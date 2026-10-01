@@ -51,12 +51,8 @@ answer. Do not use tools this time; return the JSON answer directly.
 """
 
 
-def _structured(data, schema):
-    """structured_output, or a JSON object with the required keys found in the response text."""
-    if data.get("structured_output"):
-        return data["structured_output"]
-    text = data.get("response") or ""
-    required = set(schema.get("required", []))
+def _find_json(text, required):
+    """Last JSON object in `text` that has all `required` keys, or None."""
     dec = json.JSONDecoder()
     for i in [i for i, ch in enumerate(text) if ch == "{"][::-1]:
         try:
@@ -66,6 +62,30 @@ def _structured(data, schema):
         if isinstance(obj, dict) and required <= obj.keys():
             return obj
     return None
+
+
+def _unwrap(obj, required):
+    """Models sometimes put a whole ```json {...}``` answer into a single field.
+    Unpack such nesting until the fields hold plain values."""
+    for _ in range(3):
+        nested = None
+        for key in required:
+            value = obj.get(key)
+            if isinstance(value, str) and value.lstrip().startswith(("```", "{")):
+                nested = _find_json(value, required)
+                if nested:
+                    break
+        if not nested:
+            return obj
+        obj = nested
+    return obj
+
+
+def _structured(data, schema):
+    """structured_output, or a JSON object with the required keys found in the response text."""
+    required = set(schema.get("required", []))
+    obj = data.get("structured_output") or _find_json(data.get("response") or "", required)
+    return _unwrap(obj, required) if obj else None
 
 
 def fast_variant(model):
@@ -282,6 +302,7 @@ near-black background, and explain your choice in one short sentence (German).""
 def convert_to_markdown(text, previous_headings, first, model=None):
     """Turn a chunk of extracted rulebook text into structured Markdown (used by the importer)."""
     prompt = f"""Convert this chunk of text extracted from a tabletop RPG rulebook into clean Markdown.
+Put the Markdown itself into the "markdown" field - plain Markdown, not JSON and not a code block.
 - Keep the wording exactly as it is (same language, no summarizing, no additions, no translation).
 - Restore structure: {'"# " only for the book title, ' if first else 'never use "# ", '}"## " for chapters,
   "### " for sections, "#### " below that; bullet and numbered lists; Markdown tables for tabular data.

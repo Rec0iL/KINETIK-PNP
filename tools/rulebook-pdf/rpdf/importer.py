@@ -183,7 +183,22 @@ def _chunks(text):
         yield chunk
 
 
+TOC_LINE = re.compile(r"^.{2,}?(\s*\.){4,}\s*\d+\s*$")
+TOC_TITLE = re.compile(r"^\s*(inhalt|inhaltsverzeichnis|contents|table of contents|sommaire|indice)\s*$", re.I)
+
+
+def strip_toc(text):
+    """Remove table-of-contents lines (title ..... 12) and the TOC heading."""
+    out = []
+    for line in text.split("\n"):
+        if TOC_LINE.match(line.strip()) or TOC_TITLE.match(line):
+            continue
+        out.append(line)
+    return "\n".join(out)
+
+
 def _llm_restructure(text, ctx, model=None):
+    text = strip_toc(text)
     chunks = list(_chunks(text))
     out, headings = [], []
     for i, chunk in enumerate(chunks):
