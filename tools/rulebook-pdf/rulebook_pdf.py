@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["gui", "new", "plan", "images", "check", "build", "all"])
+    ap.add_argument("command", choices=["gui", "new", "plan", "images", "check", "build", "all", "detect"])
     ap.add_argument("project", nargs="?")
     ap.add_argument("source", nargs="?")
     ap.add_argument("--force", action="store_true", help="plan: vorhandene Prompts neu schreiben")
@@ -63,6 +63,9 @@ def run_command(args, ap, ctx):
         pipeline.check(p, ctx, fix=False if args.no_fix else None)
     if args.command in ("build", "all"):
         pipeline.build(p, ctx)
+    if args.command == "detect":   # internal: gap measurement for filler images
+        from rpdf import layout
+        layout.detect_fillers(p, log=ctx.log)
 
 
 if __name__ == "__main__":

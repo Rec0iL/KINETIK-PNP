@@ -14,17 +14,54 @@ class Cancelled(Exception):
 
 class Context:
     def __init__(self, log=print, progress=lambda done, total: None, cancelled=lambda: False,
-                 image_saved=lambda key: None):
+                 image_saved=lambda key: None, isolate=False):
         self.log, self.progress, self.cancelled = log, progress, cancelled
         self.image_saved = image_saved     # called with the slot key after each saved image
+        # Run WeasyPrint in a child process. Needed inside the Qt GUI: Qt and WeasyPrint
+        # share FreeType/HarfBuzz, which are not thread-safe, and the GUI segfaulted.
+        self.isolate = isolate
 
     def check(self):
         if self.cancelled():
             raise Cancelled()
 
 
+def run_isolated(project, command, ctx):
+    """Run a WeasyPrint step (`build` or `detect`) as `rulebook_pdf.py <command>` in a child process,
+    streaming its output to the log. Returns the last output line."""
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    project.save()
+    script = Path(__file__).resolve().parent.parent / "rulebook_pdf.py"
+    proc = subprocess.Popen([sys.executable, "-u", str(script), command, str(project.root)],
+                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    last = ""
+    for line in proc.stdout:
+        line = line.rstrip()
+        if line:
+            ctx.log(line)
+            last = line
+        if ctx.cancelled():
+            proc.terminate()
+    code = proc.wait()
+    if ctx.cancelled():
+        raise Cancelled()
+    if code != 0:
+        reason = "abgestürzt (Speicherzugriffsfehler)" if code < 0 else f"Fehlercode {code}"
+        raise RuntimeError(f"PDF-Satz {reason}: {last}")
+    # the child may have changed the manifest (filler slots)
+    project.__init__(project.root)
+    return last
+
+
 def _detect(project, doc, ctx):
-    if project.config["layout"].get("fill_gaps"):
+    if not project.config["layout"].get("fill_gaps"):
+        return
+    if ctx.isolate:
+        run_isolated(project, "detect", ctx)
+    else:
         layout.detect_fillers(project, doc, ctx.log)
 
 
@@ -239,7 +276,13 @@ def preview(project, key, ctx, prompt=None, style=None, seed=None):
 
 
 def build(project, ctx):
-    return layout.render(project, log=ctx.log)
+    if not ctx.isolate:
+        return layout.render(project, log=ctx.log)
+    run_isolated(project, "build", ctx)
+    import subprocess
+    pages = subprocess.run(["pdfinfo", str(project.output_path)], capture_output=True, text=True).stdout
+    n = next((int(l.split()[-1]) for l in pages.splitlines() if l.startswith("Pages:")), 0)
+    return project.output_path, n
 
 
 def analyse(project, key, wish="", ctx=None):

@@ -43,14 +43,14 @@ class Job(QThread):
 
     def run(self):
         ctx = pipeline.Context(log=self.log.emit, progress=self.progress.emit, cancelled=lambda: self._cancel,
-                               image_saved=self.image_saved.emit)
+                               image_saved=self.image_saved.emit, isolate=True)
         try:
             self.done.emit(self.fn(ctx))
         except pipeline.Cancelled:
             self.failed.emit("Abgebrochen.")
         except Exception as e:  # noqa: BLE001 - shown to the user
             self.failed.emit(f"{e}\n{traceback.format_exc(limit=3)}" if not isinstance(
-                e, (comfy.ComfyError, planner.AgyError, FileNotFoundError, ValueError)) else str(e))
+                e, (comfy.ComfyError, planner.AgyError, FileNotFoundError, ValueError, RuntimeError)) else str(e))
 
 
 # ---------------------------------------------------------------- small widgets
