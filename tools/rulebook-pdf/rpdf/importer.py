@@ -32,9 +32,13 @@ def to_markdown(src, dest, ctx, model=None):
     elif ext == ".pdf":
         md = _llm_restructure(pdf_text(src, dest.parent / "media", ctx), ctx, model)
         toc = toc_from_pdf(src)
-        if toc:
-            ctx.log(f"Gliederung aus dem Inhaltsverzeichnis übernommen ({len(toc)} Einträge).")
-        dest.write_text(apply_toc_levels(md, toc), encoding="utf-8")
+        md, report = relevel_from_pdf(md, src, toc)
+        if report and report[0].startswith("Keine Schriftinformationen"):
+            md = apply_toc_levels(md, toc)
+            report = [f"Gliederung aus dem Inhaltsverzeichnis übernommen ({len(toc)} Einträge)."] if toc else []
+        for line in report:
+            ctx.log(line)
+        dest.write_text(md, encoding="utf-8")
     elif ext == ".txt":
         dest.write_text(_llm_restructure(src.read_text(encoding="utf-8", errors="replace"), ctx, model), encoding="utf-8")
     else:
@@ -249,6 +253,177 @@ def apply_toc_levels(md, toc):
         if line.strip() or out:
             out.append(line)
     return "\n".join(out)
+
+
+def pdf_line_styles(path):
+    """Visual lines of a PDF with their style: {normalized text: (size, bold, color, page, top)}.
+    Uses pdftohtml's XML; runs on the same page and baseline are joined into one line, and
+    wrapped headings (two consecutive lines in the same style) are also registered joined."""
+    import html as htmllib
+    import tempfile
+    if not shutil.which("pdftohtml"):
+        return {}, set()
+    with tempfile.TemporaryDirectory() as tmp:
+        subprocess.run(["pdftohtml", "-xml", "-i", "-q", "-s", str(path), f"{tmp}/x"],
+                       capture_output=True, check=False)
+        try:
+            xml = Path(f"{tmp}/x.xml").read_text(encoding="utf-8", errors="replace")
+        except FileNotFoundError:
+            return {}, set()
+    fonts = {m.group(1): (round(float(m.group(2))), m.group(3).lower())
+             for m in re.finditer(r'<fontspec id="(\d+)" size="([\d.]+)" family="[^"]*" color="([^"]*)"', xml)}
+    runs = []
+    for page_no, page in enumerate(re.findall(r"<page [^>]*>(.*?)</page>", xml, re.S), 1):
+        for m in re.finditer(r'<text top="(\d+)" left="(\d+)" width="\d+" height="(\d+)" font="(\d+)">(.*?)</text>', page):
+            raw = m.group(5)
+            text = htmllib.unescape(re.sub("<.*?>", "", raw)).strip()
+            if not text or m.group(4) not in fonts:
+                continue
+            bold = "<b>" in raw
+            size, color = fonts[m.group(4)]
+            runs.append((page_no, int(m.group(1)), int(m.group(2)), int(m.group(3)), size, bold, color, text))
+    # join runs into visual lines
+    lines = []
+    for r in sorted(runs, key=lambda r: (r[0], r[1], r[2])):
+        if lines and lines[-1]["page"] == r[0] and abs(lines[-1]["top"] - r[1]) <= 3:
+            ln = lines[-1]
+            ln["parts"].append(r)
+        else:
+            lines.append({"page": r[0], "top": r[1], "height": r[3], "parts": [r]})
+    chars = {}
+    for ln in lines:
+        main = max(ln["parts"], key=lambda r: (r[4], len(r[7])))
+        ln["size"], ln["color"] = main[4], main[6]
+        ln["bold"] = all(r[5] for r in ln["parts"] if r[7].strip())
+        ln["text"] = " ".join(r[7] for r in ln["parts"])
+        key = (ln["size"], ln["bold"], ln["color"])
+        chars[key] = chars.get(key, 0) + len(ln["text"])
+    total = sum(chars.values()) or 1
+    body = {k for k, n in chars.items() if n / total > 0.05}      # styles of running text
+    styles = {}
+    def put(key, entry):
+        # the same words appear in the TOC and in running text; the heading is the biggest one
+        old = styles.get(key)
+        rank = lambda e: (e[:3] not in body, e[0], e[1])
+        if key and (old is None or rank(entry) > rank(old)):
+            styles[key] = entry
+    for i, ln in enumerate(lines):
+        if re.search(r"\.{5,}", ln["text"]):        # table of contents line
+            continue
+        entry = (ln["size"], ln["bold"], ln["color"], ln["page"], ln["top"])
+        put(_norm(ln["text"]), entry)
+        for part in ln["parts"]:                      # heading + subtitle on one line
+            put(_norm(part[7]), entry)
+        if i + 1 < len(lines):                        # wrapped heading
+            nx = lines[i + 1]
+            if (nx["page"] == ln["page"] and (nx["size"], nx["bold"], nx["color"]) == (ln["size"], ln["bold"], ln["color"])
+                    and 0 < nx["top"] - ln["top"] <= 1.8 * ln["height"]):
+                put(_norm(ln["text"] + " " + nx["text"]), entry)
+    return styles, body
+
+
+def relevel_from_pdf(md, pdf_path, toc=None):
+    """Re-level all headings of an imported Markdown after the original PDF's typography.
+
+    - chapters ('##'): headings in the largest heading size, plus top-level TOC entries
+    - inside a chapter: the remaining heading sizes become '###', '####', ... (a size used by
+      only one heading in that chapter joins the next smaller size)
+    - a heading followed directly by another one that sits on the same PDF line (subtitle) is
+      merged into 'Title – Subtitle'
+    Headings not found in the PDF keep their position relative to their neighbours.
+    Returns (markdown, report lines)."""
+    styles, body = pdf_line_styles(pdf_path)
+    if not styles:
+        return md, ["Keine Schriftinformationen im PDF gefunden – Gliederung unverändert."]
+    toc_top = {k for k, lvl in (toc or []) if lvl == 1}
+    toc_all = {k for k, _ in (toc or [])}
+    lines = md.split("\n")
+    heads = [(i, len(m.group(1)), m.group(2).strip()) for i, l in enumerate(lines)
+             for m in [re.match(r"^(#{1,6}) (.+)$", l)] if m]
+    report = []
+
+    # 1) merge heading + subtitle on the same PDF line
+    drop = set()
+    for (i, _, t), (j, _, u) in zip(heads, heads[1:]):
+        between = [l for l in lines[i + 1:j] if l.strip()]
+        a, b = styles.get(_norm(t)), styles.get(_norm(u))
+        if not between and a and b and a[3:] == b[3:]:
+            sub = re.sub(r"^\s*[-–—]\s*", "", u)
+            lines[i] = lines[i].rstrip() + " – " + sub
+            drop.add(j)
+            report.append(f"Untertitel zusammengeführt: {t} – {sub}")
+    heads = [(i, lvl, lines[i].split(" ", 1)[1].strip()) for i, lvl, _ in heads if i not in drop]
+
+    # 2) classify
+    info = []
+    for i, md_lvl, t in heads:
+        st = styles.get(_norm(t)) or styles.get(_norm(re.sub(r" – .*$", "", t)))
+        # authors often set sub-headings as plain or partly bold text; such headings keep their
+        # relative level instead of getting one from their (body) font size
+        styled = bool(st) and (st[0], st[1], st[2]) not in body
+        info.append({"i": i, "md": md_lvl, "text": t, "size": st[0] if styled else None, "is_body": False})
+    sizes = [h["size"] for h in info if h["size"] and not h["is_body"]]
+    top_size = max(sizes) if sizes else None
+
+    # 3) chapters: the table of contents decides; the biggest type size only for headings before
+    #    the first TOC chapter (parts the TOC does not cover, like a lore section) or without a TOC
+    seen_toc_top = False
+    for h in info:
+        in_toc_top = _norm(h["text"]) in toc_top
+        seen_toc_top = seen_toc_top or in_toc_top
+        big = bool(h["size"] and top_size and h["size"] >= top_size - 1)
+        h["chapter"] = in_toc_top or (big and (not toc_top or not seen_toc_top))
+    # leading title ('#') stays when it is the very first heading and the PDF's biggest text
+    # 4) levels inside chapters
+    level = {}
+    chunk = []
+    def flush(chunk):
+        if not chunk:
+            return
+        tiers = sorted({h["size"] for h in chunk if h["size"]}, reverse=True)
+        count = {t: sum(1 for h in chunk if h["size"] == t) for t in tiers}
+        merged = {}
+        for k, t in enumerate(tiers):
+            target = t
+            if count[t] == 1 and k + 1 < len(tiers):
+                target = tiers[k + 1]
+            merged[t] = target
+        rank = {t: n for n, t in enumerate(sorted(set(merged.values()), reverse=True))}
+        prev_out, prev_md, by_md = 2, None, {}
+        for h in chunk:
+            if h["size"]:
+                out = 3 + rank[merged[h["size"]]]
+            elif h["md"] in by_md:   # unstyled: same level as the last heading of the same md level
+                out = by_md[h["md"]]
+            else:                    # otherwise keep the relation to the previous heading
+                out = prev_out + (1 if prev_md is not None and h["md"] > prev_md else 0)
+            level[h["i"]] = min(max(out, 3), 6)
+            prev_out, prev_md = level[h["i"]], h["md"]
+            by_md.setdefault(h["md"], level[h["i"]])
+    for h in info:
+        if h["is_body"]:
+            continue
+        if h["chapter"]:
+            flush(chunk); chunk = []
+            level[h["i"]] = 2
+        else:
+            chunk.append(h)
+    flush(chunk)
+
+    # 5) write
+    demoted = 0
+    for h in info:
+        text = lines[h["i"]].split(" ", 1)[1].strip()
+        if h["is_body"]:
+            lines[h["i"]] = f"**{text}**"
+            demoted += 1
+        else:
+            lines[h["i"]] = "#" * level[h["i"]] + " " + text
+    out = "\n".join(l for k, l in enumerate(lines) if k not in drop)
+    n_ch = sum(1 for h in info if h["chapter"] and not h["is_body"])
+    report.insert(0, f"Gliederung aus Schriftbild und Inhaltsverzeichnis übernommen: {n_ch} Kapitel, "
+                     f"{len(info) - n_ch} Unterüberschriften.")
+    return out, report
 
 
 def promote_chapters_from_toc(md, toc):

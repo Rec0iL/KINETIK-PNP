@@ -7,7 +7,7 @@
   python3 rulebook_pdf.py images PROJEKT [--all]      Fehlende (oder alle) Bilder generieren
   python3 rulebook_pdf.py check PROJEKT [--no-fix]    Bilder mit agy prüfen (und unpassende neu machen)
   python3 rulebook_pdf.py restructure PROJEKT ORIGINAL.pdf
-                                                      Kapitel laut Inhaltsverzeichnis des Originals hochstufen
+                                                      Überschriften-Ebenen nach dem Original-PDF richten
   python3 rulebook_pdf.py build PROJEKT               PDF setzen
   python3 rulebook_pdf.py all PROJEKT                 plan + images + build
 """
@@ -73,29 +73,40 @@ def run_command(args, ap, ctx):
 
 
 def restructure(p, original, ctx):
-    """Promote headings to chapters according to the original PDF's table of contents,
-    keeping the images of the promoted slots."""
+    """Re-level the headings after the original PDF (typography + table of contents),
+    keeping images of slots that change between chapter and section."""
+    import re
     import shutil
     from rpdf import importer, mdparse, project as proj
     if not original:
-        sys.exit("ORIGINAL.pdf fehlt (das PDF mit dem Inhaltsverzeichnis).")
-    toc = importer.toc_from_pdf(original)
-    if not toc:
-        sys.exit("Im Original wurde kein Inhaltsverzeichnis gefunden.")
+        sys.exit("ORIGINAL.pdf fehlt (das Original-PDF des Regelwerks).")
     src = p.source_path
-    md, promoted = importer.promote_chapters_from_toc(src.read_text(encoding="utf-8"), toc)
-    if not promoted:
-        ctx.log("Nichts zu tun: alle Kapitel stimmen schon mit dem Inhaltsverzeichnis überein.")
+    old_md = src.read_text(encoding="utf-8")
+    toc = importer.toc_from_pdf(original)
+    md, report = importer.relevel_from_pdf(old_md, original, toc)
+    if report and report[0].startswith("Keine Schriftinformationen"):
+        md, promoted = importer.promote_chapters_from_toc(old_md, toc)
+        report = [f"Zu Kapiteln gemacht: {', '.join(promoted)}"] if promoted else []
+    for line in report:
+        ctx.log(line)
+    if md == old_md:
+        ctx.log("Nichts zu tun: die Gliederung stimmt schon.")
         return
+    old_slots = {s.title: s for s in p.slots()}
     backup = src.with_name(src.stem + ".vor-restructure" + src.suffix)
-    shutil.copy(src, backup)
+    if not backup.exists():
+        shutil.copy(src, backup)
     src.write_text(md, encoding="utf-8")
-    mapping = {"sec-" + mdparse.slugify(mdparse.plain(t)): "ch-" + mdparse.slugify(mdparse.plain(t)) for t in promoted}
+    new_slots = {s.title: s for s in p.slots()}
+    mapping = {old_slots[t].key: new_slots[t].key for t in old_slots.keys() & new_slots.keys()
+               if old_slots[t].key != new_slots[t].key}
     moved = proj.rekey(p, mapping)
-    p.sync_manifest(p.slots())
+    p.sync_manifest(list(new_slots.values()))
     p.save()
-    ctx.log(f"Zu Kapiteln gemacht: {', '.join(promoted)}")
-    ctx.log(f"Bilder übernommen: {len(moved)} · Sicherung: {backup.name}")
+    missing = [s.title for s in new_slots.values() if not p.has_image(s.key)]
+    ctx.log(f"Bilder übernommen: {len(moved)} · ohne Bild: {len(missing)} · Sicherung: {backup.name}")
+    if missing:
+        ctx.log("Fehlende Bilder mit „Prompts planen“ und „Fehlende Bilder“ erzeugen.")
 
 
 if __name__ == "__main__":

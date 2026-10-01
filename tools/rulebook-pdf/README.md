@@ -25,7 +25,7 @@ Ohne Argument öffnet die Oberfläche das zuletzt benutzte Projekt. Das KINETIK-
 
 ## Ablauf in der Oberfläche
 
-1. **Neues Projekt…**: Regelwerk wählen (`.md`, `.docx`, `.pdf`, `.txt`) und einen leeren Projektordner. Word-Dateien werden lokal über ihre Überschriftenstile umgewandelt, PDF und Text abschnittsweise von agy (Wortlaut bleibt erhalten). Hat das PDF ein Inhaltsverzeichnis (Word-Stil mit Punktlinien und Seitenzahlen), übernimmt das Tool daraus die Gliederung: Einträge der ersten Ebene werden Kapitel, die der zweiten Abschnitte. Das Verzeichnis selbst landet nicht im Text. **Das erzeugte Markdown kurz prüfen** (Toolbar: „Quelle öffnen“), vor allem bei PDFs.
+1. **Neues Projekt…**: Regelwerk wählen (`.md`, `.docx`, `.pdf`, `.txt`) und einen leeren Projektordner. Word-Dateien werden lokal über ihre Überschriftenstile umgewandelt, PDF und Text abschnittsweise von agy (Wortlaut bleibt erhalten). Die Überschriften-Ebenen richtet das Tool danach am Original aus: Kapitel sind die Einträge der ersten Ebene im Inhaltsverzeichnis (Word-Stil mit Punktlinien und Seitenzahlen); Teile vor dem ersten solchen Kapitel, die in der größten Schrift gesetzt sind, werden ebenfalls Kapitel. Darunter ergeben die Schriftgrößen der Überschriften die Ebenen, und ein Untertitel in derselben Zeile wird mit seiner Überschrift zusammengeführt. Das Verzeichnis selbst landet nicht im Text. Für ein bereits importiertes Projekt: `rulebook_pdf.py restructure PROJEKT ORIGINAL.pdf` (Sicherung `*.vor-restructure.md`, Bilder von Plätzen, die nur zwischen Kapitel und Abschnitt wechseln, werden mitgenommen). **Das erzeugte Markdown kurz prüfen** (Toolbar: „Quelle öffnen“), vor allem bei PDFs.
 2. **Buch**: Titel, Untertitel, Kopfzeile, Farben, Schriftgröße, Blocksatz.
 3. **Stil**: Vorlage wählen (Anime Action, Film Noir, Dark Fantasy, Comic …) oder einen freien **Stilwunsch** eintragen, z.B. „soll aussehen wie One Piece“, und **Mit agy verfeinern**. agy macht daraus einen Stil-Suffix, den das gewählte Bildmodell versteht, und schlägt passende Akzentfarben vor. Der Suffix bleibt editierbar. **Komprimieren** neben jedem Feld lässt agy Doppeltes, Widersprüche, Füllwörter und für das gewählte Modell wirkungslose Begriffe entfernen (bei Krea 2 z.B. „masterpiece, best quality“). Was entfernt wurde, steht im Log.
 4. **Engine**: agy-Modell und ComfyUI. „Verbinden“ lädt die Modelle aus dem laufenden ComfyUI. Unter **Bildmodell** stehen alle Modelle mit ihrer erkannten Bauart, die Einstellungen werden beim Auswählen automatisch gesetzt (siehe „Bildmodelle“).
@@ -110,7 +110,7 @@ python3 rulebook_pdf.py new    PROJEKT QUELLE    # Projekt anlegen (importiert d
 python3 rulebook_pdf.py plan   PROJEKT [--force] # Prompts schreiben (--force: alle neu)
 python3 rulebook_pdf.py images PROJEKT [--all]   # fehlende Bilder (--all: alle neu)
 python3 rulebook_pdf.py check  PROJEKT [--no-fix]  # Bilder mit agy prüfen (--no-fix: nur prüfen)
-python3 rulebook_pdf.py restructure PROJEKT ORIGINAL.pdf  # Kapitel laut Inhaltsverzeichnis hochstufen, Bilder bleiben
+python3 rulebook_pdf.py restructure PROJEKT ORIGINAL.pdf  # Überschriften-Ebenen nach dem Original richten
 python3 rulebook_pdf.py build  PROJEKT           # PDF setzen
 python3 rulebook_pdf.py all    PROJEKT           # plan + images + build
 ```
