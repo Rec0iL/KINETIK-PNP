@@ -73,6 +73,37 @@ class ColorButton(QPushButton):
             self.set_color(c.name())
 
 
+class ImageView(QLabel):
+    """Shows a pixmap scaled to the available space. It never asks for space itself,
+    otherwise setting a pixmap at the current size makes the splitter grow step by step."""
+
+    def __init__(self, text=""):
+        super().__init__(text)
+        self._pm = QPixmap()
+        self.setAlignment(Qt.AlignCenter)
+        self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        self.setMinimumSize(120, 240)
+
+    def set_image(self, pm, empty_text=""):
+        self._pm = pm
+        if pm.isNull():
+            super().setPixmap(QPixmap())
+            self.setText(empty_text)
+        else:
+            self._rescale()
+
+    def _rescale(self):
+        if self._pm.isNull():
+            return
+        r = self.contentsRect()
+        super().setPixmap(self._pm.scaled(max(r.width(), 1), max(r.height(), 1),
+                                          Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
+    def resizeEvent(self, ev):
+        super().resizeEvent(ev)
+        self._rescale()
+
+
 def path_row(edit, dialog):
     w = QWidget()
     h = QHBoxLayout(w)
@@ -445,9 +476,7 @@ class MainWindow(QMainWindow):
         w = QWidget()
         v = QVBoxLayout(w)
         v.setContentsMargins(6, 0, 0, 0)
-        self.preview_label = QLabel("Kein Bild")
-        self.preview_label.setAlignment(Qt.AlignCenter)
-        self.preview_label.setMinimumHeight(240)
+        self.preview_label = ImageView("Kein Bild")
         self.preview_label.setObjectName("preview")
         v.addWidget(self.preview_label, 1)
         self.preview_banner = QLabel("VORSCHAU – noch nicht übernommen")
@@ -458,9 +487,11 @@ class MainWindow(QMainWindow):
         self.slot_title = QLabel()
         self.slot_title.setObjectName("slotTitle")
         self.slot_title.setWordWrap(True)
+        self.slot_title.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
         v.addWidget(self.slot_title)
         self.qc_label = QLabel()
         self.qc_label.setWordWrap(True)
+        self.qc_label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
         v.addWidget(self.qc_label)
         self.slot_prompt = text_box(96)
         self.slot_prompt.setPlaceholderText("Motiv (englisch) – der Stil-Suffix wird angehängt")
@@ -765,18 +796,7 @@ class MainWindow(QMainWindow):
 
     def _set_preview(self, path):
         pm = QPixmap(str(path)) if path and Path(path).exists() else QPixmap()
-        if pm.isNull():
-            self.preview_label.setPixmap(QPixmap())
-            self.preview_label.setText("Noch kein Bild")
-            return
-        self.preview_label.setPixmap(pm.scaled(self.preview_label.size(), Qt.KeepAspectRatio,
-                                               Qt.SmoothTransformation))
-
-    def resizeEvent(self, ev):
-        super().resizeEvent(ev)
-        s = self._current_slot()
-        if s:
-            self._set_preview(self.preview_path or self.project.image_path(s.key))
+        self.preview_label.set_image(pm, "Noch kein Bild")
 
     # ---------- jobs ----------
     def _start(self, fn, on_done=None, label=""):
