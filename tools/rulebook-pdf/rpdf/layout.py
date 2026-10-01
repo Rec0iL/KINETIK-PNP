@@ -25,9 +25,50 @@ def _hex_rgba(hex_color, alpha):
     return f"rgba({r},{g},{b},{alpha})"
 
 
-def _md(text):
+def _md(text, base=None):
     out = markdown.markdown(text, extensions=["tables", "sane_lists"])
-    return _wrap_tables(out)
+    return _wrap_tables(_figures(out, base))
+
+
+def _image_aspect(path):
+    """width / height of a local image (SVG via its viewBox), or None."""
+    try:
+        if path.suffix.lower() == ".svg":
+            m = re.search(r'viewBox="\s*[-\d.]+[ ,]+[-\d.]+[ ,]+([\d.]+)[ ,]+([\d.]+)', path.read_text(encoding="utf-8"))
+            return float(m.group(1)) / float(m.group(2)) if m else None
+        from PIL import Image
+        with Image.open(path) as im:
+            return im.width / im.height
+    except Exception:
+        return None
+
+
+def _figures(html, base):
+    """Images from the Markdown: resolve relative paths against the source file and
+    turn stand-alone images into figures (alt text becomes the caption)."""
+    def resolve(src):
+        if base is None or re.match(r"^(https?|file|data):", src):
+            return src, None
+        path = (base / htmllib.unescape(src)).resolve()
+        return path.as_uri(), path
+
+    def img_attr(tag, name):
+        m = re.search(rf'{name}="([^"]*)"', tag)
+        return m.group(1) if m else ""
+
+    def figure(m):
+        tag = m.group(1)
+        src, path = resolve(img_attr(tag, "src"))
+        alt = img_attr(tag, "alt")
+        aspect = _image_aspect(path) if path else None
+        cls = "md-figure wide" if aspect and aspect > 1.25 else "md-figure"
+        cap = f"<figcaption>{alt}</figcaption>" if alt else ""
+        return f'<figure class="{cls}"><img src="{src}" alt="{alt}">{cap}</figure>'
+
+    html = re.sub(r"<p>\s*(<img [^>]*>)\s*</p>", figure, html)
+    # remaining inline images: only fix the path
+    return re.sub(r'(<img [^>]*src=")([^"]+)(")',
+                  lambda m: m.group(1) + resolve(m.group(2))[0] + m.group(3), html)
 
 
 def _wrap_tables(html):
@@ -41,7 +82,8 @@ def _wrap_tables(html):
 
 
 def _cols(md_text):
-    plain = re.sub(r"[#*_|>\-\s]+", " ", md_text).strip()
+    plain = re.sub(r"!\[[^\]]*\]\([^)]*\)", " ", md_text)
+    plain = re.sub(r"[#*_|>\-\s]+", " ", plain).strip()
     return "cols single" if len(plain) < SINGLE_COLUMN_MAX_CHARS else "cols"
 
 
@@ -62,8 +104,70 @@ def _esc(text):
     return htmllib.escape(text or "")
 
 
-def build_html(project, doc):
+def _filler(fillers, block_key, img):
+    """Image filling the empty space after a block: fillers = {block_key: height_mm}."""
+    if not fillers or block_key not in fillers:
+        return ""
+    src = img(f"fill-{block_key}")
+    if not src:
+        return ""
+    return (f'<figure class="filler" style="height:{fillers[block_key]:.1f}mm">'
+            f'<img src="{src}" alt=""></figure>')
+
+
+def find_gaps(document, min_gap_mm):
+    """Empty space at the bottom of pages where a block ends.
+
+    Returns [(block_key, gap_mm, width_mm)] for gaps of at least min_gap_mm. A gap
+    only counts if the block that ends the page does not continue on the next page.
+    The gap is measured from the bottom edge of the block (including its margins),
+    not from its last line, so a filler of that height really fits.
+    """
+    px_to_mm = 25.4 / 96
+    leaf_types = {"LineBox", "BlockReplacedBox", "TableBox", "InlineReplacedBox"}
+
+    def walk(box, block, leaves, edges):
+        el = getattr(box, "element", None)
+        if el is not None:
+            cls = el.get("class") or ""
+            if "pagebg" in cls or "opener" in cls:
+                return
+            eid = el.get("id") or ""
+            if eid.startswith("b-") and type(box).__name__ == "BlockBox":
+                block = eid[2:]
+                edges[block] = max(edges.get(block, 0), box.position_y + box.margin_height())
+        if type(box).__name__ in leaf_types:
+            leaves.append((box.position_y + box.margin_height(), block))
+            return
+        for child in getattr(box, "children", []):
+            walk(child, block, leaves, edges)
+
+    pages = []
+    for page in document.pages:
+        pb = page._page_box
+        leaves, edges = [], {}
+        for child in pb.children:
+            if type(child).__name__ != "MarginBox":
+                walk(child, None, leaves, edges)
+        pages.append((leaves, edges, pb.margin_top + pb.height, pb.width))
+
+    gaps = []
+    for i, (leaves, edges, bottom, width) in enumerate(pages):
+        tagged = [(y, b) for y, b in leaves if b]
+        if not tagged:
+            continue
+        last_block = max(tagged)[1]
+        nxt = {b for _, b in pages[i + 1][0]} if i + 1 < len(pages) else set()
+        gap_mm = (bottom - edges.get(last_block, max(tagged)[0])) * px_to_mm
+        if last_block not in nxt and gap_mm >= min_gap_mm:
+            gaps.append((last_block, gap_mm, width * px_to_mm))
+    return gaps
+
+
+def build_html(project, doc, fillers=None):
     cfg = project.config
+    base = project.source_path.parent if project.source_path else None
+    md = lambda text: _md(text, base)
     theme, lay = cfg["theme"], cfg["layout"]
     img = lambda key: project.image_path(key).as_uri() if project.has_image(key) else None
     running = cfg.get("running_title") or (cfg.get("title") or doc.title or "").split(":")[0]
@@ -89,12 +193,12 @@ def build_html(project, doc):
     if len(intro_plain) > 300:
         parts.append(f'<section class="foreword"><div class="runhead-anchor" '
                      f'style="string-set: runhead {_css_string(running)}, chaptitle \'\'"></div>'
-                     f'<div class="cols">{_dropcap(_md(doc.intro_md))}</div></section>')
+                     f'<div class="cols">{_dropcap(md(doc.intro_md))}</div></section>')
 
     label = cfg.get("chapter_label") or ""
     for idx, ch in enumerate(doc.chapters, 1):
         if ch.appendix:
-            body = _md(ch.intro_md) + "".join(f"<h3>{_esc(s.title)}</h3>{_md(s.body_md)}" for s in ch.sections)
+            body = md(ch.intro_md) + "".join(f"<h3>{_esc(s.title)}</h3>{md(s.body_md)}" for s in ch.sections)
             head = ch.full_title.split(":")[0]
             parts.append(f'<section class="chapter appendix"><h2 style="string-set: runhead '
                          f'{_css_string(running)}, chaptitle {_css_string(head)}">{_esc(ch.full_title)}</h2>'
@@ -119,15 +223,17 @@ def build_html(project, doc):
 
         has_intro = bool(ch.intro_md.strip())
         if has_intro:
-            out.append(f'<div class="{_cols(ch.intro_md)} intro">{_dropcap(_md(ch.intro_md))}</div>')
+            out.append(f'<div class="{_cols(ch.intro_md)} intro" id="b-{ch.key}">{_dropcap(md(ch.intro_md))}</div>')
+            out.append(_filler(fillers, ch.key, img))
         for i, s in enumerate(ch.sections):
             fig = img(s.key) if lay.get("section_images") else None
             fig_html = f'<figure class="sub-figure"><img src="{fig}" alt=""></figure>' if fig else ""
-            body = _md(s.body_md)
+            body = md(s.body_md)
             if not has_intro and i == 0:
                 body = _dropcap(body)
-            out.append(f'<section class="sub"><div class="sub-head"><h3>{_esc(s.title)}</h3>{fig_html}</div>'
+            out.append(f'<section class="sub" id="b-{s.key}"><div class="sub-head"><h3>{_esc(s.title)}</h3>{fig_html}</div>'
                        f'<div class="{_cols(s.body_md)}">{body}</div></section>')
+            out.append(_filler(fillers, s.key, img))
         out.append("</section>")
         parts.append("\n".join(out))
 
@@ -139,6 +245,7 @@ def build_html(project, doc):
         accent_soft=_hex_rgba(theme["accent"], .10), accent_line=_hex_rgba(theme["accent"], .35),
         font_size=lay.get("font_size_pt", 9.6), lead_size=round(lay.get("font_size_pt", 9.6) * 1.08, 2),
         text_align="justify" if lay.get("justify", True) else "left",
+        filler_gap=FILLER_SPACING_MM - 3,
         cover_title_size=118 if len(title) <= 10 else max(48, int(118 * 10 / len(title))))
 
     return f"""<!doctype html>
@@ -150,13 +257,56 @@ def build_html(project, doc):
 </body></html>"""
 
 
+FILLER_SPACING_MM = 9   # breathing room above a filler and safety margin below
+
+
+def detect_fillers(project, doc=None, log=print):
+    """Lay out without fillers and register a filler slot for every large gap."""
+    from weasyprint import HTML
+
+    doc = doc or project.document()
+    project.build_dir.mkdir(parents=True, exist_ok=True)
+    html_path = project.build_dir / "probe.html"
+    html_path.write_text(build_html(project, doc), encoding="utf-8")
+    document = HTML(filename=str(html_path)).render()
+    min_gap = project.config["layout"].get("filler_min_mm", 55)
+    gaps = find_gaps(document, min_gap)
+    titles = {c.key: c.title for c in doc.chapters}
+    titles.update({s.key: s.title for c in doc.chapters for s in c.sections})
+    chapter_of = {c.key: c.key for c in doc.chapters}
+    chapter_of.update({s.key: c.key for c in doc.chapters for s in c.sections})
+    for e in project.manifest.values():
+        if e.get("kind") == "filler":
+            e["active"] = False
+    for block, gap_mm, width_mm in gaps:
+        if block not in titles:
+            continue
+        e = project.entry(f"fill-{block}")
+        e.update(kind="filler", active=True, title=f"Füllbild: {titles[block]}", after=block,
+                 chapter=chapter_of[block], h_mm=round(gap_mm - FILLER_SPACING_MM, 1),
+                 w_mm=round(width_mm, 1))
+    # forget fillers for gaps that no longer exist, unless an image was already made
+    for key in [k for k, e in project.manifest.items()
+                if e.get("kind") == "filler" and not e.get("active") and not project.has_image(k)]:
+        del project.manifest[key]
+    project.save_manifest()
+    log(f"Leerraum-Analyse: {len(gaps)} Lücke(n) ab {min_gap} mm gefunden.")
+    return document
+
+
 def render(project, doc=None, log=print):
     from weasyprint import HTML
 
     doc = doc or project.document()
     project.build_dir.mkdir(parents=True, exist_ok=True)
+    fillers = None
+    if project.config["layout"].get("fill_gaps"):
+        detect_fillers(project, doc, log)
+        fillers = {e["after"]: e["h_mm"] for k, e in project.manifest.items()
+                   if e.get("kind") == "filler" and e.get("active") and project.has_image(k)}
+        log(f"Füllbilder eingesetzt: {len(fillers)}")
     html_path = project.build_dir / "index.html"
-    html_path.write_text(build_html(project, doc), encoding="utf-8")
+    html_path.write_text(build_html(project, doc, fillers), encoding="utf-8")
     out = project.output_path
     out.parent.mkdir(parents=True, exist_ok=True)
     log("Setze PDF mit WeasyPrint …")

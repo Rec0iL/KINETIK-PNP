@@ -30,6 +30,13 @@ DEFAULTS = {
         "page_texture": True,
         "justify": True,
         "font_size_pt": 9.6,
+        "fill_gaps": False,        # fill large empty space after short blocks with extra images
+        "filler_min_mm": 55,
+    },
+    "qc": {
+        "enabled": False,          # let agy check every generated image (needs file read access)
+        "auto_fix": True,          # rewrite the prompt and regenerate when an image does not fit
+        "rounds": 1,
     },
     "style_preset": "",
     "style_wish": "",
@@ -63,6 +70,17 @@ SIZES = {
 }
 
 
+def size_for(slot):
+    """Generation size in pixels (multiples of 16)."""
+    if slot.kind != "filler" or not slot.aspect:
+        return SIZES[slot.kind]
+    w, h = 1280, 1280 / slot.aspect
+    if h > 1600:
+        w, h = w * 1600 / h, 1600
+    r16 = lambda v: max(384, int(round(v / 16)) * 16)
+    return r16(w), r16(h)
+
+
 def _merge(base, override):
     out = copy.deepcopy(base)
     for k, v in (override or {}).items():
@@ -80,6 +98,7 @@ class Slot:
     title: str
     context_md: str  # text the image should illustrate
     chapter_key: str = ""
+    aspect: float | None = None  # width / height, only for fillers
 
 
 class Project:
@@ -152,10 +171,19 @@ class Project:
                 continue
             out.append(Slot(ch.key, "chapter", ch.full_title,
                             ch.intro_md + "\n".join(s.title for s in ch.sections), ch.key))
-            if self.config["layout"]["section_images"]:
-                for s in ch.sections:
+            out += self._filler_slots(ch.key, ch.full_title, ch.intro_md, ch.key)
+            for s in ch.sections:
+                if self.config["layout"]["section_images"]:
                     out.append(Slot(s.key, "section", s.title, s.body_md, ch.key))
+                out += self._filler_slots(s.key, s.title, s.body_md, ch.key)
         return out
+
+    def _filler_slots(self, block_key, title, context, chapter_key):
+        e = self.manifest.get(f"fill-{block_key}")
+        if not (self.config["layout"].get("fill_gaps") and e and e.get("active")):
+            return []
+        aspect = e["w_mm"] / e["h_mm"] if e.get("h_mm") else None
+        return [Slot(f"fill-{block_key}", "filler", f"Füllbild: {title}", context, chapter_key, aspect)]
 
     def sync_manifest(self, slots):
         """Ensure every slot has a manifest entry; returns the slots."""

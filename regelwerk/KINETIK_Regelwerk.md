@@ -83,6 +83,9 @@ Jeder Charakter besitzt Titel (z.B. *Ex-Hitman*, *SWAT-Operator*). Ein Titel bes
    * **Schock:** Jede Verletzung kostet sofort 1 Willenskraft.
    * **Zonenwahl:** Bei einer normalen Verletzung wählt der SL die Zone passend zur Beschreibung des Angreifers. Der Spieler wählt selbst nur mit einem Move ("Zone wählen") oder über Bullet Time (siehe 3.9).
    * *Sondermanöver "Knochenbinde" (2 Willenskraft):* Der Schmerz wird temporär weggedrückt, das Körperteil ist für eine Aktion voll belastbar.
+
+    ![Die Körpersilhouette: sechs Trefferzonen mit je einem Feld pro Verletzung](../assets/grafiken/koerper-silhouette.svg)
+
 2. **Schutz (Rüstung & Glück):** Ein Wert von 0 bis 3. Schutz ist **kontextabhängig** (er wirkt nur gegen passende Angriffsarten, z.B. gilt ein ballistischer Anzug gegen Kugeln, nicht gegen einen brachialen Tritt). Er funktioniert als **Schwelle**:
    * **Schutz wird auf die Verletzungs-Schwelle angerechnet.** Eine Verletzung braucht eine Differenz von mindestens **Dominanz-Schwelle + Schutz** (siehe 3.2). Schutz 2 bedeutet also: Verletzung ab Differenz 5 statt 3.
    * **Abnutzung:** Jeder Treffer, der den Schutz nicht durchschlägt, kratzt ihn um 1 an (bis zum Ende der Szene). Mit 0 Schutz geht der Schaden auf die Willenskraft (siehe Kaskade in 3.2).

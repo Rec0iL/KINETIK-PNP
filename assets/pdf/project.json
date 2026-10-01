@@ -25,7 +25,14 @@
     "section_images": true,
     "page_texture": true,
     "justify": true,
-    "font_size_pt": 9.6
+    "font_size_pt": 9.6,
+    "fill_gaps": true,
+    "filler_min_mm": 55
+  },
+  "qc": {
+    "enabled": false,
+    "auto_fix": true,
+    "rounds": 1
   },
   "style_preset": "Anime Action (KINETIK)",
   "style_wish": "",

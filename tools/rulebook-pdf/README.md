@@ -46,6 +46,31 @@ In der Bildliste ein Bild wählen. Rechts stehen Motiv-Prompt, Seed und „Stil-
 
 Ein Bild passt nicht zum Abschnitt? Wunsch eintragen → Prompt neu → Vorschau → Übernehmen.
 
+### Füllbilder für Leerraum
+
+Kurze Abschnitte hinterlassen am Seitenende oft eine Lücke, weil der nächste Block aus Überschrift und Bild nicht mehr passt. Mit **Buch → Leerraum mit Füllbildern füllen** setzt das Tool das PDF zuerst probeweise, misst jede Lücke ab der eingestellten Höhe (Standard 55 mm) und legt dafür einen Bildplatz `fill-…` an. Das gilt nur für Lücken nach einem Abschnitt, der auf dieser Seite endet. agy schreibt ein zweites, anderes Motiv zum selben Abschnitt, ComfyUI erzeugt es im Seitenverhältnis der Lücke, und beim Bauen füllt es genau diesen Platz. Die übrige Seitenaufteilung bleibt gleich.
+
+Ändert sich der Text, verschieben sich die Lücken: Füllbilder ohne Lücke werden einfach nicht mehr eingesetzt, neue Lücken bekommen beim nächsten „Prompts planen“ / „Fehlende Bilder“ ein eigenes Bild.
+
+### Bildkontrolle mit agy (optional)
+
+**Engine → Generierte Bilder automatisch prüfen**: Nach jedem generierten Bild sieht sich agy das Bild an und beurteilt Motiv, Textartefakte, Anatomie und ob es zur Welt passt. Mit **Unpassende Bilder neu generieren** schreibt agy bei einem Fehlschlag einen besseren Prompt, und das Bild wird mit neuem Seed neu erzeugt. „Bilder prüfen (agy)“ prüft alle vorhandenen Bilder, „Prüfen“ beim einzelnen Bild nur dieses. Das Ergebnis steht am Bild (✓ / ✗ mit den gefundenen Problemen).
+
+agy bekommt Bilder nur als Datei (im Headless-Modus nimmt es nur Text an). Das Tool legt deshalb für jedes Bild einen Ordner `.build/qc/<bildplatz>/` an, in dem nur eine verkleinerte Kopie liegt. Dort startet es agy mit `--sandbox` und **ohne** `--dangerously-skip-permissions`. agy darf also nichts ausführen oder schreiben, ohne dass eine Freigabe greift. Lesen kann agy die Kopie, weil der Ordner in einem seiner vertrauenswürdigen Arbeitsbereiche liegt:
+
+```json
+// ~/.gemini/antigravity-cli/settings.json
+"trustedWorkspaces": [ "/home/<du>", ... ]
+```
+
+Liegt dein Projekt außerhalb aller `trustedWorkspaces`, meldet die Bildkontrolle „agy konnte das Bild nicht öffnen“. Dann den Projektordner (oder einen übergeordneten Ordner) dort eintragen. Erlaube agy dafür **nicht** pauschal alles.
+
+## Bilder im Regelwerk selbst
+
+Bilder, die im Markdown stehen (`![Bildunterschrift](pfad/bild.svg)`), übernimmt das PDF an ihrer Stelle. Relative Pfade gelten relativ zur Markdown-Datei. Der Alt-Text wird zur Bildunterschrift, Hochformat-Bilder bleiben in der Spalte, Querformate gehen über beide Spalten. Unterstützt werden SVG, PNG, JPG, GIF und WebP.
+
+Beim Import fremder Regelwerke bleiben deren Bilder erhalten: Word-Bilder landen in `media/` und stehen an ihrer Stelle im Markdown. Aus PDFs werden größere Bilder (ab 200 px) seitenweise extrahiert und am Ende ihrer Seite eingefügt. Dabei können Deko-Elemente mitkommen, deshalb `media/` und das Markdown kurz prüfen.
+
 ## Bildmodelle (Workflow)
 
 | Workflow | Für | Einstellungen |
@@ -62,6 +87,7 @@ Beim eigenen Workflow setzt das Tool Prompt, Negativ-Prompt, Seed und Bildgröß
 python3 rulebook_pdf.py new    PROJEKT QUELLE    # Projekt anlegen (importiert docx/pdf/txt)
 python3 rulebook_pdf.py plan   PROJEKT [--force] # Prompts schreiben (--force: alle neu)
 python3 rulebook_pdf.py images PROJEKT [--all]   # fehlende Bilder (--all: alle neu)
+python3 rulebook_pdf.py check  PROJEKT [--no-fix]  # Bilder mit agy prüfen (--no-fix: nur prüfen)
 python3 rulebook_pdf.py build  PROJEKT           # PDF setzen
 python3 rulebook_pdf.py all    PROJEKT           # plan + images + build
 ```
@@ -71,12 +97,13 @@ python3 rulebook_pdf.py all    PROJEKT           # plan + images + build
 ```
 projekt/
 ├── project.json   Einstellungen (Quelle, Ausgabe, Titel, Farben, Stil, Engine)
-├── images.json    pro Bildplatz: Motiv-Prompt, Seed, Stil an/aus, optional eigener Negativ-Prompt
-├── images/        die Bilder als JPEG (Name = Bildplatz-Schlüssel)
-└── .build/        Zwischendateien und Vorschauen (nicht versionieren)
+├── images.json    pro Bildplatz: Motiv-Prompt, Seed, Stil an/aus, optional Negativ-Prompt, Prüfergebnis
+├── images/        die generierten Bilder als JPEG (Name = Bildplatz-Schlüssel)
+├── media/         Bilder aus importierten Word-/PDF-Regelwerken
+└── .build/        Zwischendateien, Vorschauen, Bildkontrolle (nicht versionieren)
 ```
 
-Bildplatz-Schlüssel entstehen aus den Überschriften (`ch-…` für Kapitel, `sec-…` für Abschnitte). Wird eine Überschrift umbenannt, bekommt sie einen neuen Platz und braucht ein neues Bild; der alte Eintrag bleibt in `images.json` stehen.
+Bildplatz-Schlüssel entstehen aus den Überschriften (`ch-…` für Kapitel, `sec-…` für Abschnitte, `fill-…` für Füllbilder). Wird eine Überschrift umbenannt, bekommt sie einen neuen Platz und braucht ein neues Bild; der alte Eintrag bleibt in `images.json` stehen.
 
 ## Wie das Markdown aussehen sollte
 
@@ -88,4 +115,5 @@ Bildplatz-Schlüssel entstehen aus den Überschriften (`ch-…` für Kapitel, `s
 
 - agy-Aufrufe laufen nacheinander. Parallel gestartete agy-Läufe stören sich gegenseitig und liefern leere Antworten. Fehlende Prompts fragt das Tool einmal nach.
 - WeasyPrint malt `@page`-Hintergrundbilder nur im Satzspiegel; die Seitentextur ist deshalb ein fixiertes Element, das auf jeder Seite wiederholt wird.
+- WeasyPrint kann einen zweispaltigen Block nicht umbrechen, wenn darin ein unteilbares Element steckt, das in keine Spalte der Seite mehr passt; es schiebt dann den ganzen Abschnitt weiter. Abbildungen in Spalten sind deshalb auf 100 mm Höhe begrenzt. Hohe Grafiken besser mitten in einen Abschnitt setzen als an seinen Anfang.
 - Schriften (Bebas Neue, Oswald, Barlow) liegen in `rpdf/fonts/` (SIL Open Font License).

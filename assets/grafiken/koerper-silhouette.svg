@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 610" width="400" height="610" role="img"
+     aria-label="Körpersilhouette mit sechs Trefferzonen und Verletzungsfeldern">
+  <title>KINETIK – Körpersilhouette (Regel 2.3)</title>
+  <defs>
+    <style>
+      .zone { fill: #12352b; stroke: #1fc28b; stroke-width: 3; stroke-linejoin: round; }
+      .inner { fill: none; stroke: #8aa39a; stroke-width: 1.2; stroke-dasharray: 4 4; opacity: .7; }
+      .box { fill: #0d1015; stroke: #1fc28b; stroke-width: 1.6; }
+      .label { font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace; font-size: 13px;
+               font-weight: 700; fill: #e6edf0; letter-spacing: .5px; }
+      .title { font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace; font-size: 12px;
+               font-weight: 700; fill: #1fc28b; letter-spacing: 2px; }
+      .note { font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace; font-size: 10.5px; fill: #8f9ca3; }
+      .lead { stroke: #2d5a4b; stroke-width: 1.2; }
+    </style>
+  </defs>
+
+  <rect width="400" height="610" rx="14" fill="#10141a"/>
+  <circle cx="200" cy="310" r="172" fill="none" stroke="#1a2a29" stroke-width="1.5"/>
+  <text class="title" x="22" y="34">KÖRPER &amp; VERLETZUNGEN</text>
+
+  <!-- zones -->
+  <ellipse class="zone" cx="200" cy="104" rx="40" ry="48"/>
+  <path class="zone" d="M160,162 L240,162 L251,232 L236,298 L164,298 L149,232 Z"/>
+  <path class="inner" d="M171,175 L229,175 L238,232 L226,285 L174,285 L162,232 Z"/>
+  <path class="zone" d="M151,167 L163,186 L130,308 L109,300 Z"/>
+  <path class="zone" d="M249,167 L237,186 L270,308 L291,300 Z"/>
+  <path class="zone" d="M172,308 L197,308 L195,528 L166,528 L164,322 Z"/>
+  <path class="zone" d="M203,308 L228,308 L236,322 L234,528 L205,528 Z"/>
+
+  <!-- head: 2 -->
+  <text class="label" x="200" y="100" text-anchor="middle">KOPF</text>
+  <rect class="box" x="186" y="110" width="12" height="12" rx="2"/>
+  <rect class="box" x="203" y="110" width="12" height="12" rx="2"/>
+
+  <!-- torso: 3 -->
+  <text class="label" x="200" y="226" text-anchor="middle">TORSO</text>
+  <rect class="box" x="176" y="238" width="12" height="12" rx="2"/>
+  <rect class="box" x="194" y="238" width="12" height="12" rx="2"/>
+  <rect class="box" x="212" y="238" width="12" height="12" rx="2"/>
+
+  <!-- arms: 2 each, labels outside -->
+  <line class="lead" x1="122" y1="246" x2="98" y2="246"/>
+  <text class="label" x="94" y="242" text-anchor="end">L-ARM</text>
+  <rect class="box" x="62" y="250" width="12" height="12" rx="2"/>
+  <rect class="box" x="79" y="250" width="12" height="12" rx="2"/>
+  <line class="lead" x1="278" y1="246" x2="302" y2="246"/>
+  <text class="label" x="306" y="242">R-ARM</text>
+  <rect class="box" x="309" y="250" width="12" height="12" rx="2"/>
+  <rect class="box" x="326" y="250" width="12" height="12" rx="2"/>
+
+  <!-- legs: 2 each, labels outside -->
+  <line class="lead" x1="164" y1="420" x2="140" y2="420"/>
+  <text class="label" x="136" y="416" text-anchor="end">L-BEIN</text>
+  <rect class="box" x="104" y="424" width="12" height="12" rx="2"/>
+  <rect class="box" x="121" y="424" width="12" height="12" rx="2"/>
+  <line class="lead" x1="236" y1="420" x2="260" y2="420"/>
+  <text class="label" x="264" y="416">R-BEIN</text>
+  <rect class="box" x="267" y="424" width="12" height="12" rx="2"/>
+  <rect class="box" x="284" y="424" width="12" height="12" rx="2"/>
+
+  <!-- legend -->
+  <rect class="box" x="22" y="556" width="10" height="10" rx="2"/>
+  <text class="note" x="38" y="565">= 1 Verletzung (kostet sofort 1 Willenskraft)</text>
+  <text class="note" x="22" y="584">Arm/Bein: 2. Verletzung = unbrauchbar</text>
+  <text class="note" x="22" y="600">Kopf: 2. Verletzung · Torso: 3. Verletzung = sterbend</text>
+</svg>

@@ -98,8 +98,15 @@ Return:
 def plan_chapter(chapter, slots, world, model=None):
     """Prompts for the chapter banner and its section slots: {key: prompt}."""
     text = chapter.intro_md + "".join(f"\n\n### {s.title}\n{s.body_md}" for s in chapter.sections)
-    wanted = "\n".join(f"- {s.key}: {'chapter banner for' if s.kind == 'chapter' else 'section'} "
-                       f"\"{s.title}\"" for s in slots)
+    def describe(s):
+        if s.kind == "chapter":
+            return f'chapter banner for "{s.title}"'
+        if s.kind == "filler":
+            shape = "portrait" if s.aspect < 0.9 else ("square" if s.aspect < 1.25 else "landscape")
+            return (f'additional {shape} illustration for "{s.title.removeprefix("Füllbild: ")}" '
+                    f'- a different moment, place or character than its section image')
+        return f'section "{s.title}"'
+    wanted = "\n".join(f"- {s.key}: {describe(s)}" for s in slots)
     prompt = f"""You write prompts for an image model that illustrates a tabletop RPG rulebook.
 World of the book: {world}
 
@@ -139,6 +146,70 @@ Write one fresh prompt for this {slot.kind} image.{(' User wish: ' + hint) if hi
     return run(prompt, schema, model)["prompt"].strip()
 
 
+def check_image(image_path, work_dir, slot, prompt_used, world, model=None):
+    """Let agy look at one generated image and judge whether it fits its section.
+
+    This is the only agy call that touches a file: work_dir contains nothing but a
+    downscaled copy of the image. agy runs there with --sandbox and normal
+    permission handling (no auto-approval); it can read the image because the
+    folder lies in one of agy's trusted workspaces.
+    """
+    from PIL import Image
+
+    work_dir.mkdir(parents=True, exist_ok=True)
+    for old in work_dir.iterdir():
+        old.unlink()
+    with Image.open(image_path) as im:
+        im = im.convert("RGB")
+        im.thumbnail((768, 768))
+        im.save(work_dir / "image.jpg", "JPEG", quality=85)
+
+    prompt = f"""Look at the image file image.jpg in the current directory with your file viewing tool.
+Only view that file: do not run commands, do not create or edit files.
+
+It was generated to illustrate a tabletop RPG rulebook.
+World of the book: {world or 'unknown'}
+Section: "{slot.title}"
+Section text (excerpt):
+{slot.context_md[:1500]}
+
+Intended motif: {prompt_used}
+
+Judge it like an art director of a published rulebook:
+- Does it show the intended motif and fit the section and the world?
+- Garbled or readable text, letters, logos? Broken anatomy (extra limbs, fused hands, faces)?
+- Elements that do not belong (monsters or wings when not asked for, wrong era, wrong genre)?
+Set could_view=false if you could not open the image. fits=true only if it is good enough to print.
+problems: short German bullet points. better_prompt: an improved English motif prompt (25-60 words,
+no style words, no text in the image) that avoids the problems."""
+    schema = {"type": "object", "properties": {
+        "could_view": {"type": "boolean"}, "fits": {"type": "boolean"},
+        "problems": {"type": "array", "items": {"type": "string"}}, "better_prompt": {"type": "string"}},
+        "required": ["could_view", "fits", "problems", "better_prompt"]}
+    if not available():
+        raise AgyError("agy wurde nicht gefunden (Antigravity CLI).")
+    with tempfile.TemporaryDirectory(prefix="rpdf-agy-") as tmp:
+        schema_path = Path(tmp) / "schema.json"
+        schema_path.write_text(json.dumps(schema), encoding="utf-8")
+        cmd = ["agy", "-p", prompt, "--output-format", "json", "--json-schema", str(schema_path),
+               "--sandbox", "--print-timeout", "300s"]
+        if model:
+            cmd += ["--model", model]
+        proc = subprocess.run(cmd, cwd=work_dir, capture_output=True, text=True, timeout=360)
+    out = proc.stdout.strip()
+    start = out.find("{")
+    if start < 0:
+        raise AgyError(f"agy lieferte keine Antwort: {(proc.stderr or out)[-600:]}")
+    data = json.loads(out[start:])
+    result = data.get("structured_output")
+    if data.get("status") != "SUCCESS" or not result:
+        raise AgyError(f"agy-Fehler bei der Bildkontrolle: {str(data)[:600]}")
+    if not result.get("could_view"):
+        raise AgyError("agy konnte das Bild nicht öffnen. Der Projektordner muss in agys "
+                       "'trustedWorkspaces' liegen (siehe README, Abschnitt Bildkontrolle).")
+    return result
+
+
 def refine_style(wish, base_style, world, model_hint, model=None):
     """Turn a free-text style wish ("should look like One Piece") into a style suffix."""
     prompt = f"""You are an expert prompt engineer for image-generation models.
@@ -166,6 +237,8 @@ def convert_to_markdown(text, previous_headings, first, model=None):
 - Restore structure: {'"# " only for the book title, ' if first else 'never use "# ", '}"## " for chapters,
   "### " for sections, "#### " below that; bullet and numbered lists; Markdown tables for tabular data.
 - Remove page numbers, running headers/footers and hyphenation at line ends.
+- Keep every image reference like ![](media/img-012-000.png) exactly as written, on its own line,
+  at the position where it appears in the text.
 - Headings so far (keep the same levels for the same kind of heading): {previous_headings[-12:]}
 
 Text:

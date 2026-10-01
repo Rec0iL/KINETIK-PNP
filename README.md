@@ -28,6 +28,7 @@ KINETIK_PNP/
 │   ├── sl-dashboard/      Dashboard für Spielleiter
 │   └── rulebook-pdf/      PDF-Export mit KI-Bildern (agy + ComfyUI)
 ├── assets/                Grafiken, Logos, Druckvorlagen
+│   ├── grafiken/          Grafiken zum Regeltext (z.B. Körpersilhouette)
 │   └── pdf/               PDF-Projekt: Bilder, Prompts, Layout-Einstellungen
 ├── export/                Fertige PDFs
 └── scripts/               Hilfsskripte

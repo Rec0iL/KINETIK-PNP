@@ -18,7 +18,8 @@ from . import comfy, importer, pipeline, planner, styles
 from .project import Project, create
 
 TW, TH = 190, 84   # thumbnail size
-KIND_LABEL = {"cover": "Cover", "background": "Hintergrund", "chapter": "Kapitel", "section": "Abschnitt"}
+KIND_LABEL = {"cover": "Cover", "background": "Hintergrund", "chapter": "Kapitel", "section": "Abschnitt",
+              "filler": "Füllbild"}
 WORKFLOW_DEFAULTS = {
     "anima": {"cfg": 4.0, "sampler": "euler", "scheduler": "simple", "steps": 28},
     "checkpoint": {"cfg": 6.0, "sampler": "dpmpp_2m", "scheduler": "karras", "steps": 28},
@@ -188,6 +189,7 @@ class MainWindow(QMainWindow):
         self.chk_overwrite = QCheckBox("vorhandene überschreiben")
         self.btn_images = QPushButton("② Fehlende Bilder")
         self.btn_images_all = QPushButton("Alle Bilder neu")
+        self.btn_check = QPushButton("Bilder prüfen (agy)")
         self.btn_build = QPushButton("③ PDF bauen")
         self.btn_all = QPushButton("▶ Alles")
         self.btn_cancel = QPushButton("Abbrechen")
@@ -198,11 +200,12 @@ class MainWindow(QMainWindow):
         self.btn_plan.clicked.connect(self.run_plan)
         self.btn_images.clicked.connect(lambda: self.run_images(False))
         self.btn_images_all.clicked.connect(self._confirm_all_images)
+        self.btn_check.clicked.connect(self.run_check)
         self.btn_build.clicked.connect(self.run_build)
         self.btn_all.clicked.connect(self.run_all)
         self.btn_cancel.clicked.connect(lambda: self.job and self.job.cancel())
         for w in (self.btn_plan, self.chk_overwrite, self.btn_images, self.btn_images_all,
-                  self.btn_build, self.btn_all):
+                  self.btn_check, self.btn_build, self.btn_all):
             bar.addWidget(w)
         bar.addWidget(self.progress, 1)
         bar.addWidget(self.btn_cancel)
@@ -210,7 +213,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(root)
         self.action_buttons = [self.btn_plan, self.btn_images, self.btn_images_all, self.btn_build,
                                self.btn_all, self.btn_preview, self.btn_regen, self.btn_replan,
-                               self.btn_refine, self.btn_accept]
+                               self.btn_refine, self.btn_accept, self.btn_check, self.btn_check_one]
 
     def _scroll(self, widget):
         s = QScrollArea()
@@ -252,6 +255,14 @@ class MainWindow(QMainWindow):
         f.addRow("", self.chk_texture)
         f.addRow("", self.chk_justify)
         f.addRow("Schriftgröße", self.sp_font)
+        self.chk_fill = QCheckBox("Leerraum mit Füllbildern füllen")
+        self.chk_fill.setToolTip("Große Lücken am Seitenende nach kurzen Abschnitten bekommen ein "
+                                 "zusätzliches Bild zum selben Abschnitt.")
+        self.sp_fill = QSpinBox()
+        self.sp_fill.setRange(30, 200)
+        self.sp_fill.setSuffix(" mm")
+        f.addRow("", self.chk_fill)
+        f.addRow("Füllbild ab Lücke", self.sp_fill)
         f.addRow(section_label("Farben"))
         self.col_bg, self.col_ink, self.col_accent, self.col_accent2 = (ColorButton() for _ in range(4))
         f.addRow("Hintergrund", self.col_bg)
@@ -366,6 +377,22 @@ class MainWindow(QMainWindow):
         info.setWordWrap(True)
         info.setObjectName("dim")
         f.addRow(info)
+
+        f.addRow(section_label("Bildkontrolle (agy)"))
+        self.chk_qc = QCheckBox("Generierte Bilder automatisch prüfen")
+        self.chk_qc_fix = QCheckBox("Unpassende Bilder neu generieren")
+        self.sp_qc_rounds = QSpinBox()
+        self.sp_qc_rounds.setRange(1, 3)
+        self.sp_qc_rounds.setSuffix(" Versuch(e)")
+        f.addRow("", self.chk_qc)
+        f.addRow("", self.chk_qc_fix)
+        f.addRow("Neuversuche", self.sp_qc_rounds)
+        qc_info = QLabel("agy sieht sich jedes Bild an und prüft, ob es zum Abschnitt passt (Motiv, "
+                         "Textartefakte, Anatomie). Dafür liest agy eine Bildkopie im Projektordner – "
+                         "der Ordner muss in agys trustedWorkspaces liegen. Kostet einen agy-Aufruf pro Bild.")
+        qc_info.setWordWrap(True)
+        qc_info.setObjectName("dim")
+        f.addRow(qc_info)
         return w
 
     def _detail_panel(self):
@@ -386,6 +413,9 @@ class MainWindow(QMainWindow):
         self.slot_title.setObjectName("slotTitle")
         self.slot_title.setWordWrap(True)
         v.addWidget(self.slot_title)
+        self.qc_label = QLabel()
+        self.qc_label.setWordWrap(True)
+        v.addWidget(self.qc_label)
         self.slot_prompt = text_box(96)
         self.slot_prompt.setPlaceholderText("Motiv (englisch) – der Stil-Suffix wird angehängt")
         v.addWidget(self.slot_prompt)
@@ -407,13 +437,16 @@ class MainWindow(QMainWindow):
         self.btn_replan = QPushButton("Prompt neu (agy)")
         self.btn_preview = QPushButton("Vorschau")
         self.btn_accept = QPushButton("Übernehmen")
+        self.btn_check_one = QPushButton("Prüfen")
+        self.btn_check_one.setToolTip("Dieses Bild mit agy prüfen")
+        self.btn_check_one.clicked.connect(self.run_check_one)
         self.btn_regen = QPushButton("Generieren && speichern")
         self.btn_regen.setObjectName("primary")
         self.btn_replan.clicked.connect(self.run_replan)
         self.btn_preview.clicked.connect(self.run_preview)
         self.btn_accept.clicked.connect(self.accept_preview)
         self.btn_regen.clicked.connect(self.run_regen_one)
-        for b in (self.btn_replan, self.btn_preview, self.btn_accept, self.btn_regen):
+        for b in (self.btn_replan, self.btn_preview, self.btn_accept, self.btn_check_one, self.btn_regen):
             row.addWidget(b)
         v.addLayout(row)
         return w
@@ -449,6 +482,12 @@ class MainWindow(QMainWindow):
         self.chk_texture.setChecked(lay.get("page_texture", True))
         self.chk_justify.setChecked(lay.get("justify", True))
         self.sp_font.setValue(lay.get("font_size_pt", 9.6))
+        self.chk_fill.setChecked(lay.get("fill_gaps", False))
+        self.sp_fill.setValue(int(lay.get("filler_min_mm", 55)))
+        qc = c.get("qc", {})
+        self.chk_qc.setChecked(qc.get("enabled", False))
+        self.chk_qc_fix.setChecked(qc.get("auto_fix", True))
+        self.sp_qc_rounds.setValue(int(qc.get("rounds", 1)))
         t = c["theme"]
         self.col_bg.set_color(t["bg"])
         self.col_ink.set_color(t["ink"])
@@ -488,7 +527,10 @@ class MainWindow(QMainWindow):
         c["chapter_level"] = self.cb_level.currentIndex()
         c["layout"].update(section_images=self.chk_section_images.isChecked(),
                            page_texture=self.chk_texture.isChecked(),
-                           justify=self.chk_justify.isChecked(), font_size_pt=round(self.sp_font.value(), 2))
+                           justify=self.chk_justify.isChecked(), font_size_pt=round(self.sp_font.value(), 2),
+                           fill_gaps=self.chk_fill.isChecked(), filler_min_mm=self.sp_fill.value())
+        c.setdefault("qc", {}).update(enabled=self.chk_qc.isChecked(), auto_fix=self.chk_qc_fix.isChecked(),
+                                      rounds=self.sp_qc_rounds.value())
         c["theme"].update(bg=self.col_bg.color, ink=self.col_ink.color,
                           accent=self.col_accent.color, accent2=self.col_accent2.color)
         preset = self.cb_preset.currentText()
@@ -577,12 +619,20 @@ class MainWindow(QMainWindow):
         for s in self.slots:
             has = self.project.has_image(s.key)
             prompt = bool(self.project.entry(s.key).get("prompt"))
+            qc = self.project.entry(s.key).get("qc")
             mark = "" if has else ("  • fehlt" if prompt else "  • kein Prompt")
+            if has and qc:
+                mark = "  ✓" if qc["fits"] else "  ✗ prüfen"
             item = QListWidgetItem(self._thumb(self.project.image_path(s.key)),
                                    f"{KIND_LABEL[s.kind]}{mark}\n{s.title}")
-            item.setToolTip(s.title)
+            tip = s.title
+            if qc and not qc["fits"]:
+                tip += "\n" + "\n".join("• " + x for x in qc["problems"])
+            item.setToolTip(tip)
             if not has:
                 item.setForeground(QColor("#e0a35a" if prompt else "#e06060"))
+            elif qc and not qc["fits"]:
+                item.setForeground(QColor("#e06060"))
             self.slot_list.addItem(item)
         self.slot_list.blockSignals(False)
         if self.slots:
@@ -611,6 +661,14 @@ class MainWindow(QMainWindow):
         self.slot_prompt.setPlainText(e.get("prompt", ""))
         self.chk_include_style.setChecked(e.get("include_style", True))
         self.sp_seed.setValue(int(e.get("seed", 1)))
+        qc = e.get("qc")
+        if not qc:
+            self.qc_label.setText("<span style='color:#6c7480'>Bildkontrolle: noch nicht geprüft</span>")
+        elif qc["fits"]:
+            self.qc_label.setText("<span style='color:#4fd18b'>Bildkontrolle: passt ✓</span>")
+        else:
+            self.qc_label.setText("<span style='color:#e06060'>Bildkontrolle: passt nicht – "
+                                  + "; ".join(qc["problems"]) + "</span>")
         self._set_preview(self.project.image_path(s.key))
 
     def _store_slot_edits(self):
@@ -704,6 +762,19 @@ class MainWindow(QMainWindow):
             self._start(lambda ctx: pipeline.images(self.project, ctx, regenerate=regenerate,
                                                     new_seed=regenerate),
                         on_done=lambda _: self._after_change(), label="Generiere Bilder mit ComfyUI …")
+
+    def run_check(self):
+        if self._ready():
+            fix = self.chk_qc_fix.isChecked()
+            self._start(lambda ctx: pipeline.check(self.project, ctx, fix=fix),
+                        on_done=lambda _: self._refresh_slots(),
+                        label="agy prüft die Bilder …" + (" (unpassende werden neu generiert)" if fix else ""))
+
+    def run_check_one(self):
+        s = self._current_slot()
+        if s and self._ready() and self.project.has_image(s.key):
+            self._start(lambda ctx: pipeline.check(self.project, ctx, keys={s.key}, fix=False),
+                        on_done=lambda _: self._refresh_slots(), label=f"agy prüft „{s.title}“ …")
 
     def run_build(self):
         if self._ready():

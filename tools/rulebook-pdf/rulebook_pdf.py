@@ -5,6 +5,7 @@
   python3 rulebook_pdf.py new PROJEKT QUELLE          Projekt anlegen (md, docx, pdf, txt)
   python3 rulebook_pdf.py plan PROJEKT [--force]      Bild-Prompts mit agy schreiben
   python3 rulebook_pdf.py images PROJEKT [--all]      Fehlende (oder alle) Bilder generieren
+  python3 rulebook_pdf.py check PROJEKT [--no-fix]    Bilder mit agy prüfen (und unpassende neu machen)
   python3 rulebook_pdf.py build PROJEKT               PDF setzen
   python3 rulebook_pdf.py all PROJEKT                 plan + images + build
 """
@@ -17,11 +18,12 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["gui", "new", "plan", "images", "build", "all"])
+    ap.add_argument("command", choices=["gui", "new", "plan", "images", "check", "build", "all"])
     ap.add_argument("project", nargs="?")
     ap.add_argument("source", nargs="?")
     ap.add_argument("--force", action="store_true", help="plan: vorhandene Prompts neu schreiben")
     ap.add_argument("--all", action="store_true", help="images: auch vorhandene Bilder neu generieren")
+    ap.add_argument("--no-fix", action="store_true", help="check: nur prüfen, nichts neu generieren")
     args = ap.parse_args()
 
     if args.command == "gui":
@@ -52,6 +54,8 @@ def main():
             pipeline.plan(p, ctx, force=args.force)
         if args.command in ("images", "all"):
             pipeline.images(p, ctx, regenerate=args.all)
+        if args.command == "check":
+            pipeline.check(p, ctx, fix=False if args.no_fix else None)
         if args.command in ("build", "all"):
             pipeline.build(p, ctx)
     except (comfy.ComfyError, planner.AgyError, FileNotFoundError) as e:
