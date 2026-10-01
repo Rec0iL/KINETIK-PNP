@@ -131,7 +131,8 @@ Bildplatz-Schlüssel entstehen aus den Überschriften (`ch-…` für Kapitel, `s
 ## Layout-Regeln
 
 - Kurze Abschnitte (unter ca. 700 Zeichen, ohne Tabellen) bekommen ihr Bild als kleineres Bild rechts neben dem Text statt als Banner über der vollen Breite.
-- Tabellen mit mehr als 3 Spalten, mehr als 8 Zeilen oder langen Zellen laufen über beide Spalten und dürfen über Seiten umbrechen; die Kopfzeile wiederholt sich. Kurze Tabellen bleiben in der Spalte und am Stück.
+- Tabellen mit mehr als 3 Spalten, mehr als 8 Zeilen oder langen Zellen stehen volle Breite zwischen den Spaltenblöcken des Abschnitts (nicht als Spalten-Überspanner, sonst schiebt WeasyPrint sie komplett auf die nächste Seite und lässt Leerraum) und dürfen über Seiten umbrechen; die Kopfzeile wiederholt sich. Kurze Tabellen bleiben in der Spalte und am Stück.
+- Generierte Bilder werden nie beschnitten: Banner, Seitenbilder und Kapitelbilder behalten ihr Seitenverhältnis (Banner höchstens 66 mm hoch, dann entsprechend schmaler und zentriert). Das Cover füllt die Seitenbreite; Cover und Hintergrund werden im A4-Verhältnis erzeugt.
 - Zeilen mit `•` werden zu Listen, Listen direkt nach einem Absatz werden als Listen erkannt, und kurze Zeilen innerhalb eines Absatzes (Preislisten, „Stufe 1 …“) behalten ihren Zeilenumbruch.
 - Emojis werden einfarbig gesetzt (mitgelieferte Noto Emoji). Farbige Emoji-Schriften bringen WeasyPrint mit HarfBuzz 14 zum Absturz.
 

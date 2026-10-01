@@ -64,8 +64,8 @@ DEFAULTS = {
 
 # image sizes per slot kind (width, height)
 SIZES = {
-    "cover": (1024, 1536),
-    "background": (1024, 1536),
+    "cover": (1024, 1456),        # A4 portrait ratio, so the page shows the whole image
+    "background": (1024, 1456),
     "chapter": (1600, 704),
     "section": (1280, 560),
 }

@@ -16,7 +16,6 @@ NARROW_TABLE_MAX_COLS = 3
 NARROW_TABLE_MAX_ROWS = 8         # longer tables span both columns and may break across pages
 NARROW_TABLE_MAX_CELL = 60        # ... as do tables with long cell texts
 COMPACT_SECTION_MAX_CHARS = 700   # short sections: smaller image beside the text
-TALL_OPENER_MAX_CHARS = 4000
 SINGLE_COLUMN_MAX_CHARS = 600   # shorter texts look torn apart in two columns
 
 
@@ -105,6 +104,27 @@ def _plain_len(md_text):
 
 def _cols(md_text):
     return "cols single" if _plain_len(md_text) < SINGLE_COLUMN_MAX_CHARS else "cols"
+
+
+WIDE_BLOCK = re.compile(r'(<div class="table-wide">.*?</div>|<figure class="md-figure wide">.*?</figure>)', re.S)
+
+
+def _columns(html, md_text, extra=""):
+    """Section text in columns. Wide tables and figures are not spanners inside the column box
+    (WeasyPrint moves such a spanner whole to the next page and leaves the page below the
+    heading empty) but stand between column groups, so they break across pages like normal blocks."""
+    extra = f" {extra}" if extra else ""
+    pieces = [p for p in WIDE_BLOCK.split(html) if p.strip()]
+    if len(pieces) == 1 and not WIDE_BLOCK.fullmatch(pieces[0]):
+        return f'<div class="{_cols(md_text)}{extra}">{pieces[0]}</div>'
+    out = []
+    for p in pieces:
+        if WIDE_BLOCK.fullmatch(p):
+            out.append(p)
+        else:
+            short = len(re.sub(r"<[^>]+>|\s+", " ", p).strip()) < SINGLE_COLUMN_MAX_CHARS
+            out.append(f'<div class="cols{" single" if short else ""}{extra}">{p}</div>')
+    return "".join(out)
 
 
 def _compact(md_text):
@@ -219,7 +239,7 @@ def build_html(project, doc, fillers=None):
     if len(intro_plain) > 300:
         parts.append(f'<section class="foreword"><div class="runhead-anchor" '
                      f'style="string-set: runhead {_css_string(running)}, chaptitle \'\'"></div>'
-                     f'<div class="cols">{_dropcap(md(doc.intro_md))}</div></section>')
+                     f'{_columns(_dropcap(md(doc.intro_md)), doc.intro_md)}</section>')
 
     label = cfg.get("chapter_label") or ""
     for idx, ch in enumerate(doc.chapters, 1):
@@ -233,8 +253,7 @@ def build_html(project, doc, fillers=None):
 
         num = ch.number if ch.number is not None else idx
         banner = img(ch.key)
-        tall = not ch.sections and ch.text_length < TALL_OPENER_MAX_CHARS
-        cls = "opener" + (" tall" if banner and tall else "") + ("" if banner else " plain")
+        cls = "opener" + ("" if banner else " plain")
         out = [f'<section class="chapter">', f'<header class="{cls}">']
         if banner:
             out.append(f'<img src="{banner}" alt=""><div class="opener-scrim"></div>')
@@ -249,7 +268,7 @@ def build_html(project, doc, fillers=None):
 
         has_intro = bool(ch.intro_md.strip())
         if has_intro:
-            out.append(f'<div class="{_cols(ch.intro_md)} intro" id="b-{ch.key}">{_dropcap(md(ch.intro_md))}</div>')
+            out.append(f'<div class="intro" id="b-{ch.key}">{_columns(_dropcap(md(ch.intro_md)), ch.intro_md)}</div>')
             out.append(_filler(fillers, ch.key, img))
         for i, s in enumerate(ch.sections):
             fig = img(s.key) if lay.get("section_images") else None
@@ -263,7 +282,7 @@ def build_html(project, doc, fillers=None):
             else:
                 fig_html = f'<figure class="sub-figure"><img src="{fig}" alt=""></figure>' if fig else ""
                 out.append(f'<section class="sub" id="b-{s.key}"><div class="sub-head"><h3>{_esc(s.title)}</h3>{fig_html}</div>'
-                           f'<div class="{_cols(s.body_md)}">{body}</div></section>')
+                           f'{_columns(body, s.body_md)}</section>')
             out.append(_filler(fillers, s.key, img))
         out.append("</section>")
         parts.append("\n".join(out))
