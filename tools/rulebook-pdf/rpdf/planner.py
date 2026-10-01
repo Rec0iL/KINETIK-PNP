@@ -4,6 +4,7 @@ agy only receives text in the prompt and returns JSON; it runs in an empty
 temp directory and is never given file or shell permissions.
 """
 import json
+import re
 import shutil
 import subprocess
 import tempfile
@@ -39,26 +40,74 @@ def list_models():
     return [line.split("\t")[0] for line in out.splitlines() if "\t" in line]
 
 
+NO_TOOLS = """IMPORTANT: Everything you need is in this message. Do not use any tools: do not run
+commands, do not read, create or edit files, do not browse. Think, then answer only with the
+requested JSON.
+
+"""
+RETRY_NOTE = """Your previous attempt tried to use a tool, which is not allowed here, and produced no
+answer. Do not use tools this time; return the JSON answer directly.
+
+"""
+
+
+def _structured(data, schema):
+    """structured_output, or a JSON object with the required keys found in the response text."""
+    if data.get("structured_output"):
+        return data["structured_output"]
+    text = data.get("response") or ""
+    required = set(schema.get("required", []))
+    dec = json.JSONDecoder()
+    for i in [i for i, ch in enumerate(text) if ch == "{"][::-1]:
+        try:
+            obj, _ = dec.raw_decode(text[i:])
+        except ValueError:
+            continue
+        if isinstance(obj, dict) and required <= obj.keys():
+            return obj
+    return None
+
+
+def fast_variant(model):
+    """Same model family with low reasoning effort (agy encodes effort in the model name)."""
+    return re.sub(r"-(medium|high)$", "-low", model) if model else model
+
+
 def run(prompt, schema, model=None, timeout=600):
-    """Run one agy print-mode turn and return its structured JSON output."""
+    """Run one agy print-mode turn and return its structured JSON output.
+
+    agy runs in an empty temp dir without auto-approved permissions; if it still
+    tries a tool (which then gets denied) and comes back empty, ask once more.
+    """
     if not available():
         raise AgyError("agy wurde nicht gefunden (Antigravity CLI).")
-    with tempfile.TemporaryDirectory(prefix="rpdf-agy-") as tmp:
-        schema_path = Path(tmp) / "schema.json"
-        schema_path.write_text(json.dumps(schema), encoding="utf-8")
-        cmd = ["agy", "-p", prompt, "--output-format", "json",
-               "--json-schema", str(schema_path), "--print-timeout", f"{timeout}s"]
-        if model:
-            cmd += ["--model", model]
-        proc = subprocess.run(cmd, cwd=tmp, capture_output=True, text=True, timeout=timeout + 60)
-    out = proc.stdout.strip()
-    start = out.find("{")
-    if start < 0:
-        raise AgyError(f"agy lieferte keine Antwort: {(proc.stderr or out)[-600:]}")
-    data = json.loads(out[start:])
-    if data.get("status") != "SUCCESS" or "structured_output" not in data:
-        raise AgyError(f"agy-Fehler: {str(data)[:600]}")
-    return data["structured_output"]
+    data = {}
+    for attempt in range(2):
+        full = NO_TOOLS + (RETRY_NOTE if attempt else "") + prompt
+        with tempfile.TemporaryDirectory(prefix="rpdf-agy-") as tmp:
+            schema_path = Path(tmp) / "schema.json"
+            schema_path.write_text(json.dumps(schema), encoding="utf-8")
+            cmd = ["agy", "-p", full, "--output-format", "json",
+                   "--json-schema", str(schema_path), "--print-timeout", f"{timeout}s"]
+            if model:
+                cmd += ["--model", model]
+            proc = subprocess.run(cmd, cwd=tmp, capture_output=True, text=True, timeout=timeout + 60)
+        out = proc.stdout.strip()
+        start = out.find("{")
+        if start < 0:
+            raise AgyError(f"agy lieferte keine Antwort: {(proc.stderr or out)[-600:]}")
+        data = json.loads(out[start:])
+        if data.get("status") == "SUCCESS":
+            result = _structured(data, schema)
+            if result is not None:
+                return result
+        if not data.get("denied_actions"):
+            break
+    denied = ", ".join(a.get("display_name", a.get("action", "?")) for a in data.get("denied_actions", []))
+    if denied:
+        raise AgyError(f"agy wollte ein Werkzeug benutzen ({denied}), das ist hier gesperrt, "
+                       "und hat danach keine Antwort geliefert – auch nicht im zweiten Versuch.")
+    raise AgyError(f"agy-Fehler ({data.get('status')}): {(data.get('error') or data.get('response') or '')[:400]}")
 
 
 def plan_global(doc, title, model=None):
@@ -244,4 +293,4 @@ def convert_to_markdown(text, previous_headings, first, model=None):
 Text:
 {text}"""
     schema = {"type": "object", "properties": {"markdown": {"type": "string"}}, "required": ["markdown"]}
-    return run(prompt, schema, model, timeout=900)["markdown"]
+    return run(prompt, schema, fast_variant(model), timeout=900)["markdown"]

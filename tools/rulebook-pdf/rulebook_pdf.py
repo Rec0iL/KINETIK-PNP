@@ -32,9 +32,16 @@ def main():
 
     if not args.project:
         ap.error("PROJEKT fehlt")
-    from rpdf import importer, pipeline, project as proj
-
+    from rpdf import comfy, pipeline, planner
     ctx = pipeline.Context(log=lambda msg: print(msg, flush=True), progress=lambda d, t: None)
+    try:
+        run_command(args, ap, ctx)
+    except (comfy.ComfyError, planner.AgyError, FileNotFoundError, ValueError, RuntimeError) as e:
+        sys.exit(f"Fehler: {e}")
+
+
+def run_command(args, ap, ctx):
+    from rpdf import importer, pipeline, project as proj
     if args.command == "new":
         if not args.source:
             ap.error("QUELLE fehlt")
@@ -42,24 +49,20 @@ def main():
         root.mkdir(parents=True, exist_ok=True)
         src = Path(args.source)
         if src.suffix.lower() not in (".md", ".markdown"):
-            src = importer.to_markdown(src, root / (src.stem + ".md"), ctx)
+            src = importer.to_markdown(src, root / (src.stem + ".md"), ctx, proj.DEFAULTS["agy"]["model"])
         p = proj.create(root, src)
         print(f"Projekt angelegt: {p.root} ({len(p.manifest)} Bild-Plätze)")
         return
 
-    from rpdf import comfy, planner
     p = proj.Project(args.project)
-    try:
-        if args.command in ("plan", "all"):
-            pipeline.plan(p, ctx, force=args.force)
-        if args.command in ("images", "all"):
-            pipeline.images(p, ctx, regenerate=args.all)
-        if args.command == "check":
-            pipeline.check(p, ctx, fix=False if args.no_fix else None)
-        if args.command in ("build", "all"):
-            pipeline.build(p, ctx)
-    except (comfy.ComfyError, planner.AgyError, FileNotFoundError) as e:
-        sys.exit(f"Fehler: {e}")
+    if args.command in ("plan", "all"):
+        pipeline.plan(p, ctx, force=args.force)
+    if args.command in ("images", "all"):
+        pipeline.images(p, ctx, regenerate=args.all)
+    if args.command == "check":
+        pipeline.check(p, ctx, fix=False if args.no_fix else None)
+    if args.command in ("build", "all"):
+        pipeline.build(p, ctx)
 
 
 if __name__ == "__main__":

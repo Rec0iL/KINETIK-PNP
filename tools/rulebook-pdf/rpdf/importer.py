@@ -18,11 +18,11 @@ A = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
 R = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
 WEB_IMAGE_EXT = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp"}
 MIN_PDF_IMAGE_PX = 200   # smaller PDF images are usually icons or ornaments
-CHUNK_CHARS = 12000
+CHUNK_CHARS = 8000
 HEADING_STYLE_RE = re.compile(r"(?i)(heading|berschrift|titre|titolo|titulo|kop)\s*(\d)")
 
 
-def to_markdown(src, dest, ctx):
+def to_markdown(src, dest, ctx, model=None):
     src, dest = Path(src), Path(dest)
     ext = src.suffix.lower()
     if ext in (".md", ".markdown"):
@@ -30,9 +30,9 @@ def to_markdown(src, dest, ctx):
     elif ext == ".docx":
         dest.write_text(docx_to_markdown(src, dest.parent / "media", ctx), encoding="utf-8")
     elif ext == ".pdf":
-        dest.write_text(_llm_restructure(pdf_text(src, dest.parent / "media", ctx), ctx), encoding="utf-8")
+        dest.write_text(_llm_restructure(pdf_text(src, dest.parent / "media", ctx), ctx, model), encoding="utf-8")
     elif ext == ".txt":
-        dest.write_text(_llm_restructure(src.read_text(encoding="utf-8", errors="replace"), ctx), encoding="utf-8")
+        dest.write_text(_llm_restructure(src.read_text(encoding="utf-8", errors="replace"), ctx, model), encoding="utf-8")
     else:
         raise ValueError(f"Format {ext} wird nicht unterstützt (md, docx, pdf, txt).")
     ctx.log(f"Markdown geschrieben: {dest}")
@@ -183,14 +183,14 @@ def _chunks(text):
         yield chunk
 
 
-def _llm_restructure(text, ctx):
+def _llm_restructure(text, ctx, model=None):
     chunks = list(_chunks(text))
     out, headings = [], []
     for i, chunk in enumerate(chunks):
         ctx.check()
         ctx.progress(i, len(chunks))
         ctx.log(f"agy: Abschnitt {i + 1}/{len(chunks)} in Markdown umwandeln …")
-        md = planner.convert_to_markdown(chunk, headings, first=(i == 0))
+        md = planner.convert_to_markdown(chunk, headings, first=(i == 0), model=model)
         headings += re.findall(r"(?m)^#{1,4} .+$", md)
         out.append(md.strip())
     ctx.progress(len(chunks), len(chunks))

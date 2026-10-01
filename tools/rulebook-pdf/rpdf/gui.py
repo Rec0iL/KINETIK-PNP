@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
 )
 
 from . import comfy, importer, pipeline, planner, styles
-from .project import Project, create
+from .project import DEFAULTS, Project, create
 
 TW, TH = 190, 84   # thumbnail size
 KIND_LABEL = {"cover": "Cover", "background": "Hintergrund", "chapter": "Kapitel", "section": "Abschnitt",
@@ -577,12 +577,13 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Projekt", "In diesem Ordner gibt es schon ein Projekt.")
             return
         srcp = Path(src)
+        agy_model = self.cb_agy.currentText().strip() or DEFAULTS["agy"]["model"]
 
         def work(ctx):
             md = srcp
             if srcp.suffix.lower() not in (".md", ".markdown"):
                 ctx.log("Importiere Regelwerk – bitte das Ergebnis danach kurz prüfen.")
-                md = importer.to_markdown(srcp, root / (srcp.stem + ".md"), ctx)
+                md = importer.to_markdown(srcp, root / (srcp.stem + ".md"), ctx, agy_model)
             return create(root, md).root
 
         self._start(work, on_done=lambda r: self.load_project(r))
