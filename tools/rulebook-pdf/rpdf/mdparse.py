@@ -60,7 +60,69 @@ def slugify(text, max_len=48):
     return text[:max_len].rstrip("-") or "x"
 
 
+BULLET_LINE = re.compile(r"^(\s*)[•●▪◦‣∙]\s*(.+)$")
+
+
+def _bullets_to_lists(md):
+    """Lines starting with a bullet glyph (from Word/PDF exports) become Markdown list items,
+    with a blank line before the list so it is not glued to the previous paragraph."""
+    out, in_list = [], False
+    for line in md.split("\n"):
+        m = BULLET_LINE.match(line)
+        if m and not line.lstrip().startswith("|"):
+            if not in_list and out and out[-1].strip():
+                out.append("")
+            out.append(f"{'    ' if len(m.group(1)) >= 2 else ''}* {m.group(2)}")
+            in_list = True
+            continue
+        if in_list and not line.strip():
+            continue          # blank lines between bullets keep the list together
+        if in_list and line.strip():
+            out.append("")
+        in_list = False
+        out.append(line)
+    return "\n".join(out)
+
+
+LIST_ITEM = re.compile(r"^\s*([*+-]|\d+[.)])\s+\S")
+
+
+def _blank_line_before_lists(md):
+    """A list that directly follows a paragraph line needs a blank line in between,
+    otherwise python-markdown glues the items onto the paragraph (GitHub does not)."""
+    out = []
+    for line in md.split("\n"):
+        if LIST_ITEM.match(line) and out:
+            prev = out[-1]
+            if prev.strip() and not LIST_ITEM.match(prev) and not prev.startswith((" ", "\t", "|", "#", ">")):
+                out.append("")
+        out.append(line)
+    return "\n".join(out)
+
+
+SHORT_LINE = 60
+
+
+def _keep_short_line_breaks(md):
+    """Inside a paragraph, a line that ends early was ended on purpose (price lists, 'Stufe 1 ...',
+    'label - value' lines from imported rulebooks). Keep that break as a Markdown hard break.
+    Long lines are flowing text and stay joined; one-line paragraphs are not affected."""
+    lines = md.split("\n")
+    special = lambda l: (not l.strip() or LIST_ITEM.match(l) or l.lstrip().startswith(("|", "#", ">", "!["))
+                         or l.startswith(("    ", "\t")))
+    for i in range(len(lines) - 1):
+        cur, nxt = lines[i], lines[i + 1]
+        if special(cur) or special(nxt) or cur.endswith("  "):
+            continue
+        if len(cur.strip()) < SHORT_LINE or cur.rstrip().endswith((".", ":", "!", "?", ")")):
+            lines[i] = cur.rstrip() + "  "
+    return "\n".join(lines)
+
+
 def normalize_markdown(md):
+    md = _bullets_to_lists(md)
+    md = _blank_line_before_lists(md)
+    md = _keep_short_line_breaks(md)
     # Nested list items indented by 1-3 spaces render fine on GitHub, but
     # python-markdown needs 4, otherwise they appear as literal "*".
     return re.sub(r"(?m)^ {1,3}([*+-] |\d+\. )", r"    \1", md)

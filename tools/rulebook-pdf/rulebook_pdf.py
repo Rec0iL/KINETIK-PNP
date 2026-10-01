@@ -6,6 +6,8 @@
   python3 rulebook_pdf.py plan PROJEKT [--force]      Bild-Prompts mit agy schreiben
   python3 rulebook_pdf.py images PROJEKT [--all]      Fehlende (oder alle) Bilder generieren
   python3 rulebook_pdf.py check PROJEKT [--no-fix]    Bilder mit agy prüfen (und unpassende neu machen)
+  python3 rulebook_pdf.py restructure PROJEKT ORIGINAL.pdf
+                                                      Kapitel laut Inhaltsverzeichnis des Originals hochstufen
   python3 rulebook_pdf.py build PROJEKT               PDF setzen
   python3 rulebook_pdf.py all PROJEKT                 plan + images + build
 """
@@ -18,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["gui", "new", "plan", "images", "check", "build", "all", "detect"])
+    ap.add_argument("command", choices=["gui", "new", "plan", "images", "check", "build", "all", "detect", "restructure"])
     ap.add_argument("project", nargs="?")
     ap.add_argument("source", nargs="?")
     ap.add_argument("--force", action="store_true", help="plan: vorhandene Prompts neu schreiben")
@@ -55,6 +57,8 @@ def run_command(args, ap, ctx):
         return
 
     p = proj.Project(args.project)
+    if args.command == "restructure":
+        return restructure(p, args.source, ctx)
     if args.command in ("plan", "all"):
         pipeline.plan(p, ctx, force=args.force)
     if args.command in ("images", "all"):
@@ -66,6 +70,32 @@ def run_command(args, ap, ctx):
     if args.command == "detect":   # internal: gap measurement for filler images
         from rpdf import layout
         layout.detect_fillers(p, log=ctx.log)
+
+
+def restructure(p, original, ctx):
+    """Promote headings to chapters according to the original PDF's table of contents,
+    keeping the images of the promoted slots."""
+    import shutil
+    from rpdf import importer, mdparse, project as proj
+    if not original:
+        sys.exit("ORIGINAL.pdf fehlt (das PDF mit dem Inhaltsverzeichnis).")
+    toc = importer.toc_from_pdf(original)
+    if not toc:
+        sys.exit("Im Original wurde kein Inhaltsverzeichnis gefunden.")
+    src = p.source_path
+    md, promoted = importer.promote_chapters_from_toc(src.read_text(encoding="utf-8"), toc)
+    if not promoted:
+        ctx.log("Nichts zu tun: alle Kapitel stimmen schon mit dem Inhaltsverzeichnis überein.")
+        return
+    backup = src.with_name(src.stem + ".vor-restructure" + src.suffix)
+    shutil.copy(src, backup)
+    src.write_text(md, encoding="utf-8")
+    mapping = {"sec-" + mdparse.slugify(mdparse.plain(t)): "ch-" + mdparse.slugify(mdparse.plain(t)) for t in promoted}
+    moved = proj.rekey(p, mapping)
+    p.sync_manifest(p.slots())
+    p.save()
+    ctx.log(f"Zu Kapiteln gemacht: {', '.join(promoted)}")
+    ctx.log(f"Bilder übernommen: {len(moved)} · Sicherung: {backup.name}")
 
 
 if __name__ == "__main__":

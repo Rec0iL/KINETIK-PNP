@@ -110,6 +110,7 @@ python3 rulebook_pdf.py new    PROJEKT QUELLE    # Projekt anlegen (importiert d
 python3 rulebook_pdf.py plan   PROJEKT [--force] # Prompts schreiben (--force: alle neu)
 python3 rulebook_pdf.py images PROJEKT [--all]   # fehlende Bilder (--all: alle neu)
 python3 rulebook_pdf.py check  PROJEKT [--no-fix]  # Bilder mit agy prüfen (--no-fix: nur prüfen)
+python3 rulebook_pdf.py restructure PROJEKT ORIGINAL.pdf  # Kapitel laut Inhaltsverzeichnis hochstufen, Bilder bleiben
 python3 rulebook_pdf.py build  PROJEKT           # PDF setzen
 python3 rulebook_pdf.py all    PROJEKT           # plan + images + build
 ```
@@ -126,6 +127,13 @@ projekt/
 ```
 
 Bildplatz-Schlüssel entstehen aus den Überschriften (`ch-…` für Kapitel, `sec-…` für Abschnitte, `fill-…` für Füllbilder). Wird eine Überschrift umbenannt, bekommt sie einen neuen Platz und braucht ein neues Bild; der alte Eintrag bleibt in `images.json` stehen.
+
+## Layout-Regeln
+
+- Kurze Abschnitte (unter ca. 700 Zeichen, ohne Tabellen) bekommen ihr Bild als kleineres Bild rechts neben dem Text statt als Banner über der vollen Breite.
+- Tabellen mit mehr als 3 Spalten, mehr als 8 Zeilen oder langen Zellen laufen über beide Spalten und dürfen über Seiten umbrechen; die Kopfzeile wiederholt sich. Kurze Tabellen bleiben in der Spalte und am Stück.
+- Zeilen mit `•` werden zu Listen, Listen direkt nach einem Absatz werden als Listen erkannt, und kurze Zeilen innerhalb eines Absatzes (Preislisten, „Stufe 1 …“) behalten ihren Zeilenumbruch.
+- Emojis werden einfarbig gesetzt (mitgelieferte Noto Emoji). Farbige Emoji-Schriften bringen WeasyPrint mit HarfBuzz 14 zum Absturz.
 
 ## Wie das Markdown aussehen sollte
 

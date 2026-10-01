@@ -251,6 +251,21 @@ def apply_toc_levels(md, toc):
     return "\n".join(out)
 
 
+def promote_chapters_from_toc(md, toc):
+    """Make every heading that the table of contents lists on its top level a chapter ('##').
+    Only promotes, never demotes, so existing sections (and their images) stay sections.
+    Returns (new_md, [promoted heading texts])."""
+    top = {key for key, level in toc if level == 1}
+    out, promoted = [], []
+    for line in md.split("\n"):
+        m = re.match(r"^(#{3,6}) (.*)$", line)
+        if m and _norm(m.group(2)) in top:
+            line = "## " + m.group(2)
+            promoted.append(m.group(2).strip())
+        out.append(line)
+    return "\n".join(out), promoted
+
+
 def normalize_heading_levels(md, first):
     """agy picks heading levels per chunk. Make chapters '##' everywhere: if a chunk uses '#'
     for chapters, shift all its headings one level down (a book title at the very start of

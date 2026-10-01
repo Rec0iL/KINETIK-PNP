@@ -13,8 +13,21 @@ import markdown
 
 PKG = Path(__file__).parent
 NARROW_TABLE_MAX_COLS = 3
+NARROW_TABLE_MAX_ROWS = 8         # longer tables span both columns and may break across pages
+NARROW_TABLE_MAX_CELL = 60        # ... as do tables with long cell texts
+COMPACT_SECTION_MAX_CHARS = 700   # short sections: smaller image beside the text
 TALL_OPENER_MAX_CHARS = 4000
 SINGLE_COLUMN_MAX_CHARS = 600   # shorter texts look torn apart in two columns
+
+
+# Emoji-like code points. WeasyPrint 70 + HarfBuzz 14 crash while drawing color glyphs (COLR,
+# e.g. Noto Color Emoji), so emojis are forced to text presentation (U+FE0E) and drawn with
+# the bundled monochrome Noto Emoji instead.
+EMOJI_RE = re.compile("([\U0001F000-\U0001FAFF\u2600-\u27BF\u2B00-\u2BFF\u2300-\u23FF])\uFE0F?(?!\uFE0E)")
+
+
+def _text_emoji(html):
+    return EMOJI_RE.sub("\\1\uFE0E", html)
 
 
 def _hex_rgba(hex_color, alpha):
@@ -76,15 +89,28 @@ def _wrap_tables(html):
         table = m.group(0).replace("<table>", '<table class="rules-table">', 1)
         first_row = re.search(r"<tr>(.*?)</tr>", table, re.S)
         ncols = len(re.findall(r"<t[hd][ >]", first_row.group(1))) if first_row else 0
-        cls = "table-wide" if ncols > NARROW_TABLE_MAX_COLS else "table-narrow"
+        nrows = len(re.findall(r"<tr>", table)) - 1
+        cells = [re.sub("<.*?>", "", c) for c in re.findall(r"<t[hd][^>]*>(.*?)</t[hd]>", table, re.S)]
+        longest = max((len(c.strip()) for c in cells), default=0)
+        narrow = ncols <= NARROW_TABLE_MAX_COLS and nrows <= NARROW_TABLE_MAX_ROWS and longest <= NARROW_TABLE_MAX_CELL
+        cls = "table-narrow" if narrow else "table-wide"
         return f'<div class="{cls}">{table}</div>'
     return re.sub(r"<table>.*?</table>", repl, html, flags=re.S)
 
 
-def _cols(md_text):
+def _plain_len(md_text):
     plain = re.sub(r"!\[[^\]]*\]\([^)]*\)", " ", md_text)
-    plain = re.sub(r"[#*_|>\-\s]+", " ", plain).strip()
-    return "cols single" if len(plain) < SINGLE_COLUMN_MAX_CHARS else "cols"
+    return len(re.sub(r"[#*_|>\-\s]+", " ", plain).strip())
+
+
+def _cols(md_text):
+    return "cols single" if _plain_len(md_text) < SINGLE_COLUMN_MAX_CHARS else "cols"
+
+
+def _compact(md_text):
+    """Short section without tables or own images: image goes beside the text."""
+    return (_plain_len(md_text) < COMPACT_SECTION_MAX_CHARS and "|" not in md_text
+            and "![" not in md_text)
 
 
 def _dropcap(html):
@@ -227,12 +253,17 @@ def build_html(project, doc, fillers=None):
             out.append(_filler(fillers, ch.key, img))
         for i, s in enumerate(ch.sections):
             fig = img(s.key) if lay.get("section_images") else None
-            fig_html = f'<figure class="sub-figure"><img src="{fig}" alt=""></figure>' if fig else ""
             body = md(s.body_md)
             if not has_intro and i == 0:
                 body = _dropcap(body)
-            out.append(f'<section class="sub" id="b-{s.key}"><div class="sub-head"><h3>{_esc(s.title)}</h3>{fig_html}</div>'
-                       f'<div class="{_cols(s.body_md)}">{body}</div></section>')
+            if fig and _compact(s.body_md):
+                out.append(f'<section class="sub compact" id="b-{s.key}"><div class="sub-head"><h3>{_esc(s.title)}</h3></div>'
+                           f'<div class="compact-body"><figure class="side-figure"><img src="{fig}" alt=""></figure>'
+                           f'{body}</div></section>')
+            else:
+                fig_html = f'<figure class="sub-figure"><img src="{fig}" alt=""></figure>' if fig else ""
+                out.append(f'<section class="sub" id="b-{s.key}"><div class="sub-head"><h3>{_esc(s.title)}</h3>{fig_html}</div>'
+                           f'<div class="{_cols(s.body_md)}">{body}</div></section>')
             out.append(_filler(fillers, s.key, img))
         out.append("</section>")
         parts.append("\n".join(out))
@@ -248,13 +279,13 @@ def build_html(project, doc, fillers=None):
         filler_gap=FILLER_SPACING_MM - 3,
         cover_title_size=118 if len(title) <= 10 else max(48, int(118 * 10 / len(title))))
 
-    return f"""<!doctype html>
+    return _text_emoji(f"""<!doctype html>
 <html lang="{_esc(cfg.get('language', 'de'))}"><head><meta charset="utf-8">
 <title>{_esc(title)}</title><style>{fonts_css}
 {css}</style></head>
 <body>
 {chr(10).join(parts)}
-</body></html>"""
+</body></html>""")
 
 
 FILLER_SPACING_MM = 9   # breathing room above a filler and safety margin below

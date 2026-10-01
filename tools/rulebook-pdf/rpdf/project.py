@@ -221,3 +221,17 @@ def create(root, source, output=None):
     p.sync_manifest(p.slots(doc))
     p.save()
     return p
+
+
+def rekey(project, mapping):
+    """Move images and manifest entries to new slot keys: mapping = {old_key: new_key}."""
+    moved = []
+    for old, new in mapping.items():
+        if old == new or old not in project.manifest:
+            continue
+        project.manifest[new] = project.manifest.pop(old)
+        if project.image_path(old).exists() and not project.image_path(new).exists():
+            project.image_path(old).rename(project.image_path(new))
+            moved.append((old, new))
+    project.save_manifest()
+    return moved
