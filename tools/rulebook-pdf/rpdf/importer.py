@@ -30,7 +30,11 @@ def to_markdown(src, dest, ctx, model=None):
     elif ext == ".docx":
         dest.write_text(docx_to_markdown(src, dest.parent / "media", ctx), encoding="utf-8")
     elif ext == ".pdf":
-        dest.write_text(_llm_restructure(pdf_text(src, dest.parent / "media", ctx), ctx, model), encoding="utf-8")
+        md = _llm_restructure(pdf_text(src, dest.parent / "media", ctx), ctx, model)
+        toc = toc_from_pdf(src)
+        if toc:
+            ctx.log(f"Gliederung aus dem Inhaltsverzeichnis übernommen ({len(toc)} Einträge).")
+        dest.write_text(apply_toc_levels(md, toc), encoding="utf-8")
     elif ext == ".txt":
         dest.write_text(_llm_restructure(src.read_text(encoding="utf-8", errors="replace"), ctx, model), encoding="utf-8")
     else:
@@ -197,6 +201,79 @@ def strip_toc(text):
     return "\n".join(out)
 
 
+TOC_LAYOUT_LINE = re.compile(r"^( *)(\S.*?)(?:\s*\.){4,}\s*\d+\s*$")
+
+
+def _norm(title):
+    t = re.sub(r"[*_`#]", "", title).lower()
+    return re.sub(r"[^0-9a-zäöüß]+", "", t)
+
+
+def toc_from_pdf(path, max_pages=8):
+    """[(normalized title, level)] from a Word-style table of contents (dot leaders + page number).
+    Levels come from the indentation, clustered so that small layout jitter does not matter."""
+    out = subprocess.run(["pdftotext", "-enc", "UTF-8", "-layout", "-f", "1", "-l", str(max_pages), str(path), "-"],
+                         capture_output=True, text=True).stdout
+    entries = [(len(m.group(1)), m.group(2).strip()) for m in map(TOC_LAYOUT_LINE.match, out.splitlines()) if m]
+    if len(entries) < 4:
+        return []
+    indents = sorted({i for i, _ in entries})
+    level_of, level, prev = {}, 0, None
+    for i in indents:
+        if prev is None or i - prev > 1:
+            level += 1
+        level_of[i], prev = level, i
+    return [(_norm(t), level_of[i]) for i, t in entries]
+
+
+def apply_toc_levels(md, toc):
+    """Set heading levels from the author's table of contents: TOC level 1 -> '##' (chapter).
+    Headings that are not in the TOC go one level below the last matched heading."""
+    if not toc:
+        return md
+    out, j, last = [], 0, 2
+    for line in md.split("\n"):
+        m = re.match(r"^(#{1,6}) (.*)$", line)
+        if m and not (len(m.group(1)) == 1 and not out):          # keep a leading book title
+            key, hit = _norm(m.group(2)), None
+            for k in range(j, min(j + 25, len(toc))):
+                if toc[k][0] == key:
+                    hit = k
+                    break
+            if hit is not None:
+                level = min(toc[hit][1] + 1, 6)
+                j, last = hit + 1, level
+            else:
+                level = min(last + 1, 6)
+            line = "#" * level + " " + m.group(2)
+        if line.strip() or out:
+            out.append(line)
+    return "\n".join(out)
+
+
+def normalize_heading_levels(md, first):
+    """agy picks heading levels per chunk. Make chapters '##' everywhere: if a chunk uses '#'
+    for chapters, shift all its headings one level down (a book title at the very start of
+    the first chunk stays '#')."""
+    lines = md.split("\n")
+    title_idx = None
+    if first:
+        for i, line in enumerate(lines):
+            if line.strip():
+                title_idx = i if re.match(r"^# \S", line) else None
+                break
+    has_h1 = any(re.match(r"^# \S", l) for i, l in enumerate(lines) if i != title_idx)
+    if not has_h1:
+        return md
+    out = []
+    for i, line in enumerate(lines):
+        m = re.match(r"^(#{1,5}) (.*)$", line)
+        if m and i != title_idx:
+            line = "#" + line
+        out.append(line)
+    return "\n".join(out)
+
+
 def _llm_restructure(text, ctx, model=None):
     text = strip_toc(text)
     chunks = list(_chunks(text))
@@ -206,6 +283,7 @@ def _llm_restructure(text, ctx, model=None):
         ctx.progress(i, len(chunks))
         ctx.log(f"agy: Abschnitt {i + 1}/{len(chunks)} in Markdown umwandeln …")
         md = planner.convert_to_markdown(chunk, headings, first=(i == 0), model=model)
+        md = normalize_heading_levels(md, first=(i == 0))
         headings += re.findall(r"(?m)^#{1,4} .+$", md)
         out.append(md.strip())
     ctx.progress(len(chunks), len(chunks))

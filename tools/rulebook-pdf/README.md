@@ -25,10 +25,10 @@ Ohne Argument öffnet die Oberfläche das zuletzt benutzte Projekt. Das KINETIK-
 
 ## Ablauf in der Oberfläche
 
-1. **Neues Projekt…**: Regelwerk wählen (`.md`, `.docx`, `.pdf`, `.txt`) und einen leeren Projektordner. Word-Dateien werden lokal über ihre Überschriftenstile umgewandelt, PDF und Text abschnittsweise von agy (Wortlaut bleibt erhalten). **Das erzeugte Markdown kurz prüfen** (Toolbar: „Quelle öffnen“), vor allem bei PDFs.
+1. **Neues Projekt…**: Regelwerk wählen (`.md`, `.docx`, `.pdf`, `.txt`) und einen leeren Projektordner. Word-Dateien werden lokal über ihre Überschriftenstile umgewandelt, PDF und Text abschnittsweise von agy (Wortlaut bleibt erhalten). Hat das PDF ein Inhaltsverzeichnis (Word-Stil mit Punktlinien und Seitenzahlen), übernimmt das Tool daraus die Gliederung: Einträge der ersten Ebene werden Kapitel, die der zweiten Abschnitte. Das Verzeichnis selbst landet nicht im Text. **Das erzeugte Markdown kurz prüfen** (Toolbar: „Quelle öffnen“), vor allem bei PDFs.
 2. **Buch**: Titel, Untertitel, Kopfzeile, Farben, Schriftgröße, Blocksatz.
-3. **Stil**: Vorlage wählen (Anime Action, Film Noir, Dark Fantasy, Comic …) oder einen freien **Stilwunsch** eintragen, z.B. „soll aussehen wie One Piece“, und **Mit agy verfeinern**. agy macht daraus einen Stil-Suffix, den das gewählte Bildmodell versteht, und schlägt passende Akzentfarben vor. Der Suffix bleibt editierbar.
-4. **Engine**: agy-Modell und ComfyUI. „Verbinden“ lädt die Modelllisten aus dem laufenden ComfyUI.
+3. **Stil**: Vorlage wählen (Anime Action, Film Noir, Dark Fantasy, Comic …) oder einen freien **Stilwunsch** eintragen, z.B. „soll aussehen wie One Piece“, und **Mit agy verfeinern**. agy macht daraus einen Stil-Suffix, den das gewählte Bildmodell versteht, und schlägt passende Akzentfarben vor. Der Suffix bleibt editierbar. **Komprimieren** neben jedem Feld lässt agy Doppeltes, Widersprüche, Füllwörter und für das gewählte Modell wirkungslose Begriffe entfernen (bei Krea 2 z.B. „masterpiece, best quality“). Was entfernt wurde, steht im Log.
+4. **Engine**: agy-Modell und ComfyUI. „Verbinden“ lädt die Modelle aus dem laufenden ComfyUI. Unter **Bildmodell** stehen alle Modelle mit ihrer erkannten Bauart, die Einstellungen werden beim Auswählen automatisch gesetzt (siehe „Bildmodelle“).
 5. **① Prompts planen**: agy liest das Regelwerk, beschreibt Welt und Genre und schreibt für jeden Bildplatz ein Motiv. Ohne gesetzten Stil schlägt agy auch Stil und Farben vor.
 6. **② Fehlende Bilder**: generiert alle Bilder, die noch fehlen.
 7. **③ PDF bauen**.
@@ -37,14 +37,16 @@ Ohne Argument öffnet die Oberfläche das zuletzt benutzte Projekt. Das KINETIK-
 
 ### Einzelne Bilder nachbessern
 
-In der Bildliste ein Bild wählen. Rechts stehen Motiv-Prompt, Seed und „Stil-Suffix anhängen“.
+In der Bildliste ein Bild wählen. Rechts stehen Motiv-Prompt, ein eigener Negativ-Prompt für dieses Bild (leer = Standard aus „Stil“), Seed und „Stil-Suffix anhängen“. Die Vorschaubilder in der Liste aktualisieren sich, sobald ein Bild fertig ist, nicht erst am Ende des Durchlaufs.
 
-- **Vorschau**: rendert mit den aktuellen Einstellungen, ohne das Bild zu ersetzen. Gut, um einen neuen Stil an einem Bild zu testen.
-- **Übernehmen**: ersetzt das Bild durch die Vorschau.
 - **Prompt neu (agy)**: neues Motiv, optional mit Wunsch („eher Nacht, zwei Kämpfer“).
+- **Analysieren (agy)**: agy sieht sich das aktuelle Bild an, schreibt kurz, was passt und was nicht, und verbessert Motiv-Prompt und Negativ-Prompt gezielt (z.B. „fused fingers“, wenn Hände verschmolzen sind). Ein Wunsch im Feld darüber wird berücksichtigt („mehr Crew zeigen“).
+- **Prüfen**: nur die Bildkontrolle (✓ / ✗).
+- **Vorschau**: rendert mit den aktuellen Einstellungen, ohne das Bild zu ersetzen.
+- **Übernehmen**: ersetzt das Bild durch die Vorschau.
 - **Generieren & speichern**: direkt neu erzeugen.
 
-Ein Bild passt nicht zum Abschnitt? Wunsch eintragen → Prompt neu → Vorschau → Übernehmen.
+Ein Bild passt nicht? Wunsch eintragen → Analysieren → Vorschau → Übernehmen.
 
 ### Füllbilder für Leerraum
 
@@ -63,6 +65,8 @@ agy bekommt Bilder nur als Datei (im Headless-Modus nimmt es nur Text an). Das T
 "trustedWorkspaces": [ "/home/<du>", ... ]
 ```
 
+Bildgröße und Hoch-/Querformat bewertet agy dabei nicht, die gibt das Tool vor (Cover und Hintergrund sind absichtlich Hochformat).
+
 Liegt dein Projekt außerhalb aller `trustedWorkspaces`, meldet die Bildkontrolle „agy konnte das Bild nicht öffnen“. Dann den Projektordner (oder einen übergeordneten Ordner) dort eintragen. Erlaube agy dafür **nicht** pauschal alles.
 
 ## Bilder im Regelwerk selbst
@@ -71,7 +75,25 @@ Bilder, die im Markdown stehen (`![Bildunterschrift](pfad/bild.svg)`), übernimm
 
 Beim Import fremder Regelwerke bleiben deren Bilder erhalten: Word-Bilder landen in `media/` und stehen an ihrer Stelle im Markdown. Aus PDFs werden größere Bilder (ab 200 px) seitenweise extrahiert und am Ende ihrer Seite eingefügt. Dabei können Deko-Elemente mitkommen, deshalb `media/` und das Markdown kurz prüfen.
 
-## Bildmodelle (Workflow)
+## Bildmodelle
+
+Unter **Engine → Bildmodell** listet das Tool alle Modelle aus ComfyUI und erkennt ihre Bauart am Dateikopf (Namen der Tensoren, nicht am Dateinamen). Beim Auswählen setzt es Workflow, Text-Encoder, VAE, Steps, CFG, Sampler und Scheduler. Was du danach unter „Feinabstimmung“ änderst, merkt es sich pro Modelldatei (`~/.config/rulebook-pdf/models.json`, gilt für alle Projekte). **Empfohlene Werte** setzt wieder auf die Vorgaben zurück.
+
+| Bauart | Workflow | Vorgaben | Hinweis |
+|---|---|---|---|
+| Krea 2 | Diffusion-Modell | `qwen3vl_4b_fp8_scaled` (Typ `krea2`), `qwen_image_vae`, 8 Steps, CFG 1, euler/simple | Turbo-Modell, Negativ-Prompt wirkt bei CFG 1 nicht |
+| Anima | Diffusion-Modell | `qwen_3_06b_base`, `qwen_image_vae`, 28 Steps, CFG 4, euler/simple | |
+| SDXL / Illustrious / Pony | Checkpoint | 28 Steps, CFG 6, dpmpp_2m/karras | Lightning/Turbo im Namen: 8 Steps, CFG 2, dpmpp_sde/karras |
+| SD 1.5 | Checkpoint | 25 Steps, CFG 7, dpmpp_2m/karras | |
+| Flux (mit Encoder und VAE) | Checkpoint | 20 Steps (schnell: 4), CFG 1 | |
+
+Nicht für Text-zu-Bild nutzbar und grau markiert: Flux Kontext (Bildbearbeitung), Wan (Video), reine Flux-Diffusionsmodelle (nur über „Eigener Workflow“), Erkennungs-/Pose-Modelle.
+
+Fehlt ein Text-Encoder oder VAE, steht das unter dem Modell mit Download-Link. Liegt ein reines Diffusionsmodell nur in `checkpoints/` (z.B. Krea 2 aus Civitai), erscheint es mit ⚠ und dem Button **In diffusion_models verlinken**. Der Diffusion-Modell-Loader von ComfyUI sucht nur dort.
+
+**Krea 2 auf Karten mit 16 GB oder weniger:** Die schnellen INT8-Kernel brauchen eine RTX 3000 oder neuer. Auf älteren Karten (z.B. RTX 2000 / Quadro RTX) nutzt ComfyUI einen langsameren Weg, der zusätzlichen VRAM braucht. Ohne Reserve bricht die Generierung mit „Allocation on device“ ab. Abhilfe: ComfyUI mit `--reserve-vram 3` starten (bei Pinokio in `comfy.git/start.js`). Dann lagert ComfyUI einen Teil des Modells ins RAM aus.
+
+### Workflow-Typen
 
 | Workflow | Für | Einstellungen |
 |---|---|---|

@@ -199,6 +199,24 @@ Write one prompt for each of these keys:
     return out
 
 
+META_TEXT = ("successfully", "requested json", "json format", "as requested", "here is", "generated prompt")
+
+
+def _real_prompt(text):
+    """True if `text` is an actual image description and not a status message about one."""
+    t = (text or "").strip()
+    return len(t.split()) >= 10 and not any(m in t.lower() for m in META_TEXT)
+
+
+def _orientation(slot):
+    aspect = getattr(slot, "aspect", None)
+    if slot.kind in ("cover", "background"):
+        return "portrait"
+    if slot.kind == "filler" and aspect:
+        return "portrait" if aspect < 0.9 else "square" if aspect < 1.25 else "landscape"
+    return "wide landscape"
+
+
 def plan_single(slot, world, model=None, hint=""):
     """New prompt for one slot, optionally steered by a user hint."""
     prompt = f"""You write prompts for an image model that illustrates a tabletop RPG rulebook.
@@ -207,21 +225,28 @@ World of the book: {world}
 Section "{slot.title}":
 {slot.context_md[:CHAPTER_TEXT_LIMIT]}
 
-Write one fresh prompt for this {slot.kind} image.{(' User wish: ' + hint) if hint else ''}
-{'Portrait format; keep the lower third dark and empty for the title.' if slot.kind == 'cover' else ''}
+Write one fresh image description for this {slot.kind} image ({_orientation(slot)} format).{(' User wish: ' + hint) if hint else ''}
+{'Keep the lower third dark and empty for the title.' if slot.kind == 'cover' else ''}
+Put the description itself into "image_prompt" - not a note that you wrote it.
 
 {RULES}"""
-    schema = {"type": "object", "properties": {"prompt": {"type": "string"}}, "required": ["prompt"]}
-    return run(prompt, schema, model)["prompt"].strip()
+    schema = {"type": "object", "properties": {"image_prompt": {
+        "type": "string", "description": "The image description itself, 25-60 English words."}},
+        "required": ["image_prompt"]}
+    for _ in range(2):
+        text = run(prompt, schema, model)["image_prompt"].strip()
+        if _real_prompt(text):
+            return text
+        prompt += "\n\nYour last answer was a status message, not an image description. Return the description."
+    raise AgyError(f"agy lieferte keine Bildbeschreibung, sondern: „{text[:120]}“")
 
 
-def check_image(image_path, work_dir, slot, prompt_used, world, model=None):
-    """Let agy look at one generated image and judge whether it fits its section.
+def _run_on_image(image_path, work_dir, prompt, schema, model=None):
+    """agy call that may read exactly one file: a downscaled copy of the image.
 
-    This is the only agy call that touches a file: work_dir contains nothing but a
-    downscaled copy of the image. agy runs there with --sandbox and normal
-    permission handling (no auto-approval); it can read the image because the
-    folder lies in one of agy's trusted workspaces.
+    work_dir contains nothing but that copy. agy runs there with --sandbox and normal
+    permission handling (no auto-approval); it can read the image because the folder
+    lies in one of agy's trusted workspaces.
     """
     from PIL import Image
 
@@ -232,11 +257,42 @@ def check_image(image_path, work_dir, slot, prompt_used, world, model=None):
         im = im.convert("RGB")
         im.thumbnail((768, 768))
         im.save(work_dir / "image.jpg", "JPEG", quality=85)
+    schema = {**schema, "properties": {"could_view": {"type": "boolean"}, **schema["properties"]},
+              "required": ["could_view"] + schema["required"]}
+    head = ("Look at the image file image.jpg in the current directory with your file viewing tool. "
+            "Only view that file: do not run commands, do not create or edit files.\n"
+            "Set could_view=false if you could not open the image.\n\n")
+    if not available():
+        raise AgyError("agy wurde nicht gefunden (Antigravity CLI).")
+    with tempfile.TemporaryDirectory(prefix="rpdf-agy-") as tmp:
+        schema_path = Path(tmp) / "schema.json"
+        schema_path.write_text(json.dumps(schema), encoding="utf-8")
+        cmd = ["agy", "-p", head + prompt, "--output-format", "json", "--json-schema", str(schema_path),
+               "--sandbox", "--print-timeout", "300s"]
+        if model:
+            cmd += ["--model", model]
+        proc = subprocess.run(cmd, cwd=work_dir, capture_output=True, text=True, timeout=360)
+    out = proc.stdout.strip()
+    start = out.find("{")
+    if start < 0:
+        raise AgyError(f"agy lieferte keine Antwort: {(proc.stderr or out)[-600:]}")
+    data = json.loads(out[start:])
+    result = _structured(data, schema) if data.get("status") == "SUCCESS" else None
+    if not result:
+        raise AgyError(f"agy-Fehler bei der Bildanalyse: {(data.get('error') or data.get('response') or '')[:400]}")
+    if not result.get("could_view"):
+        raise AgyError("agy konnte das Bild nicht öffnen. Der Projektordner muss in agys "
+                       "'trustedWorkspaces' liegen (siehe README, Abschnitt Bildkontrolle).")
+    return result
 
-    prompt = f"""Look at the image file image.jpg in the current directory with your file viewing tool.
-Only view that file: do not run commands, do not create or edit files.
 
-It was generated to illustrate a tabletop RPG rulebook.
+IMAGE_FORMAT_NOTE = ("Do NOT judge or mention image size, aspect ratio or orientation (portrait/landscape) - "
+                     "the tool sets the format on purpose.")
+
+
+def check_image(image_path, work_dir, slot, prompt_used, world, model=None):
+    """Let agy look at one generated image and judge whether it fits its section."""
+    prompt = f"""The image was generated to illustrate a tabletop RPG rulebook.
 World of the book: {world or 'unknown'}
 Section: "{slot.title}"
 Section text (excerpt):
@@ -248,35 +304,69 @@ Judge it like an art director of a published rulebook:
 - Does it show the intended motif and fit the section and the world?
 - Garbled or readable text, letters, logos? Broken anatomy (extra limbs, fused hands, faces)?
 - Elements that do not belong (monsters or wings when not asked for, wrong era, wrong genre)?
-Set could_view=false if you could not open the image. fits=true only if it is good enough to print.
+{IMAGE_FORMAT_NOTE}
+fits=true only if it is good enough to print.
 problems: short German bullet points. better_prompt: an improved English motif prompt (25-60 words,
 no style words, no text in the image) that avoids the problems."""
     schema = {"type": "object", "properties": {
-        "could_view": {"type": "boolean"}, "fits": {"type": "boolean"},
-        "problems": {"type": "array", "items": {"type": "string"}}, "better_prompt": {"type": "string"}},
-        "required": ["could_view", "fits", "problems", "better_prompt"]}
-    if not available():
-        raise AgyError("agy wurde nicht gefunden (Antigravity CLI).")
-    with tempfile.TemporaryDirectory(prefix="rpdf-agy-") as tmp:
-        schema_path = Path(tmp) / "schema.json"
-        schema_path.write_text(json.dumps(schema), encoding="utf-8")
-        cmd = ["agy", "-p", prompt, "--output-format", "json", "--json-schema", str(schema_path),
-               "--sandbox", "--print-timeout", "300s"]
-        if model:
-            cmd += ["--model", model]
-        proc = subprocess.run(cmd, cwd=work_dir, capture_output=True, text=True, timeout=360)
-    out = proc.stdout.strip()
-    start = out.find("{")
-    if start < 0:
-        raise AgyError(f"agy lieferte keine Antwort: {(proc.stderr or out)[-600:]}")
-    data = json.loads(out[start:])
-    result = data.get("structured_output")
-    if data.get("status") != "SUCCESS" or not result:
-        raise AgyError(f"agy-Fehler bei der Bildkontrolle: {str(data)[:600]}")
-    if not result.get("could_view"):
-        raise AgyError("agy konnte das Bild nicht öffnen. Der Projektordner muss in agys "
-                       "'trustedWorkspaces' liegen (siehe README, Abschnitt Bildkontrolle).")
-    return result
+        "fits": {"type": "boolean"}, "problems": {"type": "array", "items": {"type": "string"}},
+        "better_prompt": {"type": "string"}}, "required": ["fits", "problems", "better_prompt"]}
+    return _run_on_image(image_path, work_dir, prompt, schema, model)
+
+
+def analyse_image(image_path, work_dir, slot, prompt_used, negative_used, world, model_hint, wish="", model=None):
+    """agy looks at the image and fine-tunes motif prompt and negative prompt for the next render."""
+    prompt = f"""You are fine-tuning the prompt for an image that illustrates a tabletop RPG rulebook.
+{model_hint}
+World of the book: {world or 'unknown'}
+Section: "{slot.title}"
+Section text (excerpt):
+{slot.context_md[:1500]}
+
+Motif prompt used: {prompt_used}
+Negative prompt used: {negative_used or '(none)'}
+{('User wish for the next version: ' + wish) if wish else ''}
+
+Compare the image with the section and the motif prompt. Then write:
+- analysis: 2-4 short German sentences: what works, what is off (motif, composition, anatomy,
+  text artifacts, mood, details that contradict the section).
+- prompt: the improved English motif prompt (25-60 words, no style words, no text in the image),
+  keeping what works and fixing what is off{', and realizing the user wish' if wish else ''}.
+- negative: an English negative prompt for this image: the generic quality terms plus terms that
+  target the concrete problems you saw (comma-separated, max 40 words).
+{IMAGE_FORMAT_NOTE}"""
+    schema = {"type": "object", "properties": {
+        "analysis": {"type": "string"}, "prompt": {"type": "string"}, "negative": {"type": "string"}},
+        "required": ["analysis", "prompt", "negative"]}
+    return _run_on_image(image_path, work_dir, prompt, schema, model)
+
+
+COMPRESS_TASK = {
+    "style": "a style suffix that is appended to every image prompt (medium, line work, palette, "
+             "lighting, quality tags)",
+    "negative": "a negative prompt (things the image model must avoid)",
+    "world": "a short description of the book's world, genre and tone that is given to other illustrators",
+    "wish": "a free-text style wish from the user",
+}
+
+
+def compress(text, kind, model_hint, model=None):
+    """Remove redundant or ineffective parts from a prompt field."""
+    prompt = f"""You are an expert prompt engineer for image-generation models.
+{model_hint}
+
+This text is {COMPRESS_TASK[kind]}:
+---
+{text}
+---
+Make it shorter and more effective for this model: remove duplicates and near-duplicates,
+contradictions, filler words, vague or ineffective phrases and things the model cannot use.
+Keep every distinct, useful idea and the original language of the text. Do not add new ideas.
+compressed: the result. removed: short German list of what you removed and why."""
+    schema = {"type": "object", "properties": {
+        "compressed": {"type": "string"}, "removed": {"type": "array", "items": {"type": "string"}}},
+        "required": ["compressed", "removed"]}
+    return run(prompt, schema, model)
 
 
 def refine_style(wish, base_style, world, model_hint, model=None):

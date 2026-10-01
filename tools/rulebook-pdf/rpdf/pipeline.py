@@ -13,8 +13,10 @@ class Cancelled(Exception):
 
 
 class Context:
-    def __init__(self, log=print, progress=lambda done, total: None, cancelled=lambda: False):
+    def __init__(self, log=print, progress=lambda done, total: None, cancelled=lambda: False,
+                 image_saved=lambda key: None):
         self.log, self.progress, self.cancelled = log, progress, cancelled
+        self.image_saved = image_saved     # called with the slot key after each saved image
 
     def check(self):
         if self.cancelled():
@@ -74,7 +76,7 @@ def plan(project, ctx, force=False, keys=None, suggest_style=None):
         pending, got = list(chapter_slots), {}
         for attempt in range(2):
             try:
-                got.update(planner.plan_chapter(chapters[ck], pending, cfg["world"], model))
+                got.update(planner.plan_chapter(chapters[ck], pending, _world(project), model))
             except planner.AgyError as e:
                 ctx.log(f"agy-Fehler bei „{title}“: {e}")
             pending = [s for s in chapter_slots if s.key not in got]
@@ -85,7 +87,7 @@ def plan(project, ctx, force=False, keys=None, suggest_style=None):
         # last resort: ask for the remaining slots one by one
         for s in list(pending):
             try:
-                got[s.key] = planner.plan_single(s, cfg["world"], model)
+                got[s.key] = planner.plan_single(s, _world(project), model)
                 pending.remove(s)
             except planner.AgyError as e:
                 ctx.log(f"agy-Fehler bei „{s.title}“: {e}")
@@ -99,10 +101,15 @@ def plan(project, ctx, force=False, keys=None, suggest_style=None):
     project.save()
 
 
+def _world(project):
+    """World description plus what the selected image model understands."""
+    from .styles import model_hint
+    return f"{project.config.get('world', '')}\n{model_hint(project.config['comfy'])}".strip()
+
+
 def replan_one(project, key, hint="", ctx=None):
     slot = next(s for s in project.slots() if s.key == key)
-    prompt = planner.plan_single(slot, project.config.get("world", ""),
-                                 project.config["agy"].get("model") or None, hint)
+    prompt = planner.plan_single(slot, _world(project), project.config["agy"].get("model") or None, hint)
     project.entry(key).update(prompt=prompt, include_style=True)
     project.save_manifest()
     return prompt
@@ -154,6 +161,7 @@ def _generate(project, client, cfg, slot, ctx):
     e.pop("qc", None)
     project.save_manifest()
     ctx.log(f"    gespeichert: {project.image_path(slot.key).name}")
+    ctx.image_saved(slot.key)
 
 
 def _check_and_fix(project, client, cfg, slot, ctx, fix, rounds):
@@ -163,7 +171,7 @@ def _check_and_fix(project, client, cfg, slot, ctx, fix, rounds):
         ctx.check()
         e = project.entry(slot.key)
         result = planner.check_image(project.image_path(slot.key), project.build_dir / "qc" / slot.key,
-                                     slot, e.get("prompt", ""), project.config.get("world", ""), model)
+                                     slot, e.get("prompt", ""), _world(project), model)
         e["qc"] = {"fits": result["fits"], "problems": result["problems"]}
         project.save_manifest()
         if result["fits"]:
@@ -232,3 +240,22 @@ def preview(project, key, ctx, prompt=None, style=None, seed=None):
 
 def build(project, ctx):
     return layout.render(project, log=ctx.log)
+
+
+def analyse(project, key, wish="", ctx=None):
+    """agy looks at the current image and returns an improved prompt and negative prompt."""
+    from .styles import model_hint
+    slot = next(s for s in project.slots() if s.key == key)
+    if not project.has_image(key):
+        raise FileNotFoundError("Für diesen Platz gibt es noch kein Bild.")
+    e = project.entry(key)
+    return planner.analyse_image(project.image_path(key), project.build_dir / "qc" / key, slot,
+                                 e.get("prompt", ""), project.negative(key), project.config.get("world", ""),
+                                 model_hint(project.config["comfy"]), wish,
+                                 project.config["agy"].get("model") or None)
+
+
+def compress_field(project, kind, text):
+    from .styles import model_hint
+    return planner.compress(text, kind, model_hint(project.config["comfy"]),
+                            project.config["agy"].get("model") or None)

@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (
     QTabWidget, QToolBar, QVBoxLayout, QWidget,
 )
 
-from . import comfy, importer, pipeline, planner, styles
+from . import comfy, importer, models, pipeline, planner, styles
 from .project import DEFAULTS, Project, create
 
 TW, TH = 190, 84   # thumbnail size
@@ -32,6 +32,7 @@ class Job(QThread):
     progress = Signal(int, int)
     done = Signal(object)
     failed = Signal(str)
+    image_saved = Signal(str)
 
     def __init__(self, fn, parent=None):
         super().__init__(parent)
@@ -41,7 +42,8 @@ class Job(QThread):
         self._cancel = True
 
     def run(self):
-        ctx = pipeline.Context(log=self.log.emit, progress=self.progress.emit, cancelled=lambda: self._cancel)
+        ctx = pipeline.Context(log=self.log.emit, progress=self.progress.emit, cancelled=lambda: self._cancel,
+                               image_saved=self.image_saved.emit)
         try:
             self.done.emit(self.fn(ctx))
         except pipeline.Cancelled:
@@ -213,7 +215,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(root)
         self.action_buttons = [self.btn_plan, self.btn_images, self.btn_images_all, self.btn_build,
                                self.btn_all, self.btn_preview, self.btn_regen, self.btn_replan,
-                               self.btn_refine, self.btn_accept, self.btn_check, self.btn_check_one]
+                               self.btn_refine, self.btn_accept, self.btn_check, self.btn_check_one,
+                               self.btn_analyse] + self.compress_buttons
 
     def _scroll(self, widget):
         s = QScrollArea()
@@ -278,8 +281,8 @@ class MainWindow(QMainWindow):
         self.cb_preset.addItems([styles.CUSTOM] + list(styles.PRESETS))
         self.cb_preset.activated.connect(self._apply_preset)
         f.addRow("Vorlage", self.cb_preset)
-        f.addRow(section_label("Stilwunsch an agy"))
         self.ed_wish = text_box(56)
+        f.addRow(self._field_head("Stilwunsch an agy", "wish", self.ed_wish))
         self.ed_wish.setPlaceholderText("z.B. „soll aussehen wie One Piece“ oder „düster wie Dark Souls, aber farbig“")
         self.btn_refine = QPushButton("Mit agy verfeinern")
         self.btn_refine.clicked.connect(self.run_refine)
@@ -289,14 +292,14 @@ class MainWindow(QMainWindow):
         self.lb_note.setWordWrap(True)
         self.lb_note.setObjectName("dim")
         f.addRow(self.lb_note)
-        f.addRow(section_label("Stil-Suffix (an jeden Prompt angehängt)"))
         self.ed_style = text_box(110)
+        f.addRow(self._field_head("Stil-Suffix (an jeden Prompt angehängt)", "style", self.ed_style))
         f.addRow(self.ed_style)
-        f.addRow(section_label("Negativ-Prompt"))
         self.ed_negative = text_box(70)
+        f.addRow(self._field_head("Negativ-Prompt (Standard für alle Bilder)", "negative", self.ed_negative))
         f.addRow(self.ed_negative)
-        f.addRow(section_label("Welt (von agy erkannt, für alle Prompts)"))
         self.ed_world = text_box(80)
+        f.addRow(self._field_head("Welt (von agy erkannt, für alle Prompts)", "world", self.ed_world))
         f.addRow(self.ed_world)
         hint = QLabel("Tipp: Stil ändern → Abschnitt wählen → „Vorschau“. Passt es, mit "
                       "„vorhandene überschreiben“ neu planen und „Alle Bilder neu“.")
@@ -304,6 +307,25 @@ class MainWindow(QMainWindow):
         hint.setObjectName("dim")
         f.addRow(hint)
         return w
+
+    def _field_head(self, title, kind, edit):
+        """Section label with a 'Komprimieren' button for the text field below it."""
+        row = QWidget()
+        h = QHBoxLayout(row)
+        h.setContentsMargins(0, 8, 0, 0)
+        label = section_label(title)
+        label.setWordWrap(True)
+        label.setMinimumWidth(10)
+        label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
+        h.addWidget(label, 1)
+        b = QPushButton("Komprimieren")
+        b.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        b.setObjectName("small")
+        b.setToolTip("agy entfernt Doppeltes, Widersprüche und Füllwörter, damit das Bildmodell den Text besser umsetzt")
+        b.clicked.connect(lambda: self.run_compress(kind, edit))
+        h.addWidget(b)
+        self.compress_buttons = getattr(self, "compress_buttons", []) + [b]
+        return row
 
     def _engine_tab(self):
         w = QWidget()
@@ -335,6 +357,30 @@ class MainWindow(QMainWindow):
         self.lb_comfy = QLabel("nicht verbunden")
         self.lb_comfy.setObjectName("dim")
         f.addRow("", self.lb_comfy)
+
+        self.cb_model = QComboBox()
+        self.cb_model.setMinimumContentsLength(14)
+        self.cb_model.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
+        self.cb_model.activated.connect(self._on_model_selected)
+        f.addRow("Bildmodell", self.cb_model)
+        self.lb_model = QLabel()
+        self.lb_model.setWordWrap(True)
+        self.lb_model.setTextFormat(Qt.RichText)
+        f.addRow("", self.lb_model)
+        row = QWidget()
+        h = QHBoxLayout(row)
+        h.setContentsMargins(0, 0, 0, 0)
+        self.btn_recommended = QPushButton("Empfohlene Werte")
+        self.btn_recommended.setToolTip("Einstellungen auf die Vorgaben für diese Modellfamilie setzen")
+        self.btn_recommended.clicked.connect(lambda: self._apply_model_settings(force_recommended=True))
+        self.btn_link = QPushButton("In diffusion_models verlinken")
+        self.btn_link.clicked.connect(self._link_model)
+        h.addWidget(self.btn_recommended)
+        h.addWidget(self.btn_link)
+        h.addStretch(1)
+        f.addRow("", row)
+        self.btn_link.hide()
+        f.addRow(section_label("Feinabstimmung"))
 
         self.cb_workflow = QComboBox()
         for k, label in comfy.WORKFLOWS.items():
@@ -419,6 +465,8 @@ class MainWindow(QMainWindow):
         self.slot_prompt = text_box(96)
         self.slot_prompt.setPlaceholderText("Motiv (englisch) – der Stil-Suffix wird angehängt")
         v.addWidget(self.slot_prompt)
+        self.slot_negative = text_box(48)
+        v.addWidget(self.slot_negative)
         g = QGridLayout()
         self.chk_include_style = QCheckBox("Stil-Suffix anhängen")
         self.sp_seed = QSpinBox()
@@ -437,6 +485,10 @@ class MainWindow(QMainWindow):
         self.btn_replan = QPushButton("Prompt neu (agy)")
         self.btn_preview = QPushButton("Vorschau")
         self.btn_accept = QPushButton("Übernehmen")
+        self.btn_analyse = QPushButton("Analysieren (agy)")
+        self.btn_analyse.setToolTip("agy sieht sich das Bild an und verbessert Prompt und Negativ-Prompt "
+                                    "(berücksichtigt den Wunsch oben)")
+        self.btn_analyse.clicked.connect(self.run_analyse)
         self.btn_check_one = QPushButton("Prüfen")
         self.btn_check_one.setToolTip("Dieses Bild mit agy prüfen")
         self.btn_check_one.clicked.connect(self.run_check_one)
@@ -446,7 +498,11 @@ class MainWindow(QMainWindow):
         self.btn_preview.clicked.connect(self.run_preview)
         self.btn_accept.clicked.connect(self.accept_preview)
         self.btn_regen.clicked.connect(self.run_regen_one)
-        for b in (self.btn_replan, self.btn_preview, self.btn_accept, self.btn_check_one, self.btn_regen):
+        for b in (self.btn_replan, self.btn_analyse, self.btn_check_one):
+            row.addWidget(b)
+        v.addLayout(row)
+        row = QHBoxLayout()
+        for b in (self.btn_preview, self.btn_accept, self.btn_regen):
             row.addWidget(b)
         v.addLayout(row)
         return w
@@ -511,6 +567,7 @@ class MainWindow(QMainWindow):
         self.sp_steps.setValue(int(cc["steps"]))
         self.sp_cfg.setValue(float(cc["cfg"]))
         self._update_engine_rows()
+        self._select_model_in_picker()
         self._apply_accent(t["accent"])
 
     def _collect(self):
@@ -547,6 +604,9 @@ class MainWindow(QMainWindow):
                   checkpoint=self.cb_ckpt.currentText(), custom_workflow=self.ed_custom.text().strip(),
                   steps=self.sp_steps.value(), cfg=round(self.sp_cfg.value(), 2),
                   sampler=self.cb_sampler.currentText(), scheduler=self.cb_scheduler.currentText())
+        model = models.selected_model(cc)
+        if model:
+            models.remember(model, cc)
         self._store_slot_edits()
         return True
 
@@ -662,6 +722,9 @@ class MainWindow(QMainWindow):
         self.slot_prompt.setPlainText(e.get("prompt", ""))
         self.chk_include_style.setChecked(e.get("include_style", True))
         self.sp_seed.setValue(int(e.get("seed", 1)))
+        self.slot_negative.setPlainText(e.get("negative", ""))
+        self.slot_negative.setPlaceholderText("Negativ-Prompt nur für dieses Bild – leer = Standard aus „Stil“: "
+                                              + self.project.config.get("negative", "")[:120])
         qc = e.get("qc")
         if not qc:
             self.qc_label.setText("<span style='color:#6c7480'>Bildkontrolle: noch nicht geprüft</span>")
@@ -680,6 +743,25 @@ class MainWindow(QMainWindow):
         e["prompt"] = self.slot_prompt.toPlainText().strip()
         e["include_style"] = self.chk_include_style.isChecked()
         e["seed"] = self.sp_seed.value()
+        neg = self.slot_negative.toPlainText().strip()
+        if neg:
+            e["negative"] = neg
+        else:
+            e.pop("negative", None)
+
+    def _on_image_saved(self, key):
+        """Refresh one thumbnail (and the big preview) as soon as its image is saved."""
+        for row, s in enumerate(self.slots):
+            if s.key != key:
+                continue
+            item = self.slot_list.item(row)
+            if item:
+                item.setIcon(self._thumb(self.project.image_path(key)))
+                item.setText(f"{KIND_LABEL[s.kind]}\n{s.title}")
+                item.setForeground(QColor("#cfd5de"))
+            if row == self.slot_list.currentRow() and not self.preview_path:
+                self._set_preview(self.project.image_path(key))
+            break
 
     def _set_preview(self, path):
         pm = QPixmap(str(path)) if path and Path(path).exists() else QPixmap()
@@ -705,6 +787,7 @@ class MainWindow(QMainWindow):
         self.job.progress.connect(self._progress)
         self.job.done.connect(lambda r: (self._set_busy(False), on_done and on_done(r)))
         self.job.failed.connect(self._failed)
+        self.job.image_saved.connect(self._on_image_saved)
         self._set_busy(True)
         if label:
             self._log(label)
@@ -763,6 +846,44 @@ class MainWindow(QMainWindow):
             self._start(lambda ctx: pipeline.images(self.project, ctx, regenerate=regenerate,
                                                     new_seed=regenerate),
                         on_done=lambda _: self._after_change(), label="Generiere Bilder mit ComfyUI …")
+
+    def run_compress(self, kind, edit):
+        text = edit.toPlainText().strip()
+        if not text:
+            return
+        if self._ready():
+            def done(r):
+                edit.setPlainText(r["compressed"].strip())
+                removed = "; ".join(r.get("removed", []))
+                self._log(f"Komprimiert ({kind}): {len(text)} → {len(r['compressed'])} Zeichen"
+                          + (f" – entfernt: {removed}" if removed else ""))
+                self._collect()
+                self.project.save()
+            self._start(lambda ctx: pipeline.compress_field(self.project, kind, text), on_done=done,
+                        label="agy komprimiert …")
+
+    def run_analyse(self):
+        s = self._current_slot()
+        if not (s and self._ready()):
+            return
+        if not self.project.has_image(s.key):
+            QMessageBox.information(self, "Analysieren", "Für diesen Platz gibt es noch kein Bild.")
+            return
+        wish = self.ed_hint.text().strip()
+
+        def done(r):
+            if self._current_slot() is None or self._current_slot().key != s.key:
+                return
+            self.slot_prompt.setPlainText(r["prompt"].strip())
+            self.slot_negative.setPlainText(r["negative"].strip())
+            self.chk_include_style.setChecked(True)
+            self.qc_label.setText(f"<span style='color:#8ab4f8'>agy: {r['analysis']}</span>")
+            self._store_slot_edits()
+            self.project.save_manifest()
+            self._log(f"Analyse „{s.title}“: {r['analysis']}")
+            self._log("Prompt und Negativ-Prompt angepasst – mit „Vorschau“ testen.")
+        self._start(lambda ctx: pipeline.analyse(self.project, s.key, wish), on_done=done,
+                    label=f"agy analysiert „{s.title}“ …")
 
     def run_check(self):
         if self._ready():
@@ -882,8 +1003,117 @@ class MainWindow(QMainWindow):
             cb.clear()
             cb.addItems(models[key])
             cb.setCurrentText(current)
+        self.comfy_lists = models
         self.lb_comfy.setText(f"✓ verbunden · {len(models['unet'])} Diffusion-Modelle, "
                               f"{len(models['checkpoint'])} Checkpoints")
+        self._fill_model_picker()
+
+    # ---------- model picker ----------
+    def _fill_model_picker(self):
+        cc = self.project.config["comfy"] if self.project else {}
+        models_dir = cc.get("models_dir") or models.default_models_dir()
+        self.model_infos = models.scan(models_dir, getattr(self, "comfy_lists", {}))
+        self.models_dir = models_dir
+        self.cb_model.clear()
+        for m in self.model_infos:
+            prefix = "" if m.family.usable else "✗ "
+            if m.loader == "unet-missing":
+                prefix = "⚠ "
+            self.cb_model.addItem(prefix + m.label)
+            if not m.family.usable:
+                item = self.cb_model.model().item(self.cb_model.count() - 1)
+                item.setForeground(QColor("#6c7480"))
+        self._select_model_in_picker()
+
+    def _select_model_in_picker(self):
+        if not getattr(self, "model_infos", None):
+            return
+        kind = self.cb_workflow.currentData()
+        name = self.cb_unet.currentText() if kind == "anima" else self.cb_ckpt.currentText()
+        for i, m in enumerate(self.model_infos):
+            if m.name == name and (m.loader == "checkpoint") == (kind == "checkpoint"):
+                self.cb_model.setCurrentIndex(i)
+                self._show_model_info(m)
+                return
+        self.lb_model.setText("<span style='color:#8a93a0'>Kein erkanntes Modell gewählt.</span>")
+
+    def _current_model_info(self):
+        i = self.cb_model.currentIndex()
+        return self.model_infos[i] if 0 <= i < len(getattr(self, "model_infos", [])) else None
+
+    def _show_model_info(self, m):
+        fam = m.family
+        lines = [f"<b>{fam.label}</b>{' · Turbo/Lightning' if m.fast else ''}"]
+        if fam.note:
+            lines.append(fam.note)
+        if fam.usable:
+            missing = models.missing_components(m, getattr(self, "comfy_lists", {}))
+            for fn, url in missing:
+                lines.append(f"<span style='color:#e06060'>Fehlt: {fn}</span>"
+                             + (f" – <a href='{url}' style='color:#8ab4f8'>herunterladen</a> nach "
+                                f"models/{'vae' if 'vae' in fn else 'text_encoders'}/" if url else ""))
+            if m.loader == "unet-missing":
+                lines.append("<span style='color:#e0a35a'>Liegt nur in checkpoints/. Es ist aber ein reines "
+                             "Diffusionsmodell und muss nach diffusion_models/ verlinkt werden.</span>")
+            if models.remembered(m.name):
+                lines.append("<span style='color:#8a93a0'>Deine letzten Einstellungen für dieses Modell sind gespeichert.</span>")
+        color = "#cfd5de" if fam.usable else "#e06060"
+        self.lb_model.setText(f"<span style='color:{color}'>" + "<br>".join(lines) + "</span>")
+        self.lb_model.setOpenExternalLinks(True)
+        self.btn_link.setVisible(m.loader == "unet-missing" and bool(self.models_dir))
+        self.btn_recommended.setEnabled(fam.usable and bool(fam.settings))
+
+    def _on_model_selected(self, index):
+        m = self._current_model_info()
+        if not m:
+            return
+        self._show_model_info(m)
+        if not m.family.usable:
+            return
+        self._apply_model_settings()
+
+    def _apply_model_settings(self, force_recommended=False):
+        m = self._current_model_info()
+        if not m or not m.family.usable:
+            return
+        settings = dict(models.recommended(m))
+        mem = None if force_recommended else models.remembered(m.name)
+        if mem:
+            settings.update({k: v for k, v in mem.items() if v not in (None, "")})
+        kind = settings.get("workflow") or ("checkpoint" if m.loader == "checkpoint" else "anima")
+        self.cb_workflow.setCurrentIndex(max(0, self.cb_workflow.findData(kind)))
+        if kind == "checkpoint":
+            self.cb_ckpt.setCurrentText(m.name)
+        else:
+            self.cb_unet.setCurrentText(m.name)
+        for cb, key in [(self.cb_clip, "clip"), (self.cb_cliptype, "clip_type"), (self.cb_vae, "vae"),
+                        (self.cb_sampler, "sampler"), (self.cb_scheduler, "scheduler")]:
+            if settings.get(key):
+                cb.setCurrentText(settings[key])
+        if settings.get("steps"):
+            self.sp_steps.setValue(int(settings["steps"]))
+        if settings.get("cfg") is not None:
+            self.sp_cfg.setValue(float(settings["cfg"]))
+        self._update_engine_rows()
+        self._log(f"Bildmodell: {m.name} ({m.family.label}) – "
+                  + ("gespeicherte Einstellungen" if mem else "empfohlene Einstellungen") + " übernommen.")
+
+    def _link_model(self):
+        m = self._current_model_info()
+        if not m:
+            return
+        try:
+            models.link_into_diffusion_models(self.models_dir, m.name)
+        except OSError as e:
+            QMessageBox.warning(self, "Verlinken", f"Verlinken fehlgeschlagen: {e}")
+            return
+        self._log(f"Verlinkt: diffusion_models/{m.name} → checkpoints/{m.name}")
+        self._connect_comfy(quiet=True)
+        for i, info in enumerate(self.model_infos):
+            if info.name == m.name and info.loader == "unet":
+                self.cb_model.setCurrentIndex(i)
+                self._on_model_selected(i)
+                break
 
     def _load_agy_models(self):
         current = self.cb_agy.currentText()
@@ -898,8 +1128,8 @@ class MainWindow(QMainWindow):
     def _workflow_changed(self):
         kind = self.cb_workflow.currentData()
         d = WORKFLOW_DEFAULTS.get(kind)
-        if d and QMessageBox.question(self, "Workflow", "Empfohlene Sampler-Einstellungen für diesen "
-                                      "Workflow übernehmen?") == QMessageBox.Yes:
+        if d and QMessageBox.question(self, "Workflow", "Allgemeine Sampler-Einstellungen für diesen "
+                                      "Workflow übernehmen? (Besser: oben ein Bildmodell wählen.)") == QMessageBox.Yes:
             self.sp_cfg.setValue(d["cfg"])
             self.sp_steps.setValue(d["steps"])
             self.cb_sampler.setCurrentText(d["sampler"])
@@ -987,6 +1217,7 @@ def stylesheet(accent):
     QPushButton {{ background:#2a2f39; border:1px solid #363c48; border-radius:6px; padding:6px 12px; }}
     QPushButton:hover {{ border-color:{accent}; }}
     QPushButton:disabled {{ color:#5c6370; border-color:#2a2f39; }}
+    QPushButton#small {{ padding:2px 8px; font-size:9pt; }}
     QPushButton#primary {{ background:{accent}; color:#0b0c10; font-weight:600; border:none; }}
     QPushButton#primary:disabled {{ background:#2a2f39; color:#5c6370; }}
     QListWidget {{ background:#111318; border:1px solid #2a2f39; border-radius:6px; }}

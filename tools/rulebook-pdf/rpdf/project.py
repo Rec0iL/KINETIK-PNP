@@ -47,6 +47,7 @@ DEFAULTS = {
     "agy": {"model": "gemini-3.8-flash-medium"},
     "comfy": {
         "url": "http://127.0.0.1:8188",
+        "models_dir": "",          # ComfyUI models folder for model detection ("" = from comfy-cli)
         "workflow": "anima",       # anima | checkpoint | custom
         "unet": "",
         "clip": "qwen_3_06b_base.safetensors",

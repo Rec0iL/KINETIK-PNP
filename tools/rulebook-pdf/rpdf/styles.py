@@ -59,14 +59,35 @@ PRESETS = {
 CUSTOM = "Eigener Stil"
 
 
+def model_family(comfy_cfg):
+    """Detected family of the selected model (reads the file header when the models folder is known)."""
+    from pathlib import Path
+    from . import models
+    name = models.selected_model(comfy_cfg) or ""
+    folder = "checkpoints" if comfy_cfg.get("workflow") == "checkpoint" else "diffusion_models"
+    root = comfy_cfg.get("models_dir") or models.default_models_dir()
+    path = Path(root) / folder / name if root and name else None
+    if path and path.exists():
+        try:
+            return models.FAMILIES[models.detect_family(models.read_header_keys(path), name)], name
+        except Exception:
+            pass
+    return models.FAMILIES["unknown"], name
+
+
 def model_hint(comfy_cfg):
     """Tell agy what kind of prompt the selected image model understands."""
-    kind = comfy_cfg.get("workflow", "anima")
-    name = (comfy_cfg.get("unet") if kind == "anima" else comfy_cfg.get("checkpoint")) or ""
+    family, name = model_family(comfy_cfg)
     low = name.lower()
-    if kind == "anima" or any(k in low for k in ("anima", "illustrious", "noob", "pony", "animagine")):
+    if family.key == "anima" or any(k in low for k in ("anima", "illustrious", "noob", "pony", "animagine")):
         return (f"Image model: {name or 'anime model'} (anime-focused; understands Danbooru-style tags, "
                 "artist and franchise names as tags, and short natural-language phrases).")
-    if "flux" in low or "qwen" in low:
-        return f"Image model: {name} (understands detailed natural-language descriptions)."
+    if family.key == "krea2":
+        return (f"Image model: {name} (Krea 2, a modern model with a large language text encoder; "
+                "understands detailed natural-language descriptions, medium and lighting words; "
+                "quality tags like 'masterpiece' are useless; negative prompts are ignored at CFG 1).")
+    if family.key == "flux_ckpt" or "flux" in low or "qwen" in low:
+        return f"Image model: {name} (understands detailed natural-language descriptions; no negative prompt)."
+    if family.key in ("sdxl", "sd15"):
+        return f"Image model: {name} ({family.label}; works best with comma-separated tags and weighted keywords)."
     return f"Image model: {name or 'Stable Diffusion checkpoint'} (works best with comma-separated tags)."
