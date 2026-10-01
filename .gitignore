@@ -1,0 +1,15 @@
+# Abhängigkeiten und Builds
+node_modules/
+dist/
+build/
+__pycache__/
+
+# Umgebung und Editoren
+.env
+.vscode/
+.idea/
+
+# System
+.DS_Store
+Thumbs.db
+*.log
