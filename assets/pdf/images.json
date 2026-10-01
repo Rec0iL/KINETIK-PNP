@@ -1,0 +1,248 @@
+{
+  "cover": {
+    "prompt": "cinematic anime action illustration, two silhouetted figures frozen mid clash against a neon-lit rain-soaked city skyline, one wielding a pistol in a long coat, one in a mid-air martial arts kick, dynamic bullet-time freeze frame, dramatic backlighting, magenta and cyan neon rim light, dark gritty atmosphere, bold inked linework, high contrast, empty plain dark sky at the very top of the frame and empty plain ground at the very bottom of the frame, no logo, no title, no lettering, masterpiece, best quality",
+    "seed": 20025,
+    "kind": "cover",
+    "title": "Cover: KINETIK",
+    "include_style": false
+  },
+  "background": {
+    "prompt": "abstract dark urban background texture, cracked wet asphalt and concrete wall, faint neon pink and cyan light bleeding at the edges, rain streaks, grime and scratches, deep black and charcoal tones, cinematic noir atmosphere, no people, no characters, no text, moody vignette, subtle film grain",
+    "seed": 1001,
+    "kind": "background",
+    "title": "Seitenhintergrund",
+    "include_style": false
+  },
+  "ch-1-grundphilosophie": {
+    "prompt": "cinematic anime action illustration, a lone fighter frozen in a dynamic bullet-time dodge, bullets and motion trails frozen mid air around them, dramatic low angle, rain-soaked neon city street, dark gritty atmosphere, bold inked linework, high contrast moody lighting, wide cinematic composition, masterpiece, best quality",
+    "seed": 3003,
+    "kind": "chapter",
+    "title": "Grundphilosophie",
+    "include_style": false
+  },
+  "ch-2-der-charakter": {
+    "prompt": "cinematic anime action illustration, a lineup of distinct action archetypes standing shoulder to shoulder, a gunslinger in a long coat, a martial artist in a gi, a sniper with a rifle, a street brawler, backlit by neon signage, rain-soaked alley, dark gritty atmosphere, bold inked linework, high contrast moody lighting, wide cinematic composition, masterpiece, best quality",
+    "seed": 4004,
+    "kind": "chapter",
+    "title": "Der Charakter",
+    "include_style": false
+  },
+  "sec-2-1-die-attribute-2w6-system": {
+    "prompt": "cinematic anime illustration, five ordinary human fighters standing in a loose line, ordinary mundane proportions, a gymnast in a low fighting stance, a marksman calmly aiming a rifle, a muscular brawler with raised fists, an alert scout crouching low, a calm tactician standing with arms crossed, rain-soaked neon city street behind them, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece, best quality",
+    "seed": 91102,
+    "kind": "section",
+    "title": "2.1 Die Attribute (2W6-System)",
+    "include_style": false,
+    "negative": "worst quality, low quality, blurry, jpeg artifacts, sepia, bad anatomy, watermark, text, signature, deformed, extra limbs, lowres, wings, bat wings, demon, monster, creature, fantasy creature, superhero, superhero costume, cape, mask, helmet"
+  },
+  "sec-2-2-das-titel-system-level-1-bis-10": {
+    "prompt": "cinematic anime action illustration, a weathered veteran master training a determined young fighter in a rain-soaked dojo courtyard, glowing rank insignia in the background, dark gritty atmosphere, bold inked linework, high contrast moody lighting, wide cinematic composition, masterpiece",
+    "seed": 90003,
+    "kind": "section",
+    "title": "2.2 Das Titel-System (Level 1 bis 10)",
+    "include_style": false
+  },
+  "sec-2-3-ressourcen-verletzungen": {
+    "prompt": "cinematic anime action illustration, a wounded fighter standing defiant despite bandaged injuries, torn clothing, glowing willpower aura around clenched fist, rain-soaked neon city backdrop, dark gritty atmosphere, bold inked linework, high contrast moody lighting, wide cinematic composition, masterpiece",
+    "seed": 90004,
+    "kind": "section",
+    "title": "2.3 Ressourcen & Verletzungen",
+    "include_style": false
+  },
+  "sec-2-4-charaktererschaffung": {
+    "prompt": "cinematic anime action illustration, silhouette roster of varied action heroes on a character select style grid, gunslinger, martial artist, sniper, brawler, each distinct pose, neon rim light, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
+    "seed": 90005,
+    "kind": "section",
+    "title": "2.4 Charaktererschaffung",
+    "include_style": false
+  },
+  "sec-2-5-waffen-deckung": {
+    "prompt": "cinematic anime action illustration, close quarters duel, a sniper gunman with a massive .50 caliber rifle grappling in melee against an akimbo gunslinger dual-wielding pistols, pistols pressed point blank, dramatic tension, rain-soaked neon-lit alley, dark gritty atmosphere, bold inked linework, extreme high contrast lighting, wide cinematic composition, masterpiece, best quality",
+    "seed": 90001,
+    "kind": "section",
+    "title": "2.5 Waffen & Deckung",
+    "include_style": false
+  },
+  "ch-3-der-kampf-das-clash-system": {
+    "prompt": "cinematic anime action illustration, two fighters colliding mid strike in a dynamic clash, fist meeting blade, sparks and shockwave radiating outward, dramatic motion blur, rain-soaked neon-lit rooftop, dark gritty atmosphere, bold inked linework, extreme high contrast lighting, wide cinematic composition, masterpiece, best quality",
+    "seed": 5005,
+    "kind": "chapter",
+    "title": "Der Kampf (Das Clash-System)",
+    "include_style": false
+  },
+  "sec-3-1-die-wuerfelmechanik-der-clash": {
+    "prompt": "cinematic anime action illustration, two fighters' weapons locking mid clash, fist against blade, glowing dice motif overlay in the impact flash, dynamic motion lines, rain-soaked neon alley, dark gritty atmosphere, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
+    "seed": 90006,
+    "kind": "section",
+    "title": "3.1 Die Würfelmechanik (Der Clash)",
+    "include_style": false
+  },
+  "sec-3-2-die-wirkung-eines-treffers-kaskade": {
+    "prompt": "cinematic anime action illustration, a devastating punch connecting, shockwave rippling outward through shattering glass and debris, dramatic freeze frame impact, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
+    "seed": 90007,
+    "kind": "section",
+    "title": "3.2 Die Wirkung eines Treffers (Kaskade)",
+    "include_style": false
+  },
+  "sec-3-3-tags": {
+    "prompt": "cinematic anime action illustration, a fighter knocked off balance and pinned face down on the wet ground, glowing orange warning triangle status icon hovering above them, opponent looming with the clear advantage, rain-soaked neon alley, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece, best quality",
+    "seed": 91003,
+    "kind": "section",
+    "title": "3.3 Tags",
+    "include_style": false
+  },
+  "sec-3-4-die-helden-schwelle": {
+    "prompt": "cinematic anime action illustration, a lone fighter in a long tattered coat standing defiant against overwhelming odds, heroic low angle, wind and debris swirling, determined glowing eyes, no cape, no superhero costume, grounded modern streetwear, rain-soaked neon city backdrop, dark gritty atmosphere, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece, best quality",
+    "seed": 91004,
+    "kind": "section",
+    "title": "3.4 Die Helden-Schwelle",
+    "include_style": false
+  },
+  "sec-3-5-ausser-reichweite-klassenunterschied": {
+    "prompt": "cinematic anime action illustration, a small outmatched fighter dwarfed by the towering silhouette of a hulking powerful opponent, dramatic scale contrast, rain-soaked neon city backdrop, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
+    "seed": 90010,
+    "kind": "section",
+    "title": "3.5 Außer Reichweite (Klassenunterschied)",
+    "include_style": false
+  },
+  "sec-3-6-der-rundenablauf-seiten-initiative-mit-kinet": {
+    "prompt": "cinematic anime action illustration, a coin spinning mid-air in dramatic slow motion between two fighters locked in a standoff, neon reflections, rain-soaked street, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
+    "seed": 90011,
+    "kind": "section",
+    "title": "3.6 Der Rundenablauf: Seiten-Initiative mit Kinetik-Marker",
+    "include_style": false
+  },
+  "sec-3-7-mehrere-gegner-goons-elite-und-bosse": {
+    "prompt": "cinematic anime action illustration, one lone hero surrounded by a horde of faceless masked goons in a rain-soaked warehouse, dynamic action stance ready to fight, dark gritty atmosphere, bold inked linework, high contrast moody lighting, wide cinematic composition, masterpiece",
+    "seed": 90012,
+    "kind": "section",
+    "title": "3.7 Mehrere Gegner: Goons, Elite und Bosse",
+    "include_style": false
+  },
+  "sec-3-8-momentum": {
+    "prompt": "cinematic anime action illustration, a fighter building up glowing kinetic energy aura around their body, crackling momentum trails, intense focused expression, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
+    "seed": 90013,
+    "kind": "section",
+    "title": "3.8 Momentum",
+    "include_style": false
+  },
+  "sec-3-9-bullet-time-rule-of-cool": {
+    "prompt": "cinematic anime action illustration, dramatic bullet time freeze frame, a fighter dodging between suspended bullets frozen mid air, droplets of rain frozen in motion, dark gritty neon backdrop, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
+    "seed": 90014,
+    "kind": "section",
+    "title": "3.9 Bullet Time (Rule of Cool)",
+    "include_style": false
+  },
+  "sec-3-10-regeneration-ohnmacht-und-gebrochen": {
+    "prompt": "cinematic anime action illustration, an exhausted fighter catching their breath against a wall, steam rising from their shoulders in the cold rain, determined to keep fighting, neon backdrop, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
+    "seed": 90015,
+    "kind": "section",
+    "title": "3.10 Regeneration, Ohnmacht und Gebrochen",
+    "include_style": false
+  },
+  "sec-3-11-ausgeschaltet-sterben-und-heilung": {
+    "prompt": "cinematic anime action illustration, a fallen fighter being helped back onto their feet by an ally amid the wreckage of battle, emotional moment, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
+    "seed": 90016,
+    "kind": "section",
+    "title": "3.11 Ausgeschaltet, Sterben und Heilung",
+    "include_style": false
+  },
+  "sec-3-12-moves-einsetzen-und-bezahlen": {
+    "prompt": "cinematic anime action illustration, a fighter mid windup for a devastating signature technique, glowing energy gathering at their fist, dramatic anticipation, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
+    "seed": 90017,
+    "kind": "section",
+    "title": "3.12 Moves einsetzen und bezahlen",
+    "include_style": false
+  },
+  "sec-3-13-optionale-experten-regel-erst-wuerfeln-dann": {
+    "prompt": "cinematic anime action illustration, split dynamic composition, two dice frozen mid roll above a battlefield clash, dramatic duality, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
+    "seed": 90018,
+    "kind": "section",
+    "title": "3.13 Optionale Experten-Regel: Erst würfeln, dann erzählen (\"Fortune in the Middle\")",
+    "include_style": false
+  },
+  "ch-4-proben-gegen-die-umgebung-nicht-kampf-skills": {
+    "prompt": "cinematic anime action illustration, a lone infiltrator climbing a fire escape on a towering neon-lit skyscraper at night, tense stealth atmosphere, no combat, rain and fog, dark gritty urban atmosphere, bold inked linework, high contrast moody lighting, wide cinematic composition, masterpiece, best quality",
+    "seed": 6006,
+    "kind": "chapter",
+    "title": "Proben gegen die Umgebung (Nicht-Kampf-Skills)",
+    "include_style": false
+  },
+  "ch-5-moves": {
+    "prompt": "cinematic anime action illustration, a martial artist unleashing a glowing energy-charged special technique, dynamic explosive motion, shattering ground beneath their feet, trailing light streaks, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, extreme high contrast lighting, wide cinematic composition, masterpiece, best quality",
+    "seed": 7007,
+    "kind": "chapter",
+    "title": "Moves",
+    "include_style": false
+  },
+  "sec-5-1-das-bewertungs-framework-effektpunkte": {
+    "prompt": "cinematic anime action illustration, a martial artist unleashing a glowing technique with geometric energy diagram patterns radiating from the point of impact, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
+    "seed": 90019,
+    "kind": "section",
+    "title": "5.1 Das Bewertungs-Framework (Effektpunkte)",
+    "include_style": false
+  },
+  "sec-5-2-move-beispiele-richtwerte": {
+    "prompt": "cinematic anime action illustration montage, multiple fighters each performing a different signature move in a dynamic composite panel, a gun-fu pistol spin, a judo throw, a flying kick, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
+    "seed": 90020,
+    "kind": "section",
+    "title": "5.2 Move-Beispiele (Richtwerte)",
+    "include_style": false
+  },
+  "sec-5-3-gemeisterte-moves": {
+    "prompt": "cinematic anime action illustration, a calm veteran fighter effortlessly executing a technique with relaxed confident expression, afterimage trail showing mastery, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
+    "seed": 90021,
+    "kind": "section",
+    "title": "5.3 Gemeisterte Moves",
+    "include_style": false
+  },
+  "sec-5-4-meister-moves-und-legendaere-moves": {
+    "prompt": "cinematic anime action illustration, an explosive screen filling ultimate technique, overwhelming energy and light engulfing the battlefield, awestruck onlooking enemies, dark gritty neon backdrop, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
+    "seed": 90022,
+    "kind": "section",
+    "title": "5.4 Meister-Moves und Legendäre Moves",
+    "include_style": false
+  },
+  "ch-6-spielbeispiele-am-tisch": {
+    "prompt": "cinematic anime action illustration, a sharp-dressed ex-assassin gunman with slicked dark hair in a long coat over concealed body armor, mid gunfight pose firing a pistol while pivoting into a throw, rain-soaked neon-lit Tokyo alley, dark gritty atmosphere, bold inked linework, high contrast moody lighting, wide cinematic composition, masterpiece, best quality",
+    "seed": 8008,
+    "kind": "chapter",
+    "title": "Spielbeispiele am Tisch",
+    "include_style": false
+  },
+  "sec-beispiel-charakterbogen": {
+    "prompt": "cinematic anime character portrait, Jin Ghost Yamada, sharp-dressed ex-assassin gunman with slicked dark hair, confident calm expression, wearing a long coat over concealed body armor, holding a pistol loosely at his side, rain-soaked neon-lit Tokyo backdrop, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
+    "seed": 90023,
+    "kind": "section",
+    "title": "Beispiel-Charakterbogen",
+    "include_style": false
+  },
+  "sec-beispiel-1-kampf-gegen-horden-goons": {
+    "prompt": "cinematic anime action illustration, a sharp-dressed gunman sprinting along a corridor wall firing a pistol, two goons collapsing in his wake, dynamic motion blur, rain-soaked neon-lit hallway, dark gritty atmosphere, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
+    "seed": 90024,
+    "kind": "section",
+    "title": "Beispiel 1: Kampf gegen Horden (Goons)",
+    "include_style": false
+  },
+  "sec-beispiel-2-ruestung-und-verletzung-boss-kampf": {
+    "prompt": "cinematic anime action illustration, a lean gunman grappling a hulking heavily armored SWAT boss into a judo throw, dramatic motion, rain-soaked neon-lit rooftop, dark gritty atmosphere, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
+    "seed": 90025,
+    "kind": "section",
+    "title": "Beispiel 2: Rüstung und Verletzung (Boss-Kampf)",
+    "include_style": false
+  },
+  "sec-beispiel-3-pvp-spieler-gegen-spieler": {
+    "prompt": "cinematic anime action illustration, a tense gunfight across a rain-lit office, one detective diving behind an overturned desk as a bullet grazes past, dynamic motion, dark gritty neon atmosphere, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
+    "seed": 90026,
+    "kind": "section",
+    "title": "Beispiel 3: PvP (Spieler gegen Spieler)",
+    "include_style": false
+  },
+  "sec-beispiel-4-charakterentwicklung-und-titel-leveli": {
+    "prompt": "cinematic anime action illustration, split before and after composition, a nervous rookie fighter on the left transforming into a legendary confident master glowing with power on the right, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
+    "seed": 90027,
+    "kind": "section",
+    "title": "Beispiel 4: Charakterentwicklung und Titel-Leveling",
+    "include_style": false
+  }
+}

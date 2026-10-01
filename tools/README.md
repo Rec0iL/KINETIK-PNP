@@ -6,3 +6,4 @@ Digitale Helfer für KINETIK. Alle Tools sollen ihre Regelwerte aus `../data/` l
 |---|---|---|
 | `charakterbogen/` | Online-Charakterbogen für Spieler | geplant |
 | `sl-dashboard/` | Kampfverwaltung und Übersicht für den Spielleiter | geplant |
+| `rulebook-pdf/` | Illustriertes PDF aus einem Regelwerk (auch fremde Regelwerke) | nutzbar |

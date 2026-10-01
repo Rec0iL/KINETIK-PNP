@@ -9,6 +9,7 @@ Ein Pen-&-Paper-Regelwerk für grenzenlose, filmische Action: Gun-Fu, Kampfkunst
 | Regelwerk | v3.4 (Alpha, in aktiver Entwicklung) |
 | Online-Charakterbogen | geplant |
 | SL-Dashboard | geplant |
+| Illustriertes PDF | `export/`, gebaut mit `tools/rulebook-pdf` |
 
 ## Projektstruktur
 
@@ -24,9 +25,12 @@ KINETIK_PNP/
 ├── data/                  Maschinenlesbare Regeldaten für die Tools
 ├── tools/
 │   ├── charakterbogen/    Online-Charakterbogen
-│   └── sl-dashboard/      Dashboard für Spielleiter
+│   ├── sl-dashboard/      Dashboard für Spielleiter
+│   └── rulebook-pdf/      PDF-Export mit KI-Bildern (agy + ComfyUI)
 ├── assets/                Grafiken, Logos, Druckvorlagen
-└── scripts/               Hilfsskripte (z.B. Export als PDF)
+│   └── pdf/               PDF-Projekt: Bilder, Prompts, Layout-Einstellungen
+├── export/                Fertige PDFs
+└── scripts/               Hilfsskripte
 ```
 
 ## Roadmap
@@ -36,7 +40,8 @@ KINETIK_PNP/
 - [ ] SL-Dashboard (Initiative, Gegner, Bedrängnis, Kinetik-Marker)
 - [ ] Move-Builder (EP-Rechner nach Kapitel 5.1)
 - [ ] Regeldaten in `data/` als gemeinsame Quelle für alle Tools
-- [ ] Druckversion (PDF) und Schnellreferenz
+- [x] Druckversion (PDF)
+- [ ] Schnellreferenz
 
 ## Lizenz
 

@@ -1,0 +1,166 @@
+"""Lay out a parsed rulebook as HTML and render it to PDF with WeasyPrint.
+
+Every subsection is one block: full-width heading + illustration, then its
+text in two columns. Headings can never end up in a different column than
+their content.
+"""
+import html as htmllib
+import re
+from pathlib import Path
+from string import Template
+
+import markdown
+
+PKG = Path(__file__).parent
+NARROW_TABLE_MAX_COLS = 3
+TALL_OPENER_MAX_CHARS = 4000
+SINGLE_COLUMN_MAX_CHARS = 600   # shorter texts look torn apart in two columns
+
+
+def _hex_rgba(hex_color, alpha):
+    h = hex_color.lstrip("#")
+    if len(h) == 3:
+        h = "".join(c * 2 for c in h)
+    r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
+    return f"rgba({r},{g},{b},{alpha})"
+
+
+def _md(text):
+    out = markdown.markdown(text, extensions=["tables", "sane_lists"])
+    return _wrap_tables(out)
+
+
+def _wrap_tables(html):
+    def repl(m):
+        table = m.group(0).replace("<table>", '<table class="rules-table">', 1)
+        first_row = re.search(r"<tr>(.*?)</tr>", table, re.S)
+        ncols = len(re.findall(r"<t[hd][ >]", first_row.group(1))) if first_row else 0
+        cls = "table-wide" if ncols > NARROW_TABLE_MAX_COLS else "table-narrow"
+        return f'<div class="{cls}">{table}</div>'
+    return re.sub(r"<table>.*?</table>", repl, html, flags=re.S)
+
+
+def _cols(md_text):
+    plain = re.sub(r"[#*_|>\-\s]+", " ", md_text).strip()
+    return "cols single" if len(plain) < SINGLE_COLUMN_MAX_CHARS else "cols"
+
+
+def _dropcap(html):
+    m = re.search(r"<p>([^\W\d_])", html)
+    if not m:
+        return html
+    return html[:m.start()] + f'<p class="lead"><span class="dropcap">{m.group(1)}</span>' + html[m.end():]
+
+
+def _css_string(text):
+    """CSS string literal that is safe inside a double-quoted style attribute."""
+    css = "'" + text.replace("\\", "\\\\").replace("'", "\\'") + "'"
+    return htmllib.escape(css, quote=True)
+
+
+def _esc(text):
+    return htmllib.escape(text or "")
+
+
+def build_html(project, doc):
+    cfg = project.config
+    theme, lay = cfg["theme"], cfg["layout"]
+    img = lambda key: project.image_path(key).as_uri() if project.has_image(key) else None
+    running = cfg.get("running_title") or (cfg.get("title") or doc.title or "").split(":")[0]
+
+    parts = []
+    if lay.get("page_texture") and img("background"):
+        parts.append(f'<div class="pagebg" style="background-image:url(\'{img("background")}\')"></div>')
+
+    # cover
+    cover_img = img("cover")
+    title = cfg.get("title") or doc.title or ""
+    parts.append(f"""<section class="cover">
+      {f'<div class="cover-img" style="background-image:url({chr(39)}{cover_img}{chr(39)})"></div><div class="cover-scrim"></div>' if cover_img else ''}
+      <div class="cover-text">
+        {f'<div class="cover-kicker">{_esc(cfg["kicker"])}</div>' if cfg.get("kicker") else ''}
+        <h1 class="cover-title">{_esc(title)}</h1>
+        {f'<div class="cover-sub">{_esc(cfg["subtitle"])}</div>' if cfg.get("subtitle") else ''}
+        {f'<div class="cover-meta">{_esc(cfg["tagline"])}</div>' if cfg.get("tagline") else ''}
+      </div></section>""")
+
+    # foreword: only when the text before chapter 1 is more than a tagline
+    intro_plain = re.sub(r"[#*_>\-\s]+", " ", doc.intro_md).strip()
+    if len(intro_plain) > 300:
+        parts.append(f'<section class="foreword"><div class="runhead-anchor" '
+                     f'style="string-set: runhead {_css_string(running)}, chaptitle \'\'"></div>'
+                     f'<div class="cols">{_dropcap(_md(doc.intro_md))}</div></section>')
+
+    label = cfg.get("chapter_label") or ""
+    for idx, ch in enumerate(doc.chapters, 1):
+        if ch.appendix:
+            body = _md(ch.intro_md) + "".join(f"<h3>{_esc(s.title)}</h3>{_md(s.body_md)}" for s in ch.sections)
+            head = ch.full_title.split(":")[0]
+            parts.append(f'<section class="chapter appendix"><h2 style="string-set: runhead '
+                         f'{_css_string(running)}, chaptitle {_css_string(head)}">{_esc(ch.full_title)}</h2>'
+                         f'<div class="appendix-body">{body}</div></section>')
+            continue
+
+        num = ch.number if ch.number is not None else idx
+        banner = img(ch.key)
+        tall = not ch.sections and ch.text_length < TALL_OPENER_MAX_CHARS
+        cls = "opener" + (" tall" if banner and tall else "") + ("" if banner else " plain")
+        out = [f'<section class="chapter">', f'<header class="{cls}">']
+        if banner:
+            out.append(f'<img src="{banner}" alt=""><div class="opener-scrim"></div>')
+        out.append('<div class="opener-label">'
+                   f'<div class="chapter-num">{_esc(label)} {num:02d}</div>'
+                   f'<h2>{_esc(ch.title)}</h2>'
+                   + (f'<div class="chapter-sub">{_esc(ch.subtitle)}</div>' if ch.subtitle else "")
+                   + '</div></header>')
+        # re-enables the running heads from the page after the opener on
+        out.append(f'<div class="runhead-anchor" style="string-set: runhead {_css_string(running)}, '
+                   f'chaptitle {_css_string(ch.title)}"></div>')
+
+        has_intro = bool(ch.intro_md.strip())
+        if has_intro:
+            out.append(f'<div class="{_cols(ch.intro_md)} intro">{_dropcap(_md(ch.intro_md))}</div>')
+        for i, s in enumerate(ch.sections):
+            fig = img(s.key) if lay.get("section_images") else None
+            fig_html = f'<figure class="sub-figure"><img src="{fig}" alt=""></figure>' if fig else ""
+            body = _md(s.body_md)
+            if not has_intro and i == 0:
+                body = _dropcap(body)
+            out.append(f'<section class="sub"><div class="sub-head"><h3>{_esc(s.title)}</h3>{fig_html}</div>'
+                       f'<div class="{_cols(s.body_md)}">{body}</div></section>')
+        out.append("</section>")
+        parts.append("\n".join(out))
+
+    fonts_css = (PKG / "fonts" / "fonts.css").read_text(encoding="utf-8").replace(
+        "url('fonts/", f"url('{(PKG / 'fonts').as_uri()}/")
+    css = Template((PKG / "theme.css").read_text(encoding="utf-8")).substitute(
+        bg=theme["bg"], ink=theme["ink"], ink_dim=_hex_rgba(theme["ink"], .62),
+        accent=theme["accent"], accent2=theme["accent2"],
+        accent_soft=_hex_rgba(theme["accent"], .10), accent_line=_hex_rgba(theme["accent"], .35),
+        font_size=lay.get("font_size_pt", 9.6), lead_size=round(lay.get("font_size_pt", 9.6) * 1.08, 2),
+        text_align="justify" if lay.get("justify", True) else "left",
+        cover_title_size=118 if len(title) <= 10 else max(48, int(118 * 10 / len(title))))
+
+    return f"""<!doctype html>
+<html lang="{_esc(cfg.get('language', 'de'))}"><head><meta charset="utf-8">
+<title>{_esc(title)}</title><style>{fonts_css}
+{css}</style></head>
+<body>
+{chr(10).join(parts)}
+</body></html>"""
+
+
+def render(project, doc=None, log=print):
+    from weasyprint import HTML
+
+    doc = doc or project.document()
+    project.build_dir.mkdir(parents=True, exist_ok=True)
+    html_path = project.build_dir / "index.html"
+    html_path.write_text(build_html(project, doc), encoding="utf-8")
+    out = project.output_path
+    out.parent.mkdir(parents=True, exist_ok=True)
+    log("Setze PDF mit WeasyPrint …")
+    document = HTML(filename=str(html_path)).render()
+    document.write_pdf(str(out))
+    log(f"PDF geschrieben: {out} ({len(document.pages)} Seiten)")
+    return out, len(document.pages)

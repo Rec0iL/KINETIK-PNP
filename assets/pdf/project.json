@@ -1,0 +1,52 @@
+{
+  "source": "../../regelwerk/KINETIK_Regelwerk.md",
+  "output": "../../export/KINETIK_Regelwerk_v3.4.pdf",
+  "title": "KINETIK",
+  "subtitle": "Cinematic Action Roleplaying",
+  "kicker": "GUN-FU · KAMPFKUNST · ANIME",
+  "tagline": "Ein Tabletop-Regelwerk für grenzenlose, filmische Action · Version 3.4",
+  "running_title": "KINETIK",
+  "chapter_label": "Kapitel",
+  "language": "de",
+  "chapter_level": 0,
+  "appendix_patterns": [
+    "^Anhang",
+    "^Appendix",
+    "^Änderungsprotokoll",
+    "^Changelog"
+  ],
+  "theme": {
+    "bg": "#0b0c10",
+    "ink": "#e6eaf0",
+    "accent": "#2fe6ff",
+    "accent2": "#ff2f92"
+  },
+  "layout": {
+    "section_images": true,
+    "page_texture": true,
+    "justify": true,
+    "font_size_pt": 9.6
+  },
+  "style_preset": "Anime Action (KINETIK)",
+  "style_wish": "",
+  "style": "cinematic anime action illustration, rain-soaked neon city, dark gritty atmosphere, bold inked linework, cel shading, extreme high contrast, magenta and cyan rim light, wide cinematic composition, masterpiece, best quality",
+  "negative": "worst quality, low quality, blurry, jpeg artifacts, bad anatomy, watermark, text, letters, signature, logo, deformed, extra limbs, lowres",
+  "world": "Modern-day cinematic action: gun-fu, martial arts and anime-style fights in rain-soaked neon cities; ex-assassins, SWAT operators, street brawlers and ninja-like masters.",
+  "agy": {
+    "model": "gemini-3.8-flash-medium"
+  },
+  "comfy": {
+    "url": "http://127.0.0.1:8188",
+    "workflow": "anima",
+    "unet": "trattoNero_nitrattoANIMA.safetensors",
+    "clip": "qwen_3_06b_base.safetensors",
+    "clip_type": "stable_diffusion",
+    "vae": "qwen_image_vae.safetensors",
+    "checkpoint": "",
+    "custom_workflow": "",
+    "steps": 28,
+    "cfg": 4.0,
+    "sampler": "euler",
+    "scheduler": "simple"
+  }
+}
