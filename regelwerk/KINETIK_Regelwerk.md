@@ -1,6 +1,6 @@
 # **KINETIK: Cinematic Action Roleplaying**
 
-*Ein Tabletop-Regelwerk für grenzenlose, filmische Action. Version 3.4.*
+*Ein Tabletop-Regelwerk für grenzenlose, filmische Action. Version 3.5.*
 
 ---
 
@@ -11,6 +11,8 @@ Dieses System belohnt Kreativität. Es bestraft Spieler nicht für coole Beschre
 **Erfahrung zählt.** Talent öffnet die Tür, aber Titel (Training, Erfahrung, Meisterschaft) entscheiden, wer am Ende steht. Ein Hüne ohne Erfahrung wird keinen Großmeister niederringen.
 
 **Detailgrad nach Geschmack.** Die Regeln funktionieren mit einer Handvoll grober Moves genauso wie mit einem kompletten Arsenal aus Taekwondo-, Karate- und Muay-Thai-Techniken. Solange jeder Move dem Raster aus Kapitel 5 folgt, entscheidet der Tisch, wie tief er gehen will.
+
+**Power-Scale nach Setting.** Wie stark die Welt ist, wählt der SL frei. In einem John-Wick-Setting ist John Wick das Nonplusultra und damit Level 10, im Naruto-Universum gilt das Gleiche für den Naruto der Endphase, und im Jackie-Chan-Setting ist Jackie einer der fähigsten Kämpfer seines Stils. Das Titel-Level misst also immer den Rang **innerhalb des Settings**, nicht eine absolute Stärke. Ob Straßenkampf, Gun-Fu oder Ki-Schlachten: Dieselben 2W6 und dasselbe Raster für Moves tragen alles. Der Tisch entscheidet, wie hoch die Decke der Welt liegt.
 
 ---
 
@@ -192,6 +194,8 @@ Tags beschreiben Zustände wie *Am Boden*, *Entwaffnet*, *Geblendet* oder *Fixie
 * **Stapeln:** Tags summieren sich, aber höchstens auf **+3** pro Clash.
 * **Aufheben:** Ein Tag endet mit einer passenden Aktion (Aufstehen, Waffe aufheben, Augen freiwischen) oder mit der Szene.
 * **Die Kinetik-Regel:** Einen **eigenen kleinen Tag** können Spieler durch eine kreative Beschreibung umdrehen. Der Tag verschwindet, und der Gegner erhält einen passenden kleinen Tag. *Beispiel:* Jin hat *Ladehemmung*. Statt nachzuladen, schnippt er die heiße Hülse ins Gesicht des Gegners: Die Ladehemmung ist weg, der Gegner ist *Geblendet*. Große Tags lassen sich nicht umdrehen.
+* **Heimspiel:** Ein kleiner Tag ist nur ein Nachteil, wenn der Betroffene die Lage nicht beherrscht. Deckt ein **Titel des Charakters die Lage ab**, gibt der kleine Tag dem Gegner kein +1. Ein BJJ-Kämpfer am Boden ist nicht *Am Boden* im Sinne des Nachteils, ein Aikidoka lässt sich von einem einfachen Griff nicht aus der Ruhe bringen. Das gilt nur für kleine Tags, große Tags (*Fixiert*, *Gelenk gesperrt*) wirken weiter und lassen sich nur über einen passenden Move lösen (siehe *Lock Reversal*, 5.2).
+* **Freiwillig:** Wer sich mit passender Beschreibung bewusst in eine Lage bringt (Guard ziehen, sich fallen lassen), nimmt den kleinen Tag als Teil seiner Aktion auf sich. Die Vorbedingung für Moves, die diese Lage brauchen, ist damit erfüllt. Ist die Lage nicht die Domäne des Charakters, bleibt der Tag ein echtes Risiko.
 
 ### **3.4 Die Helden-Schwelle**
 
@@ -249,7 +253,7 @@ Maßgeblich ist die **Gesamtbonus-Lücke** zwischen beiden Seiten im jeweiligen 
 ### **3.8 Momentum**
 
 * **Generierung:** +1 bei Dominanz im Angriff oder bei einem perfekten Konter in der Verteidigung. Außerdem über Bullet Time (siehe 3.9).
-* **Start-Momentum:** Kluge Vorbereitung vor dem Kampf (Präparation) oder ein gelungener Hinterhalt gewähren 1-3 Start-Momentum. Beides addiert sich nicht, es zählt der höhere Wert.
+* **Start-Momentum:** Kluge Vorbereitung vor dem Kampf (Präparation) oder ein gelungener Hinterhalt gewähren 1-2 Start-Momentum. Beides addiert sich nicht, es zählt der höhere Wert.
 * **Deckel:** Maximal **3 Momentum**. Der Deckel steigt **+1 ab Level 5** und **+1 ab Level 10** (höchster Titel). Wer den Deckel erreicht, wird dazu animiert, Moves einzusetzen und danach wieder Momentum aufzubauen.
 * **Szenen-Verfall:** Am Ende eines Kampfes verfällt alles Momentum auf 0. Nutze es für starke Moves!
 
@@ -347,6 +351,40 @@ Erfolgschancen (in Klammern der zusätzliche Anteil "Erfolg mit Preis"):
 | +7 (Lv 8-9) | 100 % | 100 % | 92 % (8) | 72 % (19) | 42 % (31) |
 | +9 (Lv 10) | 100 % | 100 % | 100 % | 92 % (8) | 72 % (19) |
 
+### **4.1 Heimlichkeit und Infiltration**
+
+Heimlichkeit ist kein Zusatz, sondern ein eigener Weg durch eine Szene. Sie nutzt **2W6 + Attribut + Meisterschaft**, meist **Fluss** (leise Bewegung, Verstecken), **Instinkt** (Gefahr wittern, Timing) oder **Fokus** (Wachrouten lesen, Ablenkung planen). Die Meisterschaft zählt, wenn ein Titel die Aktion abdeckt, z.B. *Ex-Hitman* (Infiltration) oder *Sturmninja*.
+
+**Gegen Goons (PvE): Wachsamkeit statt Würfel.** Goons haben Bonus +0 und eine Gruppe handelt als ein Charakter (3.7). Deshalb würfeln nur die Spieler, gegen einen **MW nach der Wachsamkeit der Gruppe**:
+
+| Lage | MW |
+|---|---|
+| Ahnungslos oder abgelenkt (Pause, Streit, Fernseher) | 7 |
+| Wachsam (Patrouille, Routine) | 9 |
+| Alarmiert (Eindringling vermutet) | 11 |
+
+* **Eine Probe pro Gruppe und Abschnitt** (ein Raum, ein Flur, eine Wachrunde). Der Spieler sagt an, wie er vorgeht (Schatten, Lüftungsschacht, Verkleidung).
+* **Erfolg:** Niemand bemerkt dich, du erreichst dein Ziel oder die Position für den ersten Schlag.
+* **Erfolg mit Preis:** Du kommst durch, aber der SL setzt einen Preis: ein Geräusch lässt die Gruppe aufmerken (nächster MW +2), du hinterlässt eine Spur (kleiner Tag *Verdacht*) oder du verlierst Zeit.
+* **Fehlschlag:** Die Goons entdecken dich. Der Kampf beginnt, der Kinetik-Marker liegt bei den Goons.
+* **Gruppen von Spielern:** Alle würfeln. Der **schlechteste** Wurf entscheidet für die Gruppe. Ein Spieler kann stattdessen einem anderen helfen und gibt ihm **+1**.
+* **Lautlos ausschalten:** Wer unbemerkt ist, schaltet **einen Goon pro Aktion** ohne Clash aus (Probe gegen MW 7 mit Präzision oder Gewalt). Bei Erfolg mit Preis fällt der Goon, aber nicht lautlos: Der Rest wird aufmerksam. Elite und Bosse lassen sich so nicht ausschalten, sie verlangen einen Clash (siehe unten).
+
+**Gegen Mitspieler, Elite und Bosse (PvP): der Heimlichkeits-Clash.** Wer selbst würfelt (Spielercharakter, Elite, Boss), wehrt sich aktiv: Beide Seiten würfeln **2W6 + Attribut + Meisterschaft**, der Schleicher gegen die **Wahrnehmung** des Wächters (meist Instinkt, bei Fallen oder Mustern Fokus). Δ = Schleicher - Wächter, **T = 3** (die Helden-Schwelle, 3.4, und die Außer-Reichweite-Regel, 3.5, gelten wie im Kampf).
+
+| Δ | Ergebnis |
+|---|---|
+| **T oder mehr** | **Unbemerkt:** Du bist verborgen und hast den Hinterhalt. Du erhältst **2 Start-Momentum**, und der Kinetik-Marker liegt bei dir (3.6, 3.8). |
+| **0 bis T - 1** | **Verdacht:** Du bist noch verborgen, aber der Wächter wird misstrauisch. Du hast **1 Start-Momentum**, der Wächter erhält den kleinen Tag *Misstrauisch* (+1 auf jede weitere Wahrnehmung). |
+| **-1 bis -(T - 1)** | **Entdeckt:** Der Wächter sieht dich und handelt zuerst. Kein Hinterhalt, keine Boni. |
+| **-T oder weniger** | **Durchschaut:** Der Wächter erkennt deinen Plan oder legt dir einen Hinterhalt. Er erhält **1 Start-Momentum** und der Kinetik-Marker liegt bei ihm. Du hast den kleinen Tag *Exponiert*. |
+
+* **Wachsame Spieler:** Ein Mitspieler würfelt Wahrnehmung nur, wenn sein Charakter wirklich aufpasst (er hat die Wache bezogen, den Raum gesichert, hört zu). Sonst gilt sein **passiver Wert 5 + Bonus**, der Schleicher würfelt dann gegen diese feste Zahl wie gegen einen MW. Das schützt den Schleicher davor, dass jeder Würfelwurf eines Mitspielers jede Idee zunichtemacht, und belohnt Wachsamkeit.
+* **Umgebung als Tags:** Dunkelheit, Lärm, Menschenmenge oder Regen geben dem Schleicher einen **kleinen Tag** (+1), gleißendes Licht, Stille oder eine freie Fläche dem Wächter. Ein **großer Tag** (+2) entsteht bei echten Extremen, z.B. Blackout, Nebel oder ein Sprengsatz als Ablenkung. Tags stapeln sich bis +3 (3.3).
+* **Hinterhalt nutzen:** Ein Angriff aus dem Verborgenen läuft mit dem Start-Momentum als gewöhnlicher Clash weiter. Moves mit der Vorbedingung *unbemerkt* (z.B. *Meuchelstoß*, 5.2) wirken nur in diesem Fall.
+* **Sieg ohne Kampf:** Die Heimlichkeit kann auch das Ziel selbst sein (Dokument stehlen, Wache umgehen). Ein Ergebnis *Unbemerkt* oder *Verdacht* erreicht das Ziel, ohne dass ein Schlag fällt.
+
+
 ---
 
 ## **5. Moves**
@@ -402,6 +440,11 @@ Die Kosten gelten für das jeweilige Mindestlevel (Meisterschaft 0 bzw. die Meis
 | **Querschläger** (Revolverheld) | Präzision | 4 | 2 | 1 Momentum, 1 Energie | Ignoriert physische Deckung (Mauern, Schilde) komplett und trifft eine gewählte Zone. *Großer Effekt 3, Zone wählen 1.* |
 | **Iaijutsu Quickdraw** (Samurai) | Instinkt | 4 | 2 | 1 Momentum, 1 Energie | Unterbrechen: eine sofortige Konter-Aktion, bevor der eigentliche Clash beginnt. Wird vor dem Clash angesagt. *Großer Effekt 3, kleiner Tag 1.* |
 | **Flashbang Breach** (Taktik) | Fokus | 5 | 4 | 1 Momentum, 1 Energie | Willenskraft-Schaden an bis zu 3 Feinden. Verbündete erhalten im ersten Clash gegen die geblendeten Feinde +2. *WK-Schaden 1, bis zu 3 Ziele 2, Team-Bonus 2.* |
+| **Meuchelstoß** (Attentäter) | Präzision | 2 | 1 | 2 Energie | Vorbedingung: der Gegner hat dich nicht bemerkt (Heimlichkeits-Clash gewonnen oder Goon aus dem Verborgenen). Verletzung auch ohne Dominanz, Zone frei gewählt. *Verletzung ohne Dominanz 2, Zone wählen 1, Vorbedingung -1.* |
+| **Schattenschritt** (Ninja) | Fluss | 2 | 1 | 2 Energie | Bei einem Heimlichkeits-Clash wird ein Ergebnis *Entdeckt* zu *Verdacht*: Du bist in einer Rauchwolke oder hinter einer Ecke wieder verschwunden. *Mittlerer Effekt 2.* |
+| **Lock Reversal** (Aikido) | Fluss | 3 | 1 | 3 Energie | Vorbedingung: der Gegner setzt einen Gelenkhebel oder Griff auf dich. Hebt den großen Tag (*Gelenk gesperrt*) sofort auf und erlaubt dir eine kostenlose Konter-Aktion. *Tag aufheben 2, Gegenangriff 2, Vorbedingung -1.* |
+
+**Design-Hinweis: Ausnahmen von den Regeln.** Moves dürfen eine Grundregel gezielt brechen, solange sie dafür bezahlen. Der *Lock Reversal* ist ein Beispiel dafür: Große Tags lassen sich eigentlich nicht umdrehen (3.3), aber ein Aikidoka hat genau dafür gelernt. Der Ausgleich steckt im Raster: Der Effekt wird mit EP bewertet, die Vorbedingung (der Gegner muss den Hebel ansetzen) bringt einen Rabatt, und die Kosten sinken mit der Meisterschaft (Level 1: 3 Energie, Level 5: 1 Energie, Level 10: 0). Ähnlich lassen sich Ausnahmen für andere Fälle bauen, z.B. ein Move, der einen Würgegriff löst, oder einer, der Deckung ignoriert. Ob ein Move so eine Ausnahme bekommt, entscheidet der SL nach dem Check aus 5.1 (Gegenspiel, Preis, Angemessenheit). Es ist ein Vorschlag, keine feste Regel.
 
 ### **5.3 Gemeisterte Moves**
 
@@ -535,6 +578,21 @@ Dieses Beispiel zeigt, wie sich ein Charakterbogen durch Meilensteine organisch 
 * *Level 5:* Kaitos Klone können nun selbst Goons ausschalten. Die Wirbel-Sphäre ignoriert jede konventionelle Rüstung und zerschmettert feste Wände.
 * *Level 10:* Der Rasengan ist nur noch ein Standard-Schlag. Die Elementar-Sphäre verändert die Geografie des Schlachtfeldes, zerstört den Schutz des Bosses sofort und senkt bei Dominanz die Willenskraft auf 0. Kaito kämpft nicht mehr gegen Einzelpersonen, sondern gegen Armeen. Mechanisch würfelt er immer noch 2W6, aber sein erzählerischer "Fluss" erlaubt es ihm nun, über Berge zu springen.
 
+### **Beispiel 5: Heimlichkeit (Goons und Elite)**
+
+*Situation:* Jin schleicht in ein Lagerhaus. Im Hauptraum sitzen vier Goons beim Kartenspiel, im Büro dahinter wartet Chen, ein Elite-Schläger (Instinkt +1, *Leibwächter Level 4* mit Leitattribut Instinkt, Bonus **+3**).
+
+* **Spieler (Jin):** "Ich nutze den Lärm der Lüftung, gleite an den Regalen entlang und will unbemerkt zur Bürotür. (Fluss +2, Ex-Killer mit Infiltration, Meisterschaft 1 = +3)"
+* **SL:** "Die vier Goons sind abgelenkt, MW 7. Der Lüftungslärm ist ein kleiner Tag, aber Jin braucht ihn kaum. Bei +3 ist die Probe nicht automatisch, würfle."
+* *Wurf Jin:* 2W6 (4) + 3 = **7**. Gelingt, ohne Preis.
+* **Spieler (Jin):** "An der Bürotür lausche ich, dann ziehe ich meine Waffe und öffne die Tür lautlos. Chen soll mich nicht bemerken."
+* **SL:** "Chen sitzt an einem Tisch und hat die Tür im Blick, also würfelt er seine Wahrnehmung. Er ist dir im Bonus gleich (+3 gegen deine +3), also Standard-Schwelle 3."
+* *Wurf Jin:* 2W6 (6) + 3 = **9**. *Wurf Chen:* 2W6 (5) + 3 = **8**.
+* **SL:** "Differenz 1, Verdacht. Du bleibst unentdeckt, aber Chen hebt den Kopf und lauscht, er ist *Misstrauisch*. Du erhältst 1 Start-Momentum. Wie gehst du vor?"
+* **Spieler (Jin):** "Ich nutze den Moment, bevor er aufsteht, und gebe ihm einen *Meuchelstoß* in den Nacken. (Präzision +1 + 1 = +2, Vorbedingung erfüllt: er hat mich nicht bemerkt.)"
+
+Jins nächster Clash mit Chen beginnt mit seinem Start-Momentum. Chen hat den kleinen Tag *Misstrauisch* (+1 auf Wahrnehmung), aber gegen den Angriff selbst nützt ihm das nichts. Trifft der Stoß, greift die Vorbedingung des Moves auch ohne Dominanz. Fällt der Wurf schlecht aus, steht Jin immerhin vor Chen, ohne dass die vier Goons ihn gehört haben.
+
 ---
 
 ## **Anhang A: Wahrscheinlichkeiten (2W6 + Bonus gegen 2W6 + Bonus)**
@@ -619,6 +677,15 @@ Ein Boss mit gleichem Bonus ist als Gruppenboss gedacht. Für ein Solo-Duell sol
 
 * **Level 9** bringt jetzt ebenfalls ein Attribut +1 auf ein Leitattribut (sind beide auf +3: ein beliebiges Attribut). Über Fluss, Gewalt, Instinkt und Fokus steigen damit auch Energie oder Willenskraft.
 * **Energie und Willenskraft:** "Startwert" heißt jetzt "Maximum" und steigt mit den Attributen.
+
+## **Änderungsprotokoll v3.4 → v3.5**
+
+* **Power-Scale nach Setting (1):** Die Stärke der Welt wählt der SL frei. Das Titel-Level misst den Rang innerhalb des Settings (John Wick, Naruto, Jackie Chan als jeweils Level 10).
+* **Heimlichkeit und Infiltration (4.1):** Gegen Goons als Probe gegen die Wachsamkeit der Gruppe (MW 7 / 9 / 11), gegen Mitspieler, Elite und Bosse als Heimlichkeits-Clash mit Hinterhalt-Momentum. Passive Wahrnehmung, Umgebung als Tags, lautloses Ausschalten.
+* **Neue Moves (5.2):** *Meuchelstoß* und *Schattenschritt*.
+* **Beispiel 5 (6):** Heimlichkeit gegen Goons und Elite.
+* **Tags (3.3):** *Heimspiel* (ein Titel, der die Lage abdeckt, nimmt kleinen Tags den Nachteil) und *Freiwillig* (sich selbst in eine Lage bringen, Vorbedingung für Moves).
+* **Move Lock Reversal (5.2)** als Beispiel für gezielte Ausnahmen von Grundregeln, mit Design-Hinweis.
 
 **Zur Bestätigung (aus v3.1):**
 

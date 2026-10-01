@@ -2,6 +2,11 @@
 
 Alle wesentlichen Änderungen am Regelwerk. Details stehen jeweils im Änderungsprotokoll am Ende von `regelwerk/KINETIK_Regelwerk.md`.
 
+## v3.5 (2026-10-01)
+- Power-Scale nach Setting (Kapitel 1): frei vom SL gewählt, das Titel-Level misst den Rang innerhalb des Settings.
+- Heimlichkeit (Kapitel 4.1): PvE gegen Goons als Probe gegen die Gruppen-Wachsamkeit, PvP gegen Spieler, Elite und Bosse als Heimlichkeits-Clash. Neue Moves Meuchelstoß und Schattenschritt, Beispiel 5.
+- Tags: Heimspiel (Titel deckt die Lage ab, kleine Tags wirken nicht als Nachteil) und freiwillig auferlegte Tags. Neuer Move Lock Reversal als Design-Beispiel für Regel-Ausnahmen.
+
 ## v3.4 (2026-10-01)
 - Level 9 gibt ein Attribut +1 (Leitattribut, sonst frei), wirkt über die Attribute auch auf Energie und Willenskraft.
 - Energie und Willenskraft: Maximum statt Startwert, steigt mit den Attributen.
