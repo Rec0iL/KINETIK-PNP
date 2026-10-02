@@ -10,6 +10,8 @@ import { pushToast } from '../ui/toasts.svelte';
 import { openPeer, explainPeerError, type DataConnection, type Peer } from './peer';
 import { serveAsset } from './assets.svelte';
 import { addPing } from '../map/pings.svelte';
+import { defaultMusic, expectedPosition, type MusicState, type TrackRef } from '../music/clock';
+import { currentTime } from '../music/engine.svelte';
 import { applyMapOp, forPlayers, type MapOp, type MapState } from '../map/mapstate';
 import {
   PROTOCOL_VERSION, newRoomCode, peerIdFor, type ClientMsg, type PatchOp, type PlayerInfo, type ServerMsg, type SharedState,
@@ -37,6 +39,8 @@ export interface GmSession {
   /** Vorbereitete Karten (Szenen). Nur die aktive wird mit den Spielern geteilt. */
   scenes: MapState[];
   activeScene: string | null;
+  /** Hochgeladene Musiktitel (mitgelieferte stehen im Katalog). */
+  tracks: TrackRef[];
 }
 
 export interface FeedEntry { ts: number; text: string }
@@ -76,6 +80,8 @@ export async function loadSavedSession(): Promise<GmSession | null> {
   try {
     const s = (await get(STORE_KEY)) as GmSession | undefined;
     if (!s) return null;
+    s.tracks = s.tracks ?? [];
+    s.state.music = { ...defaultMusic(), ...(s.state.music ?? {}), playing: false };
     s.scenes = s.scenes ?? [];
     s.activeScene = s.activeScene ?? null;
     s.players = (s.players ?? []).map((p) => ({ ...p, connected: false, character: p.character ? sanitizeCharacter(p.character) : null }));
@@ -135,8 +141,8 @@ export async function startHost(opts: { gmName: string; password: string; resume
   gm.status = 'starting';
   gm.error = '';
   const s: GmSession = opts.resume ?? {
-    code: newRoomCode(), password: '', players: [], gmNotes: '', created: Date.now(), scenes: [], activeScene: null,
-    state: { gmName: '', visibility: 'party', notes: '', rounds: 0 },
+    code: newRoomCode(), password: '', players: [], gmNotes: '', created: Date.now(), scenes: [], activeScene: null, tracks: [],
+    state: { gmName: '', visibility: 'party', notes: '', rounds: 0, music: defaultMusic() },
   };
   s.state.gmName = opts.gmName || s.state.gmName || 'Spielleiter';
   s.password = opts.password;
@@ -263,7 +269,7 @@ function onData(conn: DataConnection, msg: ClientMsg) {
       break;
     }
     case 'ping':
-      send(conn, { t: 'pong', ts: msg.ts });
+      send(conn, { t: 'pong', ts: msg.ts, gm: Date.now() });
       break;
     case 'view': {
       for (const set of viewers.values()) set.delete(id);
@@ -513,3 +519,91 @@ export function updateLocalCharacter(id: string) {
 }
 
 export const connectedCount = () => conns.size;
+
+// ---------- Musik ----------
+function pushMusic() {
+  const s = gm.session;
+  if (!s) return;
+  broadcast({ t: 'state', key: 'music', value: $state.snapshot(s.state.music) as MusicState });
+  persistSession();
+}
+
+/** Aktuelle Position laut Zustand (der SL ist die Zeitquelle). */
+function musicPos(): number {
+  const m = gm.session!.state.music;
+  return m.playing ? currentTime() : m.anchorPos || expectedPosition(m, Date.now());
+}
+
+export function musicPlay(track: TrackRef, loop?: boolean) {
+  const m = gm.session?.state.music;
+  if (!m) return;
+  m.track = $state.snapshot(track) as TrackRef;
+  m.loop = loop ?? track.loop ?? false;
+  m.playing = true;
+  m.anchorGm = Date.now();
+  m.anchorPos = 0;
+  pushMusic();
+}
+
+export function musicPause() {
+  const m = gm.session?.state.music;
+  if (!m?.track || !m.playing) return;
+  m.anchorPos = musicPos();
+  m.anchorGm = Date.now();
+  m.playing = false;
+  pushMusic();
+}
+
+export function musicResume() {
+  const m = gm.session?.state.music;
+  if (!m?.track || m.playing) return;
+  m.anchorGm = Date.now();
+  m.playing = true;
+  pushMusic();
+}
+
+export function musicStop() {
+  const m = gm.session?.state.music;
+  if (!m) return;
+  m.track = null;
+  m.playing = false;
+  m.anchorPos = 0;
+  pushMusic();
+}
+
+export function musicSeek(pos: number) {
+  const m = gm.session?.state.music;
+  if (!m?.track) return;
+  m.anchorPos = Math.max(0, pos);
+  m.anchorGm = Date.now();
+  pushMusic();
+}
+
+export function musicVolume(v: number) {
+  const m = gm.session?.state.music;
+  if (!m) return;
+  m.volume = Math.max(0, Math.min(1, v));
+  pushMusic();
+}
+
+export function musicLoop(loop: boolean) {
+  const m = gm.session?.state.music;
+  if (!m) return;
+  m.anchorPos = musicPos();
+  m.anchorGm = Date.now();
+  m.loop = loop;
+  pushMusic();
+}
+
+export function addTrack(t: TrackRef) {
+  gm.session?.tracks.push(t);
+  persistSession();
+}
+
+export function removeTrack(id: string) {
+  const s = gm.session;
+  if (!s) return;
+  if (s.state.music.track?.id === id) musicStop();
+  s.tracks = s.tracks.filter((t) => t.id !== id);
+  persistSession();
+}

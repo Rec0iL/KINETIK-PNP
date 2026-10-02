@@ -9,6 +9,7 @@ import { pushToast } from '../ui/toasts.svelte';
 import { openPeer, explainPeerError, type DataConnection, type Peer } from './peer';
 import { handleAssetMessage, setAssetRequester } from './assets.svelte';
 import { addPing } from '../map/pings.svelte';
+import { bestClockOffset } from '../music/clock';
 import { applyMapOp, type MapOp, type MapState } from '../map/mapstate';
 import {
   PROTOCOL_VERSION, peerIdFor, normalizeCode, type ClientMsg, type PlayerInfo, type ServerMsg, type SharedState,
@@ -32,9 +33,11 @@ export const player = $state<{
   name: string;
   /** Millisekunden Hin- und Rückweg zum SL. */
   latency: number;
+  /** SL-Zeit minus lokale Zeit in ms (für synchrone Musik). */
+  clockOffset: number;
 }>({
   status: 'idle', error: '', code: '', gmName: '', state: null, party: [], view: null, map: null,
-  playerId: loadPlayerId(), characterId: '', name: '', latency: 0,
+  playerId: loadPlayerId(), characterId: '', name: '', latency: 0, clockOffset: 0,
 });
 
 function loadPlayerId(): string {
@@ -56,6 +59,7 @@ let retryTimer: ReturnType<typeof setTimeout>;
 let pingTimer: ReturnType<typeof setInterval>;
 let sheetTimer: ReturnType<typeof setTimeout>;
 let retries = 0;
+const clockSamples: { rtt: number; gm: number; localAtRecv: number }[] = [];
 let unsubRoll: (() => void) | null = null;
 
 const sendMsg = (m: ClientMsg) => {
@@ -202,9 +206,14 @@ function onMessage(m: ServerMsg) {
     case 'toast':
       pushToast(m.text, 'info', 8000);
       break;
-    case 'pong':
-      player.latency = Math.round(performance.now() - m.ts);
+    case 'pong': {
+      const rtt = performance.now() - m.ts;
+      player.latency = Math.round(rtt);
+      clockSamples.push({ rtt, gm: m.gm, localAtRecv: Date.now() });
+      if (clockSamples.length > 8) clockSamples.shift();
+      player.clockOffset = bestClockOffset(clockSamples);
       break;
+    }
     case 'map':
       for (const op of m.ops) {
         if (op.op === 'full') player.map = op.map;
@@ -222,8 +231,10 @@ function onMessage(m: ServerMsg) {
 
 function startPing() {
   stopPing();
+  clockSamples.length = 0;
   pingTimer = setInterval(() => sendMsg({ t: 'ping', ts: performance.now() }), 5000);
-  sendMsg({ t: 'ping', ts: performance.now() });
+  // Am Anfang schnell mehrere Proben für eine gute Uhrenschätzung.
+  for (let i = 0; i < 4; i++) setTimeout(() => sendMsg({ t: 'ping', ts: performance.now() }), i * 250);
 }
 function stopPing() { clearInterval(pingTimer); }
 

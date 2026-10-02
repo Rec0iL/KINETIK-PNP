@@ -38,3 +38,26 @@ describe('Karten-Zustand', () => {
     expect(snapToGrid(m.grid, 123, 77, 2)).toEqual([100, 100]);
   });
 });
+
+import { bestClockOffset, defaultMusic, expectedPosition } from '../src/music/clock';
+
+describe('Musik-Uhr', () => {
+  const st = { ...defaultMusic(), playing: true, anchorGm: 10_000, anchorPos: 5 };
+  it('Position läuft mit der SL-Uhr', () => {
+    expect(expectedPosition(st, 10_000)).toBe(5);
+    expect(expectedPosition(st, 12_500)).toBeCloseTo(7.5);
+    expect(expectedPosition({ ...st, playing: false }, 99_000)).toBe(5);
+  });
+  it('Schleife faltet, sonst Deckel bei der Dauer', () => {
+    expect(expectedPosition({ ...st, loop: true }, 10_000 + 60_000, 30)).toBeCloseTo(5);
+    expect(expectedPosition({ ...st, loop: false }, 10_000 + 60_000, 30)).toBe(30);
+  });
+  it('Uhrenversatz aus der Probe mit kleinster Laufzeit', () => {
+    // Der SL hat gm=1520 gesendet, 20 ms (halbe Laufzeit) später kommt es lokal bei t=1000 an: Versatz 1520 + 20 - 1000.
+    const samples = [
+      { rtt: 200, gm: 1_300, localAtRecv: 1_000 },
+      { rtt: 40, gm: 1_520, localAtRecv: 1_000 },
+    ];
+    expect(bestClockOffset(samples)).toBeCloseTo(540);
+  });
+});

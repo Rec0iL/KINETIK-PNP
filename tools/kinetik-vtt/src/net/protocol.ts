@@ -3,6 +3,7 @@ import type { Character } from '../model/character';
 import type { RollRecord } from '../dice/roller.svelte';
 import type { AttrKey, ZoneKey } from '../rules';
 import type { MapOp, MapState } from '../map/mapstate';
+import type { MusicState } from '../music/clock';
 
 export const PROTOCOL_VERSION = 1;
 
@@ -71,6 +72,7 @@ export interface SharedState {
   visibility: Visibility;
   notes: string;
   rounds: number;
+  music: MusicState;
 }
 
 export type ServerMsg =
@@ -87,7 +89,7 @@ export type ServerMsg =
   | { t: 'asset-head'; hash: string; name: string; mime: string; size: number; total: number }
   | { t: 'asset-chunk'; hash: string; i: number; data: Uint8Array | ArrayBuffer }
   | { t: 'asset-missing'; hash: string }
-  | { t: 'pong'; ts: number }
+  | { t: 'pong'; ts: number; gm: number }
   | { t: 'kick'; reason: string };
 
 export const ROOM_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';

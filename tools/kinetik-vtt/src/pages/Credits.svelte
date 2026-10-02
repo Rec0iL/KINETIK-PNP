@@ -1,0 +1,36 @@
+<script lang="ts">
+  import { catalog } from '../music/catalog.svelte';
+</script>
+
+<section class="stack wrap">
+  <span class="kicker">KINETIK</span>
+  <h1>Credits</h1>
+
+  <section class="panel">
+    <h2>Musik</h2>
+    <p class="dim">{catalog.note || 'Alle mitgelieferten Titel: Kevin MacLeod (incompetech.com), Creative Commons Namensnennung 4.0.'}</p>
+    <ul class="list">
+      {#each catalog.tracks as t}
+        <li>
+          „{t.title}“ {t.artist} (<a href="https://incompetech.com" target="_blank" rel="noreferrer">incompetech.com</a>)<br />
+          <small class="dim">Licensed under Creative Commons: By Attribution 4.0 License, <a href={t.licenseUrl} target="_blank" rel="noreferrer">creativecommons.org/licenses/by/4.0</a>. Für die App neu kodiert (MP3, 80 kbps).</small>
+        </li>
+      {/each}
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h2>Schriften</h2>
+    <p class="dim">Barlow, Barlow Condensed, Bebas Neue und Oswald (Google Fonts), SIL Open Font License 1.1.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Software</h2>
+    <p class="dim">Svelte, Vite, PeerJS (WebRTC), idb-keyval. Alle unter MIT-ähnlichen Lizenzen. Das Regelwerk KINETIK und diese App gehören zum selben Projekt.</p>
+  </section>
+</section>
+
+<style>
+  .wrap { max-width: 760px; }
+  .list { padding-left: 1.1em; display: grid; gap: 0.6rem; }
+</style>

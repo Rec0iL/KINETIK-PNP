@@ -1,0 +1,122 @@
+{
+  "note": "Alle Titel: Kevin MacLeod (incompetech.com), Lizenz Creative Commons Namensnennung 4.0. Neu kodiert (80 kbps MP3).",
+  "tracks": [
+    {
+      "id": "volatile-reaction",
+      "title": "Volatile Reaction",
+      "artist": "Kevin MacLeod",
+      "file": "music/volatile-reaction.mp3",
+      "category": "Kampf",
+      "tag": "combat",
+      "duration": 165,
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=&search=Volatile%20Reaction",
+      "loop": false
+    },
+    {
+      "id": "killers",
+      "title": "Killers",
+      "artist": "Kevin MacLeod",
+      "file": "music/killers.mp3",
+      "category": "Kampf",
+      "tag": "combat",
+      "duration": 305,
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=&search=Killers",
+      "loop": false
+    },
+    {
+      "id": "cyborg-ninja",
+      "title": "Cyborg Ninja",
+      "artist": "Kevin MacLeod",
+      "file": "music/cyborg-ninja.mp3",
+      "category": "Kampf",
+      "tag": "combat",
+      "duration": 180,
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=&search=Cyborg%20Ninja",
+      "loop": false
+    },
+    {
+      "id": "hot-pursuit",
+      "title": "Hot Pursuit",
+      "artist": "Kevin MacLeod",
+      "file": "music/hot-pursuit.mp3",
+      "category": "Verfolgung",
+      "tag": "chase",
+      "duration": 169,
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=&search=Hot%20Pursuit",
+      "loop": false
+    },
+    {
+      "id": "sneaky-snitch",
+      "title": "Sneaky Snitch",
+      "artist": "Kevin MacLeod",
+      "file": "music/sneaky-snitch.mp3",
+      "category": "Heimlichkeit",
+      "tag": "stealth",
+      "duration": 137,
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=&search=Sneaky%20Snitch",
+      "loop": true
+    },
+    {
+      "id": "hitman",
+      "title": "Hitman",
+      "artist": "Kevin MacLeod",
+      "file": "music/hitman.mp3",
+      "category": "Spannung",
+      "tag": "tension",
+      "duration": 201,
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=&search=Hitman",
+      "loop": true
+    },
+    {
+      "id": "ouroboros",
+      "title": "Ouroboros",
+      "artist": "Kevin MacLeod",
+      "file": "music/ouroboros.mp3",
+      "category": "Düster",
+      "tag": "dark",
+      "duration": 162,
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=&search=Ouroboros",
+      "loop": true
+    },
+    {
+      "id": "spy-glass",
+      "title": "Spy Glass",
+      "artist": "Kevin MacLeod",
+      "file": "music/spy-glass.mp3",
+      "category": "Noir",
+      "tag": "noir",
+      "duration": 227,
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=&search=Spy%20Glass",
+      "loop": true
+    },
+    {
+      "id": "floating-cities",
+      "title": "Floating Cities",
+      "artist": "Kevin MacLeod",
+      "file": "music/floating-cities.mp3",
+      "category": "Ruhig",
+      "tag": "calm",
+      "duration": 184,
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=&search=Floating%20Cities",
+      "loop": true
+    }
+  ]
+}

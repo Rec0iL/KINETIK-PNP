@@ -8,6 +8,7 @@
   import Pips from '../ui/Pips.svelte';
   import TagInput from '../ui/TagInput.svelte';
   import OverrideValue from '../ui/OverrideValue.svelte';
+  import ShieldGauge from '../ui/ShieldGauge.svelte';
 
   let { char }: { char: Character } = $props();
 
@@ -137,10 +138,9 @@
       </div>
       <div class="schutz">
         <span class="lbl">Schutz</span>
-        <label class="field">Art / Kontext<input bind:value={char.resources.schutz.type} placeholder="z.B. Kevlar, gegen Kugeln und Schnitte" /></label>
-        <div class="row">
-          <span class="dim">Aktuell</span><Stepper bind:value={char.resources.schutz.current} min={0} max={9} label="Schutz aktuell" />
-          <span class="dim">Max</span><Stepper bind:value={char.resources.schutz.max} min={0} max={9} warn={char.resources.schutz.max > 3} label="Schutz max" />
+        <div class="shieldrow">
+          <ShieldGauge bind:current={char.resources.schutz.current} bind:max={char.resources.schutz.max} />
+          <label class="field">Art / Kontext<textarea rows="3" bind:value={char.resources.schutz.type} placeholder="z.B. Kevlar, gegen Kugeln und Schnitte"></textarea></label>
         </div>
       </div>
       <div class="passiv">
@@ -260,6 +260,8 @@
   .res { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem 1.6rem; align-items: start; }
   .lbl { display: block; font: 600 0.8rem var(--font-head); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim); }
   .schutz, .passiv, .mom { display: grid; gap: 0.5rem; }
+  .shieldrow { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+  .shieldrow .field { flex: 1; min-width: 160px; }
   .passiv .big { font-size: 2.2rem; color: var(--ink-strong); }
   .actions { margin-top: 1rem; padding-top: 0.9rem; border-top: 1px solid var(--line); }
 

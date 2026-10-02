@@ -15,6 +15,10 @@
   import RollPanel from './sheet/RollPanel.svelte';
   import RollToast from './ui/RollToast.svelte';
   import DiceOverlay from './dice/DiceOverlay.svelte';
+  import MusicRunner from './music/MusicRunner.svelte';
+  import MusicBar from './music/MusicBar.svelte';
+  import Credits from './pages/Credits.svelte';
+  import { loadCatalog } from './music/catalog.svelte';
   import { loadLibrary } from './store/characters.svelte';
   import { loadMoveLibrary } from './store/moves.svelte';
   import { resumeFromSession } from './net/player.svelte';
@@ -26,6 +30,7 @@
   loadLibrary().then(() => resumeFromSession());
   loadAssetIndex().then(() => resumeHostIfActive());
   loadMoveLibrary();
+  loadCatalog();
 
   const nav: { href: string; key: Key; names: string[] }[] = [
     { href: '#/', key: 'nav.home', names: ['home'] },
@@ -79,10 +84,12 @@
   {:else if router.route.name === 'gm'}
     <Gm />
   {:else}
-    <Placeholder title={router.route.name === 'credits' ? t('nav.credits') : '404'} />
+    {#if router.route.name === 'credits'}<Credits />{:else}<Placeholder title="404" />{/if}
   {/if}
 </main>
 
+<MusicRunner />
+<MusicBar />
 <RollToast />
 <DiceOverlay />
 <Toasts />
