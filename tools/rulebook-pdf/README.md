@@ -26,7 +26,7 @@ Ohne Argument öffnet die Oberfläche das zuletzt benutzte Projekt. Das KINETIK-
 ## Ablauf in der Oberfläche
 
 1. **Neues Projekt…**: Regelwerk wählen (`.md`, `.docx`, `.pdf`, `.txt`) und einen leeren Projektordner. Word-Dateien werden lokal über ihre Überschriftenstile umgewandelt, PDF und Text abschnittsweise von agy (Wortlaut bleibt erhalten). Die Überschriften-Ebenen richtet das Tool danach am Original aus: Kapitel sind die Einträge der ersten Ebene im Inhaltsverzeichnis (Word-Stil mit Punktlinien und Seitenzahlen); Teile vor dem ersten solchen Kapitel, die in der größten Schrift gesetzt sind, werden ebenfalls Kapitel. Darunter ergeben die Schriftgrößen der Überschriften die Ebenen, und ein Untertitel in derselben Zeile wird mit seiner Überschrift zusammengeführt. Das Verzeichnis selbst landet nicht im Text. Für ein bereits importiertes Projekt: `rulebook_pdf.py restructure PROJEKT ORIGINAL.pdf` (Sicherung `*.vor-restructure.md`, Bilder von Plätzen, die nur zwischen Kapitel und Abschnitt wechseln, werden mitgenommen). **Das erzeugte Markdown kurz prüfen** (Toolbar: „Quelle öffnen“), vor allem bei PDFs.
-2. **Buch**: Titel, Untertitel, Kicker, Tagline, Kopfzeile, Kapitel-Label, Farben, Schriftgröße, Blocksatz. „Alles automatisch ausfüllen (agy)“ liest den Anfang des Regelwerks und schlägt alle Cover- und Kopfzeilentexte in der Sprache des Buches vor (vorhandene Einträge werden nach Rückfrage ersetzt).
+2. **Buch**: oben der Schalter **Inhalt** (PnP-Regelwerk / Anderes Dokument, siehe „Inhaltstyp“). Titel, Untertitel, Kicker, Tagline, Kopfzeile, Kapitel-Label, Farben, Schriftgröße, Blocksatz. „Alles automatisch ausfüllen (agy)“ liest den Anfang des Regelwerks und schlägt alle Cover- und Kopfzeilentexte in der Sprache des Buches vor (vorhandene Einträge werden nach Rückfrage ersetzt).
 3. **Stil**: Vorlage wählen (Anime Action, Film Noir, Dark Fantasy, Comic …) oder einen freien **Stilwunsch** eintragen, z.B. „soll aussehen wie One Piece“, und **Mit agy verfeinern**. agy macht daraus einen Stil-Suffix, den das gewählte Bildmodell versteht, und schlägt passende Akzentfarben vor. Der Suffix bleibt editierbar. **Komprimieren** neben jedem Feld lässt agy Doppeltes, Widersprüche, Füllwörter und für das gewählte Modell wirkungslose Begriffe entfernen (bei Krea 2 z.B. „masterpiece, best quality“). Was entfernt wurde, steht im Log.
 4. **Engine**: agy-Modell und ComfyUI. „Verbinden“ lädt die Modelle aus dem laufenden ComfyUI. Unter **Bildmodell** stehen alle Modelle mit ihrer erkannten Bauart, die Einstellungen werden beim Auswählen automatisch gesetzt (siehe „Bildmodelle“).
 5. **① Prompts planen**: agy liest das Regelwerk, beschreibt Welt und Genre und schreibt für jeden Bildplatz ein Motiv. Ohne gesetzten Stil schlägt agy auch Stil und Farben vor.
@@ -70,6 +70,21 @@ Bildgröße und Hoch-/Querformat bewertet agy dabei nicht, die gibt das Tool vor
 Den gewählten Stil (z.B. Pixel Art) kennt agy bei Bildkontrolle, „Analysieren“ und Prompt-Erstellung und bewertet ihn nicht als Fehler: Verpixelung, niedrige Auflösung, begrenzte Palette, Dithering oder flache Schattierung werden nicht bemängelt, und widersprüchliche Begriffe (z.B. „pixelated“, „lowres“) kommen nicht in den Negativ-Prompt. Die Prompts selbst bleiben stilfrei, werden aber so geschrieben, dass sie im Stil gut lesbar sind.
 
 Liegt dein Projekt außerhalb aller `trustedWorkspaces`, meldet die Bildkontrolle „agy konnte das Bild nicht öffnen“. Dann den Projektordner (oder einen übergeordneten Ordner) dort eintragen. Erlaube agy dafür **nicht** pauschal alles.
+
+## Inhaltstyp: PnP-Regelwerk oder anderes Dokument
+
+Der Schalter **Inhalt** im Tab „Buch“ (beim Anlegen eines Projekts wird danach gefragt, auf der Kommandozeile `new … --type document`) steuert, wie agy denkt:
+
+| | PnP-Regelwerk (Standard) | Anderes Dokument (Readme, Tutorial, Doku …) |
+| --- | --- | --- |
+| Motive | Szenen aus der Spielwelt, Charaktere in Aktion | Szenen, Gegenstände oder Bildmetaphern aus dem Themengebiet; kein Fantasy- oder Sci-Fi-Beiwerk, keine Screenshots, kein Code, keine Beschriftungen |
+| „Welt“-Feld | Genre, Setting, Epoche, Ton | wird zu „Thema“: Gebiet, Zielgruppe, Ton |
+| Cover | Ikonische Figuren im Kampf | ein klares Sinnbild des Themas |
+| Bildkontrolle und „Analysieren“ | achtet auf falsche Epoche oder Genre, Monster ohne Anlass | achtet auf Fantasy-Fremdkörper, falsches Fachgebiet und Stockfoto-Beliebigkeit |
+| Stilvorlagen | Anime Action, Film Noir, Dark Fantasy … | Technische Illustration, Flat Vector, Isometrisch, Blaupause, Aquarell, Editorial-Foto, Minimalistisch, Pixel Art |
+| PDF-/Text-Import | Regelwerk-Wortlaut bleibt erhalten | zusätzlich bleiben Code, Befehle und Pfade in Backticks und Codeblöcken |
+
+Das Umschalten ändert nur neue agy-Anfragen. Vorhandene Prompts bleiben stehen; zum Ersetzen „Prompts planen“ mit „vorhandene überschreiben“ ausführen. Das Layout selbst ist für beide Typen gleich.
 
 ## Bilder im Regelwerk selbst
 

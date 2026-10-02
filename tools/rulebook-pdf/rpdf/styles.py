@@ -56,6 +56,57 @@ PRESETS = {
     },
 }
 
+DOC_PRESETS = {
+    "Technische Illustration": {
+        "style": "clean technical illustration, precise linework, muted blue-gray palette, soft studio lighting, "
+                 "isometric details, blueprint-like clarity, highly detailed, high quality",
+        "accent": "#4aa3ff", "accent2": "#ffb347",
+    },
+    "Flat Vector / Infografik": {
+        "style": "flat vector illustration, geometric shapes, limited bright palette, clean edges, soft gradients, "
+                 "modern editorial style, simple readable composition",
+        "accent": "#3ddc97", "accent2": "#ff6b6b",
+    },
+    "Isometrisch (3D)": {
+        "style": "isometric 3d illustration, soft pastel colors, clean smooth shading, miniature diorama look, "
+                 "soft shadows, tidy composition",
+        "accent": "#7bdff2", "accent2": "#f7a1c4",
+    },
+    "Blaupause": {
+        "style": "blueprint style technical drawing, white linework on deep blue, grid paper, engineering sketch, "
+                 "annotated look without readable text, precise",
+        "accent": "#9ad1ff", "accent2": "#ffd166",
+    },
+    "Aquarell-Skizze": {
+        "style": "loose watercolor sketch with fine ink linework, warm paper texture, light airy colors, "
+                 "hand-drawn feel, soft edges",
+        "accent": "#e0b062", "accent2": "#5fa36b",
+    },
+    "Editorial-Foto": {
+        "style": "editorial photography, natural light, shallow depth of field, realistic, high detail, "
+                 "calm professional atmosphere",
+        "accent": "#f2c14e", "accent2": "#5bc0be",
+    },
+    "Minimalistisch": {
+        "style": "minimalist illustration, large calm shapes, two-tone palette, generous negative space, "
+                 "subtle grain, elegant composition",
+        "accent": "#ff8a5b", "accent2": "#6ec6ff",
+    },
+    "Retro Pixel Art": {
+        "style": "16-bit pixel art, retro aesthetic, clean pixel outlines, limited vibrant palette, "
+                 "crisp dithering, pixel-perfect rendering",
+        "accent": "#ffd23f", "accent2": "#3bceac",
+    },
+}
+
+CONTENT_TYPES = {"rulebook": "PnP-Regelwerk", "document": "Anderes Dokument (Readme, Tutorial, Doku …)"}
+
+
+def presets_for(kind):
+    """Style presets that fit the content type."""
+    return DOC_PRESETS if kind == "document" else PRESETS
+
+
 CUSTOM = "Eigener Stil"
 
 

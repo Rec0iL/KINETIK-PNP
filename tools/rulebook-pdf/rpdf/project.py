@@ -38,6 +38,7 @@ DEFAULTS = {
         "auto_fix": True,          # rewrite the prompt and regenerate when an image does not fit
         "rounds": 1,
     },
+    "content_type": "rulebook",    # rulebook (PnP) | document (README, tutorial, docs ...): changes the agy prompts
     "style_preset": "",
     "style_wish": "",
     "style": "",
@@ -210,9 +211,10 @@ class Project:
         return self.entry(key).get("negative") or self.config["negative"]
 
 
-def create(root, source, output=None):
+def create(root, source, output=None, content_type="rulebook"):
     """Create a new project folder for `source` (a Markdown file)."""
     p = Project(root)
+    p.config["content_type"] = content_type
     p.config["source"] = str(Path(source).resolve())
     p.config["output"] = output or str(Path(root).resolve() / (Path(source).stem + ".pdf"))
     doc = p.document()

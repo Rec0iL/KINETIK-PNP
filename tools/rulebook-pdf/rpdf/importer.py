@@ -22,7 +22,7 @@ CHUNK_CHARS = 8000
 HEADING_STYLE_RE = re.compile(r"(?i)(heading|berschrift|titre|titolo|titulo|kop)\s*(\d)")
 
 
-def to_markdown(src, dest, ctx, model=None):
+def to_markdown(src, dest, ctx, model=None, kind="rulebook"):
     src, dest = Path(src), Path(dest)
     ext = src.suffix.lower()
     if ext in (".md", ".markdown"):
@@ -30,7 +30,7 @@ def to_markdown(src, dest, ctx, model=None):
     elif ext == ".docx":
         dest.write_text(docx_to_markdown(src, dest.parent / "media", ctx), encoding="utf-8")
     elif ext == ".pdf":
-        md = _llm_restructure(pdf_text(src, dest.parent / "media", ctx), ctx, model)
+        md = _llm_restructure(pdf_text(src, dest.parent / "media", ctx), ctx, model, kind)
         toc = toc_from_pdf(src)
         md, report = relevel_from_pdf(md, src, toc)
         if report and report[0].startswith("Keine Schriftinformationen"):
@@ -40,7 +40,8 @@ def to_markdown(src, dest, ctx, model=None):
             ctx.log(line)
         dest.write_text(md, encoding="utf-8")
     elif ext == ".txt":
-        dest.write_text(_llm_restructure(src.read_text(encoding="utf-8", errors="replace"), ctx, model), encoding="utf-8")
+        dest.write_text(_llm_restructure(src.read_text(encoding="utf-8", errors="replace"), ctx, model, kind),
+                        encoding="utf-8")
     else:
         raise ValueError(f"Format {ext} wird nicht unterstützt (md, docx, pdf, txt).")
     ctx.log(f"Markdown geschrieben: {dest}")
@@ -464,7 +465,7 @@ def normalize_heading_levels(md, first):
     return "\n".join(out)
 
 
-def _llm_restructure(text, ctx, model=None):
+def _llm_restructure(text, ctx, model=None, kind="rulebook"):
     text = strip_toc(text)
     chunks = list(_chunks(text))
     out, headings = [], []
@@ -472,7 +473,7 @@ def _llm_restructure(text, ctx, model=None):
         ctx.check()
         ctx.progress(i, len(chunks))
         ctx.log(f"agy: Abschnitt {i + 1}/{len(chunks)} in Markdown umwandeln …")
-        md = planner.convert_to_markdown(chunk, headings, first=(i == 0), model=model)
+        md = planner.convert_to_markdown(chunk, headings, first=(i == 0), model=model, kind=kind)
         md = normalize_heading_levels(md, first=(i == 0))
         headings += re.findall(r"(?m)^#{1,4} .+$", md)
         out.append(md.strip())

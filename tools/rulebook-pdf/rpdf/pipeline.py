@@ -86,7 +86,7 @@ def plan(project, ctx, force=False, keys=None, suggest_style=None):
 
     if need_global:
         ctx.log("agy: Welt, Stil, Cover und Hintergrund …")
-        g = planner.plan_global(doc, cfg.get("title") or doc.title or "", model)
+        g = planner.plan_global(doc, cfg.get("title") or doc.title or "", model, _kind(project))
         cfg["world"] = g["world"]
         if suggest_style or (suggest_style is None and not cfg.get("style")):
             cfg["style"] = g["style"]
@@ -114,7 +114,7 @@ def plan(project, ctx, force=False, keys=None, suggest_style=None):
         for attempt in range(2):
             try:
                 got.update(planner.plan_chapter(chapters[ck], pending, _world(project), model,
-                                                  project.config.get('style', '')))
+                                                  project.config.get('style', ''), _kind(project)))
             except planner.AgyError as e:
                 ctx.log(f"agy-Fehler bei „{title}“: {e}")
             pending = [s for s in chapter_slots if s.key not in got]
@@ -125,7 +125,8 @@ def plan(project, ctx, force=False, keys=None, suggest_style=None):
         # last resort: ask for the remaining slots one by one
         for s in list(pending):
             try:
-                got[s.key] = planner.plan_single(s, _world(project), model, style=project.config.get('style', ''))
+                got[s.key] = planner.plan_single(s, _world(project), model, style=project.config.get('style', ''),
+                                              kind=_kind(project))
                 pending.remove(s)
             except planner.AgyError as e:
                 ctx.log(f"agy-Fehler bei „{s.title}“: {e}")
@@ -139,6 +140,11 @@ def plan(project, ctx, force=False, keys=None, suggest_style=None):
     project.save()
 
 
+def _kind(project):
+    """Content type of the project: "rulebook" (PnP) or "document" (README, tutorial, ...)."""
+    return project.config.get("content_type") or "rulebook"
+
+
 def _world(project):
     """World description plus what the selected image model understands."""
     from .styles import model_hint
@@ -148,7 +154,7 @@ def _world(project):
 def replan_one(project, key, hint="", ctx=None):
     slot = next(s for s in project.slots() if s.key == key)
     prompt = planner.plan_single(slot, _world(project), project.config["agy"].get("model") or None, hint,
-                                 project.config.get("style", ""))
+                                 project.config.get("style", ""), _kind(project))
     project.entry(key).update(prompt=prompt, include_style=True)
     project.save_manifest()
     return prompt
@@ -210,7 +216,8 @@ def _check_and_fix(project, client, cfg, slot, ctx, fix, rounds):
         ctx.check()
         e = project.entry(slot.key)
         result = planner.check_image(project.image_path(slot.key), project.build_dir / "qc" / slot.key,
-                                     slot, e.get("prompt", ""), _world(project), model, project.config.get("style", ""))
+                                     slot, e.get("prompt", ""), _world(project), model, project.config.get("style", ""),
+                                     _kind(project))
         e["qc"] = {"fits": result["fits"], "problems": result["problems"]}
         project.save_manifest()
         if result["fits"]:
@@ -253,7 +260,7 @@ def refine_style(project, wish):
     from .styles import model_hint
     cfg = project.config
     return planner.refine_style(wish, cfg.get("style", ""), cfg.get("world", ""),
-                                model_hint(cfg["comfy"]), cfg["agy"].get("model") or None)
+                                model_hint(cfg["comfy"]), cfg["agy"].get("model") or None, _kind(project))
 
 
 COVER_KEYS = ("title", "subtitle", "kicker", "tagline", "running_title", "chapter_label")
@@ -265,7 +272,7 @@ def suggest_cover(project, current=None):
     chapters = [c.full_title for c in doc.chapters]
     current = {k: v for k, v in (current or {}).items() if v}
     r = planner.suggest_cover(doc.title or "", doc.intro_md, chapters, current,
-                              project.config["agy"].get("model") or None)
+                              project.config["agy"].get("model") or None, _kind(project))
     out = {k: str(r.get(k, "")).strip() for k in COVER_KEYS}
     if not out["title"]:
         out["title"] = doc.title or current.get("title", "")
@@ -315,10 +322,11 @@ def analyse(project, key, wish="", ctx=None):
     return planner.analyse_image(project.image_path(key), project.build_dir / "qc" / key, slot,
                                  e.get("prompt", ""), project.negative(key), project.config.get("world", ""),
                                  model_hint(project.config["comfy"]), wish,
-                                 project.config["agy"].get("model") or None, project.config.get("style", ""))
+                                 project.config["agy"].get("model") or None, project.config.get("style", ""),
+                                 _kind(project))
 
 
 def compress_field(project, kind, text):
     from .styles import model_hint
     return planner.compress(text, kind, model_hint(project.config["comfy"]),
-                            project.config["agy"].get("model") or None)
+                            project.config["agy"].get("model") or None, _kind(project))

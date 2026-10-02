@@ -9,7 +9,7 @@ from PySide6.QtCore import QSettings, QSize, Qt, QThread, QUrl, Signal
 from PySide6.QtGui import QAction, QColor, QDesktopServices, QFont, QIcon, QPalette, QPixmap
 from PySide6.QtWidgets import (
     QApplication, QCheckBox, QColorDialog, QComboBox, QDoubleSpinBox, QFileDialog, QFormLayout,
-    QFrame, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QListWidget, QListWidgetItem, QMainWindow,
+    QFrame, QGridLayout, QHBoxLayout, QInputDialog, QLabel, QLineEdit, QListWidget, QListWidgetItem, QMainWindow,
     QMessageBox, QPlainTextEdit, QProgressBar, QPushButton, QScrollArea, QSizePolicy, QSpinBox, QSplitter,
     QTabWidget, QToolBar, QVBoxLayout, QWidget,
 )
@@ -262,6 +262,14 @@ class MainWindow(QMainWindow):
         f = QFormLayout(w)
         self.ed_source = QLineEdit()
         self.ed_output = QLineEdit()
+        self.cb_kind = QComboBox()
+        for key, label in styles.CONTENT_TYPES.items():
+            self.cb_kind.addItem(label, key)
+        self.cb_kind.setToolTip("Bestimmt, wie agy Bild-Prompts schreibt und Bilder bewertet: "
+                                "PnP-Regelwerk = Fantasy-/Rollenspiel-Szenen, Anderes Dokument = "
+                                "Motive passend zum Thema (Readme, Tutorial, Dokumentation …).")
+        self.cb_kind.currentIndexChanged.connect(self._kind_changed)
+        f.addRow("Inhalt", self.cb_kind)
         f.addRow("Quelle (.md)", path_row(self.ed_source, self._pick_source))
         f.addRow("PDF-Ausgabe", path_row(self.ed_output, self._pick_output))
         f.addRow(section_label("Cover & Kopfzeile"))
@@ -314,7 +322,7 @@ class MainWindow(QMainWindow):
         w = QWidget()
         f = QFormLayout(w)
         self.cb_preset = QComboBox()
-        self.cb_preset.addItems([styles.CUSTOM] + list(styles.PRESETS))
+        self.cb_preset.addItems([styles.CUSTOM] + list(styles.presets_for("rulebook")))
         self.cb_preset.activated.connect(self._apply_preset)
         f.addRow("Vorlage", self.cb_preset)
         self.ed_wish = text_box(56)
@@ -335,7 +343,8 @@ class MainWindow(QMainWindow):
         f.addRow(self._field_head("Negativ-Prompt (Standard für alle Bilder)", "negative", self.ed_negative))
         f.addRow(self.ed_negative)
         self.ed_world = text_box(80)
-        f.addRow(self._field_head("Welt (von agy erkannt, für alle Prompts)", "world", self.ed_world))
+        self.world_head = self._field_head("Welt (von agy erkannt, für alle Prompts)", "world", self.ed_world)
+        f.addRow(self.world_head)
         f.addRow(self.ed_world)
         hint = QLabel("Tipp: Stil ändern → Abschnitt wählen → „Vorschau“. Passt es, mit "
                       "„vorhandene überschreiben“ neu planen und „Alle Bilder neu“.")
@@ -350,6 +359,7 @@ class MainWindow(QMainWindow):
         h = QHBoxLayout(row)
         h.setContentsMargins(0, 8, 0, 0)
         label = section_label(title)
+        row.label = label
         label.setWordWrap(True)
         label.setMinimumWidth(10)
         label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
@@ -585,8 +595,12 @@ class MainWindow(QMainWindow):
         self.col_ink.set_color(t["ink"])
         self.col_accent.set_color(t["accent"])
         self.col_accent2.set_color(t["accent2"])
+        self.cb_kind.blockSignals(True)
+        self.cb_kind.setCurrentIndex(max(0, self.cb_kind.findData(c.get("content_type") or "rulebook")))
+        self.cb_kind.blockSignals(False)
+        self._refresh_kind_ui()
         preset = c.get("style_preset") or styles.CUSTOM
-        self.cb_preset.setCurrentText(preset if preset in styles.PRESETS else styles.CUSTOM)
+        self.cb_preset.setCurrentText(preset if preset in styles.presets_for(self._kind()) else styles.CUSTOM)
         self.ed_wish.setPlainText(c.get("style_wish", ""))
         self.ed_style.setPlainText(c.get("style", ""))
         self.ed_negative.setPlainText(c.get("negative", ""))
@@ -628,6 +642,7 @@ class MainWindow(QMainWindow):
                           accent=self.col_accent.color, accent2=self.col_accent2.color)
         preset = self.cb_preset.currentText()
         c["style_preset"] = "" if preset == styles.CUSTOM else preset
+        c["content_type"] = self._kind()
         c["style_wish"] = self.ed_wish.toPlainText().strip()
         c["style"] = self.ed_style.toPlainText().strip()
         c["negative"] = self.ed_negative.toPlainText().strip()
@@ -661,10 +676,17 @@ class MainWindow(QMainWindow):
         self._refresh_slots()
 
     def new_project(self):
-        src, _ = QFileDialog.getOpenFileName(self, "Regelwerk wählen", str(Path.home()),
-                                             "Regelwerke (*.md *.markdown *.docx *.pdf *.txt)")
+        src, _ = QFileDialog.getOpenFileName(self, "Regelwerk oder Dokument wählen", str(Path.home()),
+                                             "Dokumente (*.md *.markdown *.docx *.pdf *.txt)")
         if not src:
             return
+        labels = list(styles.CONTENT_TYPES.values())
+        current = styles.CONTENT_TYPES[self._kind()]
+        choice, ok = QInputDialog.getItem(self, "Inhalt", "Was für ein Dokument ist das?", labels,
+                                          labels.index(current), False)
+        if not ok:
+            return
+        kind = next(k for k, v in styles.CONTENT_TYPES.items() if v == choice)
         folder = QFileDialog.getExistingDirectory(self, "Ordner für das neue Projekt (leer)", str(Path(src).parent))
         if not folder:
             return
@@ -678,9 +700,9 @@ class MainWindow(QMainWindow):
         def work(ctx):
             md = srcp
             if srcp.suffix.lower() not in (".md", ".markdown"):
-                ctx.log("Importiere Regelwerk – bitte das Ergebnis danach kurz prüfen.")
-                md = importer.to_markdown(srcp, root / (srcp.stem + ".md"), ctx, agy_model)
-            return create(root, md).root
+                ctx.log("Importiere Dokument – bitte das Ergebnis danach kurz prüfen.")
+                md = importer.to_markdown(srcp, root / (srcp.stem + ".md"), ctx, agy_model, kind)
+            return create(root, md, content_type=kind).root
 
         self._start(work, on_done=lambda r: self.load_project(r))
 
@@ -987,10 +1009,36 @@ class MainWindow(QMainWindow):
         self._start(lambda ctx: pipeline.suggest_cover(self.project, current), on_done=done,
                     label="agy füllt Cover & Kopfzeile aus …")
 
+    def _kind(self):
+        return self.cb_kind.currentData() or "rulebook"
+
+    def _refresh_kind_ui(self):
+        """Presets, labels and hints that depend on the content type (PnP rulebook / other document)."""
+        doc = self._kind() == "document"
+        keep = self.cb_preset.currentText()
+        self.cb_preset.blockSignals(True)
+        self.cb_preset.clear()
+        self.cb_preset.addItems([styles.CUSTOM] + list(styles.presets_for(self._kind())))
+        self.cb_preset.setCurrentText(keep if keep in styles.presets_for(self._kind()) else styles.CUSTOM)
+        self.cb_preset.blockSignals(False)
+        self.world_head.label.setText("Thema (von agy erkannt, für alle Prompts)" if doc
+                                      else "Welt (von agy erkannt, für alle Prompts)")
+        self.ed_wish.setPlaceholderText(
+            "z.B. „technische Blaupause“ oder „freundliche Flat-Illustrationen in Blau“" if doc else
+            "z.B. „soll aussehen wie One Piece“ oder „düster wie Dark Souls, aber farbig“")
+
+    def _kind_changed(self):
+        self._refresh_kind_ui()
+        if self.project:
+            self.project.config["content_type"] = self._kind()
+            self._log("Inhalt: " + styles.CONTENT_TYPES[self._kind()] +
+                      " – neue Prompts und Bildbewertungen von agy richten sich danach "
+                      "(vorhandene Prompts bleiben; zum Ersetzen „Prompts planen“ mit „vorhandene überschreiben“).")
+
     def _apply_preset(self):
         name = self.cb_preset.currentText()
-        if name in styles.PRESETS:
-            p = styles.PRESETS[name]
+        if name in styles.presets_for(self._kind()):
+            p = styles.presets_for(self._kind())[name]
             self.ed_style.setPlainText(p["style"])
             self.col_accent.set_color(p["accent"])
             self.col_accent2.set_color(p["accent2"])

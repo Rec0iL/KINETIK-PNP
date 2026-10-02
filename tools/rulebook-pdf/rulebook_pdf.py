@@ -2,7 +2,7 @@
 """rulebook-pdf: illustrated PDFs from Markdown rulebooks.
 
   python3 rulebook_pdf.py gui [PROJEKT]              Oberfläche starten
-  python3 rulebook_pdf.py new PROJEKT QUELLE          Projekt anlegen (md, docx, pdf, txt)
+  python3 rulebook_pdf.py new PROJEKT QUELLE          Projekt anlegen (md, docx, pdf, txt), --type document für Readme/Tutorial
   python3 rulebook_pdf.py plan PROJEKT [--force]      Bild-Prompts mit agy schreiben
   python3 rulebook_pdf.py images PROJEKT [--all]      Fehlende (oder alle) Bilder generieren
   python3 rulebook_pdf.py check PROJEKT [--no-fix]    Bilder mit agy prüfen (und unpassende neu machen)
@@ -23,6 +23,8 @@ def main():
     ap.add_argument("command", choices=["gui", "new", "plan", "images", "check", "build", "all", "detect", "restructure"])
     ap.add_argument("project", nargs="?")
     ap.add_argument("source", nargs="?")
+    ap.add_argument("--type", choices=["rulebook", "document"], default="rulebook",
+                    help="new: PnP-Regelwerk (Standard) oder anderes Dokument (Readme, Tutorial, Doku)")
     ap.add_argument("--force", action="store_true", help="plan: vorhandene Prompts neu schreiben")
     ap.add_argument("--all", action="store_true", help="images: auch vorhandene Bilder neu generieren")
     ap.add_argument("--no-fix", action="store_true", help="check: nur prüfen, nichts neu generieren")
@@ -51,8 +53,8 @@ def run_command(args, ap, ctx):
         root.mkdir(parents=True, exist_ok=True)
         src = Path(args.source)
         if src.suffix.lower() not in (".md", ".markdown"):
-            src = importer.to_markdown(src, root / (src.stem + ".md"), ctx, proj.DEFAULTS["agy"]["model"])
-        p = proj.create(root, src)
+            src = importer.to_markdown(src, root / (src.stem + ".md"), ctx, proj.DEFAULTS["agy"]["model"], args.type)
+        p = proj.create(root, src, content_type=args.type)
         print(f"Projekt angelegt: {p.root} ({len(p.manifest)} Bild-Plätze)")
         return
 

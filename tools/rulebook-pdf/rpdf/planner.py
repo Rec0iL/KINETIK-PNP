@@ -13,7 +13,7 @@ from pathlib import Path
 CHAPTER_TEXT_LIMIT = 14000
 OVERVIEW_TEXT_LIMIT = 6000
 
-RULES = """Rules for every prompt:
+RULEBOOK_RULES = """Rules for every prompt:
 - One concrete, vivid scene that shows what the section is about (its mechanic, theme or example),
   set in the world/genre of this rulebook.
 - English, 25-60 words: subjects, action, setting, mood, camera angle. Wide landscape composition
@@ -22,6 +22,59 @@ RULES = """Rules for every prompt:
 - No readable text, letters, numbers, logos, signs with writing, UI elements or panels.
 - People should match the setting. No monsters, creatures or wings unless the section is about them.
 - Vary characters, places and camera angles between sections so the book does not repeat itself."""
+
+DOCUMENT_RULES = """Rules for every prompt:
+- One concrete, clear illustration that makes visible what the section is about: a scene, object, tool,
+  workflow, place or visual metaphor from the domain of this document. Show the real subject matter
+  rather than generic stock imagery; for abstract topics (configuration, interfaces, theory) use a
+  fitting visual metaphor instead of screens or code.
+- English, 25-60 words: subjects, action, setting, mood, camera angle. Wide landscape composition
+  unless stated otherwise.
+- Do NOT add art-style words (medium, line art, rendering, quality tags) - a style suffix is appended automatically.
+- No readable text, letters, numbers, code, logos, screenshots, UI elements, charts or labeled diagrams.
+- Stay realistic and inside the document's domain: no fantasy, monsters, magic or sci-fi elements unless
+  the topic itself is about them. People, if shown, match the audience and setting.
+- Vary subjects, places and camera angles between sections so the document does not repeat itself."""
+
+PROFILES = {
+    "rulebook": dict(
+        noun="tabletop RPG rulebook", book="rulebook", rules=RULEBOOK_RULES, world_label="World of the book",
+        judge_misfit="Elements that do not belong (monsters or wings when not asked for, wrong era, wrong genre)?",
+        judge_role="an art director of a published rulebook",
+        world_desc="describing genre, setting, era and tone, for other illustrators",
+        style_for="that suits this book's genre",
+        cover="a portrait-format cover scene with the book's iconic characters in dramatic action; keep the "
+              "lower third as calm dark empty space for the title.",
+        background="an abstract, dark, low-contrast texture fitting the setting, for page backgrounds; "
+                   "no people, no objects in focus.",
+        cover_texts='subtitle: a short subtitle line, e.g. the system or genre ("Cinematic Action Roleplaying"); '
+                    'empty if none fits.\nkicker: a short line over the title in capital letters, 2-4 keywords '
+                    'separated by " · " (genre, setting, tone); empty if none fits.',
+        convert_extra=""),
+    "document": dict(
+        noun="document (README, tutorial, guide, documentation or similar)", book="document",
+        rules=DOCUMENT_RULES, world_label="Topic and tone of the document",
+        judge_misfit="Elements that do not belong (fantasy or sci-fi elements, wrong industry or era, a different "
+                     "subject than the section)? Does it show the topic instead of generic stock imagery?",
+        judge_role="an art director of a published technical or educational document",
+        world_desc="describing the topic, domain, audience and tone, for other illustrators",
+        style_for="that suits this document's subject and audience",
+        cover="a portrait-format cover illustration that symbolizes the document's subject in one clear "
+              "image; keep the lower third as calm empty space for the title.",
+        background="a subtle, low-contrast abstract texture or pattern fitting the topic, for page backgrounds; "
+                   "no people, no objects in focus.",
+        cover_texts='subtitle: a short subtitle line that says what the document is (for example "A practical '
+                    'guide" or "User documentation"); empty if none fits.\nkicker: a short line over the title '
+                    'in capital letters, 2-4 keywords separated by " · " (topic, audience, kind of document); '
+                    'empty if none fits.',
+        convert_extra='- Keep code, commands, file paths and configuration exactly as written: inline code in '
+                      'backticks, code blocks in fenced ``` blocks with their language if known.\n'),
+}
+RULES = RULEBOOK_RULES      # kept for callers that still import it
+
+
+def profile(kind):
+    return PROFILES.get(kind or "rulebook", PROFILES["rulebook"])
 
 
 def style_for_planning(style):
@@ -150,12 +203,13 @@ def run(prompt, schema, model=None, timeout=600):
     raise AgyError(f"agy-Fehler ({data.get('status')}): {(data.get('error') or data.get('response') or '')[:400]}")
 
 
-def plan_global(doc, title, model=None):
+def plan_global(doc, title, model=None, kind="rulebook"):
     """Genre summary, a style suggestion, theme colors, cover and background prompts."""
     outline = "\n".join(f"- {c.full_title}" + "".join(f"\n  - {s.title}" for s in c.sections)
                         for c in doc.chapters)
     sample = doc.intro_md + "\n\n" + "\n\n".join(c.intro_md for c in doc.chapters)
-    prompt = f"""You are the art director for an illustrated tabletop RPG rulebook PDF.
+    pr = profile(kind)
+    prompt = f"""You are the art director for an illustrated {pr['noun']} PDF.
 Book title: {title}
 
 Table of contents:
@@ -165,17 +219,14 @@ Excerpt:
 {sample[:OVERVIEW_TEXT_LIMIT]}
 
 Return:
-- world: 2-3 sentences (English) describing genre, setting, era and tone, for other illustrators.
-- style: a comma-separated art-style suffix (English, 15-35 words) for an image model that suits this
-  book's genre: medium, line work, lighting, color mood, plus quality tags. No subjects.
+- world: 2-3 sentences (English) {pr['world_desc']}.
+- style: a comma-separated art-style suffix (English, 15-35 words) for an image model {pr['style_for']}: medium, line work, lighting, color mood, plus quality tags. No subjects.
 - accent, accent2: two hex colors for the PDF layout (headings and highlights) that fit the style,
   readable on a near-black background.
-- cover: a portrait-format cover scene with the book's iconic characters in dramatic action; keep the
-  lower third as calm dark empty space for the title.
-- background: an abstract, dark, low-contrast texture fitting the setting, for page backgrounds;
-  no people, no objects in focus.
+- cover: {pr['cover']}
+- background: {pr['background']}
 
-{RULES}"""
+{pr['rules']}"""
     schema = {"type": "object", "properties": {
         "world": {"type": "string"}, "style": {"type": "string"},
         "accent": {"type": "string"}, "accent2": {"type": "string"},
@@ -184,7 +235,7 @@ Return:
     return run(prompt, schema, model)
 
 
-def plan_chapter(chapter, slots, world, model=None, style=""):
+def plan_chapter(chapter, slots, world, model=None, style="", kind="rulebook"):
     """Prompts for the chapter banner and its section slots: {key: prompt}."""
     text = chapter.intro_md + "".join(f"\n\n### {s.title}\n{s.body_md}" for s in chapter.sections)
     def describe(s):
@@ -196,8 +247,9 @@ def plan_chapter(chapter, slots, world, model=None, style=""):
                     f'- a different moment, place or character than its section image')
         return f'section "{s.title}"'
     wanted = "\n".join(f"- {s.key}: {describe(s)}" for s in slots)
-    prompt = f"""You write prompts for an image model that illustrates a tabletop RPG rulebook.
-World of the book: {world}
+    pr = profile(kind)
+    prompt = f"""You write prompts for an image model that illustrates a {pr['noun']}.
+{pr['world_label']}: {world}
 {style_for_planning(style)}
 
 Chapter "{chapter.full_title}":
@@ -206,7 +258,7 @@ Chapter "{chapter.full_title}":
 Write one prompt for each of these keys:
 {wanted}
 
-{RULES}"""
+{pr['rules']}"""
     schema = {"type": "object", "properties": {"images": {"type": "array", "items": {
         "type": "object", "properties": {"key": {"type": "string"}, "prompt": {"type": "string"}},
         "required": ["key", "prompt"]}}}, "required": ["images"]}
@@ -238,10 +290,11 @@ def _orientation(slot):
     return "wide landscape"
 
 
-def plan_single(slot, world, model=None, hint="", style=""):
+def plan_single(slot, world, model=None, hint="", style="", kind="rulebook"):
     """New prompt for one slot, optionally steered by a user hint."""
-    prompt = f"""You write prompts for an image model that illustrates a tabletop RPG rulebook.
-World of the book: {world}
+    pr = profile(kind)
+    prompt = f"""You write prompts for an image model that illustrates a {pr['noun']}.
+{pr['world_label']}: {world}
 {style_for_planning(style)}
 
 Section "{slot.title}":
@@ -251,7 +304,7 @@ Write one fresh image description for this {slot.kind} image ({_orientation(slot
 {'Keep the lower third dark and empty for the title.' if slot.kind == 'cover' else ''}
 Put the description itself into "image_prompt" - not a note that you wrote it.
 
-{RULES}"""
+{pr['rules']}"""
     schema = {"type": "object", "properties": {"image_prompt": {
         "type": "string", "description": "The image description itself, 25-60 English words."}},
         "required": ["image_prompt"]}
@@ -312,10 +365,11 @@ IMAGE_FORMAT_NOTE = ("Do NOT judge or mention image size, aspect ratio or orient
                      "the tool sets the format on purpose.")
 
 
-def check_image(image_path, work_dir, slot, prompt_used, world, model=None, style=""):
+def check_image(image_path, work_dir, slot, prompt_used, world, model=None, style="", kind="rulebook"):
     """Let agy look at one generated image and judge whether it fits its section."""
-    prompt = f"""The image was generated to illustrate a tabletop RPG rulebook.
-World of the book: {world or 'unknown'}
+    pr = profile(kind)
+    prompt = f"""The image was generated to illustrate a {pr['noun']}.
+{pr['world_label']}: {world or 'unknown'}
 {style_for_judging(style)}
 Section: "{slot.title}"
 Section text (excerpt):
@@ -323,10 +377,10 @@ Section text (excerpt):
 
 Intended motif: {prompt_used}
 
-Judge it like an art director of a published rulebook:
-- Does it show the intended motif and fit the section and the world?
+Judge it like {pr['judge_role']}:
+- Does it show the intended motif and fit the section and the {pr['book']}'s topic?
 - Garbled or readable text, letters, logos? Broken anatomy (extra limbs, fused hands, faces)?
-- Elements that do not belong (monsters or wings when not asked for, wrong era, wrong genre)?
+- {pr['judge_misfit']}
 {IMAGE_FORMAT_NOTE}
 fits=true only if it is good enough to print.
 problems: short German bullet points. better_prompt: an improved English motif prompt (25-60 words,
@@ -338,11 +392,12 @@ no style words, no text in the image) that avoids the problems."""
 
 
 def analyse_image(image_path, work_dir, slot, prompt_used, negative_used, world, model_hint, wish="", model=None,
-                  style=""):
+                  style="", kind="rulebook"):
     """agy looks at the image and fine-tunes motif prompt and negative prompt for the next render."""
-    prompt = f"""You are fine-tuning the prompt for an image that illustrates a tabletop RPG rulebook.
+    pr = profile(kind)
+    prompt = f"""You are fine-tuning the prompt for an image that illustrates a {pr['noun']}.
 {model_hint}
-World of the book: {world or 'unknown'}
+{pr['world_label']}: {world or 'unknown'}
 {style_for_judging(style)}
 Section: "{slot.title}"
 Section text (excerpt):
@@ -368,6 +423,9 @@ Compare the image with the section and the motif prompt. Then write:
     return _run_on_image(image_path, work_dir, prompt, schema, model)
 
 
+COMPRESS_TASK_DOCUMENT = {"world": "a short description of the document's topic, audience and tone that is given to "
+                                   "other illustrators"}
+
 COMPRESS_TASK = {
     "style": "a style suffix that is appended to every image prompt (medium, line work, palette, "
              "lighting, quality tags)",
@@ -377,12 +435,12 @@ COMPRESS_TASK = {
 }
 
 
-def compress(text, kind, model_hint, model=None):
+def compress(text, kind, model_hint, model=None, content="rulebook"):
     """Remove redundant or ineffective parts from a prompt field."""
     prompt = f"""You are an expert prompt engineer for image-generation models.
 {model_hint}
 
-This text is {COMPRESS_TASK[kind]}:
+This text is {(COMPRESS_TASK_DOCUMENT if content == "document" else {}).get(kind) or COMPRESS_TASK[kind]}:
 ---
 {text}
 ---
@@ -396,11 +454,11 @@ compressed: the result. removed: short German list of what you removed and why."
     return run(prompt, schema, model)
 
 
-def refine_style(wish, base_style, world, model_hint, model=None):
+def refine_style(wish, base_style, world, model_hint, model=None, kind="rulebook"):
     """Turn a free-text style wish ("should look like One Piece") into a style suffix."""
     prompt = f"""You are an expert prompt engineer for image-generation models.
 {model_hint}
-World of the book being illustrated: {world or 'tabletop RPG rulebook'}
+{profile(kind)['world_label']} being illustrated: {world or profile(kind)['noun']}
 Current style suffix: {base_style or '(none)'}
 User's style wish (any language): {wish}
 
@@ -416,9 +474,10 @@ near-black background, and explain your choice in one short sentence (German).""
     return run(prompt, schema, model)
 
 
-def suggest_cover(title, intro, chapters, current, model=None):
+def suggest_cover(title, intro, chapters, current, model=None, kind="rulebook"):
     """Propose the cover and running-head texts from the book's own text."""
-    prompt = f"""You fill in the cover and page-header texts of a tabletop RPG rulebook PDF.
+    pr = profile(kind)
+    prompt = f"""You fill in the cover and page-header texts of a {pr['noun']} PDF.
 Write every text in the language of the book (the text below), never translate it.
 Use only facts that are in the text: do not invent version numbers, authors, editions or claims.
 Book title found in the text: {title or '(none)'}
@@ -430,8 +489,7 @@ Start of the book:
 Texts the user already has (improve or keep them where they are fine): {current}
 
 title: the book's title as it should stand on the cover (no subtitle).
-subtitle: a short subtitle line, e.g. the system or genre ("Cinematic Action Roleplaying"); empty if none fits.
-kicker: a short line over the title in capital letters, 2-4 keywords separated by " · " (genre, setting, tone); empty if none fits.
+{pr['cover_texts']}
 tagline: one short sentence under the title (what the book is, who it is for); reuse a subtitle or tagline line
   of the text when there is one.
 running_title: the short book name for the page header, at most 30 characters.
@@ -442,15 +500,16 @@ chapter_label: the word for "Chapter" in the book's language (for example "Kapit
     return run(prompt, schema, model)
 
 
-def convert_to_markdown(text, previous_headings, first, model=None):
+def convert_to_markdown(text, previous_headings, first, model=None, kind="rulebook"):
     """Turn a chunk of extracted rulebook text into structured Markdown (used by the importer)."""
-    prompt = f"""Convert this chunk of text extracted from a tabletop RPG rulebook into clean Markdown.
+    pr = profile(kind)
+    prompt = f"""Convert this chunk of text extracted from a {pr['noun']} into clean Markdown.
 Put the Markdown itself into the "markdown" field - plain Markdown, not JSON and not a code block.
 - Keep the wording exactly as it is (same language, no summarizing, no additions, no translation).
 - Restore structure: {'"# " only for the book title, ' if first else 'never use "# ", '}"## " for chapters,
   "### " for sections, "#### " below that; bullet and numbered lists; Markdown tables for tabular data.
 - Remove page numbers, running headers/footers and hyphenation at line ends.
-- Keep every image reference like ![](media/img-012-000.png) exactly as written, on its own line,
+{pr['convert_extra']}- Keep every image reference like ![](media/img-012-000.png) exactly as written, on its own line,
   at the position where it appears in the text.
 - Headings so far (keep the same levels for the same kind of heading): {previous_headings[-12:]}
 
