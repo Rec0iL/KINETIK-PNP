@@ -3,8 +3,9 @@
   import type { Character, Move } from '../model/character';
   import { viewMove, moveRollBonus } from '../model/sheet';
   import { blankMove, moveFromTemplate } from './moveTemplates';
-  import { roll2d6 } from '../dice/roller.svelte';
   import { settings } from '../lib/settings.svelte';
+  import { affordability, rollMove } from './moveUse.svelte';
+  import MovePayBar from './MovePayBar.svelte';
   import MoveEditor from './MoveEditor.svelte';
   import { uid } from '../model/character';
 
@@ -41,12 +42,6 @@
     copy.name += ' (Kopie)';
     char.moves.push(copy);
   }
-  function rollMove(m: Move) {
-    roll2d6({
-      who: settings.displayName || char.name, characterId: char.id, kind: 'move',
-      label: m.name, bonus: moveRollBonus(char, m),
-    });
-  }
   const fmt = (n: number) => (n > 0 ? `+${n}` : String(n));
   const titleOpts = $derived(char.titles.map((t) => ({ id: t.id, name: t.name, level: t.level })));
 </script>
@@ -66,12 +61,14 @@
       </select>
       <button class="btn sm" onclick={addTemplate} disabled={!template}>Hinzufügen</button>
       <a class="btn sm ghost" href="#/builder">Zum Move-Builder</a>
+      <label class="auto" title="Regel 3.12: Bezahlt wird sonst erst nach dem Wurf, wenn der Move wirkt."><input type="checkbox" bind:checked={settings.autoPayMoves} /> Kosten sofort beim Wurf abziehen</label>
     </div>
     {#if !char.titles.length}<p class="warn">Lege zuerst einen Titel an, damit Moves Meisterschaft und Kosten bekommen.</p>{/if}
   </section>
 
   {#each filtered as m (m.id)}
     {@const v = viewMove(char, m)}
+    {@const a = affordability(char, m)}
     <section class="panel move" class:open={openId === m.id}>
       <div class="row head">
         <button class="name" onclick={() => (openId = openId === m.id ? null : m.id)} aria-expanded={openId === m.id}>
@@ -85,8 +82,9 @@
         {#if v.cost.levelTooLow}<span class="chip danger" title="Titel-Level unter dem Mindestlevel">Level {v.evaluation.minLevel} nötig</span>{/if}
         <span class="spacer"></span>
         <span class="cost">{costLabel(v.cost)}</span>
-        <button class="btn sm primary" onclick={() => rollMove(m)} title={`2W6 ${fmt(moveRollBonus(char, m))}`}>Würfeln {fmt(moveRollBonus(char, m))}</button>
+        <button class="btn sm primary" onclick={() => rollMove(char, m)} disabled={!a.ok} title={a.ok ? `2W6 ${fmt(moveRollBonus(char, m))}` : a.reason}>Würfeln {fmt(moveRollBonus(char, m))}</button>
       </div>
+      <MovePayBar {char} move={m} />
       {#if openId !== m.id && m.text}<p class="dim txt">{m.text}</p>{/if}
       {#if openId === m.id}
         <MoveEditor bind:move={char.moves[char.moves.findIndex((x) => x.id === m.id)]} level={v.level} titles={titleOpts} />
@@ -103,6 +101,7 @@
 
 <style>
   .adds { margin-top: 0.7rem; }
+  .auto { display: flex; gap: 0.4em; align-items: center; font-size: 0.85rem; color: var(--ink-dim); cursor: pointer; }
   .adds select { width: auto; max-width: 320px; }
   .search { max-width: 220px; }
   .warn { color: var(--warn); margin: 0.6rem 0 0; }

@@ -165,3 +165,41 @@ describe('Neue Regeln 3.11 und 5.1', () => {
     expect([5, 6, 7, 8].map(tierForEp)).toEqual(['momentum', 'momentum', 'meister', 'legendaer']);
   });
 });
+
+import { affordability } from '../src/model/afford';
+
+describe('Move-Kosten bezahlbar?', () => {
+  const mk = (id: string) => {
+    const c = jinYamada();
+    const m = moveFromTemplate(id, { titleId: c.titles[0].id, level: 3 })!;
+    c.moves.push(m);
+    return { c, m };
+  };
+  it('Energie-Move: genug Energie ist ok, zu wenig nicht', () => {
+    const { c, m } = mk('mozambique'); // 3 EP, Level 3 (M1): 2 Energie
+    expect(affordability(c, m)).toMatchObject({ ok: true, energie: 2, momentum: 0 });
+    c.resources.energie = 1;
+    const a = affordability(c, m);
+    expect(a.ok).toBe(false);
+    expect(a.reason).toContain('Energie');
+  });
+  it('Momentum-Move braucht Momentum und 1 Energie', () => {
+    const { c, m } = mk('querschlaeger'); // 4 EP: 1 Momentum + 1 Energie
+    expect(affordability(c, m)).toMatchObject({ ok: false });
+    expect(affordability(c, m).reason).toContain('Momentum');
+    c.resources.momentum = 1;
+    expect(affordability(c, m).ok).toBe(true);
+    c.resources.energie = 0;
+    expect(affordability(c, m).ok).toBe(false);
+  });
+  it('Kostenloser Move geht auch ohne Energie, ohnmächtig aber nie', () => {
+    const { c, m } = mk('mozambique');
+    m.costOverride = { energie: 0, momentum: 0 };
+    c.resources.energie = 0;
+    expect(affordability(c, m).ok).toBe(true);
+    c.resources.energie = -2;
+    const a = affordability(c, m);
+    expect(a.ok).toBe(false);
+    expect(a.reason).toContain('Ohnmächtig');
+  });
+});
