@@ -254,6 +254,24 @@ def refine_style(project, wish):
                                 model_hint(cfg["comfy"]), cfg["agy"].get("model") or None)
 
 
+COVER_KEYS = ("title", "subtitle", "kicker", "tagline", "running_title", "chapter_label")
+
+
+def suggest_cover(project, current=None):
+    """agy proposes all cover and running-head texts from the book (returns a dict with COVER_KEYS)."""
+    doc = project.document()
+    chapters = [c.full_title for c in doc.chapters]
+    current = {k: v for k, v in (current or {}).items() if v}
+    r = planner.suggest_cover(doc.title or "", doc.intro_md, chapters, current,
+                              project.config["agy"].get("model") or None)
+    out = {k: str(r.get(k, "")).strip() for k in COVER_KEYS}
+    if not out["title"]:
+        out["title"] = doc.title or current.get("title", "")
+    if not out["running_title"]:
+        out["running_title"] = out["title"].split(":")[0][:30]
+    return out
+
+
 def preview(project, key, ctx, prompt=None, style=None, seed=None):
     """Render one slot with the current settings into .build/ without touching the project images."""
     slot = next(s for s in project.slots() if s.key == key)

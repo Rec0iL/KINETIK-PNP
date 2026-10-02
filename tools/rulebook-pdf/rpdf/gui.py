@@ -247,7 +247,7 @@ class MainWindow(QMainWindow):
         self.action_buttons = [self.btn_plan, self.btn_images, self.btn_images_all, self.btn_build,
                                self.btn_all, self.btn_preview, self.btn_regen, self.btn_replan,
                                self.btn_refine, self.btn_accept, self.btn_check, self.btn_check_one,
-                               self.btn_analyse] + self.compress_buttons
+                               self.btn_analyse, self.btn_cover_auto] + self.compress_buttons
 
     def _scroll(self, widget):
         s = QScrollArea()
@@ -271,6 +271,11 @@ class MainWindow(QMainWindow):
                           ("Kicker (über dem Titel)", self.ed_kicker), ("Tagline", self.ed_tagline),
                           ("Kopfzeile", self.ed_running), ("Kapitel-Label", self.ed_chlabel)]:
             f.addRow(label, ed)
+        self.btn_cover_auto = QPushButton("Alles automatisch ausfüllen (agy)")
+        self.btn_cover_auto.setToolTip("agy liest den Anfang des Regelwerks und schlägt Titel, Untertitel, "
+                                       "Kicker, Tagline, Kopfzeile und Kapitel-Label vor.")
+        self.btn_cover_auto.clicked.connect(self.run_cover_auto)
+        f.addRow(self.btn_cover_auto)
         f.addRow(section_label("Struktur"))
         self.cb_lang = QComboBox()
         self.cb_lang.addItems(["de", "en", "fr", "es", "it", "nl"])
@@ -960,6 +965,27 @@ class MainWindow(QMainWindow):
                 self.project.save()
             self._start(lambda ctx: pipeline.refine_style(self.project, wish), on_done=done,
                         label="agy verfeinert den Stilwunsch …")
+
+    def run_cover_auto(self):
+        if not self._ready():
+            return
+        fields = [(self.ed_title, "title"), (self.ed_subtitle, "subtitle"), (self.ed_kicker, "kicker"),
+                  (self.ed_tagline, "tagline"), (self.ed_running, "running_title"),
+                  (self.ed_chlabel, "chapter_label")]
+        current = {key: ed.text().strip() for ed, key in fields}
+        if any(current.values()) and QMessageBox.question(
+                self, "Cover & Kopfzeile", "Die bisherigen Einträge werden durch die Vorschläge von agy "
+                "ersetzt. Fortfahren?") != QMessageBox.Yes:
+            return
+
+        def done(r):
+            for ed, key in fields:
+                ed.setText(r.get(key, ""))
+            self._log("Cover & Kopfzeile ausgefüllt: " + " | ".join(r[k] for k in pipeline.COVER_KEYS if r.get(k)))
+            self._collect()
+            self.project.save()
+        self._start(lambda ctx: pipeline.suggest_cover(self.project, current), on_done=done,
+                    label="agy füllt Cover & Kopfzeile aus …")
 
     def _apply_preset(self):
         name = self.cb_preset.currentText()

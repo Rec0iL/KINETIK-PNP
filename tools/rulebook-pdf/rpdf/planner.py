@@ -389,6 +389,32 @@ near-black background, and explain your choice in one short sentence (German).""
     return run(prompt, schema, model)
 
 
+def suggest_cover(title, intro, chapters, current, model=None):
+    """Propose the cover and running-head texts from the book's own text."""
+    prompt = f"""You fill in the cover and page-header texts of a tabletop RPG rulebook PDF.
+Write every text in the language of the book (the text below), never translate it.
+Use only facts that are in the text: do not invent version numbers, authors, editions or claims.
+Book title found in the text: {title or '(none)'}
+Chapter titles: {chapters[:30]}
+Start of the book:
+---
+{intro[:2500]}
+---
+Texts the user already has (improve or keep them where they are fine): {current}
+
+title: the book's title as it should stand on the cover (no subtitle).
+subtitle: a short subtitle line, e.g. the system or genre ("Cinematic Action Roleplaying"); empty if none fits.
+kicker: a short line over the title in capital letters, 2-4 keywords separated by " · " (genre, setting, tone); empty if none fits.
+tagline: one short sentence under the title (what the book is, who it is for); reuse a subtitle or tagline line
+  of the text when there is one.
+running_title: the short book name for the page header, at most 30 characters.
+chapter_label: the word for "Chapter" in the book's language (for example "Kapitel")."""
+    schema = {"type": "object", "properties": {k: {"type": "string"} for k in (
+        "title", "subtitle", "kicker", "tagline", "running_title", "chapter_label")},
+        "required": ["title", "subtitle", "kicker", "tagline", "running_title", "chapter_label"]}
+    return run(prompt, schema, model)
+
+
 def convert_to_markdown(text, previous_headings, first, model=None):
     """Turn a chunk of extracted rulebook text into structured Markdown (used by the importer)."""
     prompt = f"""Convert this chunk of text extracted from a tabletop RPG rulebook into clean Markdown.
