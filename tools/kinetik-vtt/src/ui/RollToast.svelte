@@ -24,7 +24,7 @@
   });
 </script>
 
-{#if visible && latest && router.route.name !== 'dice' && !settings.dice3d}
+{#if visible && latest && router.route.name !== 'dice' && router.route.name !== 'character' && !settings.dice3d}
   {#key latest.id}
     <div class="toast panel" role="status">
       <button class="x btn sm icon ghost" onclick={() => (visible = false)} aria-label="Schließen">✕</button>

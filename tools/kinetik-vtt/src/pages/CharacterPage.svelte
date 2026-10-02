@@ -11,7 +11,7 @@
   import Tags from '../sheet/Tags.svelte';
   import Notes from '../sheet/Notes.svelte';
   import Creation from '../sheet/Creation.svelte';
-  import RollPanel from '../sheet/RollPanel.svelte';
+  import RollDock from '../sheet/RollDock.svelte';
 
   let { id }: { id: string } = $props();
 
@@ -33,12 +33,16 @@
     { key: 'tags', label: 'Tags & Nachteile' },
     { key: 'notizen', label: 'Notizen' },
     { key: 'erschaffung', label: 'Erschaffung' },
-    { key: 'wuerfel', label: 'Würfeln' },
   ] as const;
   type Tab = (typeof tabs)[number]['key'];
 
   const TAB_KEY = 'kinetik.tab';
-  let tab = $state<Tab>((() => { try { return (sessionStorage.getItem(TAB_KEY) as Tab) || 'ueber'; } catch { return 'ueber'; } })());
+  let tab = $state<Tab>((() => {
+    try {
+      const t = sessionStorage.getItem(TAB_KEY);
+      return tabs.some((x) => x.key === t) ? (t as Tab) : 'ueber';
+    } catch { return 'ueber'; }
+  })());
   $effect(() => { try { sessionStorage.setItem(TAB_KEY, tab); } catch { /* ignorieren */ } });
   const pct = (v: number, m: number) => (m > 0 ? Math.max(0, Math.min(100, (v / m) * 100)) : 0);
 </script>
@@ -84,8 +88,10 @@
     {:else if tab === 'tags'}<Tags {char} />
     {:else if tab === 'notizen'}<Notes {char} />
     {:else if tab === 'erschaffung'}<Creation {char} />
-    {:else}<RollPanel {char} />{/if}
+    {/if}
   </div>
+
+  <RollDock {char} />
 {/if}
 
 <style>
