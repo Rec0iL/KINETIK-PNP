@@ -1,0 +1,45 @@
+{
+  "rules_version": "3.5",
+  "effekte": [
+    { "id": "zone", "name": "Zone wählen", "ep": 1 },
+    { "id": "tagKlein", "name": "Kleiner Tag", "ep": 1, "beispiele": "Am Boden, Geblendet, Entwaffnet, Gelähmt" },
+    { "id": "ziel2", "name": "Zweites Ziel", "ep": 1 },
+    { "id": "schutzSchaden", "name": "+1 Schutz-Schaden", "ep": 1 },
+    { "id": "schaden2", "name": "+2 WK- oder Energie-Schaden", "ep": 1 },
+    { "id": "durchschlag", "name": "Durchschlag 1", "ep": 1, "text": "Schutz -1 für diesen Clash", "schliesstAus": ["schutzIgnorieren", "schutzZerstoeren"] },
+    { "id": "wurfPlus", "name": "+1 auf den Wurf (max. +2)", "ep": 1, "stern": true, "max": 2 },
+    { "id": "heilenSelbst", "name": "Energie oder WK +2 wiederherstellen (nur selbst)", "ep": 1, "stern": true },
+    { "id": "schutzIgnorieren", "name": "Schutzart ignorieren", "ep": 2, "schliesstAus": ["durchschlag"] },
+    { "id": "schutzZerstoeren", "name": "Schutz zerstören (auf 0 bis Szenenende)", "ep": 2, "schliesstAus": ["durchschlag"] },
+    { "id": "verletzungOhneDominanz", "name": "Verletzung auch ohne Dominanz", "ep": 2 },
+    { "id": "tagGross", "name": "Großer Tag", "ep": 2, "beispiele": "Betäubt, Fixiert, Gewürgt" },
+    { "id": "ziele3", "name": "Bis zu 3 Ziele", "ep": 2 },
+    { "id": "heilenAlle", "name": "Energie oder WK +2 für bis zu 3 Verbündete", "ep": 2, "stern": true },
+    { "id": "freiKlein", "name": "Freier Effekt (klein)", "ep": 1, "frei": true },
+    { "id": "freiMittel", "name": "Freier Effekt (mittel)", "ep": 2, "frei": true },
+    { "id": "freiGross", "name": "Freier Effekt (groß)", "ep": 3, "frei": true }
+  ],
+  "abzuege": [
+    { "id": "vorbedingung", "name": "Vorbedingung", "text": "Höhe, Bodenposition, Waffe", "ep": -1 },
+    { "id": "risiko", "name": "Risiko", "text": "Nachteil für den Nutzer bei Fehlschlag", "ep": -1 },
+    { "id": "setup", "name": "Setup-Runde", "ep": -1 },
+    { "id": "einmal", "name": "Nur einmal pro Szene", "ep": -1 }
+  ],
+  "abzugMax": 2,
+  "kosten": {
+    "energieMoveMaxEp": 3,
+    "mindestEnergieAbEp": 3,
+    "mindestEnergieEntfaelltAbLevel": 10,
+    "momentum": [
+      { "ab": 4, "bis": 5, "momentum": 1 },
+      { "ab": 6, "bis": 7, "momentum": 2 },
+      { "ab": 8, "bis": 8, "momentum": 3 }
+    ],
+    "momentumMoveEnergie": 1,
+    "sternMomentumProEp": 2,
+    "capBasis": 3,
+    "gemeistertLevelAbstand": 5,
+    "legendaerEp": 8,
+    "legendaerLevel": 10
+  }
+}

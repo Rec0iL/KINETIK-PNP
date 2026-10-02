@@ -1,0 +1,73 @@
+{
+  "rules_version": "3.5",
+  "attribute": [
+    { "key": "fluss", "name": "Fluss", "en": "Flow", "kurz": "FLU", "text": "Akrobatik, weiche Kampfkünste, Ausweichen, nahtlose Bewegungen." },
+    { "key": "praezision", "name": "Präzision", "en": "Precision", "kurz": "PRÄ", "text": "Scharfschützen, gezielte Treffer auf Schwachstellen, feine Tätigkeiten." },
+    { "key": "gewalt", "name": "Gewalt", "en": "Force", "kurz": "GEW", "text": "Brachiale Zerstörung, Körperkraft, unaufhaltsame Angriffe." },
+    { "key": "instinkt", "name": "Instinkt", "en": "Instinct", "kurz": "INS", "text": "Reflexe, Wahrnehmung von Gefahren, Handeln aus dem Bauch." },
+    { "key": "fokus", "name": "Fokus", "en": "Focus", "kurz": "FOK", "text": "Taktik, analytisches Denken, Deduktion, logisches Begreifen." }
+  ],
+  "attribut": { "min": -1, "max": 3, "maxLevel10": 4, "startMax": 2 },
+  "meisterschaft": [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5],
+  "wachstumLevels": [4, 7, 9, 10],
+  "ressourcen": {
+    "energie": { "basis": 6, "attribute": ["fluss", "gewalt"] },
+    "wk": { "basis": 6, "attribute": ["instinkt", "fokus"] },
+    "passiveWahrnehmungBasis": 5
+  },
+  "momentum": { "basis": 3, "zuwachs": [{ "level": 5, "plus": 1 }, { "level": 10, "plus": 1 }] },
+  "kampagnenstufen": [
+    { "key": "strasse", "name": "Straße", "attributBudget": 3, "titelBudget": 3, "startLevelMax": 2 },
+    { "key": "kino", "name": "Kino", "attributBudget": 4, "titelBudget": 4, "startLevelMax": 3, "standard": true },
+    { "key": "legende", "name": "Legende", "attributBudget": 5, "titelBudget": 7, "startLevelMax": 5 }
+  ],
+  "schwellen": {
+    "dominanz": 3,
+    "helden": { "vorsprung": 2, "spieler": 2, "npc": 4 },
+    "ausserReichweite": { "begrenzt": 5, "keinWurf": 8 }
+  },
+  "mw": [
+    { "mw": 7, "name": "Standard" },
+    { "mw": 9, "name": "Fordernd" },
+    { "mw": 11, "name": "Schwer" },
+    { "mw": 13, "name": "Heroisch" },
+    { "mw": 15, "name": "Legendär" }
+  ],
+  "wachsamkeit": [
+    { "mw": 7, "name": "Ahnungslos", "text": "Pause, Streit, Fernseher" },
+    { "mw": 9, "name": "Wachsam", "text": "Patrouille, Routine" },
+    { "mw": 11, "name": "Alarmiert", "text": "Eindringling vermutet" }
+  ],
+  "zonen": [
+    { "key": "kopf", "name": "Kopf", "kurz": "Kopf", "felder": 2, "folge": "sterbend" },
+    { "key": "torso", "name": "Torso", "kurz": "Torso", "felder": 3, "folge": "sterbend" },
+    { "key": "armL", "name": "Linker Arm", "kurz": "L-Arm", "felder": 2, "folge": "unbrauchbar" },
+    { "key": "armR", "name": "Rechter Arm", "kurz": "R-Arm", "felder": 2, "folge": "unbrauchbar" },
+    { "key": "beinL", "name": "Linkes Bein", "kurz": "L-Bein", "felder": 2, "folge": "unbrauchbar" },
+    { "key": "beinR", "name": "Rechtes Bein", "kurz": "R-Bein", "felder": 2, "folge": "unbrauchbar" }
+  ],
+  "tags": { "stapelMax": 3, "klein": 1, "gross": 2 },
+  "sterbendRunden": 3,
+  "stabilisierenMW": 9,
+  "weckenMW": 9,
+  "deckung": [
+    { "name": "Holztisch", "schutz": 1 },
+    { "name": "Autotür", "schutz": 2 },
+    { "name": "Betonsäule", "schutz": 3 }
+  ],
+  "legendaerePreise": [
+    { "name": "Ausgepumpt", "text": "Die Energie fällt auf 0." },
+    { "name": "Nachglühen", "text": "-3 Willenskraft." },
+    { "name": "Leergebrannt", "text": "Kein Momentum-Gewinn mehr für den Rest der Szene." },
+    { "name": "Narbe", "text": "Permanenter Tag oder bleibende Verletzung (z.B. Handgelenk, Sehkraft)." },
+    { "name": "Rückstoß", "text": "Der Nutzer erleidet selbst eine Verletzung." },
+    { "name": "Überdehnung", "text": "Die Meisterschaft sinkt um 2 bis zur nächsten Rast." },
+    { "name": "Selten", "text": "Nur einmal pro Story-Abschnitt." },
+    { "name": "Sperre", "text": "Der Move ist erst nach Training/Downtime wieder verfügbar." },
+    { "name": "Aufladen", "text": "Der Nutzer ist eine Runde exponiert (Gegner erhalten +2 gegen ihn), bevor der Move zündet." },
+    { "name": "Enthüllung", "text": "Alle Gegner kennen den Move und bereiten sich darauf vor." },
+    { "name": "Kollateralschaden", "text": "Umgebung, Zivilisten oder Verbündete geraten in Gefahr." },
+    { "name": "Verlust", "text": "Waffe oder Ausrüstung geht zu Bruch." },
+    { "name": "Schuld/Ruf", "text": "Story-Komplikation: Verfolger, Schulden, Ruf." }
+  ]
+}

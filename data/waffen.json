@@ -1,0 +1,15 @@
+{
+  "rules_version": "3.5",
+  "durchschlagStandard": 1,
+  "waffen": [
+    { "id": "pistole", "name": "Pistole", "klasse": "leicht", "ep": 1, "profil": ["zone"], "profilText": "Zone wählen", "durchschlag": 1 },
+    { "id": "messer", "name": "Messer", "klasse": "leicht", "ep": 1, "profil": ["schaden2"], "profilText": "+2 Energie-Schaden (Schmerz, Blutverlust)", "durchschlag": 1 },
+    { "id": "schlagstock", "name": "Schlagstock / Tonfa", "klasse": "leicht", "ep": 1, "profil": ["tagKlein"], "profilText": "kleiner Tag Benommen", "tag": "Benommen", "durchschlag": 1 },
+    { "id": "akimbo", "name": "Akimbo-Pistolen", "klasse": "schwer", "ep": 2, "profil": ["ziel2", "zone"], "profilText": "zweites Ziel, Zone wählen", "durchschlag": 1 },
+    { "id": "sturmgewehr", "name": "Sturmgewehr", "klasse": "schwer", "ep": 2, "profil": ["ziel2", "schutzSchaden"], "profilText": "zweites Ziel, +1 Schutz-Schaden", "durchschlag": 1 },
+    { "id": "schrotflinte", "name": "Schrotflinte", "klasse": "schwer", "ep": 2, "profil": ["ziel2", "tagKlein"], "profilText": "zweites Ziel, kleiner Tag Am Boden", "tag": "Am Boden", "durchschlag": 1 },
+    { "id": "sniper50", "name": "Scharfschützengewehr (.50)", "klasse": "schwer", "ep": 2, "profil": ["tagKlein"], "profilText": "Durchschlag 2 statt 1, kleiner Tag Benommen (Druckwelle)", "tag": "Benommen", "durchschlag": 2 },
+    { "id": "katana", "name": "Katana", "klasse": "schwer", "ep": 2, "profil": ["zone", "schutzSchaden"], "profilText": "Zone wählen, +1 Schutz-Schaden", "durchschlag": 1 }
+  ],
+  "waffenlos": { "name": "Hände und Füße (Tödliche Hände)", "durchschlag": 1, "abLevel": 4, "profilText": "kein Profil, nur Durchschlag 1" }
+}

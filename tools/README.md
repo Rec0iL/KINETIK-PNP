@@ -4,6 +4,5 @@ Digitale Helfer für KINETIK. Alle Tools sollen ihre Regelwerte aus `../data/` l
 
 | Tool | Zweck | Stand |
 |---|---|---|
-| `charakterbogen/` | Online-Charakterbogen für Spieler | geplant |
-| `sl-dashboard/` | Kampfverwaltung und Übersicht für den Spielleiter | geplant |
+| `kinetik-vtt/` | Web-App: Charakterbogen, Multiplayer (WebRTC), SL-Dashboard, Karte, Musik, Würfel | in Entwicklung |
 | `rulebook-pdf/` | Illustriertes PDF aus einem Regelwerk (auch fremde Regelwerke) | nutzbar |

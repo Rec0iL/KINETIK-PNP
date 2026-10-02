@@ -1,0 +1,15 @@
+{
+  "rules_version": "3.5",
+  "klein": [
+    "Am Boden", "Geblendet", "Entwaffnet", "Gelähmt", "Benommen", "Aus der Balance", "Deckung verloren",
+    "Waffe klemmt", "Ladehemmung", "Magazin leer", "Klinge steckt fest", "Lauf weggedrückt", "Verschmutzt",
+    "Misstrauisch", "Verdacht", "Exponiert"
+  ],
+  "gross": ["Betäubt", "Fixiert", "Gewürgt", "Gelenk gesperrt"],
+  "umgebung": {
+    "schleicherKlein": ["Dunkelheit", "Lärm", "Menschenmenge", "Regen"],
+    "waechterKlein": ["Gleißendes Licht", "Stille", "Freie Fläche"],
+    "gross": ["Blackout", "Nebel", "Ablenkung durch Sprengsatz"]
+  },
+  "zustaende": ["Ausgepumpt", "Gebrochen", "Sterbend", "Ohnmächtig"]
+}

@@ -1,0 +1,31 @@
+// Alle sichtbaren Texte. Für eine weitere Sprache: Datei kopieren, übersetzen, in index.ts eintragen.
+export const de = {
+  'app.name': 'KINETIK',
+  'app.tagline': 'Cinematic Action Roleplaying',
+  'app.kicker': 'Gun-Fu · Kampfkunst · Anime',
+  'nav.home': 'Start',
+  'nav.characters': 'Charaktere',
+  'nav.builder': 'Move-Builder',
+  'nav.dice': 'Würfel',
+  'nav.gm': 'Spielleiter',
+  'nav.credits': 'Credits',
+  'theme.label': 'Look',
+  'theme.noir': 'Neo-Noir',
+  'theme.terminal': 'Terminal',
+  'theme.hybrid': 'Hybrid',
+  'home.player.title': 'Spieler',
+  'home.player.text': 'Charakterbogen bearbeiten, speichern und als JSON sichern. Funktioniert auch ohne Verbindung am Tisch. Später mit Raumcode einer Runde beitreten.',
+  'home.player.cta': 'Zu den Charakteren',
+  'home.gm.title': 'Spielleiter',
+  'home.gm.text': 'Eine Runde hosten: Spieler sehen, Karte und Musik teilen, Würfel und Kampf verwalten.',
+  'home.gm.cta': 'Runde starten',
+  'home.builder.title': 'Move-Builder',
+  'home.builder.text': 'Moves nach Kapitel 5 bauen: EP, Kosten und Mindestlevel live. Ohne Charakter nutzbar.',
+  'home.builder.cta': 'Move bauen',
+  'home.soon': 'in Arbeit',
+  'home.rules': 'Regelwerk',
+  'common.back': 'Zurück',
+  'common.soon': 'Dieser Bereich wird im nächsten Schritt gebaut.',
+} as const;
+
+export type Key = keyof typeof de;

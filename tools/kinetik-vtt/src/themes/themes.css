@@ -1,0 +1,89 @@
+/* Drei Themes über CSS-Variablen. Komponenten benutzen nur diese Tokens. */
+:root,
+:root[data-theme='noir'] {
+  color-scheme: dark;
+  --bg: #0b0c10;
+  --bg-2: #10131a;
+  --panel: rgba(16, 19, 26, 0.86);
+  --panel-solid: #12151d;
+  --raised: rgba(255, 255, 255, 0.04);
+  --ink: #e6eaf0;
+  --ink-dim: #8f9aab;
+  --ink-strong: #ffffff;
+  --accent: #00e5ff;
+  --accent-ink: #001417;
+  --accent-soft: rgba(0, 229, 255, 0.12);
+  --accent-line: rgba(0, 229, 255, 0.42);
+  --accent-2: #ffb800;
+  --accent-2-ink: #1a1200;
+  --accent-2-soft: rgba(255, 184, 0, 0.14);
+  --line: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.2);
+  --danger: #ff4d6d;
+  --ok: #3ddc97;
+  --warn: #ffb800;
+  --font-display: 'Bebas Neue', 'Oswald', Impact, sans-serif;
+  --font-head: 'Oswald', 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'JetBrains Mono', 'DejaVu Sans Mono', Consolas, monospace;
+  --head-case: uppercase;
+  --head-tracking: 0.08em;
+  --cut: 14px;
+  --radius: 2px;
+  --hard-shadow: 3px 3px 0 var(--accent-2);
+  --glow: 0 0 18px rgba(0, 229, 255, 0.28);
+  --scanlines: 0.05;
+  --grid-a: rgba(0, 229, 255, 0.05);
+  --hero-1: rgba(0, 229, 255, 0.16);
+  --hero-2: rgba(255, 184, 0, 0.1);
+  /* Terminal-Palette für Körpersilhouette und Würfellog */
+  --term-bg: #0d1015;
+  --term-fg: #e6edf0;
+  --term-dim: #8f9ca3;
+  --term-line: #1fc28b;
+  --term-fill: #12352b;
+  --term-lead: #2d5a4b;
+}
+
+:root[data-theme='terminal'] {
+  --bg: #050807;
+  --bg-2: #0a100e;
+  --panel: rgba(8, 14, 12, 0.9);
+  --panel-solid: #09110f;
+  --raised: rgba(31, 194, 139, 0.05);
+  --ink: #cfe9df;
+  --ink-dim: #6f9486;
+  --ink-strong: #eafff6;
+  --accent: #1fc28b;
+  --accent-ink: #00170e;
+  --accent-soft: rgba(31, 194, 139, 0.12);
+  --accent-line: rgba(31, 194, 139, 0.5);
+  --accent-2: #d7e24a;
+  --accent-2-ink: #121400;
+  --accent-2-soft: rgba(215, 226, 74, 0.12);
+  --line: rgba(31, 194, 139, 0.18);
+  --line-strong: rgba(31, 194, 139, 0.36);
+  --danger: #ff6b5e;
+  --font-display: var(--font-mono);
+  --font-head: var(--font-mono);
+  --font-body: var(--font-mono);
+  --head-tracking: 0.12em;
+  --cut: 0px;
+  --radius: 0px;
+  --hard-shadow: 0 0 0 transparent;
+  --glow: 0 0 14px rgba(31, 194, 139, 0.3);
+  --scanlines: 0.14;
+  --grid-a: rgba(31, 194, 139, 0.06);
+  --hero-1: rgba(31, 194, 139, 0.14);
+  --hero-2: rgba(215, 226, 74, 0.05);
+  --term-bg: #050807;
+  --term-fg: #cfe9df;
+  --term-dim: #6f9486;
+}
+
+/* Hybrid: Noir-Hülle, Terminal-Stil nur in Silhouette und Würfellog (die --term-Tokens oben bleiben grün). */
+:root[data-theme='hybrid'] {
+  --hero-1: rgba(0, 229, 255, 0.12);
+  --hero-2: rgba(31, 194, 139, 0.1);
+  --scanlines: 0.07;
+}
