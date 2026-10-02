@@ -29,4 +29,6 @@ npm run build        # dist/
 
 ## Stand
 
-M0 Fundament: Gerüst, Themes, Regel-Engine mit Tests, Regeldaten. Nächste Schritte: Charakterbogen (M1), Move-Builder (M2), Multiplayer (M3), Karte (M4), Musik (M5), SL-Werkzeuge (M6), Grafiken und Deploy (M7).
+- M0 Fundament: Gerüst, Themes, Regel-Engine mit Tests, Regeldaten.
+- M1 Charakterbogen (läuft eigenständig, auch offline am Tisch): Charakter-Bibliothek mit Autosave (IndexedDB), JSON-Import/Export, Übersicht (Attribute, Titel mit Bonus-Matrix, Ressourcen, Schutz, Erschaffungshinweise), interaktive Körpersilhouette mit Sterbend-Zähler, Moves, Waffen, Tags, Notizen, Würfler mit Probe, Clash-Rechner und freien Würfeln. Jeder abgeleitete Wert lässt sich überschreiben.
+- Als Nächstes: Move-Builder (M2), Multiplayer (M3), Karte (M4), Musik (M5), SL-Werkzeuge (M6), Grafiken und Deploy (M7).

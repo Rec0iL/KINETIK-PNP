@@ -4,7 +4,14 @@
   import { t, type Key } from './i18n';
   import Home from './pages/Home.svelte';
   import Placeholder from './pages/Placeholder.svelte';
+  import Characters from './pages/Characters.svelte';
+  import CharacterPage from './pages/CharacterPage.svelte';
+  import RollPanel from './sheet/RollPanel.svelte';
+  import RollToast from './ui/RollToast.svelte';
+  import { loadLibrary } from './store/characters.svelte';
   import { RULES_VERSION } from './rules';
+
+  loadLibrary();
 
   const nav: { href: string; key: Key; names: string[] }[] = [
     { href: '#/', key: 'nav.home', names: ['home'] },
@@ -37,12 +44,22 @@
 <main>
   {#if router.route.name === 'home'}
     <Home />
+  {:else if router.route.name === 'characters'}
+    <Characters />
+  {:else if router.route.name === 'character'}
+    {#key router.route.params.id}<CharacterPage id={router.route.params.id} />{/key}
+  {:else if router.route.name === 'dice'}
+    <span class="kicker">Spieler</span>
+    <h1 class="pagetitle">Würfel</h1>
+    <RollPanel />
   {:else if router.route.name === 'notfound'}
     <Placeholder title="404" />
   {:else}
     <Placeholder title={t(`nav.${{ characters: 'characters', character: 'characters', builder: 'builder', dice: 'dice', gm: 'gm', credits: 'credits' }[router.route.name] as 'characters'}` as Key)} />
   {/if}
 </main>
+
+<RollToast />
 
 <footer class="foot">
   <span>KINETIK · Regelwerk v{RULES_VERSION}</span>
@@ -73,6 +90,7 @@
   nav a:hover { color: var(--ink); }
   nav a[aria-current='page'] { color: var(--accent); border-bottom-color: var(--accent); }
   .theme select { width: auto; min-height: 34px; padding: 0.3em 0.6em; font: 600 0.8rem var(--font-head); letter-spacing: 0.1em; text-transform: uppercase; }
+  .pagetitle { margin-bottom: 1rem; }
   main { padding: 1.4rem max(16px, 3vw) 3rem; max-width: 1280px; margin: 0 auto; }
   .foot { display: flex; justify-content: space-between; padding: 1rem max(16px, 3vw); color: var(--ink-dim); font: 600 0.75rem var(--font-head); letter-spacing: 0.14em; text-transform: uppercase; border-top: 1px solid var(--line); }
   @media (max-width: 640px) {

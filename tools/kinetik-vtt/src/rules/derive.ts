@@ -10,6 +10,8 @@ export interface Title {
   domains: string[];
   leadAttrs: [AttrKey, AttrKey];
   startedAtLevel?: number;
+  /** Überschreibt die Meisterschaft (Hausregel, SL-Entscheidung). */
+  masteryOverride?: number;
 }
 
 const clampLevel = (level: number) => Math.max(0, Math.min(10, Math.floor(level)));
@@ -20,8 +22,8 @@ export function meisterschaft(level: number): number {
 }
 
 /** Meisterschafts-Anteil eines Titels für ein Attribut: voll bei Leitattribut, sonst halb (abgerundet). */
-export function titleMastery(title: Pick<Title, 'level' | 'leadAttrs'>, attr: AttrKey): number {
-  const m = meisterschaft(title.level);
+export function titleMastery(title: Pick<Title, 'level' | 'leadAttrs' | 'masteryOverride'>, attr: AttrKey): number {
+  const m = title.masteryOverride ?? meisterschaft(title.level);
   return title.leadAttrs.includes(attr) ? m : Math.floor(m / 2);
 }
 
