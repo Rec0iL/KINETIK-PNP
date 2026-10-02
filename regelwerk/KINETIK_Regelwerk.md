@@ -307,6 +307,34 @@ Bullet Time gibt es höchstens **einmal pro Spieler und Runde**. Der SL vergibt 
 * **Sterbend:** Die Figur stirbt nach **3 Runden**, wenn niemand sie stabilisiert. Stabilisieren ist eine **Aktion + Probe gegen MW 9** (Fokus, oder eine passende Domäne wie Medizin).
 * **Heilung:** Pro Downtime-Phase heilt **1 Verletzung**, mit gelungener Medizin-Probe 2. Unbrauchbare Gliedmaßen und schwere Wunden können als **Narbe** (permanenter Tag) bleiben.
 
+**Töten.** Wehrlose zu töten ist kein Kampf, sondern eine Entscheidung. Als **wehrlos** gilt, wer ohnmächtig ist, gefesselt und ohne Chance zu reagieren oder sich ergeben hat.
+
+* **Gnadenstoß:** Eine Aktion ohne Clash. Wehrlose NPCs sterben. Ein **Spielercharakter wird dabei sterbend** (3 Runden, siehe oben), nicht sofort tot. Seine Mitspieler haben also immer ein Fenster zum Eingreifen.
+* **Überlauf bei Ohnmächtigen:** Wer durch Energieentzug ohnmächtig wurde (3.10), hat negative Energie. Zieht ein weiterer Entzug (Würgen, Gift, Ersticken) mehr ab, bleibt der Wert negativ. **Je volle 3 Punkte unter 0 sind 1 Verletzung** an der Zone der Ursache: **Kopf** bei Würgen und Ersticken, **Torso** bei Gift. Die normalen Zonenregeln (2.3) gelten, der Kopf macht also bei 6 Punkten unter 0 sterbend, der Torso bei 9. **Ein Sterbender, der weiter Energie verliert, stirbt.**
+* **Mitzählen:** Der Überlauf lässt sich mit einem oder zwei W6 am Tisch mitführen (einer für die Einer, einer für die Verletzungen), auch online.
+* **Wecken** (3.10) setzt die Energie auf 1 zurück, die Verletzungen bleiben.
+* **Erwürgen:** Das Opfer ist ohnmächtig und bleibt im Tag *Gewürgt*. Der Würger würgt als Aktion ohne Wurf weiter und entzieht pro Runde 3 Energie. Das sind **etwa 3 Runden** von der Ohnmacht bis zum Tod. Ein Verbündeter muss den Würger in dieser Zeit lösen (Clash gegen den Würger, bei Erfolg endet der Tag).
+* **Kein Pflichtmove:** Töten braucht keinen Move, aber der SL darf Folgen setzen (Schuld oder Ruf, siehe die Preise in 5.4).
+
+**Gift.** Gift ist ein Effekt mit Zeitfaktor und wird über EP gekauft (5.1).
+
+* **Anbringen:** Ein Treffer bringt Gift nur dann in den Körper, wenn der passende Schutz bei **0** liegt (nie gehabt, durch Abnutzung verloren, durch Durchschlag oder Ignorieren) oder wenn der Treffer eine Verletzung verursacht. Ein Blasrohr zielt deshalb auf Hals oder Gesicht, eine Weste fängt den Pfeil ab.
+* **Stufen:** Das Opfer ist *Vergiftet* und verliert **am Ende jeder Runde Energie**:
+
+| Stufe | EP | Wirkung |
+|---|---|---|
+| **Schwach** | 1 | -1 Energie, 2 Runden lang (insgesamt -2). |
+| **Stark** | 2 | -2 Energie, 2 Runden lang (insgesamt -4). |
+| **Lähmgift** | 2 | Statt Energieverlust der große Tag *Gelähmt* bis zum Szenenende oder Gegenmittel. |
+| **Tödlich** | 3 | Nach der Verzögerung wird das Opfer **sterbend** (siehe oben). Ein Gegenmittel muss vorher gelingen. |
+
+* **Verzögerung:** Der Anwender legt beim Erstellen des Moves fest, ob das Gift sofort oder erst nach **bis zu 3 Runden** wirkt. Das kostet nichts: Der Assassine will weg sein, bevor es wirkt.
+* **Gegenmittel:** Aktion plus Probe gegen **MW 7** (schwach), **9** (stark, Lähmgift) oder **11** (tödlich), mit Fokus oder einer passenden Domäne wie Medizin. Bei Erfolg endet die Wirkung. Ein Verbündeter kann das auch für einen Ohnmächtigen tun. Nicht-tödliches Gift endet spätestens mit der Rast.
+* **Ohnmächtig und vergiftet:** Gift wirkt auch weiter, wenn das Opfer schon ohnmächtig ist. Fällt die Energie dadurch immer weiter, greift der Überlauf (siehe *Töten*, Torso).
+* **Gift im Spiel:** Gift in Getränk oder Essen ist ein Heimlichkeits-Clash (4.1) gegen die Wahrnehmung von Elite und Bossen, gegen Goons eine MW-Probe. *Spielercharaktere:* Tödliches Gift gegen einen Spieler gibt es nur mit **Sterbend-Fenster und Gegenmittel**. In PvP sollte der Tisch es vorher abgesprochen haben.
+* **Hinweis für den SL:** Filmische Attentäter haben fast immer ein **Gegengift am Mann**, denn wer tödliche Gifte nutzt, sichert sich ab. Gib den Spielern deshalb immer eine Chance, es zu bekommen (beim Attentäter selbst, in seinem Versteck, bei seinem Auftraggeber). Ein Gift ohne erreichbares Gegenmittel ist eine Todesfalle ohne Spiel, kein Spannungsbogen.
+* **Hinweis für Spieler:** Das Gegengift zu ergattern heißt nicht, den Gegner zu besiegen. Man kann es stehlen, erpressen, tauschen oder dem Attentäter im Chaos abnehmen. Wer die Uhr im Blick hat, gewinnt oft mehr als durch den Kampf.
+
 ### **3.12 Moves einsetzen und bezahlen**
 
 1. **Ansage vor dem Wurf:** Der Spieler benennt Ziel, Attribut und **Technik** (z.B. "Roundhouse-Kick", "Doppeltipp auf den Kopf").
@@ -399,8 +427,9 @@ Spieler erfinden Moves frei, und es gibt **keine Obergrenze** für die Anzahl. E
 
 | EP | Effekt |
 |---|---|
-| **+1** | Zone wählen · kleiner Tag (Am Boden, Geblendet, Entwaffnet, Gelähmt) · zweites Ziel · +1 Schutz-Schaden · +2 WK- oder Energie-Schaden · Durchschlag 1 (Schutz -1 für diesen Clash) · ★ +1 auf den Wurf (max. +2) · ★ Energie oder WK +2 wiederherstellen (nur sich selbst) |
-| **+2** | Schutzart ignorieren oder Schutz zerstören (auf 0 bis Szenenende) · Verletzung auch ohne Dominanz · großer Tag (Betäubt, Fixiert, Gewürgt) · bis zu 3 Ziele · ★ Energie oder WK +2 für Verbündete wiederherstellen (bis zu 3 Verbündete) |
+| **+1** | Zone wählen · kleiner Tag (Am Boden, Geblendet, Entwaffnet, Gelähmt) · zweites Ziel · +1 Schutz-Schaden · +2 WK- oder Energie-Schaden · Durchschlag 1 (Schutz -1 für diesen Clash) · Gift schwach (3.11) · ★ +1 auf den Wurf (max. +2) · ★ Energie oder WK +2 wiederherstellen (nur sich selbst) |
+| **+2** | Schutzart ignorieren oder Schutz zerstören (auf 0 bis Szenenende) · Verletzung auch ohne Dominanz · großer Tag (Betäubt, Fixiert, Gewürgt) · bis zu 3 Ziele · Gift stark oder Lähmgift (3.11) · ★ Energie oder WK +2 für Verbündete wiederherstellen (bis zu 3 Verbündete) |
+| **+3** | Tödliches Gift (3.11) · große Effekte außerhalb des Katalogs |
 
 **Effekte außerhalb des Katalogs** schätzt der SL: klein = 1 EP, mittel = 2 EP, groß = 3 EP.
 
@@ -443,6 +472,9 @@ Die Kosten gelten für das jeweilige Mindestlevel (Meisterschaft 0 bzw. die Meis
 | **Meuchelstoß** (Attentäter) | Präzision | 2 | 1 | 2 Energie | Vorbedingung: der Gegner hat dich nicht bemerkt (Heimlichkeits-Clash gewonnen oder Goon aus dem Verborgenen). Verletzung auch ohne Dominanz, Zone frei gewählt. *Verletzung ohne Dominanz 2, Zone wählen 1, Vorbedingung -1.* |
 | **Schattenschritt** (Ninja) | Fluss | 2 | 1 | 2 Energie | Bei einem Heimlichkeits-Clash wird ein Ergebnis *Entdeckt* zu *Verdacht*: Du bist in einer Rauchwolke oder hinter einer Ecke wieder verschwunden. *Mittlerer Effekt 2.* |
 | **Lock Reversal** (Aikido) | Fluss | 3 | 1 | 3 Energie | Vorbedingung: der Gegner setzt einen Gelenkhebel oder Griff auf dich. Hebt den großen Tag (*Gelenk gesperrt*) sofort auf und erlaubt dir eine kostenlose Konter-Aktion. *Tag aufheben 2, Gegenangriff 2, Vorbedingung -1.* |
+| **Blasrohr-Pfeil** (Assassine) | Präzision | 3 | 1 | 3 Energie | Ein Pfeil in Hals oder Gesicht. Trifft er einen Gegner ohne Schutz (oder bei Dominanz mit Verletzung), ist er *Vergiftet* (stark, mit Verzögerung bis 3 Runden). *Gift stark 2, Zone wählen 1.* |
+| **Dokushu-Berührung** (Gifthand) | Präzision | 3 | 1 | 3 Energie | Eine Berührung, die jede Rüstung umgeht: Das Gift (schwach) wirkt auch durch den Schutz. *Schutzart ignorieren 2, Gift schwach 1.* |
+| **Garrotte** (Attentäter) | Präzision | 3 | 1 | 3 Energie | Vorbedingung: unbemerkt. Entzieht 4 Energie und setzt den großen Tag *Gewürgt*, lautlos. Das Opfer kann nicht rufen. *Energie-Schaden 2, großer Tag 2, Vorbedingung -1.* |
 
 **Design-Hinweis: Ausnahmen von den Regeln.** Moves dürfen eine Grundregel gezielt brechen, solange sie dafür bezahlen. Der *Lock Reversal* ist ein Beispiel dafür: Große Tags lassen sich eigentlich nicht umdrehen (3.3), aber ein Aikidoka hat genau dafür gelernt. Der Ausgleich steckt im Raster: Der Effekt wird mit EP bewertet, die Vorbedingung (der Gegner muss den Hebel ansetzen) bringt einen Rabatt, und die Kosten sinken mit der Meisterschaft (Level 1: 3 Energie, Level 5: 1 Energie, Level 10: 0). Ähnlich lassen sich Ausnahmen für andere Fälle bauen, z.B. ein Move, der einen Würgegriff löst, oder einer, der Deckung ignoriert. Ob ein Move so eine Ausnahme bekommt, entscheidet der SL nach dem Check aus 5.1 (Gegenspiel, Preis, Angemessenheit). Es ist ein Vorschlag, keine feste Regel.
 
@@ -488,6 +520,8 @@ Was anfangs alle Kraft kostet, wird mit der Zeit zur Standard-Attacke. Ein Momen
 | Schuld/Ruf | Story-Komplikation: Verfolger, Schulden, Ruf. |
 
 **Fehlschlag:** Legendäre Moves brauchen immer Dominanz. Gelingt sie nicht, gibt es einen Rückschlag (der Move verpufft), und der Preis wird trotzdem fällig.
+
+*Beispiel:* **Todesberührung** (Dokushu-Meister, Präzision, 8 EP): *Schutzart ignorieren 2, tödliches Gift 3, Finale 3.* Kosten: 3 Momentum, 1 Energie. Die Berührung findet jede Lücke. Bei Dominanz endet der Kampf gegen alle Gegner auf Level 10 oder niedriger, sie gehen am Gift zu Boden. Ein **stärkerer Boss** verliert wie üblich Schutz, 2 Verletzungen und 3 Willenskraft, und das Gift wirkt trotzdem: Nach der Verzögerung wird er sterbend, das Gegenmittel braucht **MW 13**. Preise: *Narbe* (die Hand bleibt dunkel verfärbt) und *Selten*.
 
 ---
 
@@ -593,6 +627,16 @@ Dieses Beispiel zeigt, wie sich ein Charakterbogen durch Meilensteine organisch 
 
 Jins nächster Clash mit Chen beginnt mit seinem Start-Momentum. Chen hat den kleinen Tag *Misstrauisch* (+1 auf Wahrnehmung), aber gegen den Angriff selbst nützt ihm das nichts. Trifft der Stoß, greift die Vorbedingung des Moves auch ohne Dominanz. Fällt der Wurf schlecht aus, steht Jin immerhin vor Chen, ohne dass die vier Goons ihn gehört haben.
 
+### **Beispiel 6: Gift und Töten**
+
+*Situation:* Jin hat Chen, den Elite-Schläger aus Beispiel 5, im Lagerhaus niedergerungen (Energie 2). Miller hat ihn eingeholt und beobachtet die Szene.
+
+* **Spieler (Jin):** "Ich lege den Würgegriff an." *(Rear Naked Choke, entzieht 3 Energie.)* Chen fällt auf -1 Energie und ist **ohnmächtig**, im Tag *Gewürgt*.
+* **Spieler (Jin):** "Ich würge weiter." Das ist eine Aktion ohne Wurf, Chen verliert wieder 3 Energie und steht bei -4. **Je 3 Punkte unter 0 sind 1 Verletzung:** Chen erleidet eine Kopf-Verletzung.
+* **SL:** "Miller, Jin hat eine Runde Zeit, dann macht er es noch einmal. Danach wäre Chen sterbend, danach tot."
+* **Spieler (Miller):** "Ich greife Jin an, um ihn vom Hals zu lösen." Gewinnt Miller den Clash, endet der Tag *Gewürgt*. Chen bleibt bewusstlos, aber mit einer Verletzung am Leben.
+* **Variante:** Jin hätte mit dem **Blasrohr-Pfeil** aus dem Hinterhalt auf Chens ungeschützten Hals gezielt (3 Energie, Gift stark). Mit Verzögerung 2 Runden geht Chen erst beim Rückzug zu Boden, -2 Energie pro Runde über 2 Runden. Chens Leibwächter zieht seine Kugel in Jins Richtung, Jin hat sich längst abgesetzt.
+
 ---
 
 ## **Anhang A: Wahrscheinlichkeiten (2W6 + Bonus gegen 2W6 + Bonus)**
@@ -686,6 +730,11 @@ Ein Boss mit gleichem Bonus ist als Gruppenboss gedacht. Für ein Solo-Duell sol
 * **Beispiel 5 (6):** Heimlichkeit gegen Goons und Elite.
 * **Tags (3.3):** *Heimspiel* (ein Titel, der die Lage abdeckt, nimmt kleinen Tags den Nachteil) und *Freiwillig* (sich selbst in eine Lage bringen, Vorbedingung für Moves).
 * **Move Lock Reversal (5.2)** als Beispiel für gezielte Ausnahmen von Grundregeln, mit Design-Hinweis.
+
+* **Töten und Überlauf (3.11):** Gnadenstoß gegen Wehrlose (Spielercharaktere werden sterbend, nie sofort tot). Wer ohnmächtig weiter Energie verliert, hat negative Energie: je 3 Punkte unter 0 eine Verletzung (Kopf bei Würgen, Torso bei Gift), ein Sterbender mit weiterem Verlust stirbt. Erwürgen dauert etwa 3 Runden.
+* **Gift (3.11, 5.1):** Stufen Schwach, Stark, Lähmgift, Tödlich als Effekte im EP-Katalog. Wirkt nur bei Schutz 0, Verzögerung bis 3 Runden, Gegenmittel per MW-Probe.
+* **Hinweise (3.11):** SL-Hinweis (Attentäter tragen ein Gegengift) und Spieler-Hinweis (Gegengift ergattern heißt nicht den Gegner besiegen), W6 zum Mitzählen des Überlaufs.
+* **Neue Moves (5.2):** *Blasrohr-Pfeil*, *Dokushu-Berührung*, *Garrotte*. **Legendärer Move (5.4):** *Todesberührung* (Dokushu). **Beispiel 6 (6):** Gift und Töten.
 
 **Zur Bestätigung (aus v3.1):**
 
