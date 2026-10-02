@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PlayerInfo } from '../net/protocol';
   import type { Snippet } from 'svelte';
+  import { PORTRAIT_PLACEHOLDER } from '../lib/art';
 
   let { p, me = false, onopen, children }: { p: PlayerInfo; me?: boolean; onopen?: () => void; children?: Snippet } = $props();
   const v = $derived(p.vitals);
@@ -8,7 +9,7 @@
 </script>
 
 <article class="pc panel flat" class:off={!p.connected} class:me>
-  <div class="pic">{#if p.portrait}<img src={p.portrait} alt="" />{:else}<span>{(p.characterName || p.name)[0]?.toUpperCase()}</span>{/if}</div>
+  <div class="pic">{#if p.portrait}<img src={p.portrait} alt="" />{:else}<img class="ph" src={PORTRAIT_PLACEHOLDER} alt="" />{/if}</div>
   <div class="main">
     <div class="row top">
       <b class="nm">{p.characterName || p.name}</b>{#if p.alias}<span class="dim">„{p.alias}“</span>{/if}
@@ -44,7 +45,7 @@
   .pc.off { opacity: 0.6; border-left-color: var(--line-strong); }
   .pic { width: 64px; height: 82px; background: linear-gradient(160deg, var(--accent-soft), rgba(0, 0, 0, 0.5)); border: 1px solid var(--line-strong); display: grid; place-items: center; overflow: hidden; }
   .pic img { width: 100%; height: 100%; object-fit: cover; }
-  .pic span { font: 400 2rem var(--font-display); color: var(--accent); }
+  .pic img.ph { opacity: 0.55; filter: saturate(0.6); }
   .main { display: grid; gap: 0.35rem; min-width: 0; align-content: start; }
   .top { flex-wrap: nowrap; gap: 0.4rem; }
   .nm { font: 400 1.4rem var(--font-display); letter-spacing: 0.05em; color: var(--ink-strong); }

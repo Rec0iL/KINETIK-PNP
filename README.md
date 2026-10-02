@@ -7,7 +7,7 @@ Ein Pen-&-Paper-Regelwerk für grenzenlose, filmische Action: Gun-Fu, Kampfkunst
 | Bestandteil | Stand |
 |---|---|
 | Regelwerk | v3.4 (Alpha, in aktiver Entwicklung) |
-| Web-App (Charakterbogen, Multiplayer, SL-Dashboard) | in Entwicklung, siehe `tools/kinetik-vtt` |
+| Web-App (Charakterbogen, Multiplayer, SL-Dashboard, Karte, Musik, Würfel) | nutzbar, siehe `tools/kinetik-vtt` |
 | Illustriertes PDF | `export/`, gebaut mit `tools/rulebook-pdf` |
 
 ## Projektstruktur
@@ -36,10 +36,10 @@ KINETIK_PNP/
 
 - [x] Regelwerk v3: Meisterschaft, Clash, Schutz, Moves, Waffen
 - [x] Regeldaten in `data/` als gemeinsame Quelle für alle Tools
-- [ ] Online-Charakterbogen (`tools/kinetik-vtt`)
-- [ ] Move-Builder (EP-Rechner nach Kapitel 5.1)
-- [ ] Multiplayer mit Karte, Musik, Würfel und Log (WebRTC)
-- [ ] SL-Dashboard (Initiative, Gegner, Bedrängnis, Kinetik-Marker)
+- [x] Online-Charakterbogen (`tools/kinetik-vtt`)
+- [x] Move-Builder (EP-Rechner nach Kapitel 5.1)
+- [x] Multiplayer mit Karte, Musik, Würfel und Log (WebRTC)
+- [x] SL-Dashboard (Initiative, Gegner, Bedrängnis, Kinetik-Marker)
 - [x] Druckversion (PDF)
 - [ ] Schnellreferenz
 

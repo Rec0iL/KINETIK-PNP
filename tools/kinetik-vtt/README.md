@@ -4,6 +4,26 @@ Web-App für KINETIK: Charakterbogen, Multiplayer über WebRTC (PeerJS), SL-Dash
 
 Stack: Vite, Svelte 5, TypeScript. Deutsche Oberfläche (alle Texte in `src/i18n/de.ts`). Drei Looks: Neo-Noir, Terminal, Hybrid.
 
+## Kurzanleitung
+
+**Spieler:** Auf der Startseite „Spieler“ wählen, einen Charakter anlegen (oder das Beispiel Jin laden) und ausfüllen. Alles speichert automatisch in diesem Browser. Wichtige Charaktere zusätzlich als JSON exportieren. Jeder abgeleitete Wert (Energie/WK-Maximum, Momentum-Deckel, Meisterschaft, Move-Kosten) lässt sich per Klick überschreiben. Zum Mitspielen: „Beitreten“, Raumcode des SL und Namen eingeben, der SL bestätigt. Ohne Internet am Tisch funktioniert der Bogen genauso, nur ohne Verbindung.
+
+**Spielleiter:** „Spielleiter“, „Runde starten“. Der Raumcode (z.B. `K7X-2QF`) oder der Link geht an die Spieler. Der SL-Tab ist der Server und muss offen bleiben (nach einem Neuladen setzt er die Runde selbst fort). Tabs: Spieler (Bögen, Schnell-Aktionen, Sichtbarkeit), Kampf (Runden, Kinetik-Marker, Bedrängnis, Gegner), Karte (Bild hochladen, Tokens, Nebel, Raster), Handouts, Musik, Würfel (auch geheim, Clash-Antwort auf Spielerwürfe), Notizen, Einstellungen (Sichtbarkeit, lokale Spieler ohne Gerät, Sitzung sichern).
+
+**Verbindung:** Die Spieldaten laufen direkt zwischen den Browsern (WebRTC). Ein öffentlicher PeerJS-Server vermittelt nur den Verbindungsaufbau. Bei strenger Firewall hilft ein eigener TURN-Server (Einstellung „Erweitert“ beim Beitreten und Starten). Ein eigener PeerJS-Server (`npx peerjs --port 9000`) ist dort ebenfalls einstellbar.
+
+## Veröffentlichen auf GitHub Pages
+
+1. Repository auf GitHub anlegen und pushen.
+2. Unter Settings > Pages als Source „GitHub Actions“ wählen.
+3. Der Workflow `.github/workflows/pages.yml` prüft Daten, Typen und Tests, baut die App und veröffentlicht sie unter `https://<nutzer>.github.io/<repo>/`.
+
+Die App nutzt relative Pfade und Hash-Routing, funktioniert also unter jedem Unterpfad.
+
+## Grafiken neu erzeugen
+
+`python3 scripts/gen_web_assets.py` erzeugt die Bilder in `public/art` mit Krea 2 in ComfyUI (Einstellungen aus `assets/pdf/project.json`, ComfyUI muss laufen). Vorhandene Dateien werden übersprungen, `--force` erzeugt neu. Vor einer öffentlichen Nutzung die Lizenz des Bildmodells (Krea 2) für die erzeugten Bilder prüfen.
+
 ## Entwickeln
 
 ```bash

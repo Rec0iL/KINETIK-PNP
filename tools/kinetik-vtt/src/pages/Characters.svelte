@@ -5,6 +5,7 @@
   import { downloadJson, exportCharacter, exportLibrary, fileNameFor, parseImport, ImportError } from '../model/io';
   import { computeSheet } from '../model/sheet';
   import { navigate } from '../lib/router.svelte';
+  import { PORTRAIT_PLACEHOLDER } from '../lib/art';
 
   let fileInput = $state<HTMLInputElement>();
   let message = $state('');
@@ -86,7 +87,7 @@
       {@const s = computeSheet(c)}
       <article class="panel card">
         <a class="open" href={`#/charakter/${c.id}`} aria-label={`${c.name} öffnen`}>
-          <div class="pic">{#if c.portrait}<img src={c.portrait} alt="" />{:else}<span>{(c.name[0] ?? '?').toUpperCase()}</span>{/if}</div>
+          <div class="pic">{#if c.portrait}<img src={c.portrait} alt="" />{:else}<img class="ph" src={PORTRAIT_PLACEHOLDER} alt="" />{/if}</div>
           <div class="info">
             <h2>{c.name}</h2>
             {#if c.alias}<span class="kicker">„{c.alias}“</span>{/if}
@@ -122,7 +123,7 @@
   .open:hover { text-decoration: none; }
   .pic { width: 82px; height: 104px; background: linear-gradient(160deg, var(--accent-soft), rgba(0, 0, 0, 0.5)); border: 1px solid var(--line-strong); display: grid; place-items: center; overflow: hidden; }
   .pic img { width: 100%; height: 100%; object-fit: cover; }
-  .pic span { font: 400 3rem var(--font-display); color: var(--accent); }
+  .pic img.ph { opacity: 0.6; filter: saturate(0.7); }
   .info { display: grid; gap: 0.25rem; align-content: start; min-width: 0; }
   .info h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.8rem; letter-spacing: 0.05em; line-height: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .vitals { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 0.2rem; }

@@ -32,6 +32,26 @@
     if (selectedId && !scenes.some((s) => s.id === selectedId)) selectedId = scenes[0]?.id ?? null;
   });
 
+  async function loadDemo() {
+    uploading = true;
+    try {
+      const res = await fetch(new URL('art/map-lagerhaus.webp', document.baseURI));
+      if (!res.ok) throw new Error('Beispielkarte nicht gefunden.');
+      const bytes = await res.arrayBuffer();
+      const bmp = await createImageBitmap(new Blob([bytes], { type: 'image/webp' }));
+      const meta = await putAsset(bytes, 'lagerhaus.webp', 'image/webp');
+      const s = newScene(uid(), 'Lagerhaus (Beispiel)', meta.hash, bmp.width, bmp.height);
+      bmp.close?.();
+      s.grid.size = Math.round(s.width / 28);
+      addScene(s);
+      selectedId = s.id;
+    } catch (err) {
+      pushToast((err as Error).message, 'danger');
+    } finally {
+      uploading = false;
+    }
+  }
+
   async function onFile(e: Event) {
     const input = e.currentTarget as HTMLInputElement;
     const file = input.files?.[0];
@@ -124,6 +144,7 @@
         <button class="btn sm primary" onclick={() => fileInput?.click()} disabled={uploading}>{uploading ? 'Lade …' : '+ Karte'}</button>
         <input bind:this={fileInput} type="file" accept="image/*" class="sr-only" onchange={onFile} />
       </div>
+      {#if !scenes.length}<button class="btn sm" onclick={loadDemo} disabled={uploading}>Beispielkarte laden</button>{/if}
       <ul class="list">
         {#each scenes as s (s.id)}
           <li class:on={s.id === selectedId}>

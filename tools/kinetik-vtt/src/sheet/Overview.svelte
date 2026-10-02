@@ -3,6 +3,7 @@
   import { newTitle, uid, type Character } from '../model/character';
   import { computeSheet, creationReport } from '../model/sheet';
   import { imageToDataUrl } from '../lib/image';
+  import { PORTRAIT_PLACEHOLDER } from '../lib/art';
   import Stepper from '../ui/Stepper.svelte';
   import Meter from '../ui/Meter.svelte';
   import Pips from '../ui/Pips.svelte';
@@ -71,7 +72,7 @@
   <!-- Identität -->
   <section class="panel ident">
     <label class="portrait" title="Bild wählen">
-      {#if char.portrait}<img src={char.portrait} alt="Porträt" />{:else}<span>Porträt</span>{/if}
+      {#if char.portrait}<img src={char.portrait} alt="Porträt" />{:else}<img class="ph" src={PORTRAIT_PLACEHOLDER} alt="" /><span class="hintlbl">Bild wählen</span>{/if}
       <input type="file" accept="image/*" onchange={onPortrait} class="sr-only" />
       {#if char.portrait}
         <button type="button" class="btn sm icon x" onclick={(e) => { e.preventDefault(); char.portrait = undefined; }} aria-label="Bild entfernen">✕</button>
@@ -239,6 +240,8 @@
   .portrait { position: relative; width: 150px; height: 190px; border: 1px dashed var(--line-strong); display: grid; place-items: center; color: var(--ink-dim); cursor: pointer; overflow: hidden; background: rgba(0, 0, 0, 0.35); font: 600 0.8rem var(--font-head); letter-spacing: 0.15em; text-transform: uppercase; }
   .portrait:hover { border-color: var(--accent); }
   .portrait img { width: 100%; height: 100%; object-fit: cover; }
+  .portrait img.ph { opacity: 0.45; filter: saturate(0.6); }
+  .portrait .hintlbl { position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; text-shadow: 0 1px 4px #000; color: var(--ink); }
   .portrait .x { position: absolute; top: 4px; right: 4px; }
   .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.7rem; align-content: start; }
   .wide { grid-column: 1 / -1; }

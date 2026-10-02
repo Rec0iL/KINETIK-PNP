@@ -20,6 +20,11 @@
   </section>
 
   <section class="panel">
+    <h2>Grafiken</h2>
+    <p class="dim">Die Bilder dieser App (Startseite, Kartenmotive, Beispielkarte, Porträt-Platzhalter) wurden mit dem KI-Bildmodell Krea 2 in ComfyUI erzeugt, mit den Prompts aus <code>scripts/gen_web_assets.py</code>.</p>
+  </section>
+
+  <section class="panel">
     <h2>Schriften</h2>
     <p class="dim">Barlow, Barlow Condensed, Bebas Neue und Oswald (Google Fonts), SIL Open Font License 1.1.</p>
   </section>

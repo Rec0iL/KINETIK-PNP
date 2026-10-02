@@ -38,4 +38,10 @@
   .ctl input[type='range'] { width: 90px; padding: 0; min-height: 24px; }
   .mono { font-family: var(--font-mono); }
   .cr { font-size: 1rem; padding: 0 0.2rem; }
+  @media (max-width: 640px) {
+    .bar { left: 8px; right: 8px; bottom: 8px; max-width: none; padding: 0.35rem 0.6rem; gap: 0.5rem; }
+    .info { min-width: 0; flex: 1; }
+    .ctl input[type='range'] { width: 64px; }
+    .info small:last-child { display: none; }
+  }
 </style>
