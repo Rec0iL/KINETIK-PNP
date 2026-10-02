@@ -5,13 +5,16 @@
   import Home from './pages/Home.svelte';
   import Placeholder from './pages/Placeholder.svelte';
   import Characters from './pages/Characters.svelte';
+  import Builder from './pages/Builder.svelte';
   import CharacterPage from './pages/CharacterPage.svelte';
   import RollPanel from './sheet/RollPanel.svelte';
   import RollToast from './ui/RollToast.svelte';
   import { loadLibrary } from './store/characters.svelte';
+  import { loadMoveLibrary } from './store/moves.svelte';
   import { RULES_VERSION } from './rules';
 
   loadLibrary();
+  loadMoveLibrary();
 
   const nav: { href: string; key: Key; names: string[] }[] = [
     { href: '#/', key: 'nav.home', names: ['home'] },
@@ -48,6 +51,8 @@
     <Characters />
   {:else if router.route.name === 'character'}
     {#key router.route.params.id}<CharacterPage id={router.route.params.id} />{/key}
+  {:else if router.route.name === 'builder'}
+    <Builder />
   {:else if router.route.name === 'dice'}
     <span class="kicker">Spieler</span>
     <h1 class="pagetitle">Würfel</h1>

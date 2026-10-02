@@ -1,6 +1,6 @@
 // JSON-Import/Export mit Validierung und Migration.
 import { ATTR_KEYS, ZONE_KEYS, RULES_VERSION } from '../rules';
-import { SCHEMA_VERSION, newCharacter, uid, type Character } from './character';
+import { SCHEMA_VERSION, newCharacter, uid, type Character, type Move } from './character';
 
 export interface CharacterFile {
   kinetik: 'character';
@@ -116,4 +116,52 @@ export function downloadJson(data: unknown, filename: string) {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// --- Moves als eigene JSON-Dateien (Move-Builder) ---
+export interface MovesFile {
+  kinetik: 'moves';
+  schemaVersion: number;
+  rulesVersion: string;
+  exportedAt: string;
+  moves: Move[];
+}
+
+export function exportMoves(moves: Move[]): MovesFile {
+  return {
+    kinetik: 'moves', schemaVersion: SCHEMA_VERSION, rulesVersion: RULES_VERSION,
+    exportedAt: new Date().toISOString(), moves: JSON.parse(JSON.stringify(moves)),
+  };
+}
+
+export function sanitizeMove(raw: unknown, opts: { newId?: boolean } = {}): Move {
+  if (!isObj(raw)) throw new ImportError('Der Inhalt ist kein Move.');
+  const effects = arr<{ id?: unknown; label?: unknown; ep?: unknown; stern?: unknown }>(raw.effects)
+    .filter((e) => isObj(e) && typeof e.id === 'string')
+    .map((e) => ({
+      id: e.id as string,
+      ...(typeof e.label === 'string' && e.label ? { label: e.label } : {}),
+      ...(typeof e.ep === 'number' ? { ep: e.ep } : {}),
+      ...(typeof e.stern === 'boolean' ? { stern: e.stern } : {}),
+    }));
+  const attr = ATTR_KEYS.includes(raw.attr as never) ? (raw.attr as Move['attr']) : 'fluss';
+  const m: Move = {
+    ...(raw as Partial<Move>),
+    id: opts.newId || !str(raw.id) ? uid() : str(raw.id),
+    name: str(raw.name, 'Move'),
+    attr,
+    text: str(raw.text),
+    effects,
+    deductions: arr<string>(raw.deductions).map(String),
+  };
+  return m;
+}
+
+export function parseMoveImport(text: string): Move[] {
+  let json: unknown;
+  try { json = JSON.parse(text); } catch { throw new ImportError('Die Datei ist kein gültiges JSON.'); }
+  if (isObj(json) && json.kinetik === 'moves' && Array.isArray(json.moves)) return json.moves.map((m) => sanitizeMove(m, { newId: true }));
+  if (isObj(json) && json.kinetik === 'move' && json.move) return [sanitizeMove(json.move, { newId: true })];
+  if (isObj(json) && 'effects' in json) return [sanitizeMove(json, { newId: true })];
+  throw new ImportError('Das ist keine KINETIK-Move-Datei.');
 }

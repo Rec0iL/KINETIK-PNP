@@ -92,3 +92,21 @@ describe('JSON-Import/Export', () => {
     expect(c.resources.momentum).toBe(0);
   });
 });
+
+import { exportMoves, parseMoveImport } from '../src/model/io';
+import { moveFromTemplate } from '../src/sheet/moveTemplates';
+
+describe('Move-Import/Export', () => {
+  it('Runde mit neuen IDs', () => {
+    const m = moveFromTemplate('lock-reversal', { level: 1 })!;
+    const [back] = parseMoveImport(JSON.stringify(exportMoves([m])));
+    expect(back.id).not.toBe(m.id);
+    expect({ ...back, id: m.id }).toEqual(m);
+  });
+  it('lehnt Müll ab, repariert Teile', () => {
+    expect(() => parseMoveImport('{"x":1}')).toThrow(ImportError);
+    const [m] = parseMoveImport('{"kinetik":"move","move":{"name":"X","attr":"bogus","effects":[{"id":"zone"},{"nope":1}]}}');
+    expect(m.attr).toBe('fluss');
+    expect(m.effects).toEqual([{ id: 'zone' }]);
+  });
+});
