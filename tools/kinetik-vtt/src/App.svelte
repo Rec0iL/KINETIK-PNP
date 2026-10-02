@@ -31,6 +31,17 @@
   import { RULES_VERSION } from './rules';
   import { settings } from './lib/settings.svelte';
 
+  let headerEl = $state<HTMLElement>();
+  // Höhe des App-Kopfs als CSS-Variable, damit mitscrollende Leisten (Charakterbogen) genau darunter einrasten.
+  $effect(() => {
+    if (!headerEl) return;
+    const set = () => document.documentElement.style.setProperty('--hdr', `${headerEl!.offsetHeight}px`);
+    set();
+    const ro = new ResizeObserver(set);
+    ro.observe(headerEl);
+    return () => ro.disconnect();
+  });
+
   loadLibrary().then(() => resumeFromSession());
   loadAssetIndex().then(() => resumeHostIfActive());
   loadMoveLibrary();
@@ -46,7 +57,7 @@
   ];
 </script>
 
-<header class="top">
+<header class="top" bind:this={headerEl}>
   <a class="brand" href="#/" aria-label={t('app.name')}>
     <span class="mark">K</span><span class="word">KINETIK</span>
   </a>

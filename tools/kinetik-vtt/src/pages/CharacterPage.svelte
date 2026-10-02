@@ -50,6 +50,7 @@
     <div class="row"><a class="btn primary" href="#/charaktere">Zu den Charakteren</a></div>
   </section>
 {:else}
+  <div class="sticky">
   <div class="bar">
     <a class="btn sm ghost" href="#/charaktere">← Charaktere</a>
     <div class="who">
@@ -71,6 +72,7 @@
       <button role="tab" aria-selected={tab === t.key} onclick={() => (tab = t.key)}>{t.label}</button>
     {/each}
   </div>
+  </div>
 
   <div class="content" role="tabpanel">
     {#if tab === 'ueber'}<Overview {char} />
@@ -84,7 +86,10 @@
 {/if}
 
 <style>
-  .bar { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+  /* Kopfleiste und Reiter bleiben unter dem App-Kopf stehen, auch beim Scrollen. */
+  .sticky { position: sticky; top: var(--hdr, 54px); z-index: 40; margin: 0 -0.6rem; padding: 0.55rem 0.6rem 0; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .sticky .tabs { border-bottom: 0; }
+  .bar { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
   .who b { font: 400 1.7rem var(--font-display); letter-spacing: 0.06em; color: var(--ink-strong); }
   .mini { display: flex; align-items: center; gap: 0.4rem; font: 600 0.78rem var(--font-head); letter-spacing: 0.12em; color: var(--ink-dim); --c: var(--accent); }
   .mini.amber { --c: var(--accent-2); }
