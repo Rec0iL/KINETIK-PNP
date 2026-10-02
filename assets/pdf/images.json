@@ -427,7 +427,7 @@
     "prompt": "Inside a sleek high-rise safehouse overlooking glowing neon skyscrapers in pouring rain, an operative prepares her gear before an open equipment locker. She methodically inspects a custom sidearm while selecting modular tactical tools laid out across a steel workbench. Wide cinematic establishing shot, moody atmospheric shadows, quiet anticipation.",
     "seed": 303554906,
     "kind": "filler",
-    "active": true,
+    "active": false,
     "title": "Füllbild: 2.4 Charaktererschaffung",
     "after": "sec-2-4-charaktererschaffung",
     "chapter": "ch-2-der-charakter",

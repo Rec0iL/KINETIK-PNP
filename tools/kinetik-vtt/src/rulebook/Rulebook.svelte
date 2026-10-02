@@ -112,20 +112,26 @@
       {/if}
 
       {#if showCover}
-        <div class="cover" style:--img="url({rbUrl(data.cover!)})">
-          <span class="kicker">Cinematic Action Roleplaying</span>
-          <h1>KINETIK</h1>
-          <div class="rbcontent">{@html data.intro}</div>
-          {#if data.pdf}<a class="btn sm" href={rbUrl(data.pdf)} download>PDF herunterladen</a>{/if}
+        <div class="cover">
+          <img class="coverimg" src={rbUrl(data.cover!)} alt="Cover" />
+          <div class="covertxt">
+            <span class="kicker">Cinematic Action Roleplaying</span>
+            <h1>KINETIK</h1>
+            <div class="rbcontent">{@html data.intro}</div>
+            {#if data.pdf}<a class="btn sm" href={rbUrl(data.pdf)} download={`KINETIK_Regelwerk_v${data.version}.pdf`}>PDF herunterladen</a>{/if}
+          </div>
         </div>
       {/if}
 
       {#each data.chapters as c (c.id)}
         <article class="chapter" id={`rb-${c.id}`}>
-          <div class="banner" style:--img={c.image ? `url(${rbUrl(c.image)})` : 'none'}>
-            {#if c.number}<span class="no">Kapitel {c.number}</span>{:else if c.appendix}<span class="no">Anhang</span>{/if}
-            <h2>{c.title}</h2>
-            {#if c.subtitle}<span class="sub">{c.subtitle}</span>{/if}
+          <div class="banner">
+            {#if c.image}<img class="bannerimg" src={rbUrl(c.image)} alt="" loading="lazy" />{/if}
+            <div class="bannertxt">
+              {#if c.number}<span class="no">Kapitel {c.number}</span>{:else if c.appendix}<span class="no">Anhang</span>{/if}
+              <h2>{c.title}</h2>
+              {#if c.subtitle}<span class="sub">{c.subtitle}</span>{/if}
+            </div>
           </div>
           <div class="rbcontent pad">
             {@html c.html}
@@ -166,17 +172,22 @@
   .pad { padding: 1rem 1.2rem; }
   .err { color: var(--danger); }
 
-  .cover { padding: 2.5rem 1.4rem 1.4rem; background: linear-gradient(to top, var(--bg), rgba(8, 10, 14, 0.55)), var(--img) center / cover; display: grid; gap: 0.6rem; justify-items: start; }
-  .cover h1 { font-size: 4.5rem; }
+  /* Bilder werden nie beschnitten: natürliches Seitenverhältnis, Hochformate nur in der Höhe begrenzt. */
+  .cover { background: linear-gradient(to bottom, var(--bg-2), var(--bg)); }
+  .coverimg { display: block; width: auto; max-width: 100%; height: auto; max-height: min(70vh, 640px); margin: 0 auto; }
+  .covertxt { padding: 1.2rem 1.4rem 1.4rem; display: grid; gap: 0.6rem; justify-items: start; }
+  .covertxt h1 { font-size: 4.5rem; }
 
-  .banner { position: relative; padding: 3.6rem 1.4rem 1rem; background: linear-gradient(to top, var(--bg) 6%, rgba(8, 10, 14, 0.25) 70%), var(--img) center / cover, var(--bg-2); border-top: 2px solid var(--accent); }
+  .banner { border-top: 2px solid var(--accent); }
+  .bannerimg { display: block; width: 100%; height: auto; }
+  .bannertxt { padding: 0.9rem 1.4rem 0.7rem; background: linear-gradient(to bottom, var(--bg-2), var(--bg)); border-bottom: 1px solid var(--line); }
   .banner .no { font: 600 0.8rem var(--font-head); letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent-2); }
   .banner h2 { font-family: var(--font-display); font-weight: 400; font-size: 2.8rem; letter-spacing: 0.06em; line-height: 1; text-shadow: var(--hard-shadow); margin-top: 0.2rem; }
   .banner .sub { color: var(--ink-dim); font-size: 0.95rem; }
   .sec { padding: 0.4rem 1.2rem 1.2rem; }
   .sec h3 { font-size: 1.3rem; margin: 1rem 0 0.5rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--accent-line); }
-  .secimg, .fill { width: 100%; max-height: 220px; object-fit: cover; display: block; margin: 0.6rem 0; border: 1px solid var(--line); }
-  .fill { max-height: 180px; opacity: 0.9; }
+  .secimg, .fill { display: block; width: auto; max-width: 100%; height: auto; max-height: min(70vh, 560px); margin: 0.6rem auto; border: 1px solid var(--line); }
+  .secimg { width: 100%; }
 
   .toc { display: grid; gap: 2px; border-bottom: 1px solid var(--line); background: var(--panel-solid); }
   .toc button { text-align: left; background: none; border: 0; color: var(--ink); font: inherit; cursor: pointer; padding: 0.3em 0.4em; }

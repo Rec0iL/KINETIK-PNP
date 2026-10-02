@@ -26,7 +26,7 @@ export function loadRulebook(): Promise<void> {
   rulebook.loading = true;
   promise = fetch(new URL('rulebook/rulebook.json', document.baseURI))
     .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-    .then((d: RbData) => { rulebook.data = d; })
+    .then((d: RbData) => { rulebook.data = absolutize(d); })
     .catch((e) => { rulebook.error = `Regelwerk nicht ladbar (${(e as Error).message}).`; promise = null; })
     .finally(() => { rulebook.loading = false; });
   return promise;
@@ -40,6 +40,17 @@ export function openRulebook(target = '') {
 }
 export const closeRulebook = () => { rulebook.open = false; };
 export const toggleRulebook = () => (rulebook.open ? closeRulebook() : openRulebook());
+
+/** Bilder im Text verweisen relativ auf rulebook/img: auf absolute Adressen umstellen, sonst findet die Seite sie nicht. */
+function absolutize(d: RbData): RbData {
+  const fix = (html: string) => html.replace(/(<img[^>]*\ssrc=")img\//g, `$1${rbUrl('img/')}`);
+  d.intro = fix(d.intro);
+  for (const c of d.chapters) {
+    c.html = fix(c.html);
+    for (const s of c.sections) s.html = fix(s.html);
+  }
+  return d;
+}
 
 export const rbUrl = (path: string) => new URL(`rulebook/${path}`, document.baseURI).href;
 
