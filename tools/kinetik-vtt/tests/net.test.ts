@@ -56,3 +56,51 @@ describe('Raumcode und Vitals', () => {
     expect(v.bonus.fluss).toBe(3);
   });
 });
+
+import { bedraengnisHit, newCombat, newNpc, nextRound, npcInjury, npcNormalHit, npcStatus, otherSide, publicCombat, startCombat } from '../src/gm/combat';
+
+describe('Kampfverwaltung', () => {
+  it('Runden: Marker-Seite beginnt, Erledigt-Markierungen werden geleert', () => {
+    const c = newCombat();
+    startCombat(c);
+    expect([c.round, c.side, c.marker]).toEqual([1, 'players', 'players']);
+    c.done = { a: true };
+    c.marker = otherSide(c.marker);
+    nextRound(c);
+    expect([c.round, c.side, c.done]).toEqual([2, 'enemies', {}]);
+  });
+  it('Hinterhalt: überraschende Seite beginnt mit dem Marker', () => {
+    const c = newCombat();
+    startCombat(c, { ambush: 'enemies' });
+    expect([c.marker, c.side]).toEqual(['enemies', 'enemies']);
+  });
+  it('Bedrängnis: erster Treffer Zähler 1, zweiter Verletzung und Reset', () => {
+    expect(bedraengnisHit(0)).toEqual({ counter: 1, result: 'erster' });
+    expect(bedraengnisHit(1)).toEqual({ counter: 0, result: 'verletzung' });
+  });
+  it('NPC-Leiter und Ausgeschaltet-Status', () => {
+    const boss = newNpc('b', 'boss');
+    expect([boss.bonus, boss.schutz, boss.wk]).toEqual([7, 3, 8]);
+    for (let i = 0; i < 3; i++) expect(npcNormalHit(boss)).toBe('schutz');
+    expect(npcNormalHit(boss)).toBe('wk');
+    expect(boss.wk).toBe(7);
+    npcInjury(boss, 'kopf');
+    expect(npcStatus(boss).out).toBe(false);
+    npcInjury(boss, 'kopf');
+    expect(npcStatus(boss).out).toBe(true);
+  });
+  it('Goon-Gruppe: jeder Treffer schaltet einen aus', () => {
+    const g = newNpc('g', 'goon', 'Wachen', 3);
+    npcNormalHit(g);
+    expect(g.count).toBe(2);
+    npcNormalHit(g); npcNormalHit(g);
+    expect(npcStatus(g).out).toBe(true);
+  });
+  it('Spieler sehen keine versteckten NPCs', () => {
+    const c = newCombat();
+    c.npcs.push(newNpc('a', 'elite', 'Chen'), { ...newNpc('b', 'boss', 'Geheimboss'), hidden: true });
+    expect(publicCombat(c).enemies.map((e) => e.name)).toEqual(['Chen']);
+    c.showEnemies = false;
+    expect(publicCombat(c).enemies).toEqual([]);
+  });
+});

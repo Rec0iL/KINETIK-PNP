@@ -4,6 +4,7 @@ import type { RollRecord } from '../dice/roller.svelte';
 import type { AttrKey, ZoneKey } from '../rules';
 import type { MapOp, MapState } from '../map/mapstate';
 import type { MusicState } from '../music/clock';
+import type { PublicCombat } from '../gm/combat';
 
 export const PROTOCOL_VERSION = 1;
 
@@ -73,6 +74,18 @@ export interface SharedState {
   notes: string;
   rounds: number;
   music: MusicState;
+  /** Öffentlicher Kampfzustand (null = kein Kampf). */
+  combat: PublicCombat | null;
+}
+
+export interface Handout {
+  id: string;
+  title: string;
+  kind: 'image' | 'text';
+  /** Bild: Asset-Hash. */
+  hash?: string;
+  text?: string;
+  ts: number;
 }
 
 export type ServerMsg =
@@ -85,6 +98,7 @@ export type ServerMsg =
   | { t: 'roll'; roll: RollRecord }
   | { t: 'state'; key: keyof SharedState; value: SharedState[keyof SharedState] }
   | { t: 'toast'; text: string }
+  | { t: 'handout'; handout: Handout }
   | { t: 'map'; ops: MapOp[] }
   | { t: 'asset-head'; hash: string; name: string; mime: string; size: number; total: number }
   | { t: 'asset-chunk'; hash: string; i: number; data: Uint8Array | ArrayBuffer }

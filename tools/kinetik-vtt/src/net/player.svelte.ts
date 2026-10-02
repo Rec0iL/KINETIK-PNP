@@ -12,7 +12,7 @@ import { addPing } from '../map/pings.svelte';
 import { bestClockOffset } from '../music/clock';
 import { applyMapOp, type MapOp, type MapState } from '../map/mapstate';
 import {
-  PROTOCOL_VERSION, peerIdFor, normalizeCode, type ClientMsg, type PlayerInfo, type ServerMsg, type SharedState,
+  PROTOCOL_VERSION, peerIdFor, normalizeCode, type ClientMsg, type Handout, type PlayerInfo, type ServerMsg, type SharedState,
 } from './protocol';
 
 export type PlayerStatus = 'idle' | 'connecting' | 'pending' | 'connected' | 'reconnecting' | 'denied' | 'error';
@@ -28,6 +28,8 @@ export const player = $state<{
   view: { playerId: string; character: Character | null } | null;
   /** Die aktive Karte der Runde (ohne versteckte Tokens). */
   map: MapState | null;
+  /** Vom SL gesendete Handouts dieser Runde. */
+  handouts: Handout[];
   playerId: string;
   characterId: string;
   name: string;
@@ -36,7 +38,7 @@ export const player = $state<{
   /** SL-Zeit minus lokale Zeit in ms (für synchrone Musik). */
   clockOffset: number;
 }>({
-  status: 'idle', error: '', code: '', gmName: '', state: null, party: [], view: null, map: null,
+  status: 'idle', error: '', code: '', gmName: '', state: null, party: [], view: null, map: null, handouts: [],
   playerId: loadPlayerId(), characterId: '', name: '', latency: 0, clockOffset: 0,
 });
 
@@ -170,6 +172,7 @@ function onMessage(m: ServerMsg) {
       player.state = m.state;
       player.party = m.players;
       player.map = m.map;
+      player.handouts = loadHandouts();
       setAssetRequester((hash) => sendMsg({ t: 'want', hash }));
       for (const r of m.log) commitRoll(r, { remote: true, quiet: true });
       startPing();
@@ -205,6 +208,11 @@ function onMessage(m: ServerMsg) {
     }
     case 'toast':
       pushToast(m.text, 'info', 8000);
+      break;
+    case 'handout':
+      if (!player.handouts.some((h) => h.id === m.handout.id)) player.handouts.unshift(m.handout);
+      saveHandouts();
+      pushToast(`Neues Handout: ${m.handout.title}`, 'good', 8000);
       break;
     case 'pong': {
       const rtt = performance.now() - m.ts;
@@ -284,4 +292,12 @@ export function viewPlayer(id: string | null) {
 
 export function sendMapOps(ops: MapOp[]) {
   sendMsg({ t: 'map', ops });
+}
+
+const handoutKey = () => `kinetik.handouts.${player.code}`;
+function loadHandouts(): Handout[] {
+  try { return JSON.parse(localStorage.getItem(handoutKey()) ?? '[]'); } catch { return []; }
+}
+function saveHandouts() {
+  try { localStorage.setItem(handoutKey(), JSON.stringify($state.snapshot(player.handouts))); } catch { /* ignorieren */ }
 }

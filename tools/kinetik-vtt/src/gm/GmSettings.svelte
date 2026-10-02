@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { gm, setVisibility, setGmName, addLocalPlayer, endSession, stopHost } from '../net/gm.svelte';
+  import { gm, setVisibility, setGmName, addLocalPlayer, endSession, stopHost, exportSession } from '../net/gm.svelte';
+  import { downloadJson } from '../model/io';
   import { library } from '../store/characters.svelte';
   import { parseImport, ImportError } from '../model/io';
   import { newCharacter } from '../model/character';
@@ -9,6 +10,16 @@
 
   let fileInput = $state<HTMLInputElement>();
   let pick = $state('');
+  let withAssets = $state(true);
+  let exporting = $state(false);
+
+  async function doExport() {
+    exporting = true;
+    try {
+      const f = await exportSession(withAssets);
+      if (f) downloadJson(f, `kinetik-sitzung-${new Date().toISOString().slice(0, 10)}.json`);
+    } finally { exporting = false; }
+  }
 
   const modes: { key: Visibility; title: string; text: string }[] = [
     { key: 'party', title: 'Gruppenleiste', text: 'Alle sehen Name, Energie, WK, Momentum, Verletzungen und Tags der anderen, aber nicht die ganzen Bögen.' },
@@ -64,6 +75,15 @@
     </section>
 
     <section class="panel">
+      <h2>Sitzung sichern</h2>
+      <p class="dim">Die Sitzung (Spieler samt Bögen, Karten, Tokens, Nebel, Gegner, Handouts, Notizen) liegt automatisch in diesem Browser. Als Datei lässt sie sich sichern oder auf ein anderes Gerät mitnehmen und auf der Startseite des SL-Bereichs wieder laden.</p>
+      <div class="row">
+        <label class="check"><input type="checkbox" bind:checked={withAssets} /> Karten, Bilder und Musik mitspeichern (Datei wird groß)</label>
+        <button class="btn" onclick={doExport} disabled={exporting}>{exporting ? 'Packe …' : 'Sitzung exportieren'}</button>
+      </div>
+    </section>
+
+    <section class="panel">
       <h2>Lokale Spieler (ohne Gerät)</h2>
       <p class="dim">Für Spieler am Tisch ohne Verbindung: Der SL pflegt ihren Bogen selbst, sie erscheinen in der Gruppe wie alle anderen.</p>
       <div class="row">
@@ -86,6 +106,7 @@
   .mode.on { border-color: var(--accent); background: var(--accent-soft); box-shadow: var(--glow); }
   .mode.on b { color: var(--accent); }
   .row { margin-bottom: 0.5rem; }
+  .check { display: flex; gap: 0.4em; align-items: center; }
   .row :global(.field) { flex: 1; min-width: 200px; }
   select { width: auto; }
 </style>

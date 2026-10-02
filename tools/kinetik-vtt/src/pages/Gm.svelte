@@ -1,6 +1,6 @@
 <script lang="ts">
   import { untrack } from 'svelte';
-  import { gm, startHost, loadSavedSession, scheduleParty, persistSession, setSharedNotes, partyFor, type GmSession } from '../net/gm.svelte';
+  import { gm, importSession, startHost, loadSavedSession, scheduleParty, persistSession, setSharedNotes, partyFor, type GmSession } from '../net/gm.svelte';
   import { settings } from '../lib/settings.svelte';
   import { formatCode } from '../net/protocol';
   import { pushToast } from '../ui/toasts.svelte';
@@ -10,13 +10,15 @@
   import ClashAnswer from '../gm/ClashAnswer.svelte';
   import GmMap from '../gm/GmMap.svelte';
   import GmMusic from '../gm/GmMusic.svelte';
+  import GmCombat from '../gm/GmCombat.svelte';
+  import GmHandouts from '../gm/GmHandouts.svelte';
   import RollPanel from '../sheet/RollPanel.svelte';
 
   let name = $state(settings.displayName || 'Spielleiter');
   let password = $state('');
   let saved = $state<GmSession | null>(null);
   let loaded = $state(false);
-  let tab = $state<'players' | 'map' | 'music' | 'dice' | 'notes' | 'settings'>('players');
+  let tab = $state<'players' | 'combat' | 'map' | 'handouts' | 'music' | 'dice' | 'notes' | 'settings'>('players');
   let sharedDraft = $state('');
   let sharedTimer: ReturnType<typeof setTimeout>;
 
@@ -37,6 +39,18 @@
   $effect(() => {
     if (gm.status === 'open' && gm.session) sharedDraft = untrack(() => gm.session!.state.notes);
   });
+
+  let importFile = $state<HTMLInputElement>();
+  async function onImport(e: Event) {
+    const input = e.currentTarget as HTMLInputElement;
+    const f = input.files?.[0];
+    input.value = '';
+    if (!f) return;
+    try {
+      saved = await importSession(await f.text());
+      pushToast('Sitzung geladen. Du kannst sie jetzt fortsetzen.', 'good');
+    } catch (err) { pushToast((err as Error).message, 'danger'); }
+  }
 
   async function start(resume: GmSession | null) {
     settings.displayName = name.trim();
@@ -64,6 +78,7 @@
         </div>
         <hr />
       {/if}
+      <div class="row"><button class="btn sm" onclick={() => importFile?.click()}>Sitzungsdatei laden</button><input bind:this={importFile} type="file" accept="application/json,.json" class="sr-only" onchange={onImport} /></div>
       <label class="field">Dein Name in der Runde<input bind:value={name} /></label>
       <label class="field">Passwort (optional)<input bind:value={password} autocomplete="off" placeholder="leer = nur Raumcode und Bestätigung" /></label>
       <NetSettings />
@@ -93,7 +108,9 @@
 
   <div class="tabs" role="tablist" aria-label="SL-Dashboard">
     <button role="tab" aria-selected={tab === 'players'} onclick={() => (tab = 'players')}>Spieler{#if gm.pending.length} ({gm.pending.length}){/if}</button>
+    <button role="tab" aria-selected={tab === 'combat'} onclick={() => (tab = 'combat')}>Kampf{#if gm.session.combat.active} (R{gm.session.combat.round}){/if}</button>
     <button role="tab" aria-selected={tab === 'map'} onclick={() => (tab = 'map')}>Karte</button>
+    <button role="tab" aria-selected={tab === 'handouts'} onclick={() => (tab = 'handouts')}>Handouts</button>
     <button role="tab" aria-selected={tab === 'music'} onclick={() => (tab = 'music')}>Musik</button>
     <button role="tab" aria-selected={tab === 'dice'} onclick={() => (tab = 'dice')}>Würfel</button>
     <button role="tab" aria-selected={tab === 'notes'} onclick={() => (tab = 'notes')}>Notizen</button>
@@ -109,6 +126,10 @@
           {#each gm.feed.slice(0, 15) as f}<div class="f"><span class="dim mono">{new Date(f.ts).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</span> {f.text}</div>{:else}<p class="dim">Noch nichts.</p>{/each}
         </section>
       </div>
+    {:else if tab === 'combat'}
+      <GmCombat />
+    {:else if tab === 'handouts'}
+      <GmHandouts />
     {:else if tab === 'map'}
       <GmMap />
     {:else if tab === 'music'}

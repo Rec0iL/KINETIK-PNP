@@ -36,4 +36,5 @@ npm run build        # dist/
 - M4 Karte: SL lädt Bilder hoch (große werden verkleinert), Übertragung in Blöcken mit Prüfsumme und Zwischenspeicher, mehrere Szenen (eine live für Spieler), Raster, Tokens (Spieler mit Porträt, NPCs, versteckte), Nebel (Pinsel, Rechteck, Vieleck), Ping, Messen, Spieler bewegen den eigenen Token.
 - M5 Musik: SL steuert Wiedergabe für alle (Titel, Pause, Springen, Lautstärke, Schleife, automatisch nächster Titel), Position über Uhrenabgleich synchron, Überblendung beim Titelwechsel, eigene Audiodateien per Übertragung, 9 mitgelieferte CC-BY-Titel von Kevin MacLeod mit Credits-Seite, lokale Lautstärke/Stumm, Hinweis "Audio aktivieren" bei Autoplay-Sperre.
 - Schutz-Anzeige als Schild mit Aktuell / Max und Pfeiltasten.
-- Als Nächstes:, SL-Werkzeuge (M6), Grafiken und Deploy (M7).
+- M6 SL-Werkzeuge: Kampf-Tab mit Seiten-Initiative und Kinetik-Marker, Bedrängnis-Zähler mit Regelanwendung, NPC-Manager nach NPC-Leiter (Goon-Gruppen, Schläger, Elite, Boss, Nemesis, Ausgeschaltet-Status, Überzahl), öffentliche Kampfanzeige für Spieler, Handouts (Text und Bild) an alle oder einzelne, Sitzung als Datei sichern und laden.
+- Als Nächstes:, Grafiken, Feinschliff und Deploy (M7).

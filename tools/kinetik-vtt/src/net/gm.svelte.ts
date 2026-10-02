@@ -12,9 +12,11 @@ import { serveAsset } from './assets.svelte';
 import { addPing } from '../map/pings.svelte';
 import { defaultMusic, expectedPosition, type MusicState, type TrackRef } from '../music/clock';
 import { currentTime } from '../music/engine.svelte';
+import { newCombat, publicCombat, type CombatState } from '../gm/combat';
+import { getAssetBytes, putAsset } from './assets.svelte';
 import { applyMapOp, forPlayers, type MapOp, type MapState } from '../map/mapstate';
 import {
-  PROTOCOL_VERSION, newRoomCode, peerIdFor, type ClientMsg, type PatchOp, type PlayerInfo, type ServerMsg, type SharedState,
+  PROTOCOL_VERSION, newRoomCode, peerIdFor, type ClientMsg, type Handout, type PatchOp, type PlayerInfo, type ServerMsg, type SharedState,
   type Visibility,
 } from './protocol';
 
@@ -41,6 +43,8 @@ export interface GmSession {
   activeScene: string | null;
   /** Hochgeladene Musiktitel (mitgelieferte stehen im Katalog). */
   tracks: TrackRef[];
+  combat: CombatState;
+  handouts: Handout[];
 }
 
 export interface FeedEntry { ts: number; text: string }
@@ -81,6 +85,9 @@ export async function loadSavedSession(): Promise<GmSession | null> {
     const s = (await get(STORE_KEY)) as GmSession | undefined;
     if (!s) return null;
     s.tracks = s.tracks ?? [];
+    s.combat = s.combat ?? newCombat();
+    s.handouts = s.handouts ?? [];
+    s.state.combat = s.combat.active ? publicCombat(s.combat) : null;
     s.state.music = { ...defaultMusic(), ...(s.state.music ?? {}), playing: false };
     s.scenes = s.scenes ?? [];
     s.activeScene = s.activeScene ?? null;
@@ -141,8 +148,8 @@ export async function startHost(opts: { gmName: string; password: string; resume
   gm.status = 'starting';
   gm.error = '';
   const s: GmSession = opts.resume ?? {
-    code: newRoomCode(), password: '', players: [], gmNotes: '', created: Date.now(), scenes: [], activeScene: null, tracks: [],
-    state: { gmName: '', visibility: 'party', notes: '', rounds: 0, music: defaultMusic() },
+    code: newRoomCode(), password: '', players: [], gmNotes: '', created: Date.now(), scenes: [], activeScene: null, tracks: [], combat: newCombat(), handouts: [],
+    state: { gmName: '', visibility: 'party', notes: '', rounds: 0, music: defaultMusic(), combat: null },
   };
   s.state.gmName = opts.gmName || s.state.gmName || 'Spielleiter';
   s.password = opts.password;
@@ -606,4 +613,103 @@ export function removeTrack(id: string) {
   if (s.state.music.track?.id === id) musicStop();
   s.tracks = s.tracks.filter((t) => t.id !== id);
   persistSession();
+}
+
+// ---------- Kampf ----------
+/** Öffentlichen Kampfzustand an alle verteilen (nach jeder Änderung am Kampf). */
+export function commitCombat() {
+  const s = gm.session;
+  if (!s) return;
+  const pub = s.combat.active ? publicCombat($state.snapshot(s.combat) as CombatState) : null;
+  s.state.combat = pub;
+  broadcast({ t: 'state', key: 'combat', value: pub });
+  persistSession();
+}
+
+// ---------- Handouts ----------
+export function addHandout(h: Handout) {
+  gm.session?.handouts.unshift(h);
+  persistSession();
+}
+
+export function removeHandout(id: string) {
+  const s = gm.session;
+  if (!s) return;
+  s.handouts = s.handouts.filter((h) => h.id !== id);
+  persistSession();
+}
+
+/** `to` = null: an alle. Gibt zurück, wie viele Spieler es bekommen haben. */
+export function sendHandout(h: Handout, to: string[] | null): number {
+  let n = 0;
+  for (const [id, c] of conns) {
+    if (to && !to.includes(id)) continue;
+    send(c, { t: 'handout', handout: $state.snapshot(h) as Handout });
+    n++;
+  }
+  return n;
+}
+
+// ---------- Sitzung sichern ----------
+interface SessionFile {
+  kinetik: 'session';
+  version: 1;
+  exportedAt: string;
+  session: GmSession;
+  assets?: Record<string, { name: string; mime: string; b64: string }>;
+}
+
+function toB64(bytes: ArrayBuffer): string {
+  const u = new Uint8Array(bytes);
+  let s = '';
+  for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode(...u.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+function fromB64(b64: string): ArrayBuffer {
+  const bin = atob(b64);
+  const u = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+  return u.buffer;
+}
+
+/** Hashes aller Dateien, die die Sitzung braucht (Karten, Titel, Handouts). */
+export function sessionAssetHashes(s: GmSession): string[] {
+  const h = new Set<string>();
+  for (const sc of s.scenes) if (sc.asset) h.add(sc.asset);
+  for (const t of s.tracks) if (t.hash) h.add(t.hash);
+  for (const x of s.handouts) if (x.hash) h.add(x.hash);
+  return [...h];
+}
+
+export async function exportSession(includeAssets: boolean): Promise<SessionFile | null> {
+  const s = gm.session;
+  if (!s) return null;
+  const file: SessionFile = { kinetik: 'session', version: 1, exportedAt: new Date().toISOString(), session: $state.snapshot(s) as GmSession };
+  for (const p of file.session.players) p.connected = false;
+  if (includeAssets) {
+    file.assets = {};
+    for (const hash of sessionAssetHashes(s)) {
+      const rec = await getAssetBytes(hash);
+      if (rec) file.assets[hash] = { name: rec.meta.name, mime: rec.meta.mime, b64: toB64(rec.bytes) };
+    }
+  }
+  return file;
+}
+
+/** Liest eine Sitzungsdatei, stellt Dateien wieder her und liefert die Sitzung (noch nicht gestartet). */
+export async function importSession(text: string): Promise<GmSession> {
+  let json: SessionFile;
+  try { json = JSON.parse(text); } catch { throw new Error('Die Datei ist kein gültiges JSON.'); }
+  if (json?.kinetik !== 'session' || !json.session) throw new Error('Das ist keine KINETIK-Sitzungsdatei.');
+  for (const a of Object.values(json.assets ?? {})) await putAsset(fromB64(a.b64), a.name, a.mime);
+  const s = json.session;
+  s.tracks = s.tracks ?? [];
+  s.scenes = s.scenes ?? [];
+  s.handouts = s.handouts ?? [];
+  s.combat = s.combat ?? newCombat();
+  s.players = (s.players ?? []).map((p) => ({ ...p, connected: false, character: p.character ? sanitizeCharacter(p.character) : null }));
+  s.state.music = { ...defaultMusic(), ...(s.state.music ?? {}), playing: false };
+  s.state.combat = s.combat.active ? publicCombat(s.combat) : null;
+  await set(STORE_KEY, s);
+  return s;
 }
