@@ -3,7 +3,9 @@
     rules, actionBonus, probeChance, resolveClash, resolveHit, OUTCOME_LABEL, parseFormula,
     type AttrKey, type ClashResult,
   } from '../rules';
+  import type { Snippet } from 'svelte';
   import type { Character } from '../model/character';
+  import type { PlayerInfo } from '../net/protocol';
   import { computeSheet } from '../model/sheet';
   import {
     rollLog, roll2d6, rollManual, rollFormula, clearLog, linkClash, type RollRecord,
@@ -12,12 +14,15 @@
   import Stepper from '../ui/Stepper.svelte';
   import RollSummary from '../ui/RollSummary.svelte';
 
-  let { char }: { char?: Character } = $props();
+  let { char, isGm = false, canSecret = false, who: whoProp = '', party = [], entryActions }: {
+    char?: Character; isGm?: boolean; canSecret?: boolean; who?: string; party?: PlayerInfo[]; entryActions?: Snippet<[RollRecord]>;
+  } = $props();
+  let secret = $state(false);
 
   type Mode = 'probe' | 'clash' | 'free';
   let mode = $state<Mode>('probe');
 
-  const who = $derived(settings.displayName || char?.name || 'Spieler');
+  const who = $derived(whoProp || settings.displayName || char?.name || (isGm ? 'Spielleiter' : 'Spieler'));
   const attrs = rules.tabellen.attribute;
   const sheet = $derived(char ? computeSheet(char) : undefined);
 
@@ -50,8 +55,8 @@
 
   function doRoll() {
     last = tableDice
-      ? rollManual({ who, characterId: char?.id, label, bonus, mod, mw: mw || undefined, sum })
-      : roll2d6({ who, characterId: char?.id, label, bonus, mod, mw: mw || undefined });
+      ? rollManual({ who, characterId: char?.id, label, bonus, mod, mw: mw || undefined, sum, secret })
+      : roll2d6({ who, characterId: char?.id, label, bonus, mod, mw: mw || undefined, secret });
   }
 
   // --- Clash ---
@@ -69,13 +74,13 @@
   let ignoriert = $state(false);
 
   function doClash() {
-    const me = roll2d6({ who, characterId: char?.id, label: `Clash: ${label}`, bonus, mod, kind: 'clash' });
+    const me = roll2d6({ who, characterId: char?.id, label: `Clash: ${label}`, bonus, mod, kind: 'clash', secret });
     const meSum = me.dice[0].value + me.dice[1].value;
     const opp = oppManual
-      ? rollManual({ who: oppName, label: 'Clash', bonus: oppBonus, mod: oppMod, sum: oppSum, kind: 'clash' })
-      : roll2d6({ who: oppName, label: 'Clash', bonus: oppBonus, mod: oppMod, kind: 'clash' });
+      ? rollManual({ who: oppName, label: 'Clash', bonus: oppBonus, mod: oppMod, sum: oppSum, kind: 'clash', secret })
+      : roll2d6({ who: oppName, label: 'Clash', bonus: oppBonus, mod: oppMod, kind: 'clash', secret });
     const oppDice = oppManual ? oppSum : opp.dice[0].value + opp.dice[1].value;
-    const meSide = { dice: meSum, bonus, mod, isPlayer: true };
+    const meSide = { dice: meSum, bonus, mod, isPlayer: !isGm };
     const oppSide = { dice: oppDice, bonus: oppBonus, mod: oppMod, isPlayer: oppPlayer };
     const res = resolveClash({
       attacker: role === 'attacker' ? meSide : oppSide,
@@ -124,7 +129,7 @@
       parseFormula(f);
       freeError = '';
       formula = f;
-      last = rollFormula({ who, characterId: char?.id, label: freeLabel, formula: f });
+      last = rollFormula({ who, characterId: char?.id, label: freeLabel, formula: f, secret });
     } catch (e) {
       freeError = (e as Error).message;
     }
@@ -140,6 +145,10 @@
       <button role="tab" aria-selected={mode === 'clash'} onclick={() => (mode = 'clash')}>Clash-Rechner</button>
       <button role="tab" aria-selected={mode === 'free'} onclick={() => (mode = 'free')}>Freie Würfel</button>
     </div>
+
+    {#if canSecret}
+      <label class="check secret"><input type="checkbox" bind:checked={secret} /> Geheim: nur der SL sieht diese Würfe</label>
+    {/if}
 
     {#if mode !== 'free'}
       <div class="row sel">
@@ -195,6 +204,14 @@
         <div class="side">
           <h3>Gegner</h3>
           <div class="row">
+            {#if party.length}
+              <label class="field">Spieler übernehmen
+                <select onchange={(e) => { const p = party.find((x) => x.id === e.currentTarget.value); if (p?.vitals) { oppName = p.characterName || p.name; oppBonus = p.vitals.bonus[attr]; oppPlayer = true; } }}>
+                  <option value="">—</option>
+                  {#each party.filter((p) => p.vitals) as p}<option value={p.id}>{p.characterName || p.name} ({p.vitals!.bonus[attr] > 0 ? '+' : ''}{p.vitals!.bonus[attr]})</option>{/each}
+                </select>
+              </label>
+            {/if}
             <label class="field">Name<input bind:value={oppName} /></label>
             <label class="field">Bonus<Stepper bind:value={oppBonus} min={-3} max={20} label="Gegner-Bonus" /></label>
             <label class="field">Mod.<Stepper bind:value={oppMod} min={-9} max={9} label="Gegner-Modifikator" /></label>
@@ -274,7 +291,7 @@
     <div class="row"><h2>Würfellog</h2><span class="spacer"></span><button class="btn sm danger" onclick={() => confirm('Log leeren?') && clearLog()} disabled={!rollLog.entries.length}>Leeren</button></div>
     <div class="log">
       {#each filteredLog as r (r.id)}
-        <div class="entry"><RollSummary {r} animate={false} size={34} /></div>
+        <div class="entry"><RollSummary {r} animate={false} size={34} />{@render entryActions?.(r)}</div>
       {:else}
         <p class="dim">Noch nichts gewürfelt.</p>
       {/each}
@@ -291,6 +308,7 @@
   .check { display: flex; align-items: center; gap: 0.4em; font-size: 0.92rem; }
   .roll { min-width: 150px; min-height: 48px; font-size: 1.05rem; }
   .chance { margin: 0.6rem 0 0; }
+  .secret { margin-top: 0.8rem; color: var(--accent-2); }
   .last { margin-top: 1rem; padding: 0.8rem; background: var(--raised); border-left: 3px solid var(--accent-2); }
   .clash { display: grid; grid-template-columns: 1fr 1.6fr; gap: 1rem; margin: 1rem 0 0.7rem; }
   .side { display: grid; gap: 0.5rem; align-content: start; padding: 0.7rem; background: var(--raised); border: 1px solid var(--line); }

@@ -6,10 +6,17 @@ interface Settings {
   autoShock: boolean;
   /** Anzeigename in Runden (Würfelwürfe, Teilnehmerliste). */
   displayName: string;
+  /** Eigener PeerJS-Server (leer = öffentlicher Broker von peerjs.com). */
+  peerHost: string;
+  peerPort: number;
+  peerPath: string;
+  peerSecure: boolean;
+  /** Eigene ICE-Server als JSON (z.B. TURN), leer = Standard von PeerJS. */
+  iceJson: string;
 }
 
 function load(): Settings {
-  const d: Settings = { autoShock: true, displayName: '' };
+  const d: Settings = { autoShock: true, displayName: '', peerHost: '', peerPort: 443, peerPath: '/', peerSecure: true, iceJson: '' };
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) return { ...d, ...JSON.parse(raw) };

@@ -6,14 +6,20 @@
   import Placeholder from './pages/Placeholder.svelte';
   import Characters from './pages/Characters.svelte';
   import Builder from './pages/Builder.svelte';
+  import Join from './pages/Join.svelte';
+  import Round from './pages/Round.svelte';
+  import Gm from './pages/Gm.svelte';
+  import SessionBar from './ui/SessionBar.svelte';
+  import Toasts from './ui/Toasts.svelte';
   import CharacterPage from './pages/CharacterPage.svelte';
   import RollPanel from './sheet/RollPanel.svelte';
   import RollToast from './ui/RollToast.svelte';
   import { loadLibrary } from './store/characters.svelte';
   import { loadMoveLibrary } from './store/moves.svelte';
+  import { resumeFromSession } from './net/player.svelte';
   import { RULES_VERSION } from './rules';
 
-  loadLibrary();
+  loadLibrary().then(() => resumeFromSession());
   loadMoveLibrary();
 
   const nav: { href: string; key: Key; names: string[] }[] = [
@@ -21,6 +27,7 @@
     { href: '#/charaktere', key: 'nav.characters', names: ['characters', 'character'] },
     { href: '#/builder', key: 'nav.builder', names: ['builder'] },
     { href: '#/wuerfel', key: 'nav.dice', names: ['dice'] },
+    { href: '#/beitreten', key: 'nav.join', names: ['join', 'round'] },
     { href: '#/sl', key: 'nav.gm', names: ['gm'] },
   ];
 </script>
@@ -44,6 +51,8 @@
   </label>
 </header>
 
+<SessionBar />
+
 <main>
   {#if router.route.name === 'home'}
     <Home />
@@ -57,14 +66,19 @@
     <span class="kicker">Spieler</span>
     <h1 class="pagetitle">Würfel</h1>
     <RollPanel />
-  {:else if router.route.name === 'notfound'}
-    <Placeholder title="404" />
+  {:else if router.route.name === 'join'}
+    <Join />
+  {:else if router.route.name === 'round'}
+    <Round />
+  {:else if router.route.name === 'gm'}
+    <Gm />
   {:else}
-    <Placeholder title={t(`nav.${{ characters: 'characters', character: 'characters', builder: 'builder', dice: 'dice', gm: 'gm', credits: 'credits' }[router.route.name] as 'characters'}` as Key)} />
+    <Placeholder title={router.route.name === 'credits' ? t('nav.credits') : '404'} />
   {/if}
 </main>
 
 <RollToast />
+<Toasts />
 
 <footer class="foot">
   <span>KINETIK · Regelwerk v{RULES_VERSION}</span>

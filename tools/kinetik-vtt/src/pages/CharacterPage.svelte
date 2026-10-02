@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getCharacter, library } from '../store/characters.svelte';
   import { useAutosave } from '../store/autosave.svelte';
+  import { scheduleSheet } from '../net/player.svelte';
   import { downloadJson, exportCharacter, fileNameFor } from '../model/io';
   import { computeSheet } from '../model/sheet';
   import Overview from '../sheet/Overview.svelte';
@@ -16,6 +17,12 @@
   const char = $derived(getCharacter(id));
   const sheet = $derived(char ? computeSheet(char) : undefined);
   useAutosave(() => char);
+  // Bogen an den SL übertragen, wenn dieser Charakter in einer Runde aktiv ist.
+  $effect(() => {
+    if (!char) return;
+    $state.snapshot(char);
+    scheduleSheet(char);
+  });
 
   const tabs = [
     { key: 'ueber', label: 'Übersicht' },

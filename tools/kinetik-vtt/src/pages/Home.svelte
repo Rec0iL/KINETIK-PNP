@@ -3,8 +3,9 @@
 
   const cards: { href: string; title: Key; text: Key; cta: Key; accent: 'cyan' | 'amber'; soon?: boolean; no: string }[] = [
     { href: '#/charaktere', title: 'home.player.title', text: 'home.player.text', cta: 'home.player.cta', accent: 'cyan', no: '01' },
-    { href: '#/sl', title: 'home.gm.title', text: 'home.gm.text', cta: 'home.gm.cta', accent: 'amber', soon: true, no: '02' },
-    { href: '#/builder', title: 'home.builder.title', text: 'home.builder.text', cta: 'home.builder.cta', accent: 'cyan', no: '03' },
+    { href: '#/beitreten', title: 'home.join.title', text: 'home.join.text', cta: 'home.join.cta', accent: 'cyan', no: '02' },
+    { href: '#/sl', title: 'home.gm.title', text: 'home.gm.text', cta: 'home.gm.cta', accent: 'amber', no: '03' },
+    { href: '#/builder', title: 'home.builder.title', text: 'home.builder.text', cta: 'home.builder.cta', accent: 'cyan', no: '04' },
   ];
 </script>
 

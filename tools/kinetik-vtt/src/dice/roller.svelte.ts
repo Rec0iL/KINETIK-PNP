@@ -54,8 +54,9 @@ export function onRoll(fn: Listener): () => void {
 
 /** Trägt einen Wurf ins Log ein. Auch für fremde Würfe aus dem Netzwerk (`remote`). */
 export function commitRoll(r: RollRecord, opts: { remote?: boolean } = {}) {
-  if (rollLog.entries.some((e) => e.id === r.id)) return;
-  rollLog.entries.unshift(r);
+  const i = rollLog.entries.findIndex((e) => e.id === r.id);
+  if (i >= 0) rollLog.entries[i] = r; // Aktualisierung, z.B. Clash-Ergebnis
+  else rollLog.entries.unshift(r);
   if (rollLog.entries.length > MAX) rollLog.entries.length = MAX;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify($state.snapshot(rollLog.entries))); } catch { /* ignorieren */ }
   if (!opts.remote) for (const l of listeners) l(r);
@@ -144,8 +145,7 @@ export function linkClash(a: RollRecord, d: RollRecord, result: ClashResult): Ro
       limited: result.limited, noRoll: result.noRoll, tA: result.tA, tV: result.tV,
     },
   };
-  const i = rollLog.entries.findIndex((e) => e.id === d.id);
-  if (i >= 0) rollLog.entries[i] = rec;
+  commitRoll(rec);
   return rec;
 }
 
