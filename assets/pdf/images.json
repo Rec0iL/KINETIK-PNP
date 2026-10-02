@@ -257,7 +257,7 @@
     "title": "Füllbild: Grundphilosophie",
     "after": "ch-1-grundphilosophie",
     "chapter": "ch-1-grundphilosophie",
-    "h_mm": 77.7,
+    "h_mm": 76.0,
     "w_mm": 176.0,
     "include_style": true
   },
@@ -265,11 +265,11 @@
     "prompt": "A female operative leaps across rain-slicked glass catwalks suspended above a glowing neon metropolis. Mid-air, she gracefully twists to evade sniper tracer rounds, instinctively hurling balanced steel spikes toward an unseen shooter. Wide low-angle landscape view, torrential rain, shattering safety glass, cold cyan shadows, and suspended kinetic tension.",
     "seed": 247243098,
     "kind": "filler",
-    "active": false,
+    "active": true,
     "title": "Füllbild: 2.1 Die Attribute (2W6-System)",
     "after": "sec-2-1-die-attribute-2w6-system",
     "chapter": "ch-2-der-charakter",
-    "h_mm": 59.1,
+    "h_mm": 82.2,
     "w_mm": 176.0,
     "include_style": true
   },
@@ -281,7 +281,7 @@
     "title": "Füllbild: 2.5 Waffen & Deckung",
     "after": "sec-2-5-waffen-deckung",
     "chapter": "ch-2-der-charakter",
-    "h_mm": 190.6,
+    "h_mm": 183.2,
     "w_mm": 176.0,
     "include_style": true
   },
@@ -293,7 +293,7 @@
     "title": "Füllbild: 3.2 Die Wirkung eines Treffers (Kaskade)",
     "after": "sec-3-2-die-wirkung-eines-treffers-kaskade",
     "chapter": "ch-3-der-kampf-das-clash-system",
-    "h_mm": 67.2,
+    "h_mm": 52.3,
     "w_mm": 176.0,
     "include_style": true,
     "negative": "worst quality, low quality, blurry, bad anatomy, deformed, extra limbs, boxing gloves, punching, throwing punch, missed strike, undamaged armor, standing apart, no contact, text, watermark, signature"
@@ -302,7 +302,7 @@
     "prompt": "cinematic anime action illustration, Inside a gritty, neon-lit subway station, an agile operative in a dark trench coat leaps through the air, firing dual handguns with bright muzzle flashes and ejecting shell casings at masked henchmen. In the shadowy background, an imposing crime boss in a tailored suit watches calmly, flanked by heavily armored guards.",
     "seed": 1279695245,
     "kind": "filler",
-    "active": true,
+    "active": false,
     "title": "Füllbild: 3.7 Mehrere Gegner: Goons, Elite und Bosse",
     "after": "sec-3-7-mehrere-gegner-goons-elite-und-bosse",
     "chapter": "ch-3-der-kampf-das-clash-system",
@@ -355,7 +355,7 @@
     "title": "Füllbild: 5.4 Meister-Moves und Legendäre Moves",
     "after": "sec-5-4-meister-moves-und-legendaere-moves",
     "chapter": "ch-5-moves",
-    "h_mm": 213.2,
+    "h_mm": 71.8,
     "w_mm": 176.0,
     "include_style": true
   },
@@ -363,7 +363,7 @@
     "prompt": "Inside a dimly lit high-rise safehouse overlooking a rain-swept neon metropolis, an operative in a tailored dark suit inspects a disassembled handgun beside wrapped martial arts hand-wraps and a tactical vest laid across a steel workbench. Wide cinematic shot, ambient blue and amber reflections, tense and lethal atmosphere.",
     "seed": 956711661,
     "kind": "filler",
-    "active": true,
+    "active": false,
     "title": "Füllbild: Beispiel-Charakterbogen",
     "after": "sec-beispiel-charakterbogen",
     "chapter": "ch-6-spielbeispiele-am-tisch",
@@ -375,7 +375,7 @@
     "prompt": "Vertical portrait composition. In a smoke-filled subterranean fighting cage under flickering neon tubes, an imposing female brawler stands victorious with wrapped, bruised fists and a leather jacket over her shoulders. Defeated syndicate heavies lie slumped across the concrete floor around her. Low-angle framing, intense aura of ruthless dominance.",
     "seed": 446245014,
     "kind": "filler",
-    "active": true,
+    "active": false,
     "title": "Füllbild: Beispiel 4: Charakterentwicklung und Titel-Leveling",
     "after": "sec-beispiel-4-charakterentwicklung-und-titel-leveli",
     "chapter": "ch-6-spielbeispiele-am-tisch",
@@ -387,7 +387,7 @@
     "prompt": "Wide low-angle shot in a rain-slicked neon alley. A stylish woman in an open dark trench coat effortlessly parries an incoming machete strike with one hand while delivering a swift reverse-kick to another masked thug. Cascading rain, cyan neon reflections, cinematic effortless dominance, dynamic motion.",
     "seed": 258644556,
     "kind": "filler",
-    "active": true,
+    "active": false,
     "title": "Füllbild: 3.4 Die Helden-Schwelle",
     "after": "sec-3-4-die-helden-schwelle",
     "chapter": "ch-3-der-kampf-das-clash-system",
@@ -396,15 +396,55 @@
     "include_style": true
   },
   "sec-4-1-heimlichkeit-und-infiltration": {
-    "prompt": "",
+    "prompt": "Inside a dim industrial warehouse, a hooded black-clad operative crouches unseen high among shadows of towering metal storage racks. Below, four distinct gritty thugs play cards around a table under a hanging yellow lamp. In the background, a backlit silhouette stands behind a glowing frosted-glass office door.",
     "seed": 672491130,
     "kind": "section",
-    "title": "4.1 Heimlichkeit und Infiltration"
+    "title": "4.1 Heimlichkeit und Infiltration",
+    "include_style": true,
+    "negative": "worst quality, low quality, blurry, bad anatomy, clone faces, identical faces, identical clothing, business shirts, malformed hands, extra limbs, floating chair legs, text, watermark, signature"
   },
   "sec-beispiel-5-heimlichkeit-goons-und-elite": {
-    "prompt": "",
+    "prompt": "Inside a dark industrial warehouse, a black-clad stealth operative clings silently to high ceiling pipes and steel rafters. Directly beneath him in the shadowy aisle, oblivious armed thugs in casual jackets patrol past tall storage shelves toward an illuminated glass-walled office in the background.",
     "seed": 463140383,
     "kind": "section",
-    "title": "Beispiel 5: Heimlichkeit (Goons und Elite)"
+    "title": "Beispiel 5: Heimlichkeit (Goons und Elite)",
+    "include_style": true,
+    "negative": "bad anatomy, deformed hands, extra limbs, blurry, text, watermark, signage, business suit, necktie, operative on floor, standing upright, brightly lit foreground, looking at camera"
+  },
+  "fill-sec-2-3-ressourcen-verletzungen": {
+    "prompt": "In a shadowy subway tunnel washed in dim cyan emergency lights, an exhausted operative kneels beside shattered ceramic tiles. Gritting his teeth through visible shock, he tightly wraps a makeshift tourniquet around a bleeding forearm wound. Wide low-angle landscape composition, gritty desperate mood, sparks dripping from overhead severed cables.",
+    "seed": 1373587390,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 2.3 Ressourcen & Verletzungen",
+    "after": "sec-2-3-ressourcen-verletzungen",
+    "chapter": "ch-2-der-charakter",
+    "h_mm": 75.3,
+    "w_mm": 176.0,
+    "include_style": true
+  },
+  "fill-sec-2-4-charaktererschaffung": {
+    "prompt": "Inside a sleek high-rise safehouse overlooking glowing neon skyscrapers in pouring rain, an operative prepares her gear before an open equipment locker. She methodically inspects a custom sidearm while selecting modular tactical tools laid out across a steel workbench. Wide cinematic establishing shot, moody atmospheric shadows, quiet anticipation.",
+    "seed": 303554906,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 2.4 Charaktererschaffung",
+    "after": "sec-2-4-charaktererschaffung",
+    "chapter": "ch-2-der-charakter",
+    "h_mm": 85.2,
+    "w_mm": 176.0,
+    "include_style": true
+  },
+  "fill-sec-4-1-heimlichkeit-und-infiltration": {
+    "prompt": "Square composition, high-angle downward shot. A sleek operative in matte black tactical gear perches silently on overhead steel beams above a dimly lit corporate corridor. Below, an unsuspecting security guard patrols past neon-tinted glass partitions and server racks. Heavy shadows cloak the ceiling while rain streaks the tall windows in deep blue and amber tones.",
+    "seed": 1080258846,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 4.1 Heimlichkeit und Infiltration",
+    "after": "sec-4-1-heimlichkeit-und-infiltration",
+    "chapter": "ch-4-proben-gegen-die-umgebung-nicht-kampf-skills",
+    "h_mm": 160.9,
+    "w_mm": 176.0,
+    "include_style": true
   }
 }
