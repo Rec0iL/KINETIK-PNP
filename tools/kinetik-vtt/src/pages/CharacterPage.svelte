@@ -10,6 +10,7 @@
   import Gear from '../sheet/Gear.svelte';
   import Tags from '../sheet/Tags.svelte';
   import Notes from '../sheet/Notes.svelte';
+  import Creation from '../sheet/Creation.svelte';
   import RollPanel from '../sheet/RollPanel.svelte';
 
   let { id }: { id: string } = $props();
@@ -31,6 +32,7 @@
     { key: 'ausruestung', label: 'Ausrüstung' },
     { key: 'tags', label: 'Tags & Nachteile' },
     { key: 'notizen', label: 'Notizen' },
+    { key: 'erschaffung', label: 'Erschaffung' },
     { key: 'wuerfel', label: 'Würfeln' },
   ] as const;
   type Tab = (typeof tabs)[number]['key'];
@@ -69,18 +71,19 @@
 
   <div class="tabs" role="tablist" aria-label="Bogen">
     {#each tabs as t}
-      <button role="tab" aria-selected={tab === t.key} onclick={() => (tab = t.key)}>{t.label}</button>
+      <button role="tab" aria-selected={tab === t.key} onclick={() => (tab = t.key)}>{t.label}{#if t.key === 'erschaffung' && char.draft}<span class="dot" title="Erschaffung noch in Arbeit"></span>{/if}</button>
     {/each}
   </div>
   </div>
 
   <div class="content" role="tabpanel">
-    {#if tab === 'ueber'}<Overview {char} />
+    {#if tab === 'ueber'}<Overview {char} ontab={(t) => (tab = t as Tab)} />
     {:else if tab === 'koerper'}<Body {char} />
     {:else if tab === 'moves'}<Moves {char} />
     {:else if tab === 'ausruestung'}<Gear {char} />
     {:else if tab === 'tags'}<Tags {char} />
     {:else if tab === 'notizen'}<Notes {char} />
+    {:else if tab === 'erschaffung'}<Creation {char} />
     {:else}<RollPanel {char} />{/if}
   </div>
 {/if}
@@ -89,6 +92,7 @@
   /* Kopfleiste und Reiter bleiben unter dem App-Kopf stehen, auch beim Scrollen. */
   .sticky { position: sticky; top: var(--hdr, 54px); z-index: 40; margin: 0 -0.6rem; padding: 0.55rem 0.6rem 0; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
   .sticky .tabs { border-bottom: 0; }
+  .dot { display: inline-block; width: 7px; height: 7px; margin-left: 0.5em; border-radius: 50%; background: var(--accent-2); box-shadow: 0 0 6px var(--accent-2); vertical-align: middle; }
   .bar { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
   .who b { font: 400 1.7rem var(--font-display); letter-spacing: 0.06em; color: var(--ink-strong); }
   .mini { display: flex; align-items: center; gap: 0.4rem; font: 600 0.78rem var(--font-head); letter-spacing: 0.12em; color: var(--ink-dim); --c: var(--accent); }
