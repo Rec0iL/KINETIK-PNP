@@ -21,7 +21,9 @@ Die Bild-Prompts schreibt **agy** (Antigravity CLI) statt Claude, das spart Clau
 python3 tools/rulebook-pdf/rulebook_pdf.py gui
 ```
 
-Ohne Argument öffnet die Oberfläche das zuletzt benutzte Projekt. Das KINETIK-Projekt liegt unter `assets/pdf/`.
+Ohne Argument öffnet die Oberfläche das zuletzt benutzte Projekt. **Letzte Projekte** (neben „Neues Projekt…“) listet die zehn zuletzt geöffneten Projekte.
+
+Bilder im Markdown mit relativem Pfad (z.B. `docs/screenshots/x.png`) werden zuerst neben der Quelldatei gesucht, dann im Projektordner `bilder/` und im Projektordner selbst, jeweils mit Pfad und nur mit Dateiname. Nicht gefundene Bilder meldet der Build als „WARNUNG: Bild nicht gefunden“. Das KINETIK-Projekt liegt unter `assets/pdf/`.
 
 ## Ablauf in der Oberfläche
 

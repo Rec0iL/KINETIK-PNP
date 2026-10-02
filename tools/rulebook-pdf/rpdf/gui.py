@@ -11,13 +11,14 @@ from PySide6.QtWidgets import (
     QApplication, QCheckBox, QColorDialog, QComboBox, QDoubleSpinBox, QFileDialog, QFormLayout,
     QFrame, QGridLayout, QHBoxLayout, QInputDialog, QLabel, QLineEdit, QListWidget, QListWidgetItem, QMainWindow,
     QMessageBox, QPlainTextEdit, QProgressBar, QPushButton, QScrollArea, QSizePolicy, QSpinBox, QSplitter,
-    QTabWidget, QToolBar, QVBoxLayout, QWidget,
+    QMenu, QTabWidget, QToolBar, QToolButton, QVBoxLayout, QWidget,
 )
 
 from . import comfy, importer, models, pipeline, planner, styles
 from .project import DEFAULTS, Project, create
 
 TW, TH = 190, 84   # thumbnail size
+RECENT_MAX = 10
 KIND_LABEL = {"cover": "Cover", "background": "Hintergrund", "chapter": "Kapitel", "section": "Abschnitt",
               "filler": "Füllbild"}
 WORKFLOW_DEFAULTS = {
@@ -157,13 +158,23 @@ class MainWindow(QMainWindow):
         tb.setMovable(False)
         tb.setIconSize(QSize(18, 18))
         self.addToolBar(tb)
-        for text, slot in [("Neues Projekt…", self.new_project), ("Öffnen…", self.open_project),
+        for text, slot in [("Neues Projekt…", self.new_project), ("Letzte Projekte", None),
+                           ("Öffnen…", self.open_project),
                            ("Speichern", self.save_project), (None, None),
                            ("Quelle öffnen", lambda: self._open_file(self.project and self.project.source_path)),
                            ("PDF öffnen", lambda: self._open_file(self.project and self.project.output_path)),
                            ("Projektordner", lambda: self._open_file(self.project and self.project.root))]:
             if text is None:
                 tb.addSeparator()
+                continue
+            if slot is None:
+                self.recent_menu = QMenu(self)
+                self.recent_menu.aboutToShow.connect(self._fill_recent_menu)
+                btn = QToolButton()
+                btn.setText(text)
+                btn.setPopupMode(QToolButton.InstantPopup)
+                btn.setMenu(self.recent_menu)
+                tb.addWidget(btn)
                 continue
             a = QAction(text, self)
             a.triggered.connect(slot)
@@ -584,11 +595,36 @@ class MainWindow(QMainWindow):
             self.project = Project(path)
             self.slots = []
         self.settings.setValue("last_project", str(self.project.root))
+        self._remember_recent(self.project.root)
         self.project_label.setText(str(self.project.root))
         self._fill_form()
         self._refresh_slots()
         self._log(f"Projekt geladen: {self.project.root}")
         self._connect_comfy(quiet=True)
+
+    def _recent_projects(self):
+        val = self.settings.value("recent_projects") or []
+        if isinstance(val, str):   # QSettings returns a bare str for one-element lists
+            val = [val]
+        return [str(p) for p in val]
+
+    def _remember_recent(self, root):
+        root = str(Path(root).resolve())
+        recent = [root] + [p for p in self._recent_projects() if p != root]
+        self.settings.setValue("recent_projects", recent[:RECENT_MAX])
+
+    def _fill_recent_menu(self):
+        menu = self.recent_menu
+        menu.clear()
+        recent = [p for p in self._recent_projects() if (Path(p) / "project.json").exists()]
+        if not recent:
+            menu.addAction("(noch keine Projekte)").setEnabled(False)
+            return
+        for p in recent:
+            a = menu.addAction(f"{Path(p).name}   ·   {p}")
+            a.triggered.connect(lambda _=False, p=p: self.load_project(p))
+        menu.addSeparator()
+        menu.addAction("Liste leeren", lambda: self.settings.remove("recent_projects"))
 
     def _fill_form(self):
         c = self.project.config

@@ -6,6 +6,7 @@ their content.
 """
 import html as htmllib
 import re
+import urllib.parse
 from pathlib import Path
 from string import Template
 
@@ -37,9 +38,9 @@ def _hex_rgba(hex_color, alpha):
     return f"rgba({r},{g},{b},{alpha})"
 
 
-def _md(text, base=None):
+def _md(text, base=None, extra_dirs=()):
     out = markdown.markdown(text, extensions=["tables", "sane_lists"])
-    return _wrap_tables(_figures(out, base))
+    return _wrap_tables(_figures(out, base, extra_dirs))
 
 
 def _image_aspect(path):
@@ -55,13 +56,25 @@ def _image_aspect(path):
         return None
 
 
-def _figures(html, base):
+def _figures(html, base, extra_dirs=()):
     """Images from the Markdown: resolve relative paths against the source file and
-    turn stand-alone images into figures (alt text becomes the caption)."""
+    turn stand-alone images into figures (alt text becomes the caption).
+    If the file is not next to the source, the project's own folders (extra_dirs,
+    e.g. `bilder/`) are searched by relative path, then by file name."""
     def resolve(src):
         if base is None or re.match(r"^(https?|file|data):", src):
             return src, None
-        path = (base / htmllib.unescape(src)).resolve()
+        rel = htmllib.unescape(src)
+        path = (base / rel).resolve()
+        if not path.exists():
+            for d in extra_dirs:
+                for cand in (d / rel, d / Path(rel).name):
+                    if cand.is_file():
+                        path = cand.resolve()
+                        break
+                else:
+                    continue
+                break
         return path.as_uri(), path
 
     def img_attr(tag, name):
@@ -213,7 +226,8 @@ def find_gaps(document, min_gap_mm):
 def build_html(project, doc, fillers=None):
     cfg = project.config
     base = project.source_path.parent if project.source_path else None
-    md = lambda text: _md(text, base)
+    image_dirs = [project.root / "bilder", project.root]
+    md = lambda text: _md(text, base, image_dirs)
     theme, lay = cfg["theme"], cfg["layout"]
     img = lambda key: project.image_path(key).as_uri() if project.has_image(key) else None
     running = cfg.get("running_title") or (cfg.get("title") or doc.title or "").split(":")[0]
@@ -356,7 +370,12 @@ def render(project, doc=None, log=print):
                    if e.get("kind") == "filler" and e.get("active") and project.has_image(k)}
         log(f"Füllbilder eingesetzt: {len(fillers)}")
     html_path = project.build_dir / "index.html"
-    html_path.write_text(build_html(project, doc, fillers), encoding="utf-8")
+    html = build_html(project, doc, fillers)
+    html_path.write_text(html, encoding="utf-8")
+    for uri in sorted(set(re.findall(r'<img [^>]*src="(file://[^"]+)"', html))):
+        path = Path(urllib.parse.unquote(urllib.parse.urlparse(uri).path))
+        if not path.exists():
+            log(f"WARNUNG: Bild nicht gefunden: {path}")
     out = project.output_path
     out.parent.mkdir(parents=True, exist_ok=True)
     log("Setze PDF mit WeasyPrint …")
