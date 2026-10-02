@@ -72,3 +72,7 @@ npm run build        # dist/
 - Schutz-Anzeige als Schild mit Aktuell / Max und Pfeiltasten.
 - M6 SL-Werkzeuge: Kampf-Tab mit Seiten-Initiative und Kinetik-Marker, Bedrängnis-Zähler mit Regelanwendung, NPC-Manager nach NPC-Leiter (Goon-Gruppen, Schläger, Elite, Boss, Nemesis, Ausgeschaltet-Status, Überzahl), öffentliche Kampfanzeige für Spieler, Handouts (Text und Bild) an alle oder einzelne, Sitzung als Datei sichern und laden.
 - Als Nächstes:, Grafiken, Feinschliff und Deploy (M7).
+
+## Offene Punkte (TODO)
+
+- **Gift-Mechanik (Regelwerk 3.11):** Gift ist als Move-Effekt und als Zustand „Vergiftet“ vorhanden, die Abwicklung geschieht noch von Hand. Offen: Gift-Zustand mit Stufe am Bogen und am NPC, Energieverlust am Rundenende (-1/-2 über 2 Runden), Verzögerung bis 3 Runden, Lähmgift als großer Tag, tödliches Gift mit Sterbend-Zähler, Gegenmittel-Probe (MW 7/9/11) per Knopf, Zusammenspiel mit dem Überlauf bei negativer Energie, Kampf-Tab des SL mit „Runde enden“-Schritt.

@@ -40,6 +40,7 @@ KINETIK_PNP/
 - [x] Move-Builder (EP-Rechner nach Kapitel 5.1)
 - [x] Multiplayer mit Karte, Musik, Würfel und Log (WebRTC)
 - [x] SL-Dashboard (Initiative, Gegner, Bedrängnis, Kinetik-Marker)
+- [ ] Gift-Mechanik in der Web-App (3.11): Energieverlust am Rundenende, Verzögerung bis 3 Runden, Stufen Schwach/Stark/Lähmgift/Tödlich, Gegenmittel-Probe, Überlauf-Zähler und Zusammenspiel mit Sterbend
 - [x] Druckversion (PDF)
 - [ ] Schnellreferenz
 
