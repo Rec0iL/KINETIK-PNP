@@ -649,6 +649,23 @@ Jins nächster Clash mit Chen beginnt mit seinem Start-Momentum. Chen hat den kl
 * **Spieler (Miller):** "Ich greife Jin an, um ihn vom Hals zu lösen." Gewinnt Miller den Clash, endet der Tag *Gewürgt*. Chen bleibt bewusstlos, aber mit einer Verletzung am Leben.
 * **Variante:** Jin hätte mit dem **Blasrohr-Pfeil** aus dem Hinterhalt auf Chens ungeschützten Hals gezielt (3 Energie, Gift stark). Mit Verzögerung 2 Runden geht Chen erst beim Rückzug zu Boden, -2 Energie pro Runde über 2 Runden. Chens Leibwächter zieht seine Kugel in Jins Richtung, Jin hat sich längst abgesetzt.
 
+### **Beispiel 7: Den Move nicht einsetzen (Variante von Beispiel 2)**
+
+*Situation:* Wie in Beispiel 2 kämpft Jin gegen den SWAT-Boss (Schutz 3, WK 8, Bonus **+4**). Diesmal ist der Kampf schon in vollem Gang: Jin hat nur noch **Energie 3 von 8** und **Willenskraft 7**. Der Kinetik-Marker liegt bei den Spielern.
+
+* **Spieler (Jin):** "Ich werfe mich auf ihn, Judo-Wurf (Fluss)." Er sagt die Technik an, wie immer vor dem Wurf. Sein Bonus als BJJ-Schüler ist +2.
+* *Wurf Jin:* 2W6 (8) + 2 = **10**. *Wurf SL (Boss):* 2W6 (6) + 4 = **10**.
+* **SL:** "Differenz 0, ein Schlagabtausch. Der Judo-Wurf würde wirken, aber er kostet 3 Energie, also alles, was du noch hast. Du wärst danach **ausgepumpt**."
+* **Spieler (Jin):** "Dann lasse ich den Move weg. Ich will mich nicht auf 0 bringen. Ich greife ihn einfach mit meinem Wurf an."
+* **SL:** "Du zahlst nichts, denn bezahlt wird erst, wenn du den Move einsetzt. Ohne Move ist es ein normaler Treffer. Das Ergebnis bleibt ein Schlagabtausch, du hast die Wahl: Beide Seiten erleiden einen normalen Treffer, oder du bekommst einen kleinen Tag als Nachteil."
+* **Spieler (Jin):** "Beide Seiten."
+* **SL:** "Du setzt zum Wurf an, ziehst ihn durch, aber der Boss rollt sich ab. Der Wurf sitzt nicht sauber, und der Aufprall verrutscht ihm nur die Weste: Er verliert **1 Schutz** (3 auf 2). Dafür bist du im Ansatz offen. Er verpasst dir einen fiesen **Leberhaken**. Dein Kevlar schützt nur gegen Kugeln und Schnitte, du verlierst **1 Willenskraft** (7 auf 6). Keiner hat eine Dominanz, der Marker bleibt bei euch."
+* **Der Boss greift an.** Jin verteidigt mit Fluss und würfelt 2W6 (9) + 2 = **11** gegen den Wurf des Bosses 2W6 (5) + 4 = **9**.
+* **SL:** "Aus Sicht des Bosses Differenz -2, ein **Konter**. Du weichst aus und landest einen normalen Treffer: Sein Schutz sinkt von 2 auf **1**. Der Marker bleibt, wo er ist."
+* **Neue Runde, Jin beginnt.** Jin hat keinen Energie-Move mehr zur Hand. Er nutzt **Durchatmen** (+2 Energie, dafür bekommt der nächste Clash gegen ihn +1) und steht bei **Energie 5**.
+
+*Randnotiz:* Mit dem Move wäre der Wurf sauber gesessen: Jin hätte die Weste ignoriert und den Boss *Am Boden* gelegt, wäre danach aber ausgepumpt gewesen, bis er sich per Durchatmen erholt. So hat er seinen Angriff ohne Move **durchgezogen**, der Boss ist abgerollt und hat dabei seinen Leberhaken gelandet. Das ist der Unterschied zu einem sauber ausgeführten Move: Der Clash wird zu Ende gespielt, beide Seiten werden getroffen, aber der Move-Effekt bleibt aus. Zwei Runden später hat Jin wieder Energie, und der Boss hat nur noch Schutz 1.
+
 ---
 
 ## **Anhang A: Wahrscheinlichkeiten (2W6 + Bonus gegen 2W6 + Bonus)**
@@ -746,7 +763,7 @@ Ein Boss mit gleichem Bonus ist als Gruppenboss gedacht. Für ein Solo-Duell sol
 * **Töten und Überlauf (3.11):** Gnadenstoß gegen Wehrlose (Spielercharaktere werden sterbend, nie sofort tot). Wer ohnmächtig weiter Energie verliert, hat negative Energie: je 3 Punkte unter 0 eine Verletzung (Kopf bei Würgen, Torso bei Gift), ein Sterbender mit weiterem Verlust stirbt. Erwürgen dauert etwa 3 Runden.
 * **Gift (3.11, 5.1):** Stufen Schwach, Stark, Lähmgift, Tödlich als Effekte im EP-Katalog. Wirkt nur bei Schutz 0, Verzögerung bis 3 Runden, Gegenmittel per MW-Probe.
 * **Hinweise (3.11):** SL-Hinweis (Attentäter tragen ein Gegengift) und Spieler-Hinweis (Gegengift ergattern heißt nicht den Gegner besiegen), W6 zum Mitzählen des Überlaufs.
-* **Neue Moves (5.2):** *Blasrohr-Pfeil*, *Dokushu-Berührung*, *Garrotte*. **Legendärer Move (5.4):** *Todesberührung* (Dokushu). **Beispiel 6 (6):** Gift und Töten.
+* **Neue Moves (5.2):** *Blasrohr-Pfeil*, *Dokushu-Berührung*, *Garrotte*. **Legendärer Move (5.4):** *Todesberührung* (Dokushu). **Beispiel 6 (6):** Gift und Töten. **Beispiel 7 (6):** Den Move nicht einsetzen (Variante von Beispiel 2).
 
 * **Klarstellungen (aus der digitalen Umsetzung):** Eigene Kampagnenstufe mit frei gewählten Budgets (2.4), Zählung der Attributspunkte (2.4), wirksamer Schutz bei Durchschlag und Ignorieren (3.2), Helden-Schwelle nur zwischen Spielercharakteren und NPCs sowie Lücke ohne Tags und Überzahl (3.4, 3.5), Deckelung des Unterlegenen bei Außer Reichweite (3.5), Richtwerte für Schutz und Willenskraft der NPC-Leiter (3.7), Schläger wie Elite (3.11), Reihenfolge der Abzüge und ★-Effekte in Momentum-Moves (5.1), 7 EP als Meister-Move (5.4).
 
