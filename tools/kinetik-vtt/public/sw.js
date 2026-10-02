@@ -14,6 +14,7 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(req.url);
   if (req.method !== 'GET' || url.origin !== location.origin) return;
   if (url.pathname.includes('/music/') && !url.pathname.endsWith('catalog.json')) return;
+  if (url.pathname.endsWith('.pdf')) return;
 
   if (req.mode === 'navigate') {
     e.respondWith(

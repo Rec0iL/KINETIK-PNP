@@ -20,6 +20,20 @@ Stack: Vite, Svelte 5, TypeScript. Deutsche Oberfläche (alle Texte in `src/i18n
 
 Die App nutzt relative Pfade und Hash-Routing, funktioniert also unter jedem Unterpfad.
 
+## Regelwerk in der App
+
+Der Button „Regelwerk“ im Kopf öffnet das Regelwerk als Seitenleiste (für Spieler und SL, überall in der App): gleiche Texte und Bilder wie das PDF, aber als HTML im App-Look, mit Inhaltsverzeichnis, Suche und Sprungmarken (der Charakter-Assistent springt zum passenden Kapitel). Kein PDF-Viewer des Browsers beteiligt, das PDF gibt es nur als Download. Gebaut wird es aus `regelwerk/KINETIK_Regelwerk.md` und `assets/pdf/images`:
+
+```bash
+python3 scripts/build_rulebook_web.py   # schreibt tools/kinetik-vtt/public/rulebook/
+```
+
+Nach jeder Regelwerk-Änderung neu ausführen und das Ergebnis einchecken.
+
+## Charaktererschaffung
+
+„Neuer Charakter“ fragt zuerst die Kampagnenstartstufe (Straße, Kino, Legende oder Eigene mit frei wählbaren Budgets), dann Assistent oder Manuell. Der Assistent führt durch Konzept, Titel, Attribute, Moves, Ausrüstung und Abschluss mit Live-Budget; Manuell öffnet den leeren Bogen. Stufe, Naturtalent und die Budget-Hinweise stehen danach im Block „Charaktererschaffung“ am Ende des Bogens.
+
 ## Grafiken neu erzeugen
 
 `python3 scripts/gen_web_assets.py` erzeugt die Bilder in `public/art` mit Krea 2 in ComfyUI (Einstellungen aus `assets/pdf/project.json`, ComfyUI muss laufen). Vorhandene Dateien werden übersprungen, `--force` erzeugt neu. Vor einer öffentlichen Nutzung die Lizenz des Bildmodells (Krea 2) für die erzeugten Bilder prüfen.

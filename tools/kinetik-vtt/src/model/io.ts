@@ -49,6 +49,14 @@ export function sanitizeCharacter(raw: unknown, opts: { newId?: boolean } = {}):
   c.schemaVersion = SCHEMA_VERSION;
   c.id = opts.newId || !str(raw.id) ? uid() : str(raw.id);
   c.name = str(raw.name, 'Unbenannt');
+  c.stufe = (['strasse', 'kino', 'legende', 'custom'] as const).includes(raw.stufe as never) ? (raw.stufe as Character['stufe']) : 'kino';
+  const cs = isObj(raw.customStufe) ? raw.customStufe : {};
+  c.customStufe = {
+    attributBudget: Math.max(0, Math.round(num(cs.attributBudget, 4))),
+    titelBudget: Math.max(0, Math.round(num(cs.titelBudget, 4))),
+    startLevelMax: Math.max(1, Math.min(10, Math.round(num(cs.startLevelMax, 3)))),
+  };
+  c.draft = raw.draft === true;
   const attrs = isObj(raw.attributes) ? raw.attributes : {};
   c.attributes = Object.fromEntries(ATTR_KEYS.map((k) => [k, Math.round(num(attrs[k], 0))])) as Character['attributes'];
   const inj = isObj(raw.injuries) ? raw.injuries : {};

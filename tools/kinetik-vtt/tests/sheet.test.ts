@@ -110,3 +110,30 @@ describe('Move-Import/Export', () => {
     expect(m.effects).toEqual([{ id: 'zone' }]);
   });
 });
+
+import { stufeConfig } from '../src/model/sheet';
+
+describe('Kampagnenstartstufe', () => {
+  it('feste Stufen und eigene Stufe liefern ihre Budgets', () => {
+    const c = newCharacter({ stufe: 'legende' });
+    expect(stufeConfig(c)).toMatchObject({ attributBudget: 5, titelBudget: 7, startLevelMax: 5 });
+    c.stufe = 'custom';
+    c.customStufe = { attributBudget: 6, titelBudget: 9, startLevelMax: 4 };
+    expect(stufeConfig(c)).toMatchObject({ name: 'Eigene', attributBudget: 6, titelBudget: 9, startLevelMax: 4 });
+  });
+  it('Erschaffungsbericht nutzt die eigene Stufe', () => {
+    const c = jinYamada();
+    c.stufe = 'custom';
+    c.customStufe = { attributBudget: 2, titelBudget: 2, startLevelMax: 2 };
+    const r = creationReport(c);
+    expect(r.stufe.name).toBe('Eigene');
+    expect(r.hints.length).toBeGreaterThan(0);
+  });
+  it('Import repariert unbekannte Stufen und fehlende eigene Budgets', () => {
+    const c = sanitizeCharacter({ name: 'X', stufe: 'unsinn' });
+    expect(c.stufe).toBe('kino');
+    expect(c.customStufe).toEqual({ attributBudget: 4, titelBudget: 4, startLevelMax: 3 });
+    expect(c.draft).toBe(false);
+    expect(sanitizeCharacter({ stufe: 'custom', customStufe: { attributBudget: 7 } }).customStufe.attributBudget).toBe(7);
+  });
+});

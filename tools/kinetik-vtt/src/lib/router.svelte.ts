@@ -1,6 +1,6 @@
 // Minimaler Hash-Router (funktioniert auf github.io ohne Server-Konfiguration).
 export interface Route {
-  name: 'home' | 'join' | 'round' | 'characters' | 'character' | 'builder' | 'dice' | 'gm' | 'credits' | 'notfound';
+  name: 'home' | 'create' | 'wizard' | 'join' | 'round' | 'characters' | 'character' | 'builder' | 'dice' | 'gm' | 'credits' | 'notfound';
   params: Record<string, string>;
 }
 
@@ -13,6 +13,8 @@ function parse(hash: string): Route {
     case 'charakter': return parts[1] ? { name: 'character', params: { id: decodeURIComponent(parts[1]) } } : { name: 'characters', params: {} };
     case 'builder': return { name: 'builder', params: {} };
     case 'wuerfel': return { name: 'dice', params: {} };
+    case 'neu': return { name: 'create', params: {} };
+    case 'wizard': return parts[1] ? { name: 'wizard', params: { id: decodeURIComponent(parts[1]), step: parts[2] ?? '1' } } : { name: 'create', params: {} };
     case 'sl': return { name: 'gm', params: {} };
     case 'beitreten': return { name: 'join', params: { code: parts[1] ?? '' } };
     case 'runde': return { name: 'round', params: {} };

@@ -4,7 +4,10 @@ import { ATTR_KEYS, ZONE_KEYS } from '../rules';
 
 export const SCHEMA_VERSION = 1;
 
-export type Stufe = 'strasse' | 'kino' | 'legende';
+export type Stufe = 'strasse' | 'kino' | 'legende' | 'custom';
+
+/** Eigene Kampagnenstufe: der Tisch legt die Budgets selbst fest. */
+export interface CustomStufe { attributBudget: number; titelBudget: number; startLevelMax: number }
 
 export interface Injury { text: string }
 export interface TagEntry {
@@ -55,6 +58,9 @@ export interface Character {
   /** Verkleinertes Bild als Data-URL. */
   portrait?: string;
   stufe: Stufe;
+  customStufe: CustomStufe;
+  /** Noch in der Charaktererschaffung (Assistent oder manuell). */
+  draft: boolean;
   naturtalent: boolean;
   setting: string;
   attributes: Record<AttrKey, number>;
@@ -102,6 +108,8 @@ export function newCharacter(partial: Partial<Character> = {}): Character {
     player: '',
     concept: '',
     stufe: 'kino',
+    customStufe: { attributBudget: 4, titelBudget: 4, startLevelMax: 3 },
+    draft: false,
     naturtalent: false,
     setting: '',
     attributes,

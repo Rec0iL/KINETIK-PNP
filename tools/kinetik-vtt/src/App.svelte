@@ -18,6 +18,10 @@
   import MusicRunner from './music/MusicRunner.svelte';
   import MusicBar from './music/MusicBar.svelte';
   import Credits from './pages/Credits.svelte';
+  import CreateStart from './pages/CreateStart.svelte';
+  import Wizard from './pages/Wizard.svelte';
+  import Rulebook from './rulebook/Rulebook.svelte';
+  import { rulebook, toggleRulebook } from './rulebook/rulebook.svelte';
   import { loadCatalog } from './music/catalog.svelte';
   import { loadLibrary } from './store/characters.svelte';
   import { loadMoveLibrary } from './store/moves.svelte';
@@ -34,7 +38,7 @@
 
   const nav: { href: string; key: Key; names: string[] }[] = [
     { href: '#/', key: 'nav.home', names: ['home'] },
-    { href: '#/charaktere', key: 'nav.characters', names: ['characters', 'character'] },
+    { href: '#/charaktere', key: 'nav.characters', names: ['characters', 'character', 'create', 'wizard'] },
     { href: '#/builder', key: 'nav.builder', names: ['builder'] },
     { href: '#/wuerfel', key: 'nav.dice', names: ['dice'] },
     { href: '#/beitreten', key: 'nav.join', names: ['join', 'round'] },
@@ -51,6 +55,7 @@
       <a href={item.href} aria-current={item.names.includes(router.route.name) ? 'page' : undefined}>{t(item.key)}</a>
     {/each}
   </nav>
+  <button class="btn sm rbbtn" class:on={rulebook.open} onclick={toggleRulebook} aria-pressed={rulebook.open} title="Regelwerk lesen">📖 <span class="rbl">Regelwerk</span></button>
   <button class="btn sm icon dicebtn" class:on={settings.dice3d} onclick={() => (settings.dice3d = !settings.dice3d)} title={settings.dice3d ? '3D-Würfel aus' : '3D-Würfel an'} aria-pressed={settings.dice3d} aria-label="3D-Würfel">⚄</button>
   <label class="theme">
     <span class="sr-only">{t('theme.label')}</span>
@@ -77,6 +82,10 @@
     <span class="kicker">Spieler</span>
     <h1 class="pagetitle">Würfel</h1>
     <RollPanel />
+  {:else if router.route.name === 'create'}
+    <CreateStart />
+  {:else if router.route.name === 'wizard'}
+    {#key router.route.params.id}<Wizard id={router.route.params.id} step={Number(router.route.params.step) || 1} />{/key}
   {:else if router.route.name === 'join'}
     <Join />
   {:else if router.route.name === 'round'}
@@ -88,6 +97,7 @@
   {/if}
 </main>
 
+<Rulebook />
 <MusicRunner />
 <MusicBar />
 <RollToast />
@@ -122,6 +132,9 @@
   }
   nav a:hover { color: var(--ink); }
   nav a[aria-current='page'] { color: var(--accent); border-bottom-color: var(--accent); }
+  .rbbtn { font-weight: 600; }
+  .rbbtn.on { color: var(--accent); border-color: var(--accent-line); background: var(--accent-soft); }
+  @media (max-width: 760px) { .rbl { display: none; } }
   .dicebtn { font-size: 1.1rem; color: var(--ink-dim); }
   .dicebtn.on { color: var(--accent); border-color: var(--accent-line); }
   .theme select { width: auto; min-height: 34px; padding: 0.3em 0.6em; font: 600 0.8rem var(--font-head); letter-spacing: 0.1em; text-transform: uppercase; }

@@ -115,8 +115,16 @@ export interface CreationReport {
 }
 
 /** Hinweise zur Charaktererschaffung (2.4). Nur Hinweise, nie blockierend. */
+export interface StufeConfig { key: string; name: string; attributBudget: number; titelBudget: number; startLevelMax: number }
+
+/** Budgets der gewählten Kampagnenstartstufe (inkl. eigener Stufe). */
+export function stufeConfig(c: Pick<Character, 'stufe' | 'customStufe'>): StufeConfig {
+  if (c.stufe === 'custom') return { key: 'custom', name: 'Eigene', ...c.customStufe };
+  return rules.tabellen.kampagnenstufen.find((s) => s.key === c.stufe) ?? rules.tabellen.kampagnenstufen[1];
+}
+
 export function creationReport(c: Character): CreationReport {
-  const stufe = rules.tabellen.kampagnenstufen.find((s) => s.key === c.stufe) ?? rules.tabellen.kampagnenstufen[1];
+  const stufe = stufeConfig(c);
   const attrs = ATTR_KEYS.map((k) => c.attributes[k]);
   const growthPoints = c.titles.reduce((s, t) => s + growthSteps(t.startedAtLevel ?? t.level), 0);
   const minusCount = attrs.filter((a) => a < 0).length;

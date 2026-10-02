@@ -10,10 +10,7 @@
   let fileInput = $state<HTMLInputElement>();
   let message = $state('');
 
-  function create() {
-    const c = addCharacter(newCharacter());
-    navigate(`/charakter/${c.id}`);
-  }
+  const create = () => navigate('/neu');
   function loadExample() {
     const c = addCharacter(jinYamada());
     navigate(`/charakter/${c.id}`);
