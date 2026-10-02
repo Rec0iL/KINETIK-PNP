@@ -132,16 +132,28 @@ export async function startHost(opts: { gmName: string; password: string; resume
   };
   s.state.gmName = opts.gmName || s.state.gmName || 'Spielleiter';
   s.password = opts.password;
-  try {
-    peer = await openPeer(peerIdFor(s.code));
-  } catch (e) {
-    gm.status = 'error';
-    gm.error = (e as Error).message;
-    return;
+  // Nach einem Neuladen hält der Server die alte Registrierung kurz fest: ein paar Mal erneut versuchen.
+  for (let attempt = 0; ; attempt++) {
+    try {
+      peer = await openPeer(peerIdFor(s.code));
+      break;
+    } catch (e) {
+      const busy = (e as { kind?: string }).kind === 'unavailable-id';
+      if (busy && opts.resume && attempt < 16) {
+        gm.error = 'Der Server hält den alten Raumcode noch fest (bis zu einer Minute nach dem Neuladen). Neuer Versuch läuft …';
+        await new Promise((r) => setTimeout(r, 4000));
+        continue;
+      }
+      gm.status = 'error';
+      gm.error = (e as Error).message;
+      return;
+    }
   }
   gm.session = s;
   gm.status = 'open';
+  gm.error = '';
   gm.broker = true;
+  try { sessionStorage.setItem('kinetik.gmActive', '1'); } catch { /* ignorieren */ }
   feed('Runde gestartet.');
   peer.on('connection', onConnection);
   peer.on('disconnected', () => {
@@ -157,7 +169,18 @@ export async function startHost(opts: { gmName: string; password: string; resume
   persistSession();
 }
 
+/** Nach einem Neuladen des SL-Tabs die Runde automatisch fortsetzen. */
+export async function resumeHostIfActive(): Promise<boolean> {
+  try { if (sessionStorage.getItem('kinetik.gmActive') !== '1') return false; } catch { return false; }
+  const saved = await loadSavedSession();
+  if (!saved) return false;
+  await startHost({ gmName: saved.state.gmName, password: saved.password, resume: saved });
+  if (gm.status === 'open') pushToast('Runde nach dem Neuladen fortgesetzt.', 'good');
+  return true;
+}
+
 export function stopHost() {
+  try { sessionStorage.removeItem('kinetik.gmActive'); } catch { /* ignorieren */ }
   for (const c of conns.values()) { send(c, { t: 'kick', reason: 'Die Runde wurde beendet.' }); c.close(); }
   conns.clear();
   pendingConns.clear();

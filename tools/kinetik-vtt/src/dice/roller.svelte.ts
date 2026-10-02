@@ -47,16 +47,26 @@ export const rollLog = $state<{ entries: RollRecord[] }>({ entries: loadLog() })
 
 type Listener = (r: RollRecord) => void;
 const listeners = new Set<Listener>();
+const shownListeners = new Set<Listener>();
+
+/** Zuhörer für neue Würfe, die angezeigt werden sollen (eigene und fremde, ohne Verlaufsimport und Updates). */
+export function onRollShown(fn: Listener): () => void {
+  shownListeners.add(fn);
+  return () => shownListeners.delete(fn);
+}
 export function onRoll(fn: Listener): () => void {
   listeners.add(fn);
   return () => listeners.delete(fn);
 }
 
 /** Trägt einen Wurf ins Log ein. Auch für fremde Würfe aus dem Netzwerk (`remote`). */
-export function commitRoll(r: RollRecord, opts: { remote?: boolean } = {}) {
+export function commitRoll(r: RollRecord, opts: { remote?: boolean; quiet?: boolean } = {}) {
   const i = rollLog.entries.findIndex((e) => e.id === r.id);
   if (i >= 0) rollLog.entries[i] = r; // Aktualisierung, z.B. Clash-Ergebnis
-  else rollLog.entries.unshift(r);
+  else {
+    rollLog.entries.unshift(r);
+    if (!opts.quiet) for (const l of shownListeners) l(r);
+  }
   if (rollLog.entries.length > MAX) rollLog.entries.length = MAX;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify($state.snapshot(rollLog.entries))); } catch { /* ignorieren */ }
   if (!opts.remote) for (const l of listeners) l(r);

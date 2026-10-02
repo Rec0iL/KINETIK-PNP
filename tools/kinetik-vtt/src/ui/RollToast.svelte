@@ -2,6 +2,7 @@
   import { rollLog } from '../dice/roller.svelte';
   import RollSummary from './RollSummary.svelte';
   import { router } from '../lib/router.svelte';
+  import { settings } from '../lib/settings.svelte';
 
   let shownId = $state('');
   let visible = $state(false);
@@ -23,7 +24,7 @@
   });
 </script>
 
-{#if visible && latest && router.route.name !== 'dice'}
+{#if visible && latest && router.route.name !== 'dice' && !settings.dice3d}
   {#key latest.id}
     <div class="toast panel" role="status">
       <button class="x btn sm icon ghost" onclick={() => (visible = false)} aria-label="Schließen">✕</button>

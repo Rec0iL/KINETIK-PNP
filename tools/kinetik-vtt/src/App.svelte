@@ -14,12 +14,16 @@
   import CharacterPage from './pages/CharacterPage.svelte';
   import RollPanel from './sheet/RollPanel.svelte';
   import RollToast from './ui/RollToast.svelte';
+  import DiceOverlay from './dice/DiceOverlay.svelte';
   import { loadLibrary } from './store/characters.svelte';
   import { loadMoveLibrary } from './store/moves.svelte';
   import { resumeFromSession } from './net/player.svelte';
+  import { resumeHostIfActive } from './net/gm.svelte';
   import { RULES_VERSION } from './rules';
+  import { settings } from './lib/settings.svelte';
 
   loadLibrary().then(() => resumeFromSession());
+  resumeHostIfActive();
   loadMoveLibrary();
 
   const nav: { href: string; key: Key; names: string[] }[] = [
@@ -41,6 +45,7 @@
       <a href={item.href} aria-current={item.names.includes(router.route.name) ? 'page' : undefined}>{t(item.key)}</a>
     {/each}
   </nav>
+  <button class="btn sm icon dicebtn" class:on={settings.dice3d} onclick={() => (settings.dice3d = !settings.dice3d)} title={settings.dice3d ? '3D-Würfel aus' : '3D-Würfel an'} aria-pressed={settings.dice3d} aria-label="3D-Würfel">⚄</button>
   <label class="theme">
     <span class="sr-only">{t('theme.label')}</span>
     <select value={theme.current} onchange={(e) => applyTheme(e.currentTarget.value as ThemeKey)} aria-label={t('theme.label')}>
@@ -78,6 +83,7 @@
 </main>
 
 <RollToast />
+<DiceOverlay />
 <Toasts />
 
 <footer class="foot">
@@ -108,6 +114,8 @@
   }
   nav a:hover { color: var(--ink); }
   nav a[aria-current='page'] { color: var(--accent); border-bottom-color: var(--accent); }
+  .dicebtn { font-size: 1.1rem; color: var(--ink-dim); }
+  .dicebtn.on { color: var(--accent); border-color: var(--accent-line); }
   .theme select { width: auto; min-height: 34px; padding: 0.3em 0.6em; font: 600 0.8rem var(--font-head); letter-spacing: 0.1em; text-transform: uppercase; }
   .pagetitle { margin-bottom: 1rem; }
   main { padding: 1.4rem max(16px, 3vw) 3rem; max-width: 1280px; margin: 0 auto; }

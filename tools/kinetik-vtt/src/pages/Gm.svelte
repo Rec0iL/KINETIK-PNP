@@ -65,7 +65,7 @@
       <label class="field">Dein Name in der Runde<input bind:value={name} /></label>
       <label class="field">Passwort (optional)<input bind:value={password} autocomplete="off" placeholder="leer = nur Raumcode und Bestätigung" /></label>
       <NetSettings />
-      {#if gm.status === 'error'}<p class="err">{gm.error}</p>{/if}
+      {#if gm.error}<p class="err" class:wait={gm.status === 'starting'}>{gm.error}</p>{/if}
       <div class="row">
         <button class="btn amber" onclick={() => start(null)} disabled={gm.status === 'starting'}>{gm.status === 'starting' ? 'Starte …' : saved ? 'Neue Runde' : 'Runde starten'}</button>
       </div>
@@ -135,6 +135,7 @@
   .resume { display: grid; gap: 0.5rem; }
   hr { border: 0; border-top: 1px solid var(--line); width: 100%; }
   .err { color: var(--danger); margin: 0; }
+  .err.wait { color: var(--accent-2); }
   .mono { font-family: var(--font-mono); }
   .top { display: flex; justify-content: space-between; align-items: end; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
   .codewrap { display: flex; gap: 0.7rem; align-items: center; flex-wrap: wrap; margin-top: 0.3rem; }

@@ -160,7 +160,7 @@ function onMessage(m: ServerMsg) {
       player.gmName = m.gmName;
       player.state = m.state;
       player.party = m.players;
-      for (const r of m.log) commitRoll(r, { remote: true });
+      for (const r of m.log) commitRoll(r, { remote: true, quiet: true });
       startPing();
       unsubRoll?.();
       unsubRoll = onRoll((r) => sendMsg({ t: 'roll', roll: $state.snapshot(r) as RollRecord }));
