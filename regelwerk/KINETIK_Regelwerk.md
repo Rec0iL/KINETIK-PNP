@@ -116,6 +116,8 @@ Energie und Willenskraft steigen nie über ihr Maximum.
 * **Ressourcen:** Energie = 6 + Fluss + Gewalt, Willenskraft = 6 + Instinkt + Fokus.
 * **Startbonus:** Ein Kino-Charakter hat in seiner Domäne meist **+3** (Attribut +2, Meisterschaft 1).
 
+*Beispiel (Kino, Attribut-Budget 4, Titel-Level-Budget 4):* Mara ist ein **Naturtalent** an der Waffe. Sie setzt **Präzision auf +3** und **Instinkt auf +2**. Das sind 5 Punkte, aber sie setzt **Gewalt auf -1** und bekommt dafür 1 Punkt zurück, bleibt also im Budget von 4. Fluss und Fokus bleiben bei 0. Ihr Titel ist *Scharfschützin (Level 3)* mit der Domäne Schusswaffen, Tarnung, Beobachten und den Leitattributen Präzision und Instinkt, dazu *Jägerin (Level 1)* für die restlichen Punkte. Ihr Bonus beim Schuss: Präzision +3, Meisterschaft 1, also **+4**. Ein Charakter ohne Naturtalent kommt zum Start nur auf +3. Dafür hat Mara Energie 5 (6 + Fluss 0 + Gewalt -1) und ist im Nahkampf ein leichtes Ziel (Gewalt -1).
+
 ### **2.5 Waffen & Deckung**
 
 **Die Waffe bestimmt das Profil, der Titel bestimmt das Können.** Ein Meisterscharfschütze, der auf 2 km trifft, trifft mit einer Pistole genauso: Ein Titel mit der Domäne "Schusswaffen" deckt jede Schusswaffe ab. Es gibt **keine Reichweiten-Mali**. Schusswaffen funktionieren auch im Nahkampf (Gun-Fu): Läufe werden weggedrückt, Magazine herausgezogen, Schüsse knallen links und rechts am Ohr vorbei. Ein Nahkampf-Duell zwischen einem Scharfschützen mit .50 und einem Akimbo-Pistolero ist ausdrücklich erwünscht.
