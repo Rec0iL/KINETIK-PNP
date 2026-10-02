@@ -197,6 +197,27 @@ def images(project, ctx, keys=None, regenerate=False, new_seed=False):
     ctx.progress(len(todo), len(todo))
 
 
+def remove_images(project, keys):
+    """Take images out of the book so that "Fehlende Bilder" makes new ones. The file is moved to
+    .build/removed/ (not deleted) and the slot gets a new seed, otherwise the same prompt and seed
+    would just produce the same image again. Returns the keys that had an image."""
+    import time
+    removed = []
+    for key in keys:
+        path = project.image_path(key)
+        if not path.exists():
+            continue
+        trash = project.build_dir / "removed"
+        trash.mkdir(parents=True, exist_ok=True)
+        path.replace(trash / f"{key}-{time.strftime('%Y%m%d-%H%M%S')}{path.suffix}")
+        e = project.entry(key)
+        e.pop("qc", None)
+        e["seed"] = random.randint(1, 2**31 - 1)
+        removed.append(key)
+    project.save_manifest()
+    return removed
+
+
 def _generate(project, client, cfg, slot, ctx):
     e = project.entry(slot.key)
     w, h = size_for(slot)
@@ -289,6 +310,21 @@ def refine_style(project, wish):
     cfg = project.config
     return planner.refine_style(wish, cfg.get("style", ""), cfg.get("world", ""),
                                 model_hint(cfg["comfy"]), cfg["agy"].get("model") or None, _kind(project))
+
+
+def suggest_field(project, field, current):
+    """agy proposes one project field from the book: field in world | style | negative | wish.
+    current = what the other fields hold right now ({'world': ..., 'style': ..., ...})."""
+    from .styles import model_hint
+    doc = project.document()
+    outline = "\n".join(f"- {c.full_title}" + "".join(f"\n  - {s.title}" for s in c.sections)
+                        for c in doc.chapters)
+    sample = doc.intro_md + "\n\n" + "\n\n".join(c.intro_md for c in doc.chapters)
+    own = "style wish" if field == "wish" else field
+    others = {k: v for k, v in current.items() if k != own}
+    return planner.suggest_field(field, project.config.get("title") or doc.title or "", outline, sample, others,
+                                 model_hint(project.config["comfy"]),
+                                 project.config["agy"].get("model") or None, _kind(project))
 
 
 COVER_KEYS = ("title", "subtitle", "kicker", "tagline", "running_title", "chapter_label")

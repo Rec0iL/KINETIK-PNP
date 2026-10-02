@@ -444,6 +444,47 @@ COMPRESS_TASK = {
 }
 
 
+SUGGEST_TASK = {
+    "world": ("world: 2-3 sentences (English) {world_desc}. Facts only from the book; no style words."),
+    "style": ("style: a comma-separated art-style suffix (English, 15-35 words) for an image model "
+              "{style_for}: medium, line work, lighting, color mood, plus quality tags that work for the model. "
+              "No subjects, no scenes, no text or logos. Realize the user's style wish if there is one."),
+    "negative": ("negative: a comma-separated negative prompt (English, at most 40 words): generic quality "
+                 "flaws plus typical flaws for this kind of subject (anatomy, text artifacts, watermark). It must "
+                 "not contradict the art style (for pixel art, for example, leave out pixelated, lowres, blurry, "
+                 "jpeg artifacts)."),
+    "wish": ("wish: ONE short sentence in the language of the book, written the way a user would type a style "
+             "wish ('düster wie Dark Souls, aber farbig'): a promising, concrete visual direction for this book "
+             "(medium, reference look, mood, palette). No subjects or scenes."),
+}
+
+
+def suggest_field(field, title, outline, sample, current, model_hint, model=None, kind="rulebook"):
+    """Propose the content of one project field (world/topic, style, negative prompt, style wish)."""
+    pr = profile(kind)
+    task = SUGGEST_TASK[field].format(world_desc=pr["world_desc"], style_for=pr["style_for"])
+    have = "\n".join(f"- {k}: {v}" for k, v in current.items() if v) or "(nothing yet)"
+    prompt = f"""You help set up the image generation for an illustrated {pr['noun']} PDF.
+{model_hint}
+Book title: {title or '(unknown)'}
+Outline:
+{outline[:1800]}
+Excerpt:
+{sample[:3000]}
+
+What the user already has (use it, stay consistent with it): 
+{have}
+
+Write a suggestion for this field:
+{task}
+note: one short German sentence on what the suggestion is based on."""
+    key = field
+    schema = {"type": "object", "properties": {key: {"type": "string"}, "note": {"type": "string"}},
+              "required": [key, "note"]}
+    r = run(prompt, schema, model)
+    return {"text": str(r.get(key, "")).strip(), "note": str(r.get("note", "")).strip()}
+
+
 def compress(text, kind, model_hint, model=None, content="rulebook"):
     """Remove redundant or ineffective parts from a prompt field."""
     prompt = f"""You are an expert prompt engineer for image-generation models.

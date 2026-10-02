@@ -195,6 +195,7 @@ class MainWindow(QMainWindow):
         img_split = QSplitter(Qt.Horizontal)
         self.slot_list = QListWidget()
         self.slot_list.setViewMode(QListWidget.IconMode)
+        self.slot_list.setSelectionMode(QListWidget.ExtendedSelection)   # Strg/Umschalt: mehrere Bilder
         self.slot_list.setIconSize(QSize(TW, TH))
         self.slot_list.setGridSize(QSize(TW + 14, TH + 54))
         self.slot_list.setUniformItemSizes(True)
@@ -247,7 +248,7 @@ class MainWindow(QMainWindow):
         self.action_buttons = [self.btn_plan, self.btn_images, self.btn_images_all, self.btn_build,
                                self.btn_all, self.btn_preview, self.btn_regen, self.btn_replan,
                                self.btn_refine, self.btn_accept, self.btn_check, self.btn_check_one,
-                               self.btn_analyse, self.btn_cover_auto] + self.compress_buttons
+                               self.btn_analyse, self.btn_cover_auto, self.btn_remove] + self.compress_buttons
 
     def _scroll(self, widget):
         s = QScrollArea()
@@ -370,7 +371,14 @@ class MainWindow(QMainWindow):
         b.setToolTip("agy entfernt Doppeltes, Widersprüche und Füllwörter, damit das Bildmodell den Text besser umsetzt")
         b.clicked.connect(lambda: self.run_compress(kind, edit))
         h.addWidget(b)
-        self.compress_buttons = getattr(self, "compress_buttons", []) + [b]
+        s = QPushButton("Vorschlagen")
+        s.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        s.setObjectName("small")
+        s.setToolTip("agy schlägt den Inhalt dieses Felds aus Buch, den anderen Feldern und dem gewählten "
+                     "Bildmodell vor")
+        s.clicked.connect(lambda: self.run_suggest(kind, edit))
+        h.addWidget(s)
+        self.compress_buttons = getattr(self, "compress_buttons", []) + [b, s]
         return row
 
     def _engine_tab(self):
@@ -545,6 +553,11 @@ class MainWindow(QMainWindow):
         self.btn_check_one = QPushButton("Prüfen")
         self.btn_check_one.setToolTip("Dieses Bild mit agy prüfen")
         self.btn_check_one.clicked.connect(self.run_check_one)
+        self.btn_remove = QPushButton("Bild entfernen")
+        self.btn_remove.setToolTip("Entfernt das Bild (oder alle markierten, Strg/Umschalt-Klick in der Liste), "
+                                   "damit „Fehlende Bilder“ es mit neuem Seed neu erzeugt. Das Bild wird nach "
+                                   ".build/removed/ verschoben, nicht gelöscht.")
+        self.btn_remove.clicked.connect(self.run_remove)
         self.btn_regen = QPushButton("Generieren && speichern")
         self.btn_regen.setObjectName("primary")
         self.btn_replan.clicked.connect(self.run_replan)
@@ -558,6 +571,7 @@ class MainWindow(QMainWindow):
         for b in (self.btn_preview, self.btn_accept, self.btn_regen):
             row.addWidget(b)
         v.addLayout(row)
+        v.addWidget(self.btn_remove)
         return w
 
     # ---------- project ----------
@@ -902,6 +916,27 @@ class MainWindow(QMainWindow):
                                                     new_seed=regenerate),
                         on_done=lambda _: self._after_change(), label="Generiere Bilder mit ComfyUI …")
 
+    def run_suggest(self, kind, edit):
+        if not self._ready():
+            return
+        current = {"world": self.ed_world.toPlainText().strip(), "style": self.ed_style.toPlainText().strip(),
+                   "negative": self.ed_negative.toPlainText().strip(), "style wish": self.ed_wish.toPlainText().strip()}
+        if edit.toPlainText().strip() and QMessageBox.question(
+                self, "Vorschlagen", "Der bisherige Text dieses Felds wird durch den Vorschlag von agy ersetzt. "
+                "Fortfahren?") != QMessageBox.Yes:
+            return
+
+        def done(r):
+            if not r["text"]:
+                self._log("agy lieferte keinen Vorschlag.")
+                return
+            edit.setPlainText(r["text"])
+            self._log(f"Vorschlag ({kind}): {r['text']}" + (f"  – {r['note']}" if r["note"] else ""))
+            self._collect()
+            self.project.save()
+        self._start(lambda ctx: pipeline.suggest_field(self.project, kind, current), on_done=done,
+                    label="agy macht einen Vorschlag …")
+
     def run_compress(self, kind, edit):
         text = edit.toPlainText().strip()
         if not text:
@@ -1082,6 +1117,36 @@ class MainWindow(QMainWindow):
         self.project.save()
         self._log(f"Übernommen: {s.title}")
         self._refresh_slots()
+
+    def run_remove(self):
+        """Remove the selected images (or the current one) so they can be generated again."""
+        rows = sorted({i.row() for i in self.slot_list.selectedIndexes()})
+        if not rows and self._current_slot():
+            rows = [self.slot_list.currentRow()]
+        slots = [self.slots[r] for r in rows if self.project.has_image(self.slots[r].key)]
+        if not slots:
+            QMessageBox.information(self, "Bild entfernen", "Für die gewählten Plätze gibt es kein Bild.")
+            return
+        names = "\n".join("• " + s.title for s in slots[:8]) + (f"\n… und {len(slots) - 8} weitere" if len(slots) > 8 else "")
+        box = QMessageBox(self)
+        box.setIcon(QMessageBox.Question)
+        box.setWindowTitle("Bild entfernen")
+        box.setText(f"{len(slots)} Bild(er) entfernen?\n\n{names}")
+        box.setInformativeText("Die Prompts bleiben. Die Bilder landen in .build/removed/ und bekommen beim "
+                               "nächsten Mal einen neuen Seed.")
+        b_remove = box.addButton("Entfernen", QMessageBox.AcceptRole)
+        b_regen = box.addButton("Entfernen und neu generieren", QMessageBox.AcceptRole)
+        box.addButton("Abbrechen", QMessageBox.RejectRole)
+        box.exec()
+        clicked = box.clickedButton()
+        if clicked not in (b_remove, b_regen):
+            return
+        self._store_slot_edits()
+        removed = pipeline.remove_images(self.project, [s.key for s in slots])
+        self._log(f"{len(removed)} Bild(er) entfernt – „Fehlende Bilder“ erzeugt sie neu.")
+        self._refresh_slots()
+        if clicked is b_regen and self._ready():
+            self.run_images(False)
 
     def run_regen_one(self):
         s = self._current_slot()
