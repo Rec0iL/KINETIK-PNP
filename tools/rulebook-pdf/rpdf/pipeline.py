@@ -113,7 +113,8 @@ def plan(project, ctx, force=False, keys=None, suggest_style=None):
         pending, got = list(chapter_slots), {}
         for attempt in range(2):
             try:
-                got.update(planner.plan_chapter(chapters[ck], pending, _world(project), model))
+                got.update(planner.plan_chapter(chapters[ck], pending, _world(project), model,
+                                                  project.config.get('style', '')))
             except planner.AgyError as e:
                 ctx.log(f"agy-Fehler bei „{title}“: {e}")
             pending = [s for s in chapter_slots if s.key not in got]
@@ -124,7 +125,7 @@ def plan(project, ctx, force=False, keys=None, suggest_style=None):
         # last resort: ask for the remaining slots one by one
         for s in list(pending):
             try:
-                got[s.key] = planner.plan_single(s, _world(project), model)
+                got[s.key] = planner.plan_single(s, _world(project), model, style=project.config.get('style', ''))
                 pending.remove(s)
             except planner.AgyError as e:
                 ctx.log(f"agy-Fehler bei „{s.title}“: {e}")
@@ -146,7 +147,8 @@ def _world(project):
 
 def replan_one(project, key, hint="", ctx=None):
     slot = next(s for s in project.slots() if s.key == key)
-    prompt = planner.plan_single(slot, _world(project), project.config["agy"].get("model") or None, hint)
+    prompt = planner.plan_single(slot, _world(project), project.config["agy"].get("model") or None, hint,
+                                 project.config.get("style", ""))
     project.entry(key).update(prompt=prompt, include_style=True)
     project.save_manifest()
     return prompt
@@ -208,7 +210,7 @@ def _check_and_fix(project, client, cfg, slot, ctx, fix, rounds):
         ctx.check()
         e = project.entry(slot.key)
         result = planner.check_image(project.image_path(slot.key), project.build_dir / "qc" / slot.key,
-                                     slot, e.get("prompt", ""), _world(project), model)
+                                     slot, e.get("prompt", ""), _world(project), model, project.config.get("style", ""))
         e["qc"] = {"fits": result["fits"], "problems": result["problems"]}
         project.save_manifest()
         if result["fits"]:
@@ -313,7 +315,7 @@ def analyse(project, key, wish="", ctx=None):
     return planner.analyse_image(project.image_path(key), project.build_dir / "qc" / key, slot,
                                  e.get("prompt", ""), project.negative(key), project.config.get("world", ""),
                                  model_hint(project.config["comfy"]), wish,
-                                 project.config["agy"].get("model") or None)
+                                 project.config["agy"].get("model") or None, project.config.get("style", ""))
 
 
 def compress_field(project, kind, text):

@@ -24,6 +24,26 @@ RULES = """Rules for every prompt:
 - Vary characters, places and camera angles between sections so the book does not repeat itself."""
 
 
+def style_for_planning(style):
+    """Tell agy which art style is applied later, so motifs fit it (without writing style words)."""
+    if not (style or "").strip():
+        return ""
+    return (f"Art style that is applied to every image automatically: {style.strip()}\n"
+            "Write motifs that read well in this style (clear shapes, silhouettes, poses, colors) and avoid "
+            "details it cannot show. Still do not write style words into the prompt.")
+
+
+def style_for_judging(style):
+    """The chosen art style is intentional: agy must not criticize it when checking images."""
+    if not (style or "").strip():
+        return ""
+    return (f"Art style of the book (chosen on purpose, applied to every image): {style.strip()}\n"
+            "This look is intentional. Never criticize it and never ask to change it - this includes "
+            "pixelation, a low-resolution or retro look, a limited palette, dithering, flat shading, outlines, "
+            "grain, stylized or simplified anatomy and painterly strokes. Judge only the motif, the fit to the "
+            "section, text artifacts and elements that do not belong, always within what the style can show.")
+
+
 class AgyError(RuntimeError):
     pass
 
@@ -164,7 +184,7 @@ Return:
     return run(prompt, schema, model)
 
 
-def plan_chapter(chapter, slots, world, model=None):
+def plan_chapter(chapter, slots, world, model=None, style=""):
     """Prompts for the chapter banner and its section slots: {key: prompt}."""
     text = chapter.intro_md + "".join(f"\n\n### {s.title}\n{s.body_md}" for s in chapter.sections)
     def describe(s):
@@ -178,6 +198,7 @@ def plan_chapter(chapter, slots, world, model=None):
     wanted = "\n".join(f"- {s.key}: {describe(s)}" for s in slots)
     prompt = f"""You write prompts for an image model that illustrates a tabletop RPG rulebook.
 World of the book: {world}
+{style_for_planning(style)}
 
 Chapter "{chapter.full_title}":
 {text[:CHAPTER_TEXT_LIMIT]}
@@ -217,10 +238,11 @@ def _orientation(slot):
     return "wide landscape"
 
 
-def plan_single(slot, world, model=None, hint=""):
+def plan_single(slot, world, model=None, hint="", style=""):
     """New prompt for one slot, optionally steered by a user hint."""
     prompt = f"""You write prompts for an image model that illustrates a tabletop RPG rulebook.
 World of the book: {world}
+{style_for_planning(style)}
 
 Section "{slot.title}":
 {slot.context_md[:CHAPTER_TEXT_LIMIT]}
@@ -290,10 +312,11 @@ IMAGE_FORMAT_NOTE = ("Do NOT judge or mention image size, aspect ratio or orient
                      "the tool sets the format on purpose.")
 
 
-def check_image(image_path, work_dir, slot, prompt_used, world, model=None):
+def check_image(image_path, work_dir, slot, prompt_used, world, model=None, style=""):
     """Let agy look at one generated image and judge whether it fits its section."""
     prompt = f"""The image was generated to illustrate a tabletop RPG rulebook.
 World of the book: {world or 'unknown'}
+{style_for_judging(style)}
 Section: "{slot.title}"
 Section text (excerpt):
 {slot.context_md[:1500]}
@@ -314,11 +337,13 @@ no style words, no text in the image) that avoids the problems."""
     return _run_on_image(image_path, work_dir, prompt, schema, model)
 
 
-def analyse_image(image_path, work_dir, slot, prompt_used, negative_used, world, model_hint, wish="", model=None):
+def analyse_image(image_path, work_dir, slot, prompt_used, negative_used, world, model_hint, wish="", model=None,
+                  style=""):
     """agy looks at the image and fine-tunes motif prompt and negative prompt for the next render."""
     prompt = f"""You are fine-tuning the prompt for an image that illustrates a tabletop RPG rulebook.
 {model_hint}
 World of the book: {world or 'unknown'}
+{style_for_judging(style)}
 Section: "{slot.title}"
 Section text (excerpt):
 {slot.context_md[:1500]}
@@ -333,7 +358,9 @@ Compare the image with the section and the motif prompt. Then write:
 - prompt: the improved English motif prompt (25-60 words, no style words, no text in the image),
   keeping what works and fixing what is off{', and realizing the user wish' if wish else ''}.
 - negative: an English negative prompt for this image: the generic quality terms plus terms that
-  target the concrete problems you saw (comma-separated, max 40 words).
+  target the concrete problems you saw (comma-separated, max 40 words). Leave out every term that
+  contradicts the art style above (for pixel art, for example, "pixelated", "lowres", "blurry",
+  "jpeg artifacts" must not appear).
 {IMAGE_FORMAT_NOTE}"""
     schema = {"type": "object", "properties": {
         "analysis": {"type": "string"}, "prompt": {"type": "string"}, "negative": {"type": "string"}},

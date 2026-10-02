@@ -67,6 +67,8 @@ agy bekommt Bilder nur als Datei (im Headless-Modus nimmt es nur Text an). Das T
 
 Bildgröße und Hoch-/Querformat bewertet agy dabei nicht, die gibt das Tool vor (Cover und Hintergrund sind absichtlich Hochformat).
 
+Den gewählten Stil (z.B. Pixel Art) kennt agy bei Bildkontrolle, „Analysieren“ und Prompt-Erstellung und bewertet ihn nicht als Fehler: Verpixelung, niedrige Auflösung, begrenzte Palette, Dithering oder flache Schattierung werden nicht bemängelt, und widersprüchliche Begriffe (z.B. „pixelated“, „lowres“) kommen nicht in den Negativ-Prompt. Die Prompts selbst bleiben stilfrei, werden aber so geschrieben, dass sie im Stil gut lesbar sind.
+
 Liegt dein Projekt außerhalb aller `trustedWorkspaces`, meldet die Bildkontrolle „agy konnte das Bild nicht öffnen“. Dann den Projektordner (oder einen übergeordneten Ordner) dort eintragen. Erlaube agy dafür **nicht** pauschal alles.
 
 ## Bilder im Regelwerk selbst
