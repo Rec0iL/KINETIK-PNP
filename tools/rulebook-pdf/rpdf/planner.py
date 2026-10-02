@@ -290,9 +290,18 @@ def _orientation(slot):
     return "wide landscape"
 
 
-def plan_single(slot, world, model=None, hint="", style="", kind="rulebook"):
-    """New prompt for one slot, optionally steered by a user hint."""
+def plan_single(slot, world, model=None, hint="", style="", kind="rulebook", avoid=None):
+    """New prompt for one slot, optionally steered by a user hint.
+
+    avoid: [(prompt, problems)] of concepts that were already tried and failed; the new description
+    must be a clearly different concept that still fits the section."""
     pr = profile(kind)
+    if avoid:
+        tried = "\n".join(f"- {p} (problems: {'; '.join(pb) or 'did not fit'})" for p, pb in avoid)
+        hint = (hint + " " if hint else "") + (
+            "Radical rethink: the concepts below were tried and did not work. Do not repeat or paraphrase "
+            "them. Invent a completely different concept for this section - other main subject, other place, "
+            "other composition and camera angle - that still fits its topic.\nTried concepts:\n" + tried)
     prompt = f"""You write prompts for an image model that illustrates a {pr['noun']}.
 {pr['world_label']}: {world}
 {style_for_planning(style)}

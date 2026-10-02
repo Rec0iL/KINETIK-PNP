@@ -37,6 +37,7 @@ DEFAULTS = {
         "enabled": False,          # let agy check every generated image (needs file read access)
         "auto_fix": True,          # rewrite the prompt and regenerate when an image does not fit
         "rounds": 1,
+        "radical": False,          # after 3 failed tries rewrite the prompt radically: up to 3 concepts x 3 images
     },
     "content_type": "rulebook",    # rulebook (PnP) | document (README, tutorial, docs ...): changes the agy prompts
     "style_preset": "",

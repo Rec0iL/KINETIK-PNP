@@ -476,9 +476,16 @@ class MainWindow(QMainWindow):
         self.sp_qc_rounds = QSpinBox()
         self.sp_qc_rounds.setRange(1, 3)
         self.sp_qc_rounds.setSuffix(" Versuch(e)")
+        self.chk_qc_radical = QCheckBox("Nach 3 Fehlversuchen Konzept radikal neu (bis zu 3×3 Bilder)")
+        self.chk_qc_radical.setToolTip(
+            "Bis zu 3 Bilder pro Konzept. Passt keins, schreibt agy den Prompt von Grund auf neu: anderes "
+            "Hauptmotiv, anderer Ort, andere Perspektive, aber weiter passend zum Abschnitt. Insgesamt höchstens "
+            "3 Konzepte mit je 3 Bildern. Die Zahl der Neuversuche gilt dann nicht.")
+        self.chk_qc_radical.toggled.connect(lambda on: self.sp_qc_rounds.setEnabled(not on))
         f.addRow("", self.chk_qc)
         f.addRow("", self.chk_qc_fix)
         f.addRow("Neuversuche", self.sp_qc_rounds)
+        f.addRow("", self.chk_qc_radical)
         qc_info = QLabel("agy sieht sich jedes Bild an und prüft, ob es zum Abschnitt passt (Motiv, "
                          "Textartefakte, Anatomie). Dafür liest agy eine Bildkopie im Projektordner – "
                          "der Ordner muss in agys trustedWorkspaces liegen. Kostet einen agy-Aufruf pro Bild.")
@@ -590,6 +597,7 @@ class MainWindow(QMainWindow):
         self.chk_qc.setChecked(qc.get("enabled", False))
         self.chk_qc_fix.setChecked(qc.get("auto_fix", True))
         self.sp_qc_rounds.setValue(int(qc.get("rounds", 1)))
+        self.chk_qc_radical.setChecked(qc.get("radical", False))
         t = c["theme"]
         self.col_bg.set_color(t["bg"])
         self.col_ink.set_color(t["ink"])
@@ -637,7 +645,7 @@ class MainWindow(QMainWindow):
                            justify=self.chk_justify.isChecked(), font_size_pt=round(self.sp_font.value(), 2),
                            fill_gaps=self.chk_fill.isChecked(), filler_min_mm=self.sp_fill.value())
         c.setdefault("qc", {}).update(enabled=self.chk_qc.isChecked(), auto_fix=self.chk_qc_fix.isChecked(),
-                                      rounds=self.sp_qc_rounds.value())
+                                      rounds=self.sp_qc_rounds.value(), radical=self.chk_qc_radical.isChecked())
         c["theme"].update(bg=self.col_bg.color, ink=self.col_ink.color,
                           accent=self.col_accent.color, accent2=self.col_accent2.color)
         preset = self.cb_preset.currentText()

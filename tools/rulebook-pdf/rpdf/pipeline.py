@@ -193,7 +193,7 @@ def images(project, ctx, keys=None, regenerate=False, new_seed=False):
         _generate(project, client, cfg, s, ctx)
         if qc.get("enabled"):
             _check_and_fix(project, client, cfg, s, ctx, fix=qc.get("auto_fix", True),
-                           rounds=int(qc.get("rounds", 1)))
+                           rounds=int(qc.get("rounds", 1)), radical=bool(qc.get("radical")))
     ctx.progress(len(todo), len(todo))
 
 
@@ -209,26 +209,53 @@ def _generate(project, client, cfg, slot, ctx):
     ctx.image_saved(slot.key)
 
 
-def _check_and_fix(project, client, cfg, slot, ctx, fix, rounds):
-    """agy image check; on a miss optionally rewrite the prompt and regenerate."""
+RADICAL_CONCEPTS = 3    # radical mode: up to 3 concepts ...
+RADICAL_TRIES = 3       # ... with up to 3 images each (3x3)
+
+
+def _check_and_fix(project, client, cfg, slot, ctx, fix, rounds, radical=False):
+    """agy image check; on a miss rewrite the prompt and regenerate.
+
+    Normal: the first image plus `rounds` retries with a refined (similar) prompt.
+    Radical: up to RADICAL_TRIES images per concept; when they all fail, the prompt is rewritten
+    from scratch as a different concept (still on the section's topic), up to RADICAL_CONCEPTS concepts.
+    """
     model = project.config["agy"].get("model") or None
-    for attempt in range(rounds + 1):
-        ctx.check()
-        e = project.entry(slot.key)
-        result = planner.check_image(project.image_path(slot.key), project.build_dir / "qc" / slot.key,
-                                     slot, e.get("prompt", ""), _world(project), model, project.config.get("style", ""),
-                                     _kind(project))
-        e["qc"] = {"fits": result["fits"], "problems": result["problems"]}
-        project.save_manifest()
-        if result["fits"]:
-            ctx.log("    Bildkontrolle: passt")
-            return True
-        ctx.log("    Bildkontrolle: passt nicht – " + "; ".join(result["problems"]))
-        if not fix or attempt == rounds:
-            return False
-        e.update(prompt=result["better_prompt"], include_style=True, seed=random.randint(1, 2**31 - 1))
-        ctx.log("    neuer Prompt, generiere neu …")
-        _generate(project, client, cfg, slot, ctx)
+    concepts, tries = (RADICAL_CONCEPTS, RADICAL_TRIES) if radical else (1, rounds + 1)
+    failed = []     # [(prompt, problems)] of concepts that did not work
+    for concept in range(concepts):
+        for attempt in range(tries):
+            ctx.check()
+            e = project.entry(slot.key)
+            result = planner.check_image(project.image_path(slot.key), project.build_dir / "qc" / slot.key,
+                                         slot, e.get("prompt", ""), _world(project), model,
+                                         project.config.get("style", ""), _kind(project))
+            e["qc"] = {"fits": result["fits"], "problems": result["problems"]}
+            project.save_manifest()
+            where = f" (Konzept {concept + 1}/{concepts}, Bild {attempt + 1}/{tries})" if radical else ""
+            if result["fits"]:
+                ctx.log("    Bildkontrolle: passt" + where)
+                return True
+            ctx.log("    Bildkontrolle: passt nicht" + where + " – " + "; ".join(result["problems"]))
+            if not fix:
+                return False
+            last_try, last_concept = attempt == tries - 1, concept == concepts - 1
+            if last_try and last_concept:
+                return False
+            if last_try:        # radical: this concept is used up
+                failed.append((e.get("prompt", ""), result["problems"]))
+                ctx.log(f"    {tries} Bilder ohne Treffer – neues Konzept {concept + 2}/{concepts} wird entworfen …")
+                try:
+                    prompt = planner.plan_single(slot, _world(project), model, "", project.config.get("style", ""),
+                                                 _kind(project), avoid=failed)
+                except planner.AgyError as err:
+                    ctx.log(f"    agy konnte kein neues Konzept liefern: {err}")
+                    return False
+                e.update(prompt=prompt, include_style=True, seed=random.randint(1, 2**31 - 1))
+            else:
+                e.update(prompt=result["better_prompt"], include_style=True, seed=random.randint(1, 2**31 - 1))
+                ctx.log("    neuer Prompt, generiere neu …")
+            _generate(project, client, cfg, slot, ctx)
     return False
 
 
@@ -249,7 +276,8 @@ def check(project, ctx, keys=None, fix=None):
         ctx.check()
         ctx.progress(i, len(slots))
         ctx.log(f"[{i + 1}/{len(slots)}] prüfe {s.title}")
-        if not _check_and_fix(project, client, cfg, s, ctx, fix=fix, rounds=int(qc.get("rounds", 1))):
+        if not _check_and_fix(project, client, cfg, s, ctx, fix=fix, rounds=int(qc.get("rounds", 1)),
+                              radical=bool(qc.get("radical"))):
             misses += 1
     ctx.progress(len(slots), len(slots))
     ctx.log(f"Bildkontrolle fertig: {len(slots) - misses} passen, {misses} auffällig.")
