@@ -2,6 +2,7 @@
 import type { Character } from '../model/character';
 import type { RollRecord } from '../dice/roller.svelte';
 import type { AttrKey, ZoneKey } from '../rules';
+import type { MapOp, MapState } from '../map/mapstate';
 
 export const PROTOCOL_VERSION = 1;
 
@@ -61,6 +62,7 @@ export type ClientMsg =
   | { t: 'ping'; ts: number }
   | { t: 'want'; hash: string }
   | { t: 'view'; playerId: string | null }
+  | { t: 'map'; ops: MapOp[] }
   | { t: 'bye' };
 
 /** Geteilter Zustand, den der SL an alle verteilt. Jeder Schlüssel wird einzeln übertragen. */
@@ -72,7 +74,7 @@ export interface SharedState {
 }
 
 export type ServerMsg =
-  | { t: 'welcome'; playerId: string; gmName: string; state: SharedState; players: PlayerInfo[]; log: RollRecord[]; resume: boolean }
+  | { t: 'welcome'; playerId: string; gmName: string; state: SharedState; players: PlayerInfo[]; log: RollRecord[]; resume: boolean; map: MapState | null }
   | { t: 'pending' }
   | { t: 'deny'; reason: string }
   | { t: 'party'; players: PlayerInfo[] }
@@ -81,6 +83,10 @@ export type ServerMsg =
   | { t: 'roll'; roll: RollRecord }
   | { t: 'state'; key: keyof SharedState; value: SharedState[keyof SharedState] }
   | { t: 'toast'; text: string }
+  | { t: 'map'; ops: MapOp[] }
+  | { t: 'asset-head'; hash: string; name: string; mime: string; size: number; total: number }
+  | { t: 'asset-chunk'; hash: string; i: number; data: Uint8Array | ArrayBuffer }
+  | { t: 'asset-missing'; hash: string }
   | { t: 'pong'; ts: number }
   | { t: 'kick'; reason: string };
 

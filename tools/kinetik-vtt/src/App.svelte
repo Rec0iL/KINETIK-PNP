@@ -19,11 +19,12 @@
   import { loadMoveLibrary } from './store/moves.svelte';
   import { resumeFromSession } from './net/player.svelte';
   import { resumeHostIfActive } from './net/gm.svelte';
+  import { loadAssetIndex } from './net/assets.svelte';
   import { RULES_VERSION } from './rules';
   import { settings } from './lib/settings.svelte';
 
   loadLibrary().then(() => resumeFromSession());
-  resumeHostIfActive();
+  loadAssetIndex().then(() => resumeHostIfActive());
   loadMoveLibrary();
 
   const nav: { href: string; key: Key; names: string[] }[] = [

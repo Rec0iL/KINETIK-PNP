@@ -8,13 +8,14 @@
   import GmPlayers from '../gm/GmPlayers.svelte';
   import GmSettings from '../gm/GmSettings.svelte';
   import ClashAnswer from '../gm/ClashAnswer.svelte';
+  import GmMap from '../gm/GmMap.svelte';
   import RollPanel from '../sheet/RollPanel.svelte';
 
   let name = $state(settings.displayName || 'Spielleiter');
   let password = $state('');
   let saved = $state<GmSession | null>(null);
   let loaded = $state(false);
-  let tab = $state<'players' | 'dice' | 'notes' | 'settings'>('players');
+  let tab = $state<'players' | 'map' | 'dice' | 'notes' | 'settings'>('players');
   let sharedDraft = $state('');
   let sharedTimer: ReturnType<typeof setTimeout>;
 
@@ -91,6 +92,7 @@
 
   <div class="tabs" role="tablist" aria-label="SL-Dashboard">
     <button role="tab" aria-selected={tab === 'players'} onclick={() => (tab = 'players')}>Spieler{#if gm.pending.length} ({gm.pending.length}){/if}</button>
+    <button role="tab" aria-selected={tab === 'map'} onclick={() => (tab = 'map')}>Karte</button>
     <button role="tab" aria-selected={tab === 'dice'} onclick={() => (tab = 'dice')}>Würfel</button>
     <button role="tab" aria-selected={tab === 'notes'} onclick={() => (tab = 'notes')}>Notizen</button>
     <button role="tab" aria-selected={tab === 'settings'} onclick={() => (tab = 'settings')}>Einstellungen</button>
@@ -105,6 +107,8 @@
           {#each gm.feed.slice(0, 15) as f}<div class="f"><span class="dim mono">{new Date(f.ts).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</span> {f.text}</div>{:else}<p class="dim">Noch nichts.</p>{/each}
         </section>
       </div>
+    {:else if tab === 'map'}
+      <GmMap />
     {:else if tab === 'dice'}
       <RollPanel isGm canSecret who={gm.session.state.gmName} {party}>
         {#snippet entryActions(r)}

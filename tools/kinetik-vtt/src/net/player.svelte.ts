@@ -7,6 +7,9 @@ import { getCharacter, saveCharacter } from '../store/characters.svelte';
 import { settings } from '../lib/settings.svelte';
 import { pushToast } from '../ui/toasts.svelte';
 import { openPeer, explainPeerError, type DataConnection, type Peer } from './peer';
+import { handleAssetMessage, setAssetRequester } from './assets.svelte';
+import { addPing } from '../map/pings.svelte';
+import { applyMapOp, type MapOp, type MapState } from '../map/mapstate';
 import {
   PROTOCOL_VERSION, peerIdFor, normalizeCode, type ClientMsg, type PlayerInfo, type ServerMsg, type SharedState,
 } from './protocol';
@@ -22,13 +25,15 @@ export const player = $state<{
   party: PlayerInfo[];
   /** Der Bogen eines anderen Spielers, den ich gerade ansehe (Sichtbarkeit "offen"). */
   view: { playerId: string; character: Character | null } | null;
+  /** Die aktive Karte der Runde (ohne versteckte Tokens). */
+  map: MapState | null;
   playerId: string;
   characterId: string;
   name: string;
   /** Millisekunden Hin- und Rückweg zum SL. */
   latency: number;
 }>({
-  status: 'idle', error: '', code: '', gmName: '', state: null, party: [], view: null,
+  status: 'idle', error: '', code: '', gmName: '', state: null, party: [], view: null, map: null,
   playerId: loadPlayerId(), characterId: '', name: '', latency: 0,
 });
 
@@ -160,6 +165,8 @@ function onMessage(m: ServerMsg) {
       player.gmName = m.gmName;
       player.state = m.state;
       player.party = m.players;
+      player.map = m.map;
+      setAssetRequester((hash) => sendMsg({ t: 'want', hash }));
       for (const r of m.log) commitRoll(r, { remote: true, quiet: true });
       startPing();
       unsubRoll?.();
@@ -198,6 +205,18 @@ function onMessage(m: ServerMsg) {
     case 'pong':
       player.latency = Math.round(performance.now() - m.ts);
       break;
+    case 'map':
+      for (const op of m.ops) {
+        if (op.op === 'full') player.map = op.map;
+        else if (op.op === 'ping') addPing(op.x, op.y, op.who, op.color);
+        else if (player.map) applyMapOp(player.map, op);
+      }
+      break;
+    case 'asset-head':
+    case 'asset-chunk':
+    case 'asset-missing':
+      void handleAssetMessage(m);
+      break;
   }
 }
 
@@ -227,6 +246,8 @@ export function leaveRound() {
   player.party = [];
   player.state = null;
   player.view = null;
+  player.map = null;
+  setAssetRequester(null);
   player.error = '';
   try { sessionStorage.removeItem('kinetik.round'); } catch { /* ignorieren */ }
 }
@@ -248,4 +269,8 @@ export function pushSheetNow() {
 export function viewPlayer(id: string | null) {
   player.view = id ? { playerId: id, character: null } : null;
   sendMsg({ t: 'view', playerId: id });
+}
+
+export function sendMapOps(ops: MapOp[]) {
+  sendMsg({ t: 'map', ops });
 }

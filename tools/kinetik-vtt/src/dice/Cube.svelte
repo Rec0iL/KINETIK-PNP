@@ -6,17 +6,26 @@
     { cls: 'front', v: 1 }, { cls: 'back', v: 6 }, { cls: 'right', v: 3 }, { cls: 'left', v: 4 }, { cls: 'top', v: 2 }, { cls: 'bottom', v: 5 },
   ];
   const PIPS: Record<number, number[]> = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
-  // Endwinkel (X, Y), damit die Fläche mit `value` nach vorn zeigt.
-  const END: Record<number, [number, number]> = { 1: [0, 0], 6: [0, 180], 3: [0, -90], 4: [0, 90], 2: [-90, 0], 5: [90, 0] };
+  // Endlage: die Fläche mit dem Wurfergebnis liegt OBEN (Normale nach oben, wie bei einem Würfel auf dem Tisch).
+  // Reihenfolge der Transformationen auf Punkte: erst Z, dann X, dann Y (Gierwinkel um die Hochachse).
+  const END: Record<number, { x: number; z: number }> = {
+    2: { x: 0, z: 0 },     // Oberseite liegt schon oben
+    5: { x: 180, z: 0 },   // Unterseite nach oben
+    1: { x: 90, z: 0 },    // Vorderseite nach oben
+    6: { x: -90, z: 0 },   // Rückseite nach oben
+    3: { x: 0, z: -90 },   // rechte Seite nach oben
+    4: { x: 0, z: 90 },    // linke Seite nach oben
+  };
 
   let cube = $state<HTMLElement>();
   let fly = $state<HTMLElement>();
 
   $effect(() => {
     if (!cube || !fly) return;
-    const [ex, ey] = END[value] ?? [0, 0];
+    const e = END[value] ?? END[2];
+    const yaw = (Math.random() < 0.5 ? -1 : 1) * (12 + Math.random() * 38);
     const rnd = (n: number) => (Math.random() < 0.5 ? -1 : 1) * (1 + Math.floor(Math.random() * n)) * 360;
-    const end = `rotateX(${ex}deg) rotateY(${ey}deg) rotateZ(0deg)`;
+    const end = `rotateY(${yaw}deg) rotateX(${e.x}deg) rotateZ(${e.z}deg)`;
     if (!animate || matchMedia('(prefers-reduced-motion: reduce)').matches) {
       cube.style.transform = end;
       return;
@@ -26,7 +35,7 @@
     const dur = 1500 + Math.random() * 300;
     cube.animate(
       [
-        { transform: `rotateX(${ex + rnd(2)}deg) rotateY(${ey + rnd(2)}deg) rotateZ(${rnd(1)}deg)` },
+        { transform: `rotateY(${yaw + rnd(2)}deg) rotateX(${e.x + rnd(2)}deg) rotateZ(${e.z + rnd(1)}deg)` },
         { transform: end },
       ],
       { duration: dur, delay, easing: 'cubic-bezier(0.15, 0.7, 0.25, 1)', fill: 'both' },
@@ -63,7 +72,7 @@
 <style>
   .scene { width: var(--s); height: var(--s); perspective: calc(var(--s) * 6); position: relative; }
   .fly { position: absolute; inset: 0; will-change: transform; }
-  .tilt { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateX(-22deg) rotateY(-28deg); }
+  .tilt { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateX(-54deg); }
   .cube { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
   .face {
     position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 14%;

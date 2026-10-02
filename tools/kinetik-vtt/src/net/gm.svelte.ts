@@ -8,6 +8,9 @@ import { commitRoll, onRoll, rollLog, type RollRecord } from '../dice/roller.sve
 import { settings } from '../lib/settings.svelte';
 import { pushToast } from '../ui/toasts.svelte';
 import { openPeer, explainPeerError, type DataConnection, type Peer } from './peer';
+import { serveAsset } from './assets.svelte';
+import { addPing } from '../map/pings.svelte';
+import { applyMapOp, forPlayers, type MapOp, type MapState } from '../map/mapstate';
 import {
   PROTOCOL_VERSION, newRoomCode, peerIdFor, type ClientMsg, type PatchOp, type PlayerInfo, type ServerMsg, type SharedState,
   type Visibility,
@@ -31,6 +34,9 @@ export interface GmSession {
   /** Private Notizen des SL. */
   gmNotes: string;
   created: number;
+  /** Vorbereitete Karten (Szenen). Nur die aktive wird mit den Spielern geteilt. */
+  scenes: MapState[];
+  activeScene: string | null;
 }
 
 export interface FeedEntry { ts: number; text: string }
@@ -70,6 +76,8 @@ export async function loadSavedSession(): Promise<GmSession | null> {
   try {
     const s = (await get(STORE_KEY)) as GmSession | undefined;
     if (!s) return null;
+    s.scenes = s.scenes ?? [];
+    s.activeScene = s.activeScene ?? null;
     s.players = (s.players ?? []).map((p) => ({ ...p, connected: false, character: p.character ? sanitizeCharacter(p.character) : null }));
     return s;
   } catch { return null; }
@@ -127,7 +135,7 @@ export async function startHost(opts: { gmName: string; password: string; resume
   gm.status = 'starting';
   gm.error = '';
   const s: GmSession = opts.resume ?? {
-    code: newRoomCode(), password: '', players: [], gmNotes: '', created: Date.now(),
+    code: newRoomCode(), password: '', players: [], gmNotes: '', created: Date.now(), scenes: [], activeScene: null,
     state: { gmName: '', visibility: 'party', notes: '', rounds: 0 },
   };
   s.state.gmName = opts.gmName || s.state.gmName || 'Spielleiter';
@@ -269,9 +277,91 @@ function onData(conn: DataConnection, msg: ClientMsg) {
       }
       break;
     }
+    case 'want':
+      if (typeof msg.hash === 'string') void serveAsset(conn, msg.hash);
+      break;
+    case 'map':
+      onPlayerMapOps(id, p.name, msg.ops);
+      break;
     case 'bye':
       conn.close();
       break;
+  }
+}
+
+// ---------- Karte ----------
+export const activeScene = (): MapState | null => {
+  const s = gm.session;
+  return s?.scenes.find((x) => x.id === s.activeScene) ?? null;
+};
+
+/** Was Spieler von einer Änderung sehen dürfen (versteckte Tokens bleiben beim SL). */
+function playerOps(scene: MapState, ops: MapOp[]): MapOp[] {
+  const out: MapOp[] = [];
+  for (const op of ops) {
+    if (op.op === 'tok') out.push(op.token.hidden ? { op: 'tokdel', id: op.token.id } : op);
+    else if (op.op === 'tokmove') { if (!scene.tokens.find((t) => t.id === op.id)?.hidden) out.push(op); }
+    else if (op.op === 'full') out.push({ op: 'full', map: forPlayers(op.map) });
+    else out.push(op);
+  }
+  return out;
+}
+
+/** Änderung des SL an einer Szene. Ist es die aktive, geht sie an die Spieler. */
+export function gmMapOps(sceneId: string, ops: MapOp[]) {
+  const s = gm.session;
+  const scene = s?.scenes.find((x) => x.id === sceneId);
+  if (!s || !scene) return;
+  for (const op of ops) applyMapOp(scene, op);
+  if (s.activeScene === sceneId) {
+    const filtered = playerOps(scene, ops);
+    if (filtered.length) broadcast({ t: 'map', ops: $state.snapshot(filtered) as MapOp[] });
+  }
+  persistSession();
+}
+
+export function addScene(scene: MapState) {
+  gm.session?.scenes.push(scene);
+  persistSession();
+}
+
+export function removeScene(id: string) {
+  const s = gm.session;
+  if (!s) return;
+  if (s.activeScene === id) activateScene(null);
+  s.scenes = s.scenes.filter((x) => x.id !== id);
+  persistSession();
+}
+
+export function activateScene(id: string | null) {
+  const s = gm.session;
+  if (!s) return;
+  s.activeScene = id;
+  broadcast({ t: 'map', ops: [{ op: 'full', map: $state.snapshot(forPlayers(activeScene())) as MapState | null }] });
+  persistSession();
+}
+
+export function gmPing(x: number, y: number, color: string) {
+  const who = gm.session?.state.gmName ?? 'SL';
+  addPing(x, y, who, color);
+  broadcast({ t: 'map', ops: [{ op: 'ping', x, y, who, color }] });
+}
+
+function onPlayerMapOps(playerId: string, name: string, ops: MapOp[]) {
+  const scene = activeScene();
+  if (!scene || !Array.isArray(ops)) return;
+  for (const op of ops) {
+    if (op.op === 'ping') {
+      addPing(op.x, op.y, name, op.color);
+      broadcast({ t: 'map', ops: [{ op: 'ping', x: op.x, y: op.y, who: name, color: op.color }] }, playerId);
+    } else if (op.op === 'tokmove') {
+      const t = scene.tokens.find((x) => x.id === op.id);
+      if (t && t.playerId === playerId && Number.isFinite(op.x) && Number.isFinite(op.y)) {
+        applyMapOp(scene, { op: 'tokmove', id: op.id, x: op.x, y: op.y });
+        broadcast({ t: 'map', ops: [{ op: 'tokmove', id: op.id, x: op.x, y: op.y }] }, playerId);
+        persistSession();
+      }
+    }
   }
 }
 
@@ -300,7 +390,10 @@ function accept(conn: DataConnection, p: GmPlayer, name: string, resume: boolean
   connOwner.set(conn, p.id);
   const s = gm.session!;
   const log = rollLog.entries.filter((r) => !r.secret).slice(0, 50).reverse();
-  send(conn, { t: 'welcome', playerId: p.id, gmName: s.state.gmName, state: $state.snapshot(s.state), players: partyFor(p.id), log: $state.snapshot(log) as RollRecord[], resume });
+  send(conn, {
+    t: 'welcome', playerId: p.id, gmName: s.state.gmName, state: $state.snapshot(s.state), players: partyFor(p.id),
+    log: $state.snapshot(log) as RollRecord[], resume, map: $state.snapshot(forPlayers(activeScene())) as MapState | null,
+  });
   feed(`${p.name} ist ${resume ? 'wieder da' : 'beigetreten'}.`);
   scheduleParty();
   persistSession();
