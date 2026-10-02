@@ -14,6 +14,7 @@ export function moveFromTemplate(templateId: string, opts: { titleId?: string; l
     titleId: opts.titleId,
     learnedAtLevel: opts.level,
     templateId,
+    ...(('preise' in t && t.preise) ? { prices: [...(t.preise as string[])] } : {}),
   };
 }
 

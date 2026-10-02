@@ -4,6 +4,8 @@ import { uid, type Character } from './character';
 import { computeSheet } from './sheet';
 import type { PatchOp } from '../net/protocol';
 
+export const ENERGIE_MIN = -30;
+
 export function applyPatch(c: Character, ops: PatchOp[], opts: { autoShock?: boolean } = {}): void {
   const autoShock = opts.autoShock ?? true;
   for (const op of ops) {
@@ -14,7 +16,8 @@ export function applyPatch(c: Character, ops: PatchOp[], opts: { autoShock?: boo
         const cur = op.key === 'schutz' ? c.resources.schutz.current : c.resources[op.key];
         const next = op.op === 'add' ? cur + op.delta : op.value;
         const max = { energie: sheet.energieMax.value, wk: sheet.wkMax.value, momentum: sheet.momentumCap.value, schutz: c.resources.schutz.max }[op.key];
-        const v = Math.max(0, Math.min(max, next));
+        // Energie darf durch Gegnereinwirkung unter 0 fallen (ohnmächtig, Überlauf 3.11), alles andere nicht.
+        const v = Math.max(op.key === 'energie' ? ENERGIE_MIN : 0, Math.min(max, next));
         if (op.key === 'schutz') c.resources.schutz.current = v;
         else c.resources[op.key] = v;
         break;

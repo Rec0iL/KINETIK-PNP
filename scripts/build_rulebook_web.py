@@ -64,9 +64,11 @@ def main():
     doc = parse(md, chapter_level=PROJECT.get("chapter_level") or None, appendix_patterns=PROJECT.get("appendix_patterns", []))
     version = (re.search(r"Version\s+(\d+(?:\.\d+)*)", md) or [None, ""])[1]
 
-    if OUT.exists():
-        shutil.rmtree(OUT)
-    (OUT / "img").mkdir(parents=True)
+    # Inhalt leeren statt den Ordner zu löschen: der Vite-Entwicklungsserver merkt sich sonst veraltete Dateilisten.
+    OUT.mkdir(parents=True, exist_ok=True)
+    for old in OUT.iterdir():
+        shutil.rmtree(old) if old.is_dir() else old.unlink()
+    (OUT / "img").mkdir()
     shutil.copy(ROOT / "assets" / "grafiken" / "koerper-silhouette.svg", OUT / "img" / "koerper-silhouette.svg")
     written = set()
 

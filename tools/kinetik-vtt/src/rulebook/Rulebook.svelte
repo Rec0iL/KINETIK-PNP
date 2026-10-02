@@ -71,7 +71,15 @@
 <aside class="rb" class:open={rulebook.open} class:wide={rulebook.wide} aria-label="Regelwerk" aria-hidden={!rulebook.open}>
   <header>
     <div class="titlebar">
-      <b>Regelwerk</b>{#if data}<small class="dim">v{data.version}</small>{/if}
+      {#if data?.pdf}
+        <a class="dl" href={rbUrl(data.pdf)} download={`KINETIK_Regelwerk_v${data.version}.pdf`} title="Regelwerk als PDF herunterladen">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 3v11m0 0l-4.5-4.5M12 14l4.5-4.5M4 15v4a2 2 0 002 2h12a2 2 0 002-2v-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          <b>Regelwerk</b><small>v{data.version}</small>
+          <span class="sr-only">als PDF herunterladen</span>
+        </a>
+      {:else}
+        <b>Regelwerk</b>{#if data}<small class="dim">v{data.version}</small>{/if}
+      {/if}
       <span class="spacer"></span>
       <button class="btn sm icon ghost" onclick={() => (navOpen = !navOpen)} aria-expanded={navOpen} aria-label="Inhaltsverzeichnis" title="Inhaltsverzeichnis">☰</button>
       <button class="btn sm icon ghost" onclick={() => (rulebook.wide = !rulebook.wide)} aria-label={rulebook.wide ? 'Schmaler' : 'Breiter'} title={rulebook.wide ? 'Schmaler' : 'Breiter'}>{rulebook.wide ? '⇥' : '⇤'}</button>
@@ -150,6 +158,10 @@
   header { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--line); background: var(--panel-solid); display: grid; gap: 0.5rem; }
   .titlebar { display: flex; align-items: center; gap: 0.3rem; }
   .titlebar b { font: 400 1.6rem var(--font-display); letter-spacing: 0.1em; color: var(--accent); }
+  .dl { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--accent); text-decoration: none; padding: 0.15rem 0.5rem 0.15rem 0.3rem; margin-left: -0.3rem; border: 1px solid transparent; transition: background 0.15s, border-color 0.15s; }
+  .dl:hover { background: var(--accent-soft); border-color: var(--accent-line); text-decoration: none; }
+  .dl small { color: var(--ink-dim); font-size: 0.8rem; }
+  .dl svg { flex: none; }
   .body { flex: 1; overflow-y: auto; overscroll-behavior: contain; }
   .pad { padding: 1rem 1.2rem; }
   .err { color: var(--danger); }

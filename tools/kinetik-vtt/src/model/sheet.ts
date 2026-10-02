@@ -29,7 +29,9 @@ export interface Sheet {
   titleRows: { title: Title; mastery: number; row: Record<AttrKey, number>; growth: number }[];
   topLevel: number;
   /** Zustände aus den Ressourcen und Verletzungen. */
-  states: { ausgepumpt: boolean; gebrochen: boolean; sterbend: boolean; unbrauchbar: ZoneKey[] };
+  states: { ausgepumpt: boolean; ohnmaechtig: boolean; gebrochen: boolean; sterbend: boolean; unbrauchbar: ZoneKey[] };
+  /** Fällige Verletzungen aus dem Überlauf bei negativer Energie (je volle 3 Punkte unter 0, 3.11). */
+  overflow: number;
   injuryCount: number;
   tagBonus: number;
 }
@@ -63,10 +65,12 @@ export function computeSheet(c: Character): Sheet {
     topLevel: topLevel(c.titles),
     states: {
       ausgepumpt: c.resources.energie <= 0,
+      ohnmaechtig: c.resources.energie < 0,
       gebrochen: c.resources.wk <= 0,
       sterbend: statesZones.some((s) => s.status === 'sterbend'),
       unbrauchbar: statesZones.filter((s) => s.status === 'unbrauchbar').map((s) => s.z),
     },
+    overflow: c.resources.energie < 0 ? Math.floor(-c.resources.energie / 3) : 0,
     injuryCount: totalInjuries(Object.fromEntries(ZONE_KEYS.map((z) => [z, c.injuries[z].length]))),
     tagBonus: Math.min(tg.stapelMax, small * tg.klein + large * tg.gross),
   };

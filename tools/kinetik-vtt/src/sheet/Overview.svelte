@@ -116,13 +116,14 @@
   <section class="panel">
     <h2>Ressourcen</h2>
     <div class="states">
-      {#if sheet.states.ausgepumpt}<span class="chip danger">Ausgepumpt</span>{/if}
+      {#if sheet.states.ohnmaechtig}<span class="chip danger" title="Energie unter 0: ohnmächtig bis zum Szenenende. Je volle 3 Punkte unter 0 ist 1 Verletzung (Kopf bei Würgen und Ersticken, Torso bei Gift).">Ohnmächtig · Überlauf {sheet.overflow} Verletzung(en) fällig</span>
+      {:else if sheet.states.ausgepumpt}<span class="chip danger">Ausgepumpt</span>{/if}
       {#if sheet.states.gebrochen}<span class="chip danger">Gebrochen</span>{/if}
       {#if sheet.states.sterbend}<span class="chip danger">Sterbend</span>{/if}
       {#each sheet.states.unbrauchbar as z}<span class="chip amber">{rules.tabellen.zonen.find((x) => x.key === z)?.kurz} unbrauchbar</span>{/each}
     </div>
     <div class="res">
-      <Meter label="Energie" bind:value={char.resources.energie} max={sheet.energieMax.value} quick={[-3, -2, -1, 1, 2, 3]}>
+      <Meter label="Energie" bind:value={char.resources.energie} max={sheet.energieMax.value} min={-12} quick={[-3, -2, -1, 1, 2, 3]}>
         {#snippet maxSlot()}<OverrideValue derived={sheet.energieMax} label="Energie-Maximum" formula="6 + Fluss + Gewalt" onset={(v) => (v === undefined ? delete char.overrides.energieMax : (char.overrides.energieMax = v))} />{/snippet}
       </Meter>
       <Meter label="Willenskraft" tone="amber" bind:value={char.resources.wk} max={sheet.wkMax.value} quick={[-3, -2, -1, 1, 2, 3]}>
@@ -152,6 +153,7 @@
       <button class="btn sm" onclick={dominance} title="+1 Momentum, +1 Energie (nur gegen Gegner ab Level 1, 1× pro Runde)">Dominanz</button>
       <button class="btn sm" onclick={perfectCounter} title="+1 Momentum, +1 Willenskraft">Perfekter Konter</button>
       <button class="btn sm" onclick={combatEnd} title="Momentum verfällt auf 0">Kampfende</button>
+      {#if sheet.states.ohnmaechtig}<button class="btn sm" onclick={() => (char.resources.energie = 1)} title="Wecken: Energie auf 1, Verletzungen bleiben">Wecken</button>{/if}
       <button class="btn sm amber" onclick={shortRest} title="Energie und WK voll, Schutz voll, Momentum 0, Szenen-Tags weg">Kurze Rast</button>
     </div>
   </section>

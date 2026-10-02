@@ -289,7 +289,7 @@
     "prompt": "An unarmored karateka mid air, grabbing both hands onto the helmeted head of a heavily armored security guard to pull him downward into a brutal flying knee strike. Splintering armor fragments shatter on impact amid pouring rain, puddle splashes, and halogen floodlights in a shipping container yard.",
     "seed": 297025712,
     "kind": "filler",
-    "active": true,
+    "active": false,
     "title": "Füllbild: 3.2 Die Wirkung eines Treffers (Kaskade)",
     "after": "sec-3-2-die-wirkung-eines-treffers-kaskade",
     "chapter": "ch-3-der-kampf-das-clash-system",
@@ -331,7 +331,7 @@
     "title": "Füllbild: 3.13 Optionale Experten-Regel: Erst würfeln, dann erzählen (\"Fortune in the Middle\")",
     "after": "sec-3-13-optionale-experten-regel-erst-wuerfeln-dann",
     "chapter": "ch-3-der-kampf-das-clash-system",
-    "h_mm": 94.6,
+    "h_mm": 167.3,
     "w_mm": 176.0,
     "include_style": true
   },
@@ -355,7 +355,7 @@
     "title": "Füllbild: 5.4 Meister-Moves und Legendäre Moves",
     "after": "sec-5-4-meister-moves-und-legendaere-moves",
     "chapter": "ch-5-moves",
-    "h_mm": 71.8,
+    "h_mm": 208.4,
     "w_mm": 176.0,
     "include_style": true
   },
@@ -431,7 +431,7 @@
     "title": "Füllbild: 2.4 Charaktererschaffung",
     "after": "sec-2-4-charaktererschaffung",
     "chapter": "ch-2-der-charakter",
-    "h_mm": 85.2,
+    "h_mm": 61.0,
     "w_mm": 176.0,
     "include_style": true
   },
@@ -446,5 +446,46 @@
     "h_mm": 160.9,
     "w_mm": 176.0,
     "include_style": true
+  },
+  "sec-beispiel-6-gift-und-toeten": {
+    "prompt": "In the foreground of a dark, rain-drenched alley, a gloved assassin's hand rests at their side, deftly holding a slender blowpipe dart dripping with glowing emerald neurotoxin. In the soft-focus, blurred background, the distant silhouette of an unsuspecting target stumbles past damp brick walls beneath flickering streetlamps.",
+    "seed": 2145845881,
+    "kind": "section",
+    "title": "Beispiel 6: Gift und Töten",
+    "include_style": true,
+    "negative": "standing upright, stable stance, wide athletic stance, active fighting pose, energetic victim, extra limbs, fused hands, tangled arms, deformed fingers, mutated hands, bad anatomy, text, watermark, signature"
+  },
+  "fill-sec-beispiel-6-gift-und-toeten": {
+    "prompt": "",
+    "seed": 946633415,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: Beispiel 6: Gift und Töten",
+    "after": "sec-beispiel-6-gift-und-toeten",
+    "chapter": "ch-6-spielbeispiele-am-tisch",
+    "h_mm": 102.6,
+    "w_mm": 176.0
+  },
+  "fill-sec-3-3-tags": {
+    "prompt": "",
+    "seed": 800004017,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 3.3 Tags",
+    "after": "sec-3-3-tags",
+    "chapter": "ch-3-der-kampf-das-clash-system",
+    "h_mm": 66.3,
+    "w_mm": 176.0
+  },
+  "fill-sec-3-8-momentum": {
+    "prompt": "",
+    "seed": 487952336,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 3.8 Momentum",
+    "after": "sec-3-8-momentum",
+    "chapter": "ch-3-der-kampf-das-clash-system",
+    "h_mm": 53.6,
+    "w_mm": 176.0
   }
 }

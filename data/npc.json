@@ -1,14 +1,77 @@
 {
   "rules_version": "3.5",
-  "hinweis": "Level, Bonus und Ausgeschaltet-bei stammen aus 3.7 und 3.11. Schutz und WK sind Startwerte aus den Simulationsszenarien in Anhang A (Elite 1/6, Boss 3/8) bzw. Vorschläge (Schläger, Nemesis) und frei änderbar.",
+  "hinweis": "Level, Bonus und Ausgeschaltet-bei stammen aus 3.7 und 3.11, Schutz und WK aus der Tabelle in 3.7 (Richtwerte, frei änderbar).",
   "leiter": [
-    { "key": "goon", "name": "Goon", "levelMin": 0, "levelMax": 0, "bonusMin": 0, "bonusMax": 0, "schutz": 0, "gruppe": true, "ausgeschaltet": "1 Treffer" },
-    { "key": "schlaeger", "name": "Schläger", "levelMin": 1, "levelMax": 2, "bonusMin": 2, "bonusMax": 2, "schutz": 0, "ausgeschaltet": "WK 0 oder 2 Verletzungen" },
-    { "key": "elite", "name": "Elite", "levelMin": 3, "levelMax": 5, "bonusMin": 4, "bonusMax": 5, "schutz": 1, "wk": 6, "ausgeschaltet": "WK 0 (flieht, ergibt sich) oder 2 Verletzungen" },
-    { "key": "boss", "name": "Boss", "levelMin": 6, "levelMax": 8, "bonusMin": 6, "bonusMax": 7, "schutz": 3, "wk": 8, "ausgeschaltet": "3 Verletzungen insgesamt, 2 am Kopf oder 3 am Torso. Bei WK 0 gebrochen mit letzter Verzweiflungstat." },
-    { "key": "nemesis", "name": "Nemesis", "levelMin": 9, "levelMax": 10, "bonusMin": 8, "bonusMax": 9, "schutz": 3, "wk": 10, "ausgeschaltet": "wie Boss" }
+    {
+      "key": "goon",
+      "name": "Goon",
+      "levelMin": 0,
+      "levelMax": 0,
+      "bonusMin": 0,
+      "bonusMax": 0,
+      "schutz": 0,
+      "gruppe": true,
+      "ausgeschaltet": "1 Treffer"
+    },
+    {
+      "key": "schlaeger",
+      "name": "Schläger",
+      "levelMin": 1,
+      "levelMax": 2,
+      "bonusMin": 2,
+      "bonusMax": 2,
+      "schutz": 0,
+      "ausgeschaltet": "WK 0 oder 2 Verletzungen",
+      "wk": 4
+    },
+    {
+      "key": "elite",
+      "name": "Elite",
+      "levelMin": 3,
+      "levelMax": 5,
+      "bonusMin": 4,
+      "bonusMax": 5,
+      "schutz": 1,
+      "wk": 6,
+      "ausgeschaltet": "WK 0 (flieht, ergibt sich) oder 2 Verletzungen"
+    },
+    {
+      "key": "boss",
+      "name": "Boss",
+      "levelMin": 6,
+      "levelMax": 8,
+      "bonusMin": 6,
+      "bonusMax": 7,
+      "schutz": 3,
+      "wk": 8,
+      "ausgeschaltet": "3 Verletzungen insgesamt, 2 am Kopf oder 3 am Torso. Bei WK 0 gebrochen mit letzter Verzweiflungstat."
+    },
+    {
+      "key": "nemesis",
+      "name": "Nemesis",
+      "levelMin": 9,
+      "levelMax": 10,
+      "bonusMin": 8,
+      "bonusMax": 9,
+      "schutz": 3,
+      "wk": 10,
+      "ausgeschaltet": "wie Boss"
+    }
   ],
-  "goon": { "siegAusgeschaltet": 1, "dominanzAusgeschaltet": [2, 3] },
-  "ueberzahl": { "proWeiterem": 1, "max": 3 },
-  "bedraengnis": { "erster": "-1 passender Schutz, sonst -1 WK (Zähler 1)", "zweiter": "Verletzung (Zähler 0)", "reset": "Jeder Sieg des Spielers setzt den Zähler auf 0." }
+  "goon": {
+    "siegAusgeschaltet": 1,
+    "dominanzAusgeschaltet": [
+      2,
+      3
+    ]
+  },
+  "ueberzahl": {
+    "proWeiterem": 1,
+    "max": 3
+  },
+  "bedraengnis": {
+    "erster": "-1 passender Schutz, sonst -1 WK (Zähler 1)",
+    "zweiter": "Verletzung (Zähler 0)",
+    "reset": "Jeder Sieg des Spielers setzt den Zähler auf 0."
+  }
 }

@@ -32,8 +32,10 @@
   "qc": {
     "enabled": false,
     "auto_fix": true,
-    "rounds": 1
+    "rounds": 1,
+    "radical": false
   },
+  "content_type": "rulebook",
   "style_preset": "",
   "style_wish": "cowboy beebop style extent the anime range for gritty anime styles, so our character doesnt look like spike spiegel so much, but keep it modern i dont want it to look like from the 90s, but dont namedrop any animes otherwise the characters from that anime start to bleed through",
   "style": "modern gritty neo-noir anime aesthetic, hard-boiled cinematic style, sharp inked linework, digital cel shading, smoky atmospheric depth, desaturated urban color palette, moody chiaroscuro lighting, dramatic cyan and amber rim light, crisp high-definition, wide cinematic framing",

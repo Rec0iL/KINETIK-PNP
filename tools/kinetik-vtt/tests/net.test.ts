@@ -8,7 +8,9 @@ describe('applyPatch', () => {
   it('Energie/WK werden auf 0 und Maximum begrenzt', () => {
     const c = jinYamada();
     applyPatch(c, [{ op: 'add', key: 'energie', delta: -20 }]);
-    expect(c.resources.energie).toBe(0);
+    expect(c.resources.energie).toBe(-12); // Energie darf unter 0 fallen (ohnmächtig, 3.11)
+    applyPatch(c, [{ op: 'add', key: 'wk', delta: -20 }]);
+    expect(c.resources.wk).toBe(0);
     applyPatch(c, [{ op: 'add', key: 'energie', delta: 99 }]);
     expect(c.resources.energie).toBe(8);
     applyPatch(c, [{ op: 'set', key: 'momentum', value: 9 }]);

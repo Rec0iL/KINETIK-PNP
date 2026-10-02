@@ -112,6 +112,7 @@ describe('Move-Import/Export', () => {
 });
 
 import { stufeConfig } from '../src/model/sheet';
+import { evaluateMove, tierForEp } from '../src/rules';
 
 describe('Kampagnenstartstufe', () => {
   it('feste Stufen und eigene Stufe liefern ihre Budgets', () => {
@@ -135,5 +136,32 @@ describe('Kampagnenstartstufe', () => {
     expect(c.customStufe).toEqual({ attributBudget: 4, titelBudget: 4, startLevelMax: 3 });
     expect(c.draft).toBe(false);
     expect(sanitizeCharacter({ stufe: 'custom', customStufe: { attributBudget: 7 } }).customStufe.attributBudget).toBe(7);
+  });
+});
+
+describe('Neue Regeln 3.11 und 5.1', () => {
+  it('negative Energie: ohnmächtig, je 3 Punkte unter 0 eine Verletzung fällig', () => {
+    const c = jinYamada();
+    c.resources.energie = -1;
+    expect(computeSheet(c).states).toMatchObject({ ausgepumpt: true, ohnmaechtig: true });
+    expect(computeSheet(c).overflow).toBe(0);
+    c.resources.energie = -4;
+    expect(computeSheet(c).overflow).toBe(1);
+    c.resources.energie = -9;
+    expect(computeSheet(c).overflow).toBe(3);
+    c.resources.energie = 0;
+    expect(computeSheet(c).states.ohnmaechtig).toBe(false);
+  });
+  it('Gift-Moves aus 5.2 und Todesberührung aus 5.4 stimmen mit ihren EP', () => {
+    for (const id of ['blasrohr-pfeil', 'dokushu-beruehrung', 'garrotte']) {
+      const m = moveFromTemplate(id)!;
+      expect(evaluateMove(m).ep, id).toBe(3);
+    }
+    const t = moveFromTemplate('todesberuehrung')!;
+    expect(evaluateMove(t)).toMatchObject({ ep: 8, tier: 'legendaer', minLevel: 10 });
+    expect(t.prices).toEqual(['Narbe', 'Selten']);
+  });
+  it('Meister-Move erst ab 7 EP', () => {
+    expect([5, 6, 7, 8].map(tierForEp)).toEqual(['momentum', 'momentum', 'meister', 'legendaer']);
   });
 });

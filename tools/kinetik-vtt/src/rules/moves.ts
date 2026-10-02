@@ -75,7 +75,7 @@ export function minLevelForEp(ep: number): number {
 export function tierForEp(ep: number): MoveTier {
   const k = rules.epKatalog.kosten;
   if (ep >= k.legendaerEp) return 'legendaer';
-  if (ep >= 6) return 'meister';
+  if (ep >= 7) return 'meister';
   if (ep > k.energieMoveMaxEp) return 'momentum';
   return 'energie';
 }

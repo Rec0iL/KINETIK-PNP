@@ -107,8 +107,10 @@ Energie und Willenskraft steigen nie über ihr Maximum.
 | Straße | 3 | 3 | 2 |
 | **Kino (Standard)** | **4** | **4** | **3** |
 | Legende | 5 | 7 | 5 |
+| Eigene | frei | frei | frei |
 
-* **Attribute:** Alle starten bei 0. Das Maximum zum Start ist +2, ein **Naturtalent** darf auf einem Attribut +3 haben. Ein Attribut auf -1 gibt 1 Punkt zurück (bei höchstens zwei Attributen).
+* **Eigene Stufe:** Der Tisch legt Attribut-Budget, Titel-Level-Budget und das maximale Start-Level je Titel selbst fest. Die Kampagnenstartstufe gilt nur für die Erschaffung, danach wächst die Figur über ihre Titel-Level.
+* **Attribute:** Alle starten bei 0. Das Maximum zum Start ist +2, ein **Naturtalent** darf auf einem Attribut +3 haben. Ein Attribut auf -1 gibt 1 Punkt zurück (bei höchstens zwei Attributen). Gezählt werden die Werte über 0, abzüglich dieser Rückgabe.
 * **Titel:** Die Level-Punkte werden auf die Titel verteilt. Pro Titel werden Domäne (3 bis 5 Bereiche) und 2 Leitattribute festgelegt.
 * **Titel über Level 4:** Startet ein Titel bei der Erschaffung auf Level 4 oder höher (nur in der Stufe *Legende* möglich), bringt er sein Attributswachstum gleich mit. Dieses +1 kommt zusätzlich zum Attribut-Budget und darf das Startmaximum von +2 auf +3 heben.
 * **Ressourcen:** Energie = 6 + Fluss + Gewalt, Willenskraft = 6 + Instinkt + Fokus.
@@ -177,6 +179,7 @@ Ein Angriff ohne Move macht **Standardschaden** nach der Kaskade **Schutz → Wi
 * **Normaler Treffer** (Schlagabtausch, Konter): **-1 Schutz** des Ziels (nur wenn ein passender Schutz über 0 vorhanden ist), sonst **-1 Willenskraft**.
 * **Dominanz** (Δ ≥ T): **Verletzung**, wenn Δ ≥ **T + Schutz**. Reicht die Differenz nicht, wird der Treffer abgefangen (-1 Schutz und -1 Willenskraft).
 * **Momentum** gibt es bei Δ ≥ T, unabhängig vom Schutz. Rüstung bremst also nie die Dynamik.
+* **Durchschlag und Ignorieren** wirken auf den **wirksamen Schutz** (Schutz minus Durchschlag, beim Ignorieren 0). Gilt für den Treffer kein wirksamer Schutz über 0, geht ein normaler Treffer direkt auf die Willenskraft.
 
 **Wann wirken Moves?**
 
@@ -204,6 +207,8 @@ Ist ein Spieler seinem Gegner im Gesamtbonus (Attribut + Meisterschaft) um **2 o
 * Seine Dominanz-Schwelle (als Angreifer T(A), als Verteidiger T(V)) liegt bei **2** statt 3.
 * Die Dominanz-Schwelle des NPCs gegen ihn steigt auf **4**.
 
+Die Helden-Schwelle gilt nur zwischen Spielercharakteren und NPCs, nie zwischen zwei Spielercharakteren. Verglichen wird der Gesamtbonus aus Attribut und Meisterschaft, Tags, Überzahl und andere Wurfmodifikatoren zählen dafür nicht.
+
 Gegen gleich starke oder stärkere Gegner ändert sich nichts. Die Spieler profitieren also nur dort, wo es cineastisch passt. (Wahrscheinlichkeiten: Anhang A.)
 
 ### **3.5 Außer Reichweite (Klassenunterschied)**
@@ -212,6 +217,8 @@ Maßgeblich ist die **Gesamtbonus-Lücke** zwischen beiden Seiten im jeweiligen 
 
 * **Lücke 5 oder mehr:** Der Unterlegene kann weder Dominanz noch Konter erzielen. Sein bestes Ergebnis ist ein Schlagabtausch. Er kann das nur mit der **Heldenhaften Gegenwehr** umgehen (3 Momentum): Der Clash wird dann regulär gewürfelt.
 * **Lücke 8 oder mehr:** Es wird nicht mehr gewürfelt. Der Überlegene erzählt den Ausgang, der Unterlegene kann nur fliehen, aufgeben oder die Heldenhafte Gegenwehr einsetzen.
+
+*Zur Klarstellung:* Die Lücke besteht nur aus Attribut und Meisterschaft, Tags und Überzahl zählen nicht mit. Der Unterlegene wird auf den Schlagabtausch gedeckelt: Als **Angreifer** wird aus einer Dominanz ein Schlagabtausch, als **Verteidiger** werden Konter und perfekter Konter zum Schlagabtausch.
 
 *Zur Einordnung:* Bei einer Lücke von 5 gewinnt der Unterlegene nach den Würfeln ohnehin nur noch 5 % der Clashs. Die Regel macht aus "fast nie" ein klares "nur mit Heldenmut". Ein Level-10-Großmeister (+9) hält einen untrainierten Kraftprotz (+3) mit einer Lücke von 6 sicher außer Reichweite.
 
@@ -242,13 +249,15 @@ Maßgeblich ist die **Gesamtbonus-Lücke** zwischen beiden Seiten im jeweiligen 
 
 **NPC-Leiter (Orientierung für den SL):**
 
-| Typ | Level | Bonus in der Domäne |
-|---|---|---|
-| Goon | 0 | +0 |
-| Schläger | 1-2 | +2 |
-| Elite | 3-5 | +4 bis +5 |
-| Boss | 6-8 | +6 bis +7 |
-| Nemesis | 9-10 | +8 bis +9 |
+| Typ | Level | Bonus in der Domäne | Schutz / Willenskraft (Richtwert) |
+|---|---|---|---|
+| Goon | 0 | +0 | 0 / keine |
+| Schläger | 1-2 | +2 | 0 / 4 |
+| Elite | 3-5 | +4 bis +5 | 1 / 6 |
+| Boss | 6-8 | +6 bis +7 | 3 / 8 |
+| Nemesis | 9-10 | +8 bis +9 | 3 / 10 |
+
+Schutz und Willenskraft sind Richtwerte, der SL passt sie an. Die Werte für Elite und Boss stammen aus den Simulationen in Anhang A.
 
 ### **3.8 Momentum**
 
@@ -300,6 +309,7 @@ Bullet Time gibt es höchstens **einmal pro Spieler und Runde**. Der SL vergibt 
 | Gegner | Ausgeschaltet bei |
 |---|---|
 | **Goon** | 1 Treffer |
+| **Schläger** | wie Elite |
 | **Elite** | WK 0 (flieht, ergibt sich) oder 2 Verletzungen |
 | **Boss** | 3 Verletzungen insgesamt, 2 Verletzungen am Kopf oder 3 am Torso. Bei WK 0 Gebrochen mit letzter Verzweiflungstat. |
 | **Spielercharakter** | 2 Verletzungen am Kopf oder 3 am Torso (sterbend). Bei WK 0 Gebrochen (3.10). |
@@ -435,7 +445,7 @@ Spieler erfinden Moves frei, und es gibt **keine Obergrenze** für die Anzahl. E
 
 **Nicht kombinierbar:** Durchschlag mit "Schutzart ignorieren" oder "Schutz zerstören". Ist der Schutz schon ignoriert oder auf 0, senkt Durchschlag nichts mehr, der EP wäre verschenkt.
 
-**Abzüge** (insgesamt max. -2 EP, je -1 EP): Vorbedingung (Höhe, Bodenposition, Waffe) · Risiko (Nachteil für den Nutzer bei Fehlschlag) · Setup-Runde · nur einmal pro Szene.
+**Abzüge** (insgesamt max. -2 EP, je -1 EP): Vorbedingung (Höhe, Bodenposition, Waffe) · Risiko (Nachteil für den Nutzer bei Fehlschlag) · Setup-Runde · nur einmal pro Szene. Die Abzüge gehen zuerst von den normalen EP ab, ein Rest von den ★-EP. Die Summe sinkt nie unter 0.
 
 **Schritt 3: Kosten.**
 
@@ -443,7 +453,7 @@ Spieler erfinden Moves frei, und es gibt **keine Obergrenze** für die Anzahl. E
   * **Mindestkosten:** Moves mit **3 EP** kosten immer mindestens **1 Energie**. Kleine Moves (1-2 EP) können kostenlos werden.
   * **Level 10:** Ab Level 10 entfällt die Mindestgebühr. Was ein Mythos beherrscht, ist reines Muskelgedächtnis.
   * **★ Sondereffekte** (Wurfbonus, Wiederherstellen) erhalten **keinen Meisterschafts-Rabatt**, ihre EP werden immer voll in Energie bezahlt. *Alternative:* Beim Erstellen des Moves kann der Spieler festlegen, dass er die ★-EP stattdessen mit **1 Momentum je angefangene 2 ★-EP** bezahlt. Diese Wahl gilt dann dauerhaft für diesen Move.
-* **Momentum-Moves (ab 4 EP):** 4-5 EP kosten 1 Momentum, 6-7 EP kosten 2, ab 8 EP kosten 3. Dazu kommt **fix 1 Energie**, die nicht rabattiert wird.
+* **Momentum-Moves (ab 4 EP):** 4-5 EP kosten 1 Momentum, 6-7 EP kosten 2, ab 8 EP kosten 3. Dazu kommt **fix 1 Energie**, die nicht rabattiert wird. Enthält ein Momentum-Move ★-Effekte, zählen deren EP für die Momentum-Stufe mit, und die ★-EP werden zusätzlich wie oben bezahlt (voll in Energie oder mit 1 Momentum je angefangene 2 ★-EP).
 * **Cap:** Maximale EP eines Moves = **3 + Meisterschaft** (von 3 auf Level 1 bis 8 auf Level 10). Damit hat jeder Move ein **Mindestlevel**: 4 EP ab Level 2, 5 EP ab Level 4, 6 EP ab Level 6, 7 EP ab Level 8, 8 EP auf Level 10.
 
 **Schritt 4: SL-Check.**
@@ -493,7 +503,7 @@ Was anfangs alle Kraft kostet, wird mit der Zeit zur Standard-Attacke. Ein Momen
 
 ### **5.4 Meister-Moves und Legendäre Moves**
 
-**Meister-Moves (Level 8 und 9):** Moves bis **7 EP**. Sie kosten 2 Momentum und 1 Energie und folgen den normalen Regeln.
+**Meister-Moves (Level 8 und 9):** Moves bis **7 EP**. Sie kosten 2 Momentum und 1 Energie und folgen den normalen Regeln. Ein Move mit **7 EP** gilt als Meister-Move (der EP-Deckel beträgt auf Level 8 und 9 genau 7). Moves mit 6 EP (ab Level 6) sind normale Momentum-Moves, Moves mit 8 EP sind legendär.
 
 **Legendäre Moves (Level 10):** Ein Move ist **legendär**, wenn er **8 EP** hat. Er kostet 3 Momentum und 1 Energie und erfordert einen Titel auf **Level 10**.
 
@@ -735,6 +745,8 @@ Ein Boss mit gleichem Bonus ist als Gruppenboss gedacht. Für ein Solo-Duell sol
 * **Gift (3.11, 5.1):** Stufen Schwach, Stark, Lähmgift, Tödlich als Effekte im EP-Katalog. Wirkt nur bei Schutz 0, Verzögerung bis 3 Runden, Gegenmittel per MW-Probe.
 * **Hinweise (3.11):** SL-Hinweis (Attentäter tragen ein Gegengift) und Spieler-Hinweis (Gegengift ergattern heißt nicht den Gegner besiegen), W6 zum Mitzählen des Überlaufs.
 * **Neue Moves (5.2):** *Blasrohr-Pfeil*, *Dokushu-Berührung*, *Garrotte*. **Legendärer Move (5.4):** *Todesberührung* (Dokushu). **Beispiel 6 (6):** Gift und Töten.
+
+* **Klarstellungen (aus der digitalen Umsetzung):** Eigene Kampagnenstufe mit frei gewählten Budgets (2.4), Zählung der Attributspunkte (2.4), wirksamer Schutz bei Durchschlag und Ignorieren (3.2), Helden-Schwelle nur zwischen Spielercharakteren und NPCs sowie Lücke ohne Tags und Überzahl (3.4, 3.5), Deckelung des Unterlegenen bei Außer Reichweite (3.5), Richtwerte für Schutz und Willenskraft der NPC-Leiter (3.7), Schläger wie Elite (3.11), Reihenfolge der Abzüge und ★-Effekte in Momentum-Moves (5.1), 7 EP als Meister-Move (5.4).
 
 **Zur Bestätigung (aus v3.1):**
 
