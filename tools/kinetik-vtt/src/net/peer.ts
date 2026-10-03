@@ -1,6 +1,8 @@
 // Dünne Hülle um PeerJS: Optionen aus den Einstellungen, Peer erzeugen und auf "open" warten.
 import Peer, { type PeerOptions, type DataConnection } from 'peerjs';
 import { settings } from '../lib/settings.svelte';
+import { buildIceConfig, explainFailedJoin, hasCustomTurn } from './ice';
+import { currentIceSettings } from './icetest';
 
 export type { DataConnection };
 export { Peer };
@@ -13,13 +15,7 @@ export function peerOptions(): PeerOptions {
     o.path = settings.peerPath || '/';
     o.secure = settings.peerSecure;
   }
-  if (settings.iceJson.trim()) {
-    try {
-      o.config = { iceServers: JSON.parse(settings.iceJson) };
-    } catch {
-      console.warn('ICE-Server-JSON ungültig, Standard wird verwendet.');
-    }
-  }
+  o.config = buildIceConfig({ iceJson: settings.iceJson, turnUrl: settings.turnUrl, turnUser: settings.turnUser, turnPass: settings.turnPass, relayOnly: settings.relayOnly });
   return o;
 }
 
@@ -64,4 +60,18 @@ export function openPeer(id?: string): Promise<Peer> {
       reject(explainPeerError(err));
     });
   });
+}
+
+/** Nach einem gescheiterten Beitritt anhand der ICE-Kandidaten erklären, woran es lag. */
+export async function diagnoseJoin(conn: DataConnection): Promise<string> {
+  const local: string[] = [];
+  let remote = 0;
+  try {
+    const stats = await (conn as unknown as { peerConnection?: RTCPeerConnection }).peerConnection?.getStats();
+    stats?.forEach((r) => {
+      if (r.type === 'local-candidate' && r.candidateType) local.push(r.candidateType);
+      if (r.type === 'remote-candidate') remote++;
+    });
+  } catch { /* ohne Statistik: allgemeine Meldung */ }
+  return explainFailedJoin(local, remote, hasCustomTurn(currentIceSettings()));
 }

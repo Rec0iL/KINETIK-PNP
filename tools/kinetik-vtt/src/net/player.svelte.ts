@@ -6,7 +6,7 @@ import { commitRoll, onRoll, type RollRecord } from '../dice/roller.svelte';
 import { getCharacter, saveCharacter } from '../store/characters.svelte';
 import { settings } from '../lib/settings.svelte';
 import { pushToast } from '../ui/toasts.svelte';
-import { openPeer, explainPeerError, type DataConnection, type Peer } from './peer';
+import { openPeer, explainPeerError, diagnoseJoin, type DataConnection, type Peer } from './peer';
 import { handleAssetMessage, setAssetRequester } from './assets.svelte';
 import { addPing } from '../map/pings.svelte';
 import { bestClockOffset } from '../music/clock';
@@ -118,7 +118,13 @@ async function attempt() {
   const c = peer.connect(target, { reliable: true });
   conn = c;
   let opened = false;
-  const guard = setTimeout(() => { if (!opened) { c.close(); failed('Zeitüberschreitung: Die Runde antwortet nicht.'); } }, 15000);
+  const guard = setTimeout(async () => {
+    if (opened) return;
+    const why = await diagnoseJoin(c);
+    if (conn === c) conn = null;
+    c.close();
+    failed(`Zeitüberschreitung. ${why}`);
+  }, 20000);
   c.on('open', () => {
     opened = true;
     clearTimeout(guard);

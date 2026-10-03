@@ -19,10 +19,16 @@ interface Settings {
   peerSecure: boolean;
   /** Eigene ICE-Server als JSON (z.B. TURN), leer = Standard von PeerJS. */
   iceJson: string;
+  /** Eigener TURN-Server (Relay) für strenge NATs wie Mobilfunk. */
+  turnUrl: string;
+  turnUser: string;
+  turnPass: string;
+  /** Nur über den Relay-Server verbinden. */
+  relayOnly: boolean;
 }
 
 function load(): Settings {
-  const d: Settings = { autoShock: true, dice3d: true, musicAutoNext: false, autoPayMoves: false, displayName: '', peerHost: '', peerPort: 443, peerPath: '/', peerSecure: true, iceJson: '' };
+  const d: Settings = { autoShock: true, dice3d: true, musicAutoNext: false, autoPayMoves: false, displayName: '', peerHost: '', peerPort: 443, peerPath: '/', peerSecure: true, iceJson: '', turnUrl: '', turnUser: '', turnPass: '', relayOnly: false };
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) return { ...d, ...JSON.parse(raw) };
