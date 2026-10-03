@@ -25,6 +25,7 @@ SRC = ROOT / "regelwerk" / "KINETIK_Regelwerk.md"
 IMG_SRC = ROOT / "assets" / "pdf" / "images"
 OUT = ROOT / "tools" / "kinetik-vtt" / "public" / "rulebook"
 PROJECT = json.loads((ROOT / "assets" / "pdf" / "project.json").read_text(encoding="utf-8"))
+MANIFEST = json.loads((ROOT / "assets" / "pdf" / "images.json").read_text(encoding="utf-8"))
 
 WIDTH = {"ch": 1400, "sec": 1000, "fill": 1000}
 
@@ -44,7 +45,13 @@ def render(md):
 
 
 def image(key, kind, written):
-    """Konvertiert das Bild zu `key` (falls vorhanden) und liefert den Dateinamen oder None."""
+    """Konvertiert das Bild zu `key` (falls vorhanden) und liefert den Dateinamen oder None.
+
+    Füllbilder (`fill-…`) setzt das PDF nur dort ein, wo es eine Lücke gefunden hat (Eintrag "active" im Manifest).
+    Alte Füllbilder ohne aktive Lücke bleiben auf der Platte liegen und dürfen weder im PDF noch hier erscheinen."""
+    entry = MANIFEST.get(key, {})
+    if key.startswith("fill-") and not (entry.get("kind") == "filler" and entry.get("active")):
+        return None
     src = IMG_SRC / f"{key}.jpg"
     if not src.exists():
         return None
