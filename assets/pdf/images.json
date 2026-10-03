@@ -431,7 +431,7 @@
     "title": "Füllbild: 2.4 Charaktererschaffung",
     "after": "sec-2-4-charaktererschaffung",
     "chapter": "ch-2-der-charakter",
-    "h_mm": 61.0,
+    "h_mm": 85.2,
     "w_mm": 176.0,
     "include_style": true
   },
@@ -455,37 +455,68 @@
     "include_style": true,
     "negative": "standing upright, stable stance, wide athletic stance, active fighting pose, energetic victim, extra limbs, fused hands, tangled arms, deformed fingers, mutated hands, bad anatomy, text, watermark, signature"
   },
-  "fill-sec-beispiel-6-gift-und-toeten": {
-    "prompt": "",
-    "seed": 946633415,
-    "kind": "filler",
-    "active": true,
-    "title": "Füllbild: Beispiel 6: Gift und Töten",
-    "after": "sec-beispiel-6-gift-und-toeten",
-    "chapter": "ch-6-spielbeispiele-am-tisch",
-    "h_mm": 102.6,
-    "w_mm": 176.0
+  "sec-beispiel-7-den-move-nicht-einsetzen-variante-von": {
+    "prompt": "In a vast, flooded subway tunnel under flickering amber emergency lights, a bruised female brawler drops into a low, measured stance to catch her breath. Down the submerged tracks, a burly riot officer wades forward through dark water, creating a tense, wide-angle standoff of tactical endurance and conserved energy.",
+    "seed": 484209912,
+    "kind": "section",
+    "title": "Beispiel 7: Den Move nicht einsetzen (Variante von Beispiel 2)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "fill-sec-3-3-tags": {
-    "prompt": "",
-    "seed": 800004017,
+    "prompt": "Inside a cavernous subway maintenance tunnel, a tactical SWAT operator forcefully drives a heavy ballistic riot shield into a leather-jacketed enforcer, pinning him hard against a curved concrete wall. The trapped enforcer grimaces and struggles fruitlessly behind the transparent shield viewport, boots scraping the wet ballast, framed in a dynamic low-angle wide shot.",
+    "seed": 294591923,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 3.3 Tags",
     "after": "sec-3-3-tags",
     "chapter": "ch-3-der-kampf-das-clash-system",
     "h_mm": 66.3,
-    "w_mm": 176.0
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "fill-sec-3-8-momentum": {
-    "prompt": "",
-    "seed": 487952336,
+    "prompt": "In a dimly lit underground subway terminal, an athletic female assassin in a tactical bodysuit delivers a mid-air roundhouse kick into an armored guard's chest. The concussive impact sends the guard crashing backward through metal turnstiles, scattering shattered tiles and sparks across the concrete platform. Wide dynamic low-angle shot.",
+    "seed": 1464470084,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 3.8 Momentum",
     "after": "sec-3-8-momentum",
     "chapter": "ch-3-der-kampf-das-clash-system",
     "h_mm": 53.6,
-    "w_mm": 176.0
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-beispiel-6-gift-und-toeten": {
+    "prompt": "In a rainy dark alley, a suited enforcer collapses lifelessly against wet asphalt the enforcers neck shows a tiny glowing blowdart sticking out. In the misty background, a hooded masked assassin turns away and flees into the shadows.",
+    "seed": 1651149988,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: Beispiel 6: Gift und Töten",
+    "after": "sec-beispiel-6-gift-und-toeten",
+    "chapter": "ch-6-spielbeispiele-am-tisch",
+    "h_mm": 101.5,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": false,
+      "problems": [
+        "Kein Würgegriff erkennbar: Der kniende Mann legt lediglich eine Hand auf die Schulter des anderen, anstatt ihn in einem Rear-Naked-Chokehold zu fixieren.",
+        "Das angebliche Opfer wirkt wach, stützt sich auf dem Gleisbett ab und ist keineswegs ohnmächtig oder schlaff.",
+        "Die Interaktion wirkt eher wie Erste Hilfe oder Trösten statt einer lebensbedrohlichen Würgeszene."
+      ]
+    },
+    "negative": "worst quality, low quality, bad anatomy, deformed, extra limbs, watermark, text, signature, walking toward viewer, approaching camera, sword, baton, calm expression, sitting comfortably"
   }
 }

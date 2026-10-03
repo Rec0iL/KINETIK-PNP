@@ -65,10 +65,13 @@ def main():
     version = (re.search(r"Version\s+(\d+(?:\.\d+)*)", md) or [None, ""])[1]
 
     # Inhalt leeren statt den Ordner zu löschen: der Vite-Entwicklungsserver merkt sich sonst veraltete Dateilisten.
-    OUT.mkdir(parents=True, exist_ok=True)
+    (OUT / "img").mkdir(parents=True, exist_ok=True)
     for old in OUT.iterdir():
-        shutil.rmtree(old) if old.is_dir() else old.unlink()
-    (OUT / "img").mkdir()
+        if old.is_dir():
+            for f in old.iterdir():
+                f.unlink()
+        else:
+            old.unlink()
     shutil.copy(ROOT / "assets" / "grafiken" / "koerper-silhouette.svg", OUT / "img" / "koerper-silhouette.svg")
     written = set()
 

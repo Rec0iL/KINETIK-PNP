@@ -30,10 +30,10 @@
     "filler_min_mm": 55
   },
   "qc": {
-    "enabled": false,
+    "enabled": true,
     "auto_fix": true,
-    "rounds": 1,
-    "radical": false
+    "rounds": 3,
+    "radical": true
   },
   "content_type": "rulebook",
   "style_preset": "",

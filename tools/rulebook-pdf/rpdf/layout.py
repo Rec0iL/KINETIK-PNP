@@ -38,7 +38,15 @@ def _hex_rgba(hex_color, alpha):
     return f"rgba({r},{g},{b},{alpha})"
 
 
+def _unfold_details(text):
+    """<details> blocks are raw HTML to the Markdown parser, so tables inside stay unparsed.
+    Drop the wrapper (a PDF cannot fold) and keep the summary as a paragraph."""
+    text = re.sub(r"</?details[^>]*>", "", text)
+    return re.sub(r"<summary[^>]*>(.*?)</summary>", r"\n\n\1\n\n", text, flags=re.S)
+
+
 def _md(text, base=None, extra_dirs=()):
+    text = _unfold_details(text)
     out = markdown.markdown(text, extensions=["tables", "sane_lists"])
     return _wrap_tables(_figures(out, base, extra_dirs))
 
@@ -104,7 +112,8 @@ def _wrap_tables(html):
         nrows = len(re.findall(r"<tr>", table)) - 1
         cells = [re.sub("<.*?>", "", c) for c in re.findall(r"<t[hd][^>]*>(.*?)</t[hd]>", table, re.S)]
         longest = max((len(c.strip()) for c in cells), default=0)
-        narrow = ncols <= NARROW_TABLE_MAX_COLS and nrows <= NARROW_TABLE_MAX_ROWS and longest <= NARROW_TABLE_MAX_CELL
+        narrow = (ncols <= NARROW_TABLE_MAX_COLS and nrows <= NARROW_TABLE_MAX_ROWS
+                  and longest <= NARROW_TABLE_MAX_CELL and "<img" not in table)   # screenshot grids need the full width
         cls = "table-narrow" if narrow else "table-wide"
         return f'<div class="{cls}">{table}</div>'
     return re.sub(r"<table>.*?</table>", repl, html, flags=re.S)

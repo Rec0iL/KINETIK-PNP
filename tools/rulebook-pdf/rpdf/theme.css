@@ -132,6 +132,10 @@ table.rules-table th{ background:var(--accent-soft); color:var(--cyan); font-fam
                       font-weight:500; letter-spacing:.05em; text-transform:uppercase; font-size:7.6pt; }
 table.rules-table tr:nth-child(even) td{ background:rgba(255,255,255,.025); }
 table.rules-table tr{ break-inside:avoid; }
+/* inline images from the Markdown (e.g. a centred hero screenshot) stay inside the text area */
+p > img{ display:block; max-width:100%; height:auto; margin:2mm auto; }
+/* screenshots in table cells (README galleries) must not push the table past the page */
+table.rules-table td img{ display:block; max-width:100%; height:auto; margin:0 auto; }
 .table-narrow table.rules-table{ break-inside:avoid; }
 
 /* short sections: smaller image beside the text instead of a full-width banner */
