@@ -257,8 +257,8 @@
   .list li { display: flex; align-items: center; }
   .list li.on { background: var(--accent-soft); border-left: 2px solid var(--accent); }
   .pick { flex: 1; display: flex; gap: 0.5rem; align-items: center; background: none; border: 0; color: var(--ink); font: inherit; text-align: left; cursor: pointer; padding: 0.45em 0.6em; }
-  .npc { flex-wrap: nowrap; }
-  .npc input:first-child { flex: 1; min-width: 0; }
+  .npc { flex-wrap: wrap; }
+  .npc input:first-child { flex: 1 1 100%; min-width: 0; }
   .color { width: 40px; min-height: 32px; padding: 2px; flex: none; }
   .tok { margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid var(--line); }
   .check { display: flex; gap: 0.4em; align-items: center; font-size: 0.9rem; }

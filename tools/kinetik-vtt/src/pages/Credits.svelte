@@ -30,6 +30,11 @@
   </section>
 
   <section class="panel">
+    <h2>Lizenz</h2>
+    <p class="dim">Regeltext, Regeldaten und Bilder: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noreferrer">CC BY-NC-SA 4.0</a> (nicht kommerziell). Quellcode der App: MIT. Quelle und Details: <a href="https://github.com/Rec0iL/KINETIK-PNP" target="_blank" rel="noreferrer">github.com/Rec0iL/KINETIK-PNP</a>.</p>
+  </section>
+
+  <section class="panel">
     <h2>Software</h2>
     <p class="dim">Svelte, Vite, PeerJS (WebRTC), idb-keyval. Alle unter MIT-ähnlichen Lizenzen. Das Regelwerk KINETIK und diese App gehören zum selben Projekt.</p>
   </section>
