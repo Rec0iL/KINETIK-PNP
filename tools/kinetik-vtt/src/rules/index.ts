@@ -5,3 +5,4 @@ export * from './clash';
 export * from './probe';
 export * from './moves';
 export * from './npc';
+export * from './gift';

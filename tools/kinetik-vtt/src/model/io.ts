@@ -1,5 +1,5 @@
 // JSON-Import/Export mit Validierung und Migration.
-import { ATTR_KEYS, ZONE_KEYS, RULES_VERSION } from '../rules';
+import { ATTR_KEYS, ZONE_KEYS, RULES_VERSION, GIFT_LEVELS, MAX_GIFT_DELAY, type Poison } from '../rules';
 import { SCHEMA_VERSION, newCharacter, uid, type Character, type Move } from './character';
 
 export interface CharacterFile {
@@ -84,6 +84,14 @@ export function sanitizeCharacter(raw: unknown, opts: { newId?: boolean } = {}):
   }
   c.overrides = isObj(raw.overrides) ? (raw.overrides as Character['overrides']) : {};
   c.dying = typeof raw.dying === 'number' ? raw.dying : null;
+  c.dyingGift = raw.dyingGift === true && c.dying !== null ? true : undefined;
+  c.poisons = arr<Record<string, unknown>>(raw.poisons)
+    .filter((p) => isObj(p) && GIFT_LEVELS.includes(p.level as never))
+    .map((p) => ({
+      id: str(p.id) || uid(), level: p.level as Poison['level'], delay: Math.max(0, Math.min(MAX_GIFT_DELAY, Math.round(num(p.delay, 0)))),
+      left: Math.max(0, Math.round(num(p.left, 0))), fired: p.fired === true ? true : undefined, source: str(p.source),
+      mw: typeof p.mw === 'number' ? p.mw : undefined,
+    }));
   c.created = num(raw.created, Date.now());
   c.updated = num(raw.updated, Date.now());
   return c;

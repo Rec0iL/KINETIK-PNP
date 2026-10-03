@@ -1,7 +1,7 @@
 <script lang="ts">
   import {
     rules, effectDef, effectEp, isStar, evaluateMove, moveCost, costLabel, meisterschaft, epCap, TIER_LABEL, minLevelForEp,
-    type MoveEffect,
+    giftOfEffects, GIFT, MAX_GIFT_DELAY, type MoveEffect,
   } from '../rules';
   import type { Move } from '../model/character';
   import Stepper from '../ui/Stepper.svelte';
@@ -36,6 +36,7 @@
   const legendary = $derived(ev.tier === 'legendaer');
 
   let pick = $state('zone');
+  const gift = $derived(giftOfEffects(move.effects.map((e) => e.id)));
 
   function addEffect(id: string) {
     const def = effectDef(id);
@@ -74,6 +75,13 @@
     {/if}
     <label class="field">Gelernt auf Level<Stepper value={move.learnedAtLevel ?? level} min={0} max={10} onchange={(v) => (move.learnedAtLevel = v)} label="Gelernt auf Level" /></label>
   </div>
+  {#if gift}
+    <div class="row giftrow">
+      <span class="chip danger">Gift: {GIFT[gift].label}</span>
+      <label class="field">Wirkt nach (Runden, kostet nichts)<Stepper value={move.giftDelay ?? 0} min={0} max={MAX_GIFT_DELAY} onchange={(v) => (move.giftDelay = v)} label="Verzögerung in Runden" /></label>
+      <small class="dim">{GIFT[gift].text}. Wirkt nur, wenn der Treffer den Körper erreicht (Schutz 0 oder Verletzung). Gegenmittel MW {GIFT[gift].mw}.</small>
+    </div>
+  {/if}
   <label class="field">Beschreibung der Technik<textarea rows="2" bind:value={move.text} placeholder="Was passiert, wann wirkt es, Vorbedingungen"></textarea></label>
 
   <div class="cols">

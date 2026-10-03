@@ -1,12 +1,15 @@
 <script lang="ts">
   import { gm, addScene, removeScene, activateScene, gmMapOps, gmPing, partyFor } from '../net/gm.svelte';
   import { assets, putAsset, prepareImage, removeAsset } from '../net/assets.svelte';
-  import { newScene, TOKEN_COLORS, type MapOp, type MapState, type Token } from '../map/mapstate';
+  import { newScene, snapToGrid, TOKEN_COLORS, type MapOp, type MapState, type Token } from '../map/mapstate';
   import { uid } from '../model/character';
   import { shrinkDataUrl } from '../lib/image';
   import { pushToast } from '../ui/toasts.svelte';
-  import MapView, { type Tool } from '../map/MapView.svelte';
+  import MapView, { type Tool, type Ghost } from '../map/MapView.svelte';
   import Stepper from '../ui/Stepper.svelte';
+  import CombatSidebar from './CombatSidebar.svelte';
+  import { rules, type NpcType } from '../rules';
+  import { newNpc, npcStatus } from './combat';
 
   let selectedId = $state<string | null>(null);
   let tool = $state<Tool>('move');
@@ -20,12 +23,24 @@
   let npcName = $state('Gegner');
   let npcColor = $state('#ff4d6d');
   let npcSize = $state(1);
+  let enemyType = $state<NpcType>('schlaeger');
+  let enemyName = $state('');
+  let enemyCount = $state(3);
+  let sideOpen = $state(true);
 
   const scenes = $derived(gm.session?.scenes ?? []);
   const scene = $derived(scenes.find((s) => s.id === selectedId) ?? null);
   const live = $derived(gm.session?.activeScene ?? null);
   const token = $derived(scene?.tokens.find((t) => t.id === selectedToken) ?? null);
   const party = $derived(gm.session ? partyFor(null) : []);
+  const combat = $derived(gm.session!.combat);
+  const ghosts = $derived<Ghost[]>(
+    combat.moveRequests.map((r) => ({
+      id: r.id, from: r.from, to: r.to, label: r.name, size: scene?.tokens.find((t) => t.id === r.tokenId)?.size ?? 1,
+      color: scene?.tokens.find((t) => t.id === r.tokenId)?.color ?? '#ffb800',
+    })),
+  );
+  const npcOf = (t: { npcId?: string }) => combat.npcs.find((n) => n.id === t.npcId);
 
   $effect(() => {
     if (!selectedId && scenes.length) selectedId = live ?? scenes[0].id;
@@ -105,6 +120,54 @@
     send({ op: 'tok', token: t });
     selectedToken = t.id;
   }
+  /** Freies Feld nahe der Kartenmitte, ohne bestehende Token zu überdecken. */
+  function freeSpot(taken: { x: number; y: number; size: number }[], size: number): [number, number] {
+    const sc = scene!;
+    const g = sc.grid.size;
+    const cx = sc.width / 2;
+    const cy = sc.height / 2 - g * 3;
+    for (let r = 0; r < 40; r++) {
+      for (let dy = -r; dy <= r; dy++) {
+        for (let dx = -r; dx <= r; dx++) {
+          if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
+          const [x, y] = snapToGrid(sc.grid, cx + dx * g * size, cy + dy * g * size, size);
+          if (x < 0 || y < 0 || x > sc.width || y > sc.height) continue;
+          if (taken.every((t) => Math.hypot(t.x - x, t.y - y) >= ((t.size + size) / 2) * g * 0.95)) return [x, y];
+        }
+      }
+    }
+    return [cx, cy];
+  }
+
+  /** Gegner aufstellen: Kampf-NPC und Token in einem Schritt. Goon-Gruppen bekommen einen Token je Mitglied. */
+  function addEnemy() {
+    if (!scene) return;
+    const n = newNpc(uid(), enemyType, enemyName.trim() || undefined, enemyCount);
+    combat.npcs.push(n);
+    const total = n.type === 'goon' ? n.count : 1;
+    const size = n.type === 'boss' || n.type === 'nemesis' ? 2 : 1;
+    const ops: MapOp[] = [];
+    let last: Token | null = null;
+    const placed: { x: number; y: number; size: number }[] = scene.tokens.map((t) => ({ x: t.x, y: t.y, size: t.size }));
+    for (let i = 0; i < total; i++) {
+      const [x, y] = freeSpot(placed, size);
+      placed.push({ x, y, size });
+      last = {
+        id: uid(), name: n.type === 'goon' ? `${n.name} ${i + 1}` : n.name, x, y, size, color: npcColor, kind: 'npc', hidden: false, npcId: n.id,
+      };
+      ops.push({ op: 'tok', token: last });
+    }
+    send(...ops);
+    if (last) selectedToken = last.id;
+    enemyName = '';
+  }
+  function removeToken() {
+    if (!token) return;
+    const n = npcOf(token);
+    if (n?.type === 'goon') n.count = Math.max(0, n.count - 1);
+    send({ op: 'tokdel', id: token.id });
+    selectedToken = null;
+  }
   function patchToken(p: Partial<Token>) {
     if (token) send({ op: 'tok', token: { ...$state.snapshot(token), ...p } });
   }
@@ -174,16 +237,26 @@
           {#each party.filter((p) => !hasPcToken(p.id)) as p (p.id)}
             <button class="btn sm" onclick={() => addPcToken(p.id)}>+ {p.characterName || p.name}</button>
           {/each}
+          <div class="enemy stack">
+            <h3>Gegner aufstellen</h3>
+            <div class="row npc">
+              <select bind:value={enemyType} aria-label="Typ">{#each rules.npc.leiter as t}<option value={t.key as NpcType}>{t.name} (Bonus +{t.bonusMax})</option>{/each}</select>
+              <input bind:value={enemyName} placeholder="Name (optional)" aria-label="Name" />
+              <input type="color" bind:value={npcColor} aria-label="Farbe" class="color" />
+              {#if enemyType === 'goon'}<Stepper bind:value={enemyCount} min={1} max={12} label="Anzahl" />{/if}
+              <button class="btn sm danger" onclick={addEnemy}>+ Gegner</button>
+            </div>
+            <small class="dim">Es entstehen Token und Kampf-Gegner zusammen. Goons: ein Token je Mitglied.</small>
+          </div>
           <div class="row npc">
-            <input bind:value={npcName} aria-label="Name" />
-            <input type="color" bind:value={npcColor} aria-label="Farbe" class="color" />
+            <input bind:value={npcName} aria-label="Name" placeholder="Neutraler Token" />
             <Stepper bind:value={npcSize} min={1} max={4} label="Größe in Feldern" />
             <button class="btn sm" onclick={addNpc}>+ Token</button>
           </div>
         </div>
         {#if token}
           <div class="tok stack">
-            <h3>Ausgewählt: {token.name}</h3>
+            <h3>Ausgewählt: {token.name}{#if npcOf(token)} <span class="chip" class:danger={npcStatus(npcOf(token)!).out}>{npcOf(token)!.name}{npcStatus(npcOf(token)!).out ? ' · aus' : ''}</span>{/if}</h3>
             <label class="field">Name<input value={token.name} onchange={(e) => patchToken({ name: e.currentTarget.value })} /></label>
             <label class="field">Notiz (unter dem Token)<input value={token.note ?? ''} onchange={(e) => patchToken({ note: e.currentTarget.value || undefined })} placeholder="z.B. verwundet" /></label>
             <div class="row">
@@ -193,7 +266,7 @@
             </div>
             <div class="row">
               <button class="btn sm" onclick={() => view?.focusOn(token.x, token.y)}>Anzeigen</button>
-              <button class="btn sm danger" onclick={() => { send({ op: 'tokdel', id: token.id }); selectedToken = null; }}>Entfernen</button>
+              <button class="btn sm danger" onclick={removeToken}>Entfernen</button>
             </div>
           </div>
         {/if}
@@ -240,19 +313,26 @@
         {#each tools as t}<button class="btn sm" class:primary={tool === t.key} onclick={() => (tool = t.key)} title={t.title}>{t.label}</button>{/each}
         <span class="spacer"></span>
         <label class="check"><input type="checkbox" bind:checked={snap} /> Einrasten</label>
+        <button class="btn sm" class:primary={sideOpen} onclick={() => (sideOpen = !sideOpen)}>Kampf{#if combat.active} · R{combat.round}{/if}{#if combat.moveRequests.length} ({combat.moveRequests.length}){/if}</button>
         <button class="btn sm" onclick={() => view?.fit()}>Einpassen</button>
       </div>
-      <div class="stage"><MapView bind:this={view} map={scene} role="gm" {tool} {brush} {snap} bind:selected={selectedToken} onops={handle} /></div>
+      <div class="stage"><MapView bind:this={view} map={scene} role="gm" {tool} {brush} {snap} {ghosts} bind:selected={selectedToken} onops={handle} /></div>
       <small class="dim">Mausrad: Zoom · Ziehen: verschieben · Rechtsklick/Shift: immer verschieben · Doppelklick: Ping{live === scene.id ? '' : ' · Diese Karte ist noch nicht für Spieler freigegeben.'}</small>
     {:else}
       <div class="panel empty"><p class="dim">Wähle links eine Karte oder lade ein Bild hoch.</p></div>
     {/if}
     {#each Object.entries(assets.progress) as [h, p] (h)}<small class="dim">Übertragung … {Math.round((p.loaded / Math.max(1, p.total)) * 100)} %</small>{/each}
   </section>
+
+  {#if sideOpen}<div class="combatcol"><CombatSidebar /></div>{/if}
 </div>
 
 <style>
-  .gmmap { display: grid; grid-template-columns: 320px 1fr; gap: 1rem; align-items: start; }
+  .gmmap { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 1rem; align-items: start; }
+  .gmmap:has(.combatcol) { grid-template-columns: 320px minmax(0, 1fr) 380px; }
+  .combatcol { max-height: calc(100vh - 90px); overflow-y: auto; position: sticky; top: 64px; padding-right: 2px; }
+  .enemy { padding: 0.6rem; background: var(--raised); border-left: 3px solid var(--danger); }
+  .enemy h3 { margin: 0; }
   .list { list-style: none; margin: 0.6rem 0; padding: 0; display: grid; gap: 2px; }
   .list li { display: flex; align-items: center; }
   .list li.on { background: var(--accent-soft); border-left: 2px solid var(--accent); }
@@ -267,5 +347,6 @@
   .stage { height: min(72vh, 760px); min-height: 360px; }
   .empty { min-height: 300px; display: grid; place-items: center; }
   input[type='range'] { padding: 0; min-height: 28px; }
-  @media (max-width: 1000px) { .gmmap { grid-template-columns: 1fr; } .stagewrap { position: static; order: -1; } }
+  @media (max-width: 1300px) { .gmmap:has(.combatcol) { grid-template-columns: 300px minmax(0, 1fr); } .combatcol { grid-column: 1 / -1; position: static; max-height: none; } }
+  @media (max-width: 1000px) { .gmmap, .gmmap:has(.combatcol) { grid-template-columns: 1fr; } .stagewrap { position: static; order: -1; } }
 </style>

@@ -26,6 +26,10 @@ export interface RollRecord {
   auto?: boolean;
   /** Nur für den SL sichtbar. */
   secret?: boolean;
+  /** Gehört zu dieser Kampfsituation (SL-Seite wertet den Wurf aus). */
+  sit?: string;
+  /** Heldenhafte Gegenwehr (3 Momentum bezahlt). */
+  hero?: boolean;
   /** Verknüpfter Wurf (Gegenseite eines Clashs). */
   clashWith?: string;
   /** Zusammenfassung des Clash-Ergebnisses (am zweiten Wurf). */
@@ -87,6 +91,8 @@ export interface BaseRollOptions {
   mod?: number;
   secret?: boolean;
   kind?: RollKind;
+  sit?: string;
+  hero?: boolean;
 }
 
 /** 2W6 + Bonus (+ Modifikator), optional gegen einen MW. */
@@ -97,7 +103,7 @@ export function roll2d6(o: BaseRollOptions & { mw?: number }): RollRecord {
   const rec: RollRecord = {
     id: uid(), ts: Date.now(), who: o.who, characterId: o.characterId, kind: o.kind ?? (o.mw ? 'probe' : 'attr'),
     label: o.label, formula: `2W6 ${sign(o.bonus)}${mod ? ` ${sign(mod)}` : ''}`,
-    dice, bonus: o.bonus, mod, total: sum + o.bonus + mod, secret: o.secret,
+    dice, bonus: o.bonus, mod, total: sum + o.bonus + mod, secret: o.secret, sit: o.sit, hero: o.hero,
   };
   if (o.mw) {
     const p = resolveProbe({ dice: sum, bonus: o.bonus, mod, mw: o.mw });
@@ -115,7 +121,7 @@ export function rollManual(o: BaseRollOptions & { sum: number; mw?: number }): R
   const rec: RollRecord = {
     id: uid(), ts: Date.now(), who: o.who, characterId: o.characterId, kind: o.kind ?? (o.mw ? 'probe' : 'attr'),
     label: o.label, formula: `2W6 (Tisch) ${sign(o.bonus)}${mod ? ` ${sign(mod)}` : ''}`,
-    dice: [], bonus: o.bonus, mod, total: o.sum + o.bonus + mod, secret: o.secret,
+    dice: [], bonus: o.bonus, mod, total: o.sum + o.bonus + mod, secret: o.secret, sit: o.sit, hero: o.hero,
   };
   if (o.mw) {
     const p = resolveProbe({ dice: o.sum, bonus: o.bonus, mod, mw: o.mw });

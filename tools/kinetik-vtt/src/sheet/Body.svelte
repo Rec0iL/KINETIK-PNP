@@ -15,7 +15,7 @@
   function syncDying() {
     if (isDyingNow()) {
       if (char.dying === null) char.dying = rules.tabellen.sterbendRunden;
-    } else char.dying = null;
+    } else if (!char.dyingGift) char.dying = null;
   }
 
   function addInjury(z: ZoneKey) {
@@ -67,7 +67,7 @@
         <div class="row">
           <button class="btn sm" onclick={() => (char.dying = Math.max(0, (char.dying ?? 0) - 1))}>Runde vergangen</button>
           <button class="btn sm" onclick={() => (char.dying = rules.tabellen.sterbendRunden)}>Zurücksetzen</button>
-          <button class="btn sm primary" onclick={() => (char.dying = null)}>Stabilisiert</button>
+          <button class="btn sm primary" onclick={() => { char.dying = null; char.dyingGift = undefined; }}>Stabilisiert</button>
         </div>
       </section>
     {/if}

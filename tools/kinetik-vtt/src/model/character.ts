@@ -1,5 +1,5 @@
 // Datenmodell des Charakterbogens. Abgeleitete Werte werden nie gespeichert, nur Überschreibungen (`overrides`).
-import type { AttrKey, ZoneKey, Title, MoveSpec } from '../rules';
+import type { AttrKey, ZoneKey, Title, MoveSpec, Poison } from '../rules';
 import { ATTR_KEYS, ZONE_KEYS } from '../rules';
 
 export const SCHEMA_VERSION = 1;
@@ -24,6 +24,8 @@ export interface Move extends MoveSpec {
   name: string;
   /** Zugehöriger Titel (Meisterschaft und Level). */
   titleId?: string;
+  /** Gift-Moves: Runden bis das Gift wirkt (0 bis 3), legt der Anwender beim Erstellen fest (3.11). */
+  giftDelay?: number;
   attr: AttrKey;
   text: string;
   /** Legendäre Moves: 1 bis 2 gewählte Preise. */
@@ -74,6 +76,10 @@ export interface Character {
   injuries: Record<ZoneKey, Injury[]>;
   /** Verbleibende Runden bis zum Tod, wenn sterbend (3.11). */
   dying: number | null;
+  /** Das Sterbend-Fenster kommt von tödlichem Gift (nicht von Verletzungen), endet mit Stabilisieren oder Gegenmittel. */
+  dyingGift?: boolean;
+  /** Aktive Gifte mit Verzögerung und Wirkrunden (3.11). */
+  poisons: Poison[];
   tags: TagEntry[];
   scars: TextEntry[];
   disadvantages: TextEntry[];
@@ -117,6 +123,7 @@ export function newCharacter(partial: Partial<Character> = {}): Character {
     resources: { energie: 6, wk: 6, momentum: 0, schutz: { type: '', current: 0, max: 0 } },
     injuries: emptyInjuries(),
     dying: null,
+    poisons: [],
     tags: [],
     scars: [],
     disadvantages: [],

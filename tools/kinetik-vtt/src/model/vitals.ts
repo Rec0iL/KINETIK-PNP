@@ -12,6 +12,7 @@ export function vitalsOf(c: Character): Vitals {
     injuries: s.injuryCount,
     ausgepumpt: s.states.ausgepumpt, gebrochen: s.states.gebrochen, sterbend: s.states.sterbend,
     tags: c.tags.map((t) => ({ name: t.name, size: t.size })),
+    poisons: (c.poisons ?? []).map((p) => ({ level: p.level, delay: p.delay })),
     bonus: s.basicBonus,
   };
 }

@@ -100,6 +100,7 @@ Der Knopf „Regelwerk“ öffnet das gesamte Regelwerk als Seitenleiste: gleich
 - **Karte**: Raster, Tokens, Nebel, Ping, Messen. Mehrere Szenen, eine davon live für die Spieler.
 - **Musik** vom SL, für alle synchron, mit Überblendung (neun mitgelieferte Titel).
 - **Kampf-Werkzeuge**: Seiten-Initiative, Bedrängnis, Gegner mit Schutz, Willenskraft und Verletzungen, Handouts.
+- **Kampf auf der Karte**: Der SL stellt Gegner auf der Karte auf, Spieler fragen Bewegung an und planen ihre Aktion mit Ziel, Technik und Tags. Der SL gibt frei, vergibt Bullet Time und wickelt das Ergebnis mit einem Klick ab. Gift tickt am Rundenende.
 - **Drei Looks** (Neo-Noir, Terminal, Hybrid), deutsche Oberfläche, Offline-Cache.
 
 ### So geht es los
@@ -160,7 +161,8 @@ Nach Änderungen am Regelwerk: `python3 scripts/build_rulebook_web.py` (Regelwer
 - [x] Multiplayer mit Karte, Musik, Würfeln und Log (WebRTC)
 - [x] SL-Dashboard (Initiative, Gegner, Bedrängnis, Kinetik-Marker, Handouts)
 - [x] Druckversion (PDF) und Regelwerk in der App
-- [ ] Gift-Mechanik in der Web-App (3.11): Energieverlust am Rundenende, Verzögerung, Stufen, Gegenmittel-Probe, Überlauf-Zähler
+- [x] Gift-Mechanik in der Web-App (3.11): Energieverlust am Rundenende, Verzögerung, Stufen, Gegenmittel-Probe, Überlauf-Zähler
+- [x] Karte und Kampf verknüpft: Gegner als Token, Bewegung per Anfrage, geplante Aktionen als Kampfsituationen mit Freigabe, Bullet Time, Tags, Ein-Klick-Abwicklung
 - [ ] Schnellreferenz
 
 ## Credits

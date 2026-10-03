@@ -7,7 +7,7 @@ Alle wesentlichen Änderungen am Regelwerk. Details stehen jeweils im Änderungs
 - Heimlichkeit (Kapitel 4.1): PvE gegen Goons als Probe gegen die Gruppen-Wachsamkeit, PvP gegen Spieler, Elite und Bosse als Heimlichkeits-Clash. Neue Moves Meuchelstoß und Schattenschritt, Beispiel 5.
 - Tags: Heimspiel (Titel deckt die Lage ab, kleine Tags wirken nicht als Nachteil) und freiwillig auferlegte Tags. Neuer Move Lock Reversal als Design-Beispiel für Regel-Ausnahmen.
 - Töten und Gift (3.11): Gnadenstoß, Überlauf bei Ohnmächtigen (je 3 Punkte unter 0 eine Verletzung), Erwürgen, Gift-Stufen mit Verzögerung und Gegenmittel. Neue Moves Blasrohr-Pfeil, Dokushu-Berührung, Garrotte, Beispiel 6.
-- Klarstellungen aus der digitalen Umsetzung: eigene Kampagnenstufe, Zählung der Attributspunkte, wirksamer Schutz, Helden-Schwelle nur Spieler gegen NPC, Deckelung bei Außer Reichweite, NPC-Richtwerte (Schutz/WK), Schläger wie Elite, Reihenfolge der Abzüge, ★ in Momentum-Moves, 7 EP als Meister-Move.
+- Klarstellungen aus der digitalen Umsetzung: eigene Kampagnenstufe, Zählung der Attributspunkte, wirksamer Schutz, Helden-Schwelle nur Spieler gegen NPC, Deckelung bei Außer Reichweite, NPC-Richtwerte (Schutz/WK), Schläger wie Elite, Reihenfolge der Abzüge, ★ in Momentum-Moves, 7 EP als Meister-Move, Gift-Verzögerung in vollen Runden bis zur ersten Wirkung am Rundenende.
 
 ## v3.4 (2026-10-01)
 - Level 9 gibt ein Attribut +1 (Leitattribut, sonst frei), wirkt über die Attribute auch auf Energie und Willenskraft.

@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { player, leaveRound, setActiveCharacter, viewPlayer, sendMapOps } from '../net/player.svelte';
-  import { applyMapOp, type MapOp } from '../map/mapstate';
+  import { player, leaveRound, setActiveCharacter, viewPlayer, sendMapOps, sendMoveRequest } from '../net/player.svelte';
+  import { applyMapOp, isRevealed, type MapOp } from '../map/mapstate';
   import { addPing } from '../map/pings.svelte';
-  import MapView, { type Tool } from '../map/MapView.svelte';
+  import MapView, { type Tool, type Ghost } from '../map/MapView.svelte';
+  import CombatPlan from './CombatPlan.svelte';
+  import { ROUGH_LABEL } from '../gm/combat';
   import { library, getCharacter } from '../store/characters.svelte';
   import { navigate } from '../lib/router.svelte';
   import { formatCode } from '../net/protocol';
@@ -35,6 +37,27 @@
   let mapTool = $state<Tool>('move');
   let mapView = $state<{ fit: () => void }>();
   let mapHidden = $state(false);
+  let target = $state<string | null>(null);
+  let selTok = $state<string | null>(null);
+
+  // Gegner, die man anklicken kann: sichtbar (nicht im Nebel), nicht ausgeschaltet, mit Kampf-NPC verknüpft.
+  const targetTokens = $derived(
+    combat?.active && player.map
+      ? player.map.tokens.filter((t) => t.npcId && !t.out && combat.enemies.some((e) => e.id === t.npcId && !e.out) && isRevealed(player.map!, t.x, t.y)).map((t) => t.id)
+      : [],
+  );
+  $effect(() => {
+    const t = player.map?.tokens.find((k) => k.id === selTok);
+    if (t?.npcId && targetTokens.includes(t.id)) target = t.npcId;
+  });
+  const ghosts = $derived<Ghost[]>(
+    player.pendingMove
+      ? (() => {
+          const t = player.map?.tokens.find((k) => k.id === player.pendingMove!.tokenId);
+          return t ? [{ id: 'mine', from: { x: t.x, y: t.y }, to: { x: player.pendingMove!.x, y: player.pendingMove!.y }, color: t.color, label: 'Warte auf den SL', size: t.size }] : [];
+        })()
+      : [],
+  );
 
   function mapOps(ops: MapOp[]) {
     const m = player.map;
@@ -44,7 +67,10 @@
       if (op.op === 'ping') { addPing(op.x, op.y, player.name, op.color); out.push({ ...op, who: player.name }); }
       else if (op.op === 'tokmove') {
         const t = m.tokens.find((x) => x.id === op.id);
-        if (t?.playerId === player.playerId) { applyMapOp(m, op); out.push(op); }
+        if (t?.playerId !== player.playerId) continue;
+        // Im Kampf bewegt der SL: das Ziehen ist nur eine Anfrage.
+        if (combat?.active) sendMoveRequest(op.id, op.x, op.y);
+        else { applyMapOp(m, op); out.push(op); }
       }
     }
     if (out.length) sendMapOps(out);
@@ -96,11 +122,13 @@
       </div>
       {#if combat.enemies.length}
         <div class="row who">
-          {#each combat.enemies as e}<span class="chip" class:danger={!e.out}>{e.name}{e.out ? ' · ausgeschaltet' : ''}</span>{/each}
+          {#each combat.enemies as e}<span class="chip" class:danger={!e.out} title={e.tags.map((t) => t.name).join(', ')}>{e.name} · {ROUGH_LABEL[e.state]}{e.tags.length ? ` · ${e.tags.map((t) => t.name).join(', ')}` : ''}</span>{/each}
         </div>
       {/if}
     </section>
   {/if}
+
+  <CombatPlan char={mine ?? null} bind:target />
 
   {#if player.map}
     <section class="panel mapsec">
@@ -113,7 +141,7 @@
         <button class="btn sm ghost" onclick={() => (mapHidden = !mapHidden)}>{mapHidden ? 'Zeigen' : 'Ausblenden'}</button>
       </div>
       {#if !mapHidden}
-        <div class="stage"><MapView bind:this={mapView} map={player.map} role="player" myPlayerId={player.playerId} tool={mapTool} pingColor={myColor} onops={mapOps} /></div>
+        <div class="stage"><MapView bind:this={mapView} map={player.map} role="player" myPlayerId={player.playerId} tool={mapTool} pingColor={myColor} {ghosts} requestMoves={!!combat?.active} highlight={targetTokens} bind:selected={selTok} onops={mapOps} /></div>
       {/if}
     </section>
   {/if}

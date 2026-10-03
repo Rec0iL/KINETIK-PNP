@@ -340,7 +340,7 @@ Bullet Time gibt es höchstens **einmal pro Spieler und Runde**. Der SL vergibt 
 | **Lähmgift** | 2 | Statt Energieverlust der große Tag *Gelähmt* bis zum Szenenende oder Gegenmittel. |
 | **Tödlich** | 3 | Nach der Verzögerung wird das Opfer **sterbend** (siehe oben). Ein Gegenmittel muss vorher gelingen. |
 
-* **Verzögerung:** Der Anwender legt beim Erstellen des Moves fest, ob das Gift sofort oder erst nach **bis zu 3 Runden** wirkt. Das kostet nichts: Der Assassine will weg sein, bevor es wirkt.
+* **Verzögerung:** Der Anwender legt beim Erstellen des Moves fest, ob das Gift sofort oder erst nach **bis zu 3 Runden** wirkt. Das kostet nichts: Der Assassine will weg sein, bevor es wirkt. Gezählt wird in vollen Runden: Bei Verzögerung 2 bleiben zwei Rundenenden ohne Wirkung, danach wirkt das Gift am Ende jeder weiteren Runde (bei Verzögerung 0 schon am Ende der Runde des Treffers).
 * **Gegenmittel:** Aktion plus Probe gegen **MW 7** (schwach), **9** (stark, Lähmgift) oder **11** (tödlich), mit Fokus oder einer passenden Domäne wie Medizin. Bei Erfolg endet die Wirkung. Ein Verbündeter kann das auch für einen Ohnmächtigen tun. Nicht-tödliches Gift endet spätestens mit der Rast.
 * **Ohnmächtig und vergiftet:** Gift wirkt auch weiter, wenn das Opfer schon ohnmächtig ist. Fällt die Energie dadurch immer weiter, greift der Überlauf (siehe *Töten*, Torso).
 * **Gift im Spiel:** Gift in Getränk oder Essen ist ein Heimlichkeits-Clash (4.1) gegen die Wahrnehmung von Elite und Bossen, gegen Goons eine MW-Probe. *Spielercharaktere:* Tödliches Gift gegen einen Spieler gibt es nur mit **Sterbend-Fenster und Gegenmittel**. In PvP sollte der Tisch es vorher abgesprochen haben.
@@ -761,7 +761,7 @@ Ein Boss mit gleichem Bonus ist als Gruppenboss gedacht. Für ein Solo-Duell sol
 * **Move Lock Reversal (5.2)** als Beispiel für gezielte Ausnahmen von Grundregeln, mit Design-Hinweis.
 
 * **Töten und Überlauf (3.11):** Gnadenstoß gegen Wehrlose (Spielercharaktere werden sterbend, nie sofort tot). Wer ohnmächtig weiter Energie verliert, hat negative Energie: je 3 Punkte unter 0 eine Verletzung (Kopf bei Würgen, Torso bei Gift), ein Sterbender mit weiterem Verlust stirbt. Erwürgen dauert etwa 3 Runden.
-* **Gift (3.11, 5.1):** Stufen Schwach, Stark, Lähmgift, Tödlich als Effekte im EP-Katalog. Wirkt nur bei Schutz 0, Verzögerung bis 3 Runden, Gegenmittel per MW-Probe.
+* **Gift (3.11, 5.1):** Stufen Schwach, Stark, Lähmgift, Tödlich als Effekte im EP-Katalog. Wirkt nur bei Schutz 0, Verzögerung bis 3 Runden (gezählt in vollen Runden bis zur ersten Wirkung am Rundenende), Gegenmittel per MW-Probe.
 * **Hinweise (3.11):** SL-Hinweis (Attentäter tragen ein Gegengift) und Spieler-Hinweis (Gegengift ergattern heißt nicht den Gegner besiegen), W6 zum Mitzählen des Überlaufs.
 * **Neue Moves (5.2):** *Blasrohr-Pfeil*, *Dokushu-Berührung*, *Garrotte*. **Legendärer Move (5.4):** *Todesberührung* (Dokushu). **Beispiel 6 (6):** Gift und Töten. **Beispiel 7 (6):** Den Move nicht einsetzen (Variante von Beispiel 2).
 

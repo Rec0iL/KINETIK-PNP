@@ -1,5 +1,5 @@
 // Wendet SL-Änderungen (PatchOp) auf einen Bogen an. Rein, auch für lokale Spieler des SL verwendet.
-import { rules, zoneStatus, ZONE_KEYS } from '../rules';
+import { rules, zoneStatus, ZONE_KEYS, GIFT } from '../rules';
 import { uid, type Character } from './character';
 import { computeSheet } from './sheet';
 import type { PatchOp } from '../net/protocol';
@@ -43,11 +43,22 @@ export function applyPatch(c: Character, ops: PatchOp[], opts: { autoShock?: boo
         if (i >= 0) c.tags.splice(i, 1);
         break;
       }
+      case 'poison':
+        c.poisons = [...(c.poisons ?? []), op.poison];
+        break;
+      case 'poisons':
+        c.poisons = op.list;
+        break;
+      case 'dying':
+        if (c.dying === null) c.dying = rules.tabellen.sterbendRunden;
+        c.dyingGift = true;
+        break;
     }
   }
   const dying = ZONE_KEYS.some((z) => zoneStatus(z, c.injuries[z].length) === 'sterbend');
   if (dying && c.dying === null) c.dying = rules.tabellen.sterbendRunden;
-  if (!dying) c.dying = null;
+  if (!dying && !c.dyingGift) c.dying = null;
+  if (c.dying === null) c.dyingGift = undefined;
   c.updated = Date.now();
 }
 
@@ -63,6 +74,9 @@ export function describePatch(ops: PatchOp[]): string {
         case 'heal': return `Verletzung geheilt (${rules.tabellen.zonen.find((z) => z.key === op.zone)?.kurz})`;
         case 'tag': return `Tag: ${op.name}`;
         case 'untag': return `Tag weg: ${op.name}`;
+        case 'poison': return `Vergiftet (${GIFT[op.poison.level].label})`;
+        case 'poisons': return 'Gift aktualisiert';
+        case 'dying': return 'Sterbend durch Gift';
       }
     })
     .join(', ');

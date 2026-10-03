@@ -2,6 +2,7 @@
   import { rules } from '../rules';
   import { uid, type Character } from '../model/character';
   import { computeSheet } from '../model/sheet';
+  import Poisons from './Poisons.svelte';
 
   let { char }: { char: Character } = $props();
   const sheet = $derived(computeSheet(char));
@@ -24,6 +25,7 @@
 </script>
 
 <div class="stack">
+  <Poisons {char} />
   <section class="panel">
     <div class="row"><h2>Tags gegen mich</h2><span class="spacer"></span>
       <span class="chip" class:danger={sheet.tagBonus >= 3} class:accent={sheet.tagBonus < 3}>Gegner-Bonus +{sheet.tagBonus} (max. +{rules.tabellen.tags.stapelMax})</span>

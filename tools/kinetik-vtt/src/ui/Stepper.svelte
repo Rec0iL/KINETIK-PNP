@@ -6,8 +6,9 @@
     step = 1,
     label = '',
     warn = false,
+    disabled = false,
     onchange,
-  }: { value: number; min?: number; max?: number; step?: number; label?: string; warn?: boolean; onchange?: (v: number) => void } = $props();
+  }: { value: number; min?: number; max?: number; step?: number; label?: string; warn?: boolean; disabled?: boolean; onchange?: (v: number) => void } = $props();
 
   function set(v: number) {
     const n = Math.max(min, Math.min(max, Math.round(v)));
@@ -19,13 +20,14 @@
 </script>
 
 <div class="stepper" class:warn role="group" aria-label={label || undefined}>
-  <button type="button" class="btn sm icon" onclick={() => set(value - step)} disabled={value <= min} aria-label="Verringern">−</button>
+  <button type="button" class="btn sm icon" onclick={() => set(value - step)} disabled={disabled || value <= min} aria-label="Verringern">−</button>
   <input
     type="number" {min} {max} {step} aria-label={label || 'Wert'}
     value={value}
+    {disabled}
     onchange={(e) => set(Number(e.currentTarget.value))}
   />
-  <button type="button" class="btn sm icon" onclick={() => set(value + step)} disabled={value >= max} aria-label="Erhöhen">+</button>
+  <button type="button" class="btn sm icon" onclick={() => set(value + step)} disabled={disabled || value >= max} aria-label="Erhöhen">+</button>
 </div>
 
 <style>

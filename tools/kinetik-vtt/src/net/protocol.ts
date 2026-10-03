@@ -1,12 +1,13 @@
 // Nachrichten zwischen SL (Host) und Spielern. Alles typisiertes JSON-kompatibles Objekt, übertragen über PeerJS-Datenkanäle.
 import type { Character } from '../model/character';
 import type { RollRecord } from '../dice/roller.svelte';
-import type { AttrKey, ZoneKey } from '../rules';
+import type { AttrKey, ZoneKey, Poison } from '../rules';
 import type { MapOp, MapState } from '../map/mapstate';
 import type { MusicState } from '../music/clock';
 import type { PublicCombat } from '../gm/combat';
+import type { BtOption, Draft, PlayerSituation } from '../gm/situation';
 
-export const PROTOCOL_VERSION = 1;
+export const PROTOCOL_VERSION = 2;
 
 export type Visibility = 'party' | 'private' | 'open';
 
@@ -18,6 +19,8 @@ export interface Vitals {
   injuries: number;
   ausgepumpt: boolean; gebrochen: boolean; sterbend: boolean;
   tags: { name: string; size: 'klein' | 'gross' }[];
+  /** Aktive Gifte (Stufe und Verzögerung), für die Anzeige beim SL. */
+  poisons: { level: Poison['level']; delay: number }[];
   /** Bonus je Attribut (bester Titel, gleiche Zahl wie "Probe" im Bogen), nützlich für den SL-Clash. */
   bonus: Record<AttrKey, number>;
 }
@@ -47,7 +50,13 @@ export type PatchOp =
   | { op: 'injury'; zone: ZoneKey; text: string }
   | { op: 'heal'; zone: ZoneKey; index?: number }
   | { op: 'tag'; name: string; size: 'klein' | 'gross'; note?: string }
-  | { op: 'untag'; name: string };
+  | { op: 'untag'; name: string }
+  /** Ein Gift in den Körper bringen (3.11). */
+  | { op: 'poison'; poison: Poison }
+  /** Giftliste ersetzen (nach einem Rundenende oder einem Gegenmittel). */
+  | { op: 'poisons'; list: Poison[] }
+  /** Sterbend durch Gift (3 Runden, bis stabilisiert). */
+  | { op: 'dying' };
 
 export interface HelloMsg {
   t: 'hello';
@@ -65,6 +74,13 @@ export type ClientMsg =
   | { t: 'want'; hash: string }
   | { t: 'view'; playerId: string | null }
   | { t: 'map'; ops: MapOp[] }
+  /** Aktion planen: der SL bekommt eine Kampfsituation. */
+  | { t: 'plan'; draft: Draft }
+  | { t: 'plan-cancel'; id: string }
+  /** Wahl bei Bullet Time (Zone nur bei `zone`). */
+  | { t: 'bt-choice'; id: string; option: BtOption; zone?: ZoneKey }
+  /** Bewegung im Kampf: Anfrage, der SL gibt frei. */
+  | { t: 'move-req'; tokenId: string; x: number; y: number }
   | { t: 'bye' };
 
 /** Geteilter Zustand, den der SL an alle verteilt. Jeder Schlüssel wird einzeln übertragen. */
@@ -100,6 +116,9 @@ export type ServerMsg =
   | { t: 'toast'; text: string }
   | { t: 'handout'; handout: Handout }
   | { t: 'map'; ops: MapOp[] }
+  /** Alle eigenen Kampfsituationen (ohne Werte der Gegner). */
+  | { t: 'sits'; list: PlayerSituation[] }
+  | { t: 'move-result'; ok: boolean; note: string }
   | { t: 'asset-head'; hash: string; name: string; mime: string; size: number; total: number }
   | { t: 'asset-chunk'; hash: string; i: number; data: Uint8Array | ArrayBuffer }
   | { t: 'asset-missing'; hash: string }

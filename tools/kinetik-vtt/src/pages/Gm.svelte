@@ -1,6 +1,6 @@
 <script lang="ts">
   import { untrack } from 'svelte';
-  import { gm, importSession, startHost, loadSavedSession, scheduleParty, persistSession, setSharedNotes, partyFor, type GmSession } from '../net/gm.svelte';
+  import { gm, importSession, startHost, loadSavedSession, scheduleParty, persistSession, setSharedNotes, partyFor, commitCombat, type GmSession } from '../net/gm.svelte';
   import { settings } from '../lib/settings.svelte';
   import { formatCode } from '../net/protocol';
   import { pushToast } from '../ui/toasts.svelte';
@@ -11,6 +11,7 @@
   import GmMap from '../gm/GmMap.svelte';
   import GmMusic from '../gm/GmMusic.svelte';
   import GmCombat from '../gm/GmCombat.svelte';
+  import CombatSidebar from '../gm/CombatSidebar.svelte';
   import GmHandouts from '../gm/GmHandouts.svelte';
   import RollPanel from '../sheet/RollPanel.svelte';
 
@@ -35,6 +36,14 @@
     gm.session.password;
     if (first) { first = false; return; }
     untrack(() => { scheduleParty(); persistSession(); });
+  });
+  // Jede Änderung am Kampf wird gespeichert und an die Spieler gemeldet, auch wenn der Kampf-Tab nicht offen ist.
+  let firstCombat = true;
+  $effect(() => {
+    if (gm.status !== 'open' || !gm.session) return;
+    JSON.stringify($state.snapshot(gm.session.combat));
+    if (firstCombat) { firstCombat = false; return; }
+    untrack(commitCombat);
   });
   $effect(() => {
     if (gm.status === 'open' && gm.session) sharedDraft = untrack(() => gm.session!.state.notes);
@@ -127,7 +136,7 @@
         </section>
       </div>
     {:else if tab === 'combat'}
-      <GmCombat />
+      <div class="combatgrid"><GmCombat /><CombatSidebar /></div>
     {:else if tab === 'handouts'}
       <GmHandouts />
     {:else if tab === 'map'}
@@ -171,6 +180,8 @@
   .code { font: 400 3.4rem/1 var(--font-display); letter-spacing: 0.22em; color: var(--accent-2); text-shadow: var(--hard-shadow); }
   .content { padding-top: 1rem; }
   .cols { display: grid; grid-template-columns: 1fr 260px; gap: 1rem; align-items: start; }
+  .combatgrid { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 1rem; align-items: start; }
+  @media (max-width: 1200px) { .combatgrid { grid-template-columns: 1fr; } }
   .feed .f { padding: 0.3rem 0; border-bottom: 1px solid var(--line); font-size: 0.9rem; }
   @media (max-width: 900px) { .cols { grid-template-columns: 1fr; } }
 </style>

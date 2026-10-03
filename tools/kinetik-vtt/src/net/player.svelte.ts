@@ -11,6 +11,8 @@ import { handleAssetMessage, setAssetRequester } from './assets.svelte';
 import { addPing } from '../map/pings.svelte';
 import { bestClockOffset } from '../music/clock';
 import { applyMapOp, type MapOp, type MapState } from '../map/mapstate';
+import type { BtOption, Draft, PlayerSituation } from '../gm/situation';
+import type { ZoneKey } from '../rules';
 import {
   PROTOCOL_VERSION, peerIdFor, normalizeCode, type ClientMsg, type Handout, type PlayerInfo, type ServerMsg, type SharedState,
 } from './protocol';
@@ -37,9 +39,13 @@ export const player = $state<{
   latency: number;
   /** SL-Zeit minus lokale Zeit in ms (für synchrone Musik). */
   clockOffset: number;
+  /** Meine Kampfsituationen (geplante Aktionen, Angriffe auf mich). */
+  sits: PlayerSituation[];
+  /** Meine Bewegungsanfrage wartet auf den SL. */
+  pendingMove: { tokenId: string; x: number; y: number } | null;
 }>({
   status: 'idle', error: '', code: '', gmName: '', state: null, party: [], view: null, map: null, handouts: [],
-  playerId: loadPlayerId(), characterId: '', name: '', latency: 0, clockOffset: 0,
+  playerId: loadPlayerId(), characterId: '', name: '', latency: 0, clockOffset: 0, sits: [], pendingMove: null,
 });
 
 function loadPlayerId(): string {
@@ -172,6 +178,8 @@ function onMessage(m: ServerMsg) {
       player.state = m.state;
       player.party = m.players;
       player.map = m.map;
+      player.sits = [];
+      player.pendingMove = null;
       player.handouts = loadHandouts();
       setAssetRequester((hash) => sendMsg({ t: 'want', hash }));
       for (const r of m.log) commitRoll(r, { remote: true, quiet: true });
@@ -208,6 +216,13 @@ function onMessage(m: ServerMsg) {
     }
     case 'toast':
       pushToast(m.text, 'info', 8000);
+      break;
+    case 'sits':
+      player.sits = m.list;
+      break;
+    case 'move-result':
+      player.pendingMove = null;
+      pushToast(m.note, m.ok ? 'good' : 'warn', 4000);
       break;
     case 'handout':
       if (!player.handouts.some((h) => h.id === m.handout.id)) player.handouts.unshift(m.handout);
@@ -266,6 +281,8 @@ export function leaveRound() {
   player.state = null;
   player.view = null;
   player.map = null;
+  player.sits = [];
+  player.pendingMove = null;
   setAssetRequester(null);
   player.error = '';
   try { sessionStorage.removeItem('kinetik.round'); } catch { /* ignorieren */ }
@@ -292,6 +309,22 @@ export function viewPlayer(id: string | null) {
 
 export function sendMapOps(ops: MapOp[]) {
   sendMsg({ t: 'map', ops });
+}
+
+/** Aktion planen: der SL bekommt eine Kampfsituation. */
+export function sendPlan(draft: Draft) {
+  sendMsg({ t: 'plan', draft });
+}
+export function cancelPlan(id: string) {
+  sendMsg({ t: 'plan-cancel', id });
+}
+export function sendBulletChoice(id: string, option: BtOption, zone?: ZoneKey) {
+  sendMsg({ t: 'bt-choice', id, option, zone });
+}
+/** Bewegung im Kampf: Anfrage an den SL. */
+export function sendMoveRequest(tokenId: string, x: number, y: number) {
+  player.pendingMove = { tokenId, x, y };
+  sendMsg({ t: 'move-req', tokenId, x, y });
 }
 
 const handoutKey = () => `kinetik.handouts.${player.code}`;

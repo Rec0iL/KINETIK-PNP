@@ -31,6 +31,10 @@ export interface Token {
   hidden?: boolean;
   /** Zusatztext unter dem Token (z.B. Zustand). */
   note?: string;
+  /** Verknüpfter Kampf-NPC (Goon-Gruppen: alle Token der Gruppe tragen dieselbe ID). */
+  npcId?: string;
+  /** Der Gegner ist ausgeschaltet. */
+  out?: boolean;
 }
 
 export type FogShape =
@@ -141,6 +145,45 @@ export function snapToGrid(grid: GridConfig, x: number, y: number, size = 1): [n
   const sx = Math.round((x - grid.ox - half) / grid.size) * grid.size + grid.ox + half;
   const sy = Math.round((y - grid.oy - half) / grid.size) * grid.size + grid.oy + half;
   return [sx, sy];
+}
+
+/** Liegt der Punkt im aufgedeckten Teil der Karte? Ohne Nebel immer wahr. Die letzte Operation gewinnt. */
+export function isRevealed(map: MapState, x: number, y: number): boolean {
+  if (!map.fog.enabled) return true;
+  let revealed = false;
+  for (const op of map.fog.ops) {
+    if (inShape(op.s, x, y)) revealed = op.m === 'reveal';
+  }
+  return revealed;
+}
+
+function inShape(s: FogShape, x: number, y: number): boolean {
+  switch (s.t) {
+    case 'rect': return x >= s.x && x <= s.x + s.w && y >= s.y && y <= s.y + s.h;
+    case 'circle': return Math.hypot(x - s.x, y - s.y) <= s.r;
+    case 'poly': {
+      let inside = false;
+      for (let i = 0, j = s.pts.length - 1; i < s.pts.length; j = i++) {
+        const [xi, yi] = s.pts[i];
+        const [xj, yj] = s.pts[j];
+        if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+      }
+      return inside;
+    }
+    case 'stroke': {
+      if (s.pts.length === 1) return Math.hypot(x - s.pts[0][0], y - s.pts[0][1]) <= s.r;
+      for (let i = 1; i < s.pts.length; i++) if (distToSegment(x, y, s.pts[i - 1], s.pts[i]) <= s.r) return true;
+      return false;
+    }
+  }
+}
+
+function distToSegment(px: number, py: number, a: [number, number], b: [number, number]): number {
+  const dx = b[0] - a[0];
+  const dy = b[1] - a[1];
+  const len2 = dx * dx + dy * dy;
+  const t = len2 ? Math.max(0, Math.min(1, ((px - a[0]) * dx + (py - a[1]) * dy) / len2)) : 0;
+  return Math.hypot(px - (a[0] + t * dx), py - (a[1] + t * dy));
 }
 
 export const TOKEN_COLORS = ['#00e5ff', '#ffb800', '#ff4d6d', '#3ddc97', '#b388ff', '#ff8a3d', '#e6eaf0'];

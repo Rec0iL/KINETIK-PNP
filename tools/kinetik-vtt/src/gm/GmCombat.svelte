@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { untrack } from 'svelte';
-  import { rules, ueberzahlBonus, type NpcType, type ZoneKey } from '../rules';
-  import { gm, commitCombat, patchPlayer, partyFor } from '../net/gm.svelte';
+    import { rules, ueberzahlBonus, newPoison, describePoison, antidoteMw, GIFT, GIFT_LEVELS, MAX_GIFT_DELAY, type GiftLevel, type NpcType, type ZoneKey } from '../rules';
+  import { gm, patchPlayer, partyFor, advanceRound, poisonRound } from '../net/gm.svelte';
   import {
-    startCombat, nextRound, endCombat, otherSide, bedraengnisHit, newNpc, npcNormalHit, npcInjury, npcStatus, type Npc, type Side,
+    startCombat, endCombat, otherSide, bedraengnisHit, newNpc, npcNormalHit, npcInjury, npcStatus, type Npc, type Side,
   } from './combat';
   import { roll2d6 } from '../dice/roller.svelte';
   import { uid } from '../model/character';
@@ -21,14 +20,8 @@
   let attackers = $state(1);
   let hurtZone = $state<ZoneKey>('torso');
   let secret = $state(false);
-
-  // Jede Änderung am Kampf wird gespeichert und an die Spieler gemeldet.
-  let first = true;
-  $effect(() => {
-    JSON.stringify($state.snapshot(gm.session!.combat));
-    if (first) { first = false; return; }
-    untrack(commitCombat);
-  });
+  let giftLevel = $state<GiftLevel>('stark');
+  let giftDelay = $state(0);
 
   const types = rules.npc.leiter;
   const sideName = (s: Side) => (s === 'players' ? 'Spieler' : 'Gegner');
@@ -66,6 +59,11 @@
     roll2d6({ who: n.name, label: `Gegner (${n.type})`, bonus: n.bonus + ueberzahlBonus(attackers), kind: 'attr', secret });
   }
   function hit(n: Npc) { npcNormalHit(n); }
+  function addGift(n: Npc) { n.poisons = [...(n.poisons ?? []), newPoison(uid(), giftLevel, giftDelay, 'SL')]; }
+  function cure(n: Npc, id: string) {
+    n.poisons = (n.poisons ?? []).filter((p) => p.id !== id);
+    if (!n.poisons.some((p) => p.level === 'laehm')) n.tags = n.tags.filter((t) => t !== 'Gelähmt');
+  }
   const fmt = (v: number) => (v > 0 ? `+${v}` : String(v));
   const defaultsOf = (t: NpcType) => types.find((x) => x.key === t)!;
 </script>
@@ -76,11 +74,12 @@
       <h2>Kampf</h2>
       {#if combat.active}<span class="chip accent">Runde {combat.round}</span>{:else}<span class="chip">kein Kampf</span>{/if}
       <span class="spacer"></span>
+      <button class="btn sm" onclick={poisonRound} title="Alle Gifte ticken lassen, auch außerhalb des Kampfes">Gift-Runde</button>
       {#if !combat.active}
         <select bind:value={ambush} aria-label="Hinterhalt"><option value="">Normaler Beginn (Marker bei den Spielern)</option><option value="players">Spieler überraschen (Marker bei Spielern)</option><option value="enemies">Hinterhalt der Gegner (Marker bei Gegnern)</option></select>
         <button class="btn primary" onclick={start}>Kampf starten</button>
       {:else}
-        <button class="btn primary" onclick={() => nextRound(combat)}>Nächste Runde</button>
+        <button class="btn primary" onclick={advanceRound} title="Gift wirkt am Rundenende, dann beginnt die nächste Runde">Nächste Runde</button>
         <button class="btn danger" onclick={end}>Kampf beenden</button>
       {/if}
     </div>
@@ -162,7 +161,7 @@
           {:else}
             <label class="s">Schutz<span class="pair"><Stepper bind:value={n.schutz} min={0} max={9} label="Schutz" /><span class="dim">/</span><Stepper bind:value={n.schutzMax} min={0} max={9} label="Schutz max" /></span></label>
             <label class="s">WK<span class="pair"><Stepper bind:value={n.wk} min={0} max={n.wkMax} label="WK" /><span class="dim">/</span><Stepper bind:value={n.wkMax} min={0} max={30} label="WK max" /></span></label>
-            <label class="s">Energie<span class="pair"><Stepper bind:value={n.energie} min={0} max={n.energieMax} label="Energie" /><span class="dim">/</span><Stepper bind:value={n.energieMax} min={0} max={30} label="Energie max" /></span></label>
+            <label class="s">Energie<span class="pair"><Stepper bind:value={n.energie} min={-30} max={n.energieMax} label="Energie" /><span class="dim">/</span><Stepper bind:value={n.energieMax} min={0} max={30} label="Energie max" /></span></label>
           {/if}
         </div>
         {#if n.type !== 'goon'}
@@ -178,6 +177,21 @@
           </div>
         {/if}
         <label class="field">Tags<TagInput bind:values={n.tags} label="Tags" placeholder="z.B. Am Boden" /></label>
+        {#if n.type !== 'goon'}
+          <div class="gift">
+            {#each n.poisons ?? [] as pz (pz.id)}
+              <div class="row gp">
+                <span class="chip danger">{describePoison(pz)}</span><span class="spacer"></span>
+                <button class="btn sm" onclick={() => cure(n, pz.id)} title="Gegenmittel gelungen, das Gift endet">Gegenmittel (MW {antidoteMw(pz)})</button>
+              </div>
+            {/each}
+            <div class="row gp">
+              <select bind:value={giftLevel} aria-label="Giftstufe">{#each GIFT_LEVELS as l}<option value={l}>{GIFT[l].label}</option>{/each}</select>
+              <Stepper bind:value={giftDelay} min={0} max={MAX_GIFT_DELAY} label="Verzögerung in Runden" />
+              <button class="btn sm danger" onclick={() => addGift(n)}>+ Gift</button>
+            </div>
+          </div>
+        {/if}
         <label class="field">Notiz<input bind:value={n.note} placeholder="Verhalten, Schwäche, Beute" /></label>
         <div class="row">
           <button class="btn sm primary" onclick={() => rollNpc(n)} title="2W6 + Bonus (+ Überzahl)">Würfeln {fmt(n.bonus + ueberzahlBonus(attackers))}</button>
@@ -218,6 +232,9 @@
   .stats { display: flex; gap: 0.8rem; flex-wrap: wrap; }
   .s { display: grid; gap: 3px; font: 600 0.7rem var(--font-head); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); }
   .pair { display: flex; align-items: center; gap: 4px; }
+  .gift { display: grid; gap: 4px; }
+  .gp { flex-wrap: wrap; }
+  .gp select { width: auto; min-height: 30px; padding: 0.15em 0.4em; }
   .zones { display: flex; flex-wrap: wrap; gap: 4px; }
   .z { display: inline-flex; align-items: center; gap: 2px; font: 600 0.78rem var(--font-head); letter-spacing: 0.06em; text-transform: uppercase; padding: 0 2px; border: 1px solid var(--line); }
   .z.bad { border-color: var(--danger); color: var(--danger); }

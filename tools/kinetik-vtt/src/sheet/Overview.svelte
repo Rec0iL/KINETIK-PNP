@@ -11,6 +11,7 @@
   import OverrideValue from '../ui/OverrideValue.svelte';
   import ShieldGauge from '../ui/ShieldGauge.svelte';
   import TagsMini from './TagsMini.svelte';
+  import Poisons from './Poisons.svelte';
   import MovesOverview from './MovesOverview.svelte';
 
   let { char, ontab }: { char: Character; ontab?: (tab: string) => void } = $props();
@@ -52,6 +53,8 @@
     char.resources.schutz.current = char.resources.schutz.max;
     char.tags = char.tags.filter((t) => t.permanent);
     char.resources.momentum = 0;
+    // Nicht-tödliches Gift endet spätestens mit der Rast (3.11).
+    char.poisons = (char.poisons ?? []).filter((p) => p.level === 'toedlich');
   }
 
   function addTitle() {
@@ -118,6 +121,7 @@
       {:else if sheet.states.ausgepumpt}<span class="chip danger">Ausgepumpt</span>{/if}
       {#if sheet.states.gebrochen}<span class="chip danger">Gebrochen</span>{/if}
       {#if sheet.states.sterbend}<span class="chip danger">Sterbend</span>{/if}
+      {#if (char.poisons ?? []).length}<span class="chip danger" title="Gift wirkt am Rundenende (3.11)">Vergiftet</span>{/if}
       {#each sheet.states.unbrauchbar as z}<span class="chip amber">{rules.tabellen.zonen.find((x) => x.key === z)?.kurz} unbrauchbar</span>{/each}
     </div>
     <div class="res">
@@ -156,6 +160,7 @@
     </div>
   </section>
   <TagsMini {char} {ontab} />
+  <Poisons {char} />
   </div>
 
   <!-- Titel -->

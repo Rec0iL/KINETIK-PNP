@@ -4,7 +4,7 @@ import type { Character } from '../model/character';
 import { sanitizeCharacter } from '../model/io';
 import { applyPatch, describePatch } from '../model/patch';
 import { infoOf } from '../model/vitals';
-import { commitRoll, onRoll, rollLog, type RollRecord } from '../dice/roller.svelte';
+import { commitRoll, linkClash, onRoll, rollLog, roll2d6, type RollRecord } from '../dice/roller.svelte';
 import { settings } from '../lib/settings.svelte';
 import { pushToast } from '../ui/toasts.svelte';
 import { openPeer, explainPeerError, type DataConnection, type Peer } from './peer';
@@ -12,7 +12,15 @@ import { serveAsset } from './assets.svelte';
 import { addPing } from '../map/pings.svelte';
 import { defaultMusic, expectedPosition, type MusicState, type TrackRef } from '../music/clock';
 import { currentTime } from '../music/engine.svelte';
-import { newCombat, publicCombat, type CombatState } from '../gm/combat';
+import { newCombat, nextRound, npcStatus, publicCombat, upgradeCombat, type CombatState } from '../gm/combat';
+import {
+  KIND_LABEL, applyProposal, computeResult, createSituation, grantBulletTime, isOpen, nearestIds, npcRollMod, playerRollMod, playerView,
+  proposeResolution, rollToSit, situationsOf, type Draft, type SitKind, type Situation,
+} from '../gm/situation';
+import { tickCharacter, tickNpc } from '../gm/poison';
+import { ATTR_KEYS, ZONE_KEYS, GIFT_LEVELS, MAX_GIFT_DELAY } from '../rules';
+import { uid } from '../model/character';
+import { vitalsOf } from '../model/vitals';
 import { getAssetBytes, putAsset } from './assets.svelte';
 import { applyMapOp, forPlayers, type MapOp, type MapState } from '../map/mapstate';
 import {
@@ -85,7 +93,7 @@ export async function loadSavedSession(): Promise<GmSession | null> {
     const s = (await get(STORE_KEY)) as GmSession | undefined;
     if (!s) return null;
     s.tracks = s.tracks ?? [];
-    s.combat = s.combat ?? newCombat();
+    s.combat = upgradeCombat(s.combat);
     s.handouts = s.handouts ?? [];
     s.state.combat = s.combat.active ? publicCombat(s.combat) : null;
     s.state.music = { ...defaultMusic(), ...(s.state.music ?? {}), playing: false };
@@ -273,6 +281,7 @@ function onData(conn: DataConnection, msg: ClientMsg) {
       if (!r || typeof r.id !== 'string') return;
       commitRoll(r, { remote: true });
       if (!r.secret) broadcast({ t: 'roll', roll: r }, id);
+      if (typeof r.sit === 'string') attachPlayerRoll(id, r);
       break;
     }
     case 'ping':
@@ -295,6 +304,26 @@ function onData(conn: DataConnection, msg: ClientMsg) {
       break;
     case 'map':
       onPlayerMapOps(id, p.name, msg.ops);
+      break;
+    case 'plan':
+      onPlan(id, msg.draft);
+      break;
+    case 'plan-cancel': {
+      const sit = sitById(String(msg.id));
+      if (sit && sit.playerId === id && (sit.status === 'planned' || sit.status === 'released') && !sit.pRoll) sit.status = 'cancelled';
+      break;
+    }
+    case 'bt-choice': {
+      const sit = sitById(String(msg.id));
+      if (!sit || sit.playerId !== id || !sit.bullet || sit.bullet.option || !['zone', 'ep', 'momentum'].includes(msg.option)) break;
+      sit.bullet.option = msg.option;
+      if (msg.option === 'zone' && ZONE_KEYS.includes(msg.zone as never)) sit.bullet.zone = msg.zone;
+      feed(`${p.name}: Bullet Time, ${msg.option === 'zone' ? 'Zonenwahl' : msg.option === 'ep' ? '+1 EP' : '+1 Momentum'}.`);
+      if (sit.proposal) buildProposal(sit);
+      break;
+    }
+    case 'move-req':
+      onMoveRequest(id, p.name, msg.tokenId, msg.x, msg.y);
       break;
     case 'bye':
       conn.close();
@@ -368,6 +397,7 @@ function onPlayerMapOps(playerId: string, name: string, ops: MapOp[]) {
       addPing(op.x, op.y, name, op.color);
       broadcast({ t: 'map', ops: [{ op: 'ping', x: op.x, y: op.y, who: name, color: op.color }] }, playerId);
     } else if (op.op === 'tokmove') {
+      if (gm.session?.combat.active) continue; // im Kampf nur per Anfrage (move-req)
       const t = scene.tokens.find((x) => x.id === op.id);
       if (t && t.playerId === playerId && Number.isFinite(op.x) && Number.isFinite(op.y)) {
         applyMapOp(scene, { op: 'tokmove', id: op.id, x: op.x, y: op.y });
@@ -409,6 +439,8 @@ function accept(conn: DataConnection, p: GmPlayer, name: string, resume: boolean
   });
   feed(`${p.name} ist ${resume ? 'wieder da' : 'beigetreten'}.`);
   scheduleParty();
+  lastSits.delete(p.id);
+  pushSituations();
   persistSession();
 }
 
@@ -623,7 +655,252 @@ export function commitCombat() {
   const pub = s.combat.active ? publicCombat($state.snapshot(s.combat) as CombatState) : null;
   s.state.combat = pub;
   broadcast({ t: 'state', key: 'combat', value: pub });
+  pushSituations();
+  syncTokens();
   persistSession();
+}
+
+// ---------- Kampfsituationen ----------
+const sitById = (id: string) => gm.session?.combat.situations.find((s) => s.id === id);
+const npcById = (id: string | null) => (id ? gm.session?.combat.npcs.find((n) => n.id === id) ?? null : null);
+const lastSits = new Map<string, string>();
+
+/** Jedem Spieler seine Situationen schicken (nur bei Änderung). */
+function pushSituations() {
+  const s = gm.session;
+  if (!s) return;
+  const c = $state.snapshot(s.combat) as CombatState;
+  for (const [id, conn] of conns) {
+    const list = c.active ? situationsOf(c, id).map((x) => playerView(x, npcById(x.npcId))) : [];
+    const key = JSON.stringify(list);
+    if (lastSits.get(id) === key) continue;
+    lastSits.set(id, key);
+    send(conn, { t: 'sits', list });
+  }
+}
+
+/** Karten-Token ausgeschalteter Gegner abdunkeln, Token gelöschter Gegner entfernen. */
+function syncTokens() {
+  const s = gm.session;
+  if (!s) return;
+  for (const scene of s.scenes) {
+    const ops: MapOp[] = [];
+    for (const t of scene.tokens) {
+      if (!t.npcId) continue;
+      const npc = s.combat.npcs.find((n) => n.id === t.npcId);
+      if (!npc) { ops.push({ op: 'tokdel', id: t.id }); continue; }
+      const out = npcStatus(npc).out;
+      if (!!t.out !== out) ops.push({ op: 'tok', token: { ...$state.snapshot(t), out } });
+    }
+    if (ops.length) gmMapOps(scene.id, ops);
+  }
+}
+
+function pcName(playerId: string) {
+  const p = playerById(playerId);
+  return p?.character?.name || p?.name || 'Spieler';
+}
+
+function onPlan(playerId: string, d: Draft) {
+  const s = gm.session!;
+  const c = s.combat;
+  const p = playerById(playerId);
+  const warn = (text: string) => send(conns.get(playerId), { t: 'toast', text });
+  if (!p || !d || typeof d !== 'object') return;
+  if (!c.active) return warn('Es läuft kein Kampf.');
+  if (!['attack', 'breath', 'gather'].includes(d.kind) || !ATTR_KEYS.includes(d.attr)) return;
+  if (c.done[playerId] || c.situations.some((x) => x.playerId === playerId && x.round === c.round && x.kind !== 'defend' && isOpen(x))) {
+    return warn('Du hast in dieser Runde schon eine Aktion (3.6).');
+  }
+  const npc = npcById(d.npcId);
+  if (d.kind === 'attack' && (!npc || npc.hidden || npcStatus(npc).out)) return warn('Dieses Ziel gibt es nicht oder es ist schon ausgeschaltet.');
+  const gift = d.gift && GIFT_LEVELS.includes(d.gift.level) ? { level: d.gift.level, delay: Math.max(0, Math.min(MAX_GIFT_DELAY, Math.round(Number(d.gift.delay) || 0))) } : undefined;
+  const sit = createSituation(c, uid(), playerId, {
+    kind: d.kind, npcId: d.npcId, attr: d.attr, technique: String(d.technique ?? ''), moveName: String(d.moveName ?? ''),
+    tagsUsed: Array.isArray(d.tagsUsed) ? d.tagsUsed.map(String) : [], gift,
+  });
+  feed(`${p.name} plant: ${KIND_LABEL[sit.kind]}${npc ? ` gegen ${npc.name}` : ''}.`);
+  pushToast(`${p.name} plant: ${KIND_LABEL[sit.kind]}${npc ? ` gegen ${npc.name}` : ''}`, 'info', 5000);
+  if (sit.status === 'released' && (sit.kind === 'breath' || sit.kind === 'gather')) finish(sit);
+}
+
+function onMoveRequest(playerId: string, name: string, tokenId: string, x: number, y: number) {
+  const s = gm.session!;
+  const c = s.combat;
+  const scene = activeScene();
+  const t = scene?.tokens.find((k) => k.id === tokenId);
+  if (!c.active || !t || t.playerId !== playerId || !Number.isFinite(x) || !Number.isFinite(y)) return;
+  c.moveRequests = c.moveRequests.filter((r) => r.playerId !== playerId);
+  c.moveRequests.push({ id: uid(), playerId, tokenId, name: t.name, from: { x: t.x, y: t.y }, to: { x, y } });
+  feed(`${name} möchte sich bewegen.`);
+  pushToast(`${name} möchte sich bewegen`, 'info', 5000);
+}
+
+/** Der SL antwortet auf eine Bewegungsanfrage. */
+export function answerMove(id: string, ok: boolean) {
+  const s = gm.session;
+  const r = s?.combat.moveRequests.find((x) => x.id === id);
+  if (!s || !r) return;
+  const scene = activeScene();
+  if (ok && scene) gmMapOps(scene.id, [{ op: 'tokmove', id: r.tokenId, x: r.to.x, y: r.to.y }]);
+  s.combat.moveRequests = s.combat.moveRequests.filter((x) => x.id !== id);
+  send(conns.get(r.playerId), { t: 'move-result', ok, note: ok ? 'Bewegung bestätigt.' : 'Der SL lehnt die Bewegung ab.' });
+}
+
+/** Der SL legt für einen Spieler eine Aktion an (z.B. für lokale Spieler ohne Gerät). */
+export function gmPlan(playerId: string, d: Draft): Situation | null {
+  const c = gm.session?.combat;
+  if (!c?.active || !playerById(playerId)) return null;
+  const sit = createSituation(c, uid(), playerId, { ...d, tagsUsed: d.tagsUsed ?? [] });
+  if (sit.status === 'planned') sit.status = 'released';
+  if (sit.kind === 'breath' || sit.kind === 'gather') finish(sit);
+  return sit;
+}
+
+/** Ein Gegner greift einen Spieler an: der Spieler bekommt eine Verteidigungs-Abfrage. */
+export function gmAttack(playerId: string, npcId: string): Situation | null {
+  const c = gm.session?.combat;
+  const npc = npcById(npcId);
+  if (!c?.active || !npc || !playerById(playerId)) return null;
+  const sit = createSituation(c, uid(), playerId, { kind: 'defend', npcId, attr: 'fluss', technique: `${npc.name} greift an`, moveName: '', tagsUsed: [] });
+  sit.status = 'released';
+  sit.attackers = npc.type === 'goon' ? Math.max(1, npc.count) : 1;
+  feed(`${npc.name} greift ${pcName(playerId)} an.`);
+  sendToast(playerId, `${npc.name} greift dich an!`);
+  return sit;
+}
+
+export function releaseSit(id: string) {
+  const sit = sitById(id);
+  if (!sit || sit.status !== 'planned') return;
+  sit.status = 'released';
+  if (sit.kind === 'breath' || sit.kind === 'gather') finish(sit);
+}
+
+export function cancelSit(id: string) {
+  const sit = sitById(id);
+  if (sit && sit.status !== 'resolved') sit.status = 'cancelled';
+}
+
+/** Erleichtern/Erschweren, Tags oder Gift ändern: erlaubt, solange der Spieler noch nicht gewürfelt hat. */
+export const sitEditable = (sit: Situation) => (sit.status === 'planned' || sit.status === 'released') && !sit.pRoll;
+
+export function grantBullet(id: string) {
+  const c = gm.session?.combat;
+  const sit = sitById(id);
+  if (!c || !sit) return;
+  if (!grantBulletTime(c, sit)) { pushToast('Bullet Time gab es in dieser Runde für diesen Spieler schon.', 'warn'); return; }
+  sendToast(sit.playerId, 'Bullet Time! Wähle Zonenwahl, +1 EP oder +1 Momentum.');
+}
+
+function attachPlayerRoll(playerId: string, r: RollRecord) {
+  const sit = sitById(String(r.sit));
+  if (!sit || sit.playerId !== playerId || sit.pRoll || (sit.kind !== 'attack' && sit.kind !== 'defend')) return;
+  if (sit.status !== 'released') { send(conns.get(playerId), { t: 'toast', text: 'Der SL hat diese Aktion noch nicht freigegeben.' }); return; }
+  sit.pRoll = rollToSit(r.id, r.total, r.bonus, r.mod);
+  sit.hero = !!r.hero;
+  finish(sit);
+}
+
+/** Der SL würfelt für den Gegner der Situation. */
+export function rollNpcFor(id: string, secret = false) {
+  const c = gm.session?.combat;
+  const sit = sitById(id);
+  const npc = npcById(sit?.npcId ?? null);
+  if (!c || !sit || !npc || sit.nRoll || (sit.status !== 'released' && sit.status !== 'planned')) return;
+  const pc = playerById(sit.playerId)?.character;
+  const mod = npcRollMod(sit, c, pc ? pc.tags.map((t) => ({ name: t.name, size: t.size })) : []);
+  const rec = roll2d6({
+    who: npc.name, label: `${KIND_LABEL[sit.kind]}: ${npc.name} gegen ${pcName(sit.playerId)}`, bonus: npc.bonus, mod, kind: 'clash', secret, sit: sit.id,
+  });
+  sit.nRoll = rollToSit(rec.id, rec.total, rec.bonus, rec.mod);
+  finish(sit);
+}
+
+/** Der SL würfelt für einen Spieler ohne Gerät (lokaler Spieler oder getrennt). */
+export function rollPlayerFor(id: string) {
+  const sit = sitById(id);
+  const p = sit ? playerById(sit.playerId) : null;
+  if (!sit || !p?.character || sit.pRoll || sit.status !== 'released' || (sit.kind !== 'attack' && sit.kind !== 'defend')) return;
+  const bonus = vitalsOf(p.character).bonus[sit.attr];
+  const rec = roll2d6({
+    who: p.character.name, characterId: p.character.id, label: `${KIND_LABEL[sit.kind]} (${sit.technique || sit.attr})`, bonus,
+    mod: playerRollMod(sit, npcById(sit.npcId)), kind: 'clash', sit: sit.id,
+  });
+  sit.pRoll = rollToSit(rec.id, rec.total, rec.bonus, rec.mod);
+  finish(sit);
+}
+
+function buildProposal(sit: Situation) {
+  const c = gm.session!.combat;
+  const p = playerById(sit.playerId);
+  const npc = npcById(sit.npcId);
+  const scene = activeScene();
+  const pcTok = scene?.tokens.find((t) => t.playerId === sit.playerId) ?? null;
+  sit.proposal = proposeResolution({
+    sit, npc, pcName: pcName(sit.playerId), pcSchutz: p?.character?.resources.schutz.current ?? 0,
+    pcBedraengnis: c.bedraengnis[sit.playerId] ?? 0, nearTokens: scene && npc ? nearestIds($state.snapshot(scene.tokens), npc.id, pcTok ? { x: pcTok.x, y: pcTok.y } : null) : [],
+    exposedUsed: !!c.exposed[sit.playerId] && (sit.kind === 'attack' || sit.kind === 'defend'),
+  });
+}
+
+/** Beide Würfe da: Clash rechnen, Wurf-Protokoll verknüpfen, Folgen vorschlagen. */
+function finish(sit: Situation) {
+  if (sit.kind === 'breath' || sit.kind === 'gather') { buildProposal(sit); sit.status = 'rolled'; return; }
+  if (!sit.pRoll || !sit.nRoll) return;
+  const res = computeResult(sit);
+  if (!res) return;
+  sit.result = res;
+  sit.status = 'rolled';
+  const a = rollLog.entries.find((e) => e.id === sit.pRoll!.id);
+  const d = rollLog.entries.find((e) => e.id === sit.nRoll!.id);
+  if (a && d) linkClash($state.snapshot(a) as RollRecord, $state.snapshot(d) as RollRecord, res);
+  buildProposal(sit);
+}
+
+export function refreshProposal(id: string) {
+  const sit = sitById(id);
+  if (sit && sit.result) buildProposal(sit);
+}
+
+/** Wendet die angehakten Folgen an: NPCs, Kampfzustand, Karte, Spielerbögen. */
+export function applySit(id: string) {
+  const s = gm.session;
+  const sit = sitById(id);
+  if (!s || !sit?.proposal || sit.status === 'resolved') return;
+  const applied = applyProposal(s.combat, sit.proposal);
+  const byPlayer = new Map<string, import('./protocol').PatchOp[]>();
+  for (const pt of applied.patches) byPlayer.set(pt.playerId, [...(byPlayer.get(pt.playerId) ?? []), ...pt.ops]);
+  for (const [pid, ops] of byPlayer) patchPlayer(pid, ops);
+  const scene = activeScene();
+  if (scene && applied.removeTokens.length) gmMapOps(scene.id, applied.removeTokens.map((tid) => ({ op: 'tokdel', id: tid }) as MapOp));
+  sit.status = 'resolved';
+  feed(`${KIND_LABEL[sit.kind]} von ${pcName(sit.playerId)} abgewickelt.`);
+}
+
+// ---------- Rundenende und Gift ----------
+/** Gift tickt am Rundenende: Spielerbögen und NPCs. */
+export function poisonRound() {
+  const s = gm.session;
+  if (!s) return;
+  const notes: string[] = [];
+  for (const p of s.players) {
+    if (!p.character?.poisons?.length) continue;
+    const r = tickCharacter(p.character);
+    notes.push(...r.notes);
+    patchPlayer(p.id, r.ops);
+  }
+  for (const n of s.combat.npcs) notes.push(...tickNpc(n));
+  for (const t of notes) feed(t);
+  if (notes.length) pushToast(`Gift: ${notes.join(' · ')}`, 'warn', 9000);
+}
+
+/** Neue Runde: erst wirkt das Gift (Rundenende), dann beginnt die nächste. */
+export function advanceRound() {
+  const c = gm.session?.combat;
+  if (!c) return;
+  poisonRound();
+  nextRound(c);
 }
 
 // ---------- Handouts ----------
@@ -706,7 +983,7 @@ export async function importSession(text: string): Promise<GmSession> {
   s.tracks = s.tracks ?? [];
   s.scenes = s.scenes ?? [];
   s.handouts = s.handouts ?? [];
-  s.combat = s.combat ?? newCombat();
+  s.combat = upgradeCombat(s.combat);
   s.players = (s.players ?? []).map((p) => ({ ...p, connected: false, character: p.character ? sanitizeCharacter(p.character) : null }));
   s.state.music = { ...defaultMusic(), ...(s.state.music ?? {}), playing: false };
   s.state.combat = s.combat.active ? publicCombat(s.combat) : null;

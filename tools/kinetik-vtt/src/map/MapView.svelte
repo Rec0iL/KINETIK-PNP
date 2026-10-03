@@ -6,6 +6,9 @@
 
   export type Tool = 'move' | 'reveal-rect' | 'reveal-brush' | 'reveal-poly' | 'hide-rect' | 'hide-brush' | 'ping' | 'measure';
 
+  /** Geplante Bewegung: Geisterbild am Zielpunkt mit Linie vom Start. */
+  export interface Ghost { id: string; from: { x: number; y: number }; to: { x: number; y: number }; color: string; label: string; size: number }
+
   let {
     map,
     role,
@@ -15,6 +18,9 @@
     snap = true,
     pingColor = '#ffb800',
     selected = $bindable(null),
+    ghosts = [],
+    requestMoves = false,
+    highlight = [],
     onops,
   }: {
     map: MapState;
@@ -25,6 +31,11 @@
     snap?: boolean;
     pingColor?: string;
     selected?: string | null;
+    ghosts?: Ghost[];
+    /** Spieler im Kampf: der eigene Token wird nicht bewegt, das Ziehen erzeugt nur einen Vorschlag (tokmove-Operation am Ende). */
+    requestMoves?: boolean;
+    /** Token, die als wählbares Ziel markiert werden. */
+    highlight?: string[];
     onops: (ops: MapOp[]) => void;
   } = $props();
 
@@ -47,6 +58,7 @@
     kind: 'pan' | 'token' | 'rect' | 'stroke' | 'poly' | 'measure';
     startX: number; startY: number; startTx: number; startTy: number;
     tokenId?: string; offX?: number; offY?: number;
+    ghost?: [number, number];
     pts?: [number, number][];
     cur?: [number, number];
     moved: boolean;
@@ -125,6 +137,7 @@
     map.grid.show; map.grid.size; map.grid.ox; map.grid.oy; map.grid.color; map.grid.opacity;
     map.fog.enabled;
     pings.list.length;
+    ghosts.length; JSON.stringify(ghosts); highlight.length;
     assets.progress[map.asset ?? ''];
     tool; role;
     untrack(schedule);
@@ -215,6 +228,13 @@
     // Tokens
     for (const t of map.tokens) drawToken(g, t);
 
+    // Geplante Bewegungen (Anfragen) und die laufende Geste im Kampf
+    for (const gh of ghosts) drawGhost(g, gh.from.x, gh.from.y, gh.to.x, gh.to.y, gh.color, gh.label, gh.size);
+    if (drag?.kind === 'token' && drag.ghost) {
+      const t = map.tokens.find((k) => k.id === drag!.tokenId);
+      if (t) drawGhost(g, t.x, t.y, drag.ghost[0], drag.ghost[1], t.color, t.name, t.size);
+    }
+
     // Nebel
     if (map.fog.enabled) {
       g.globalAlpha = role === 'gm' ? 0.58 : 1;
@@ -300,10 +320,34 @@
     if (animating) schedule();
   }
 
+  function drawGhost(g: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, color: string, label: string, size: number) {
+    const r = (size * map.grid.size * 0.92) / 2;
+    g.save();
+    g.strokeStyle = color;
+    g.lineWidth = Math.max(2, r * 0.07);
+    g.setLineDash([r * 0.35, r * 0.25]);
+    g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke();
+    g.setLineDash([]);
+    g.globalAlpha = 0.55;
+    g.fillStyle = 'rgba(8,10,14,0.7)';
+    g.beginPath(); g.arc(x1, y1, r, 0, Math.PI * 2); g.fill();
+    g.lineWidth = Math.max(3, r * 0.1);
+    g.stroke();
+    g.globalAlpha = 1;
+    const fs = Math.max(11 / view.scale, r * 0.3);
+    g.font = `600 ${fs}px Barlow, sans-serif`;
+    g.textAlign = 'center';
+    g.fillStyle = color;
+    const m = measure(map.grid, [x0, y0], [x1, y1]);
+    g.fillText(`${label} · ${m.cells.toFixed(1).replace('.0', '')} Felder`, x1, y1 - r - fs * 0.3);
+    g.restore();
+  }
+
   function drawToken(g: CanvasRenderingContext2D, t: Token) {
     const r = (t.size * map.grid.size * 0.92) / 2;
     g.save();
     if (t.hidden) g.globalAlpha = 0.5;
+    if (t.out) g.globalAlpha = Math.min(g.globalAlpha, 0.38);
     g.beginPath();
     g.arc(t.x, t.y, r, 0, Math.PI * 2);
     g.fillStyle = 'rgba(8,10,14,0.85)';
@@ -330,6 +374,23 @@
     if (t.hidden) g.setLineDash([r * 0.3, r * 0.2]);
     g.stroke();
     g.setLineDash([]);
+    if (t.out) {
+      g.strokeStyle = '#ff4d6d';
+      g.lineWidth = Math.max(3, r * 0.12);
+      g.beginPath();
+      g.moveTo(t.x - r * 0.55, t.y - r * 0.55); g.lineTo(t.x + r * 0.55, t.y + r * 0.55);
+      g.moveTo(t.x + r * 0.55, t.y - r * 0.55); g.lineTo(t.x - r * 0.55, t.y + r * 0.55);
+      g.stroke();
+    }
+    if (highlight.includes(t.id)) {
+      g.beginPath();
+      g.arc(t.x, t.y, r + Math.max(7, r * 0.2), 0, Math.PI * 2);
+      g.strokeStyle = '#ff4d6d';
+      g.lineWidth = Math.max(2, r * 0.07);
+      g.setLineDash([r * 0.25, r * 0.18]);
+      g.stroke();
+      g.setLineDash([]);
+    }
     if (selected === t.id) {
       g.beginPath();
       g.arc(t.x, t.y, r + Math.max(5, r * 0.12), 0, Math.PI * 2);
@@ -450,6 +511,7 @@
       const nx = x - (drag.offX ?? 0);
       const ny = y - (drag.offY ?? 0);
       drag.moved = true;
+      if (requestMoves && role === 'player') { drag.ghost = [nx, ny]; schedule(); return; }
       const now = performance.now();
       if (now - lastEmit > 60) { lastEmit = now; onops([{ op: 'tokmove', id: t.id, x: nx, y: ny }]); }
       else { t.x = nx; t.y = ny; }
@@ -468,7 +530,14 @@
     if (!drag) return;
     const d = drag;
     drag = null;
-    if (d.kind === 'token') {
+    if (d.kind === 'token' && d.ghost) {
+      const t = map.tokens.find((k) => k.id === d.tokenId);
+      if (t) {
+        let [nx, ny] = d.ghost;
+        if (snap && map.grid.show) [nx, ny] = snapToGrid(map.grid, nx, ny, Math.round(t.size));
+        onops([{ op: 'tokmove', id: t.id, x: nx, y: ny }]);
+      }
+    } else if (d.kind === 'token') {
       const t = map.tokens.find((k) => k.id === d.tokenId);
       if (t && d.moved) {
         let [nx, ny] = [t.x, t.y];

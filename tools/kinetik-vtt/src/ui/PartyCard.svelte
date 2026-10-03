@@ -27,6 +27,7 @@
         {#if v.schutzMax}<span class="chip" title="Schutz">S {v.schutz}/{v.schutzMax}</span>{/if}
         {#if v.injuries}<span class="chip danger" title="Verletzungen">{v.injuries} Verl.</span>{/if}
         {#if v.sterbend}<span class="chip danger">sterbend</span>{/if}
+        {#if v.poisons?.length}<span class="chip danger" title="Vergiftet">Gift</span>{/if}
         {#if v.ausgepumpt}<span class="chip danger">ausgepumpt</span>{/if}
         {#if v.gebrochen}<span class="chip danger">gebrochen</span>{/if}
         {#each v.tags as t}<span class="chip" class:amber={t.size === 'gross'}>{t.name}</span>{/each}
