@@ -80,7 +80,7 @@
 
 <SessionBar />
 
-<main>
+<main class:wide={router.route.name === 'gm'}>
   {#if router.route.name === 'home'}
     <Home />
   {:else if router.route.name === 'characters'}
@@ -151,6 +151,8 @@
   .theme select { width: auto; min-height: 34px; padding: 0.3em 0.6em; font: 600 0.8rem var(--font-head); letter-spacing: 0.1em; text-transform: uppercase; }
   .pagetitle { margin-bottom: 1rem; }
   main { padding: 1.4rem max(16px, 3vw) 3rem; max-width: 1280px; margin: 0 auto; }
+  /* SL-Dashboard: die volle Breite nutzen (Widescreen und Ultrawide), die Karte braucht den Platz. */
+  main.wide { max-width: none; padding-inline: max(16px, 1.2vw); padding-top: 1rem; padding-bottom: 1.5rem; }
   .foot { display: flex; justify-content: space-between; padding: 1rem max(16px, 3vw); color: var(--ink-dim); font: 600 0.75rem var(--font-head); letter-spacing: 0.14em; text-transform: uppercase; border-top: 1px solid var(--line); }
   @media (max-width: 640px) {
     .word { display: none; }

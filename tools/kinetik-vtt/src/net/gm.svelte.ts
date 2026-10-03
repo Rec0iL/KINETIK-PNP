@@ -7,7 +7,8 @@ import { infoOf } from '../model/vitals';
 import { commitRoll, linkClash, onRoll, rollLog, roll2d6, type RollRecord } from '../dice/roller.svelte';
 import { settings } from '../lib/settings.svelte';
 import { pushToast } from '../ui/toasts.svelte';
-import { openPeer, explainPeerError, type DataConnection, type Peer } from './peer';
+import { openPeer, explainPeerError, brokerReachable, type DataConnection, type Peer } from './peer';
+import { RECONNECT_MAX_TRIES, backoffMs } from './backoff';
 import { serveAsset } from './assets.svelte';
 import { addPing } from '../map/pings.svelte';
 import { defaultMusic, expectedPosition, type MusicState, type TrackRef } from '../music/clock';
@@ -62,10 +63,12 @@ export const gm = $state<{
   error: string;
   /** Vermittlungsserver erreichbar? Bestehende Verbindungen laufen auch ohne weiter. */
   broker: boolean;
+  /** Zustand des Neuaufbaus, z.B. "Neuer Versuch 3/8 in 8 s" (leer, wenn alles läuft). */
+  brokerNote: string;
   session: GmSession | null;
   pending: { id: string; name: string }[];
   feed: FeedEntry[];
-}>({ status: 'idle', error: '', broker: false, session: null, pending: [], feed: [] });
+}>({ status: 'idle', error: '', broker: false, brokerNote: '', session: null, pending: [], feed: [] });
 
 const STORE_KEY = 'gm-session';
 let peer: Peer | null = null;
@@ -184,18 +187,99 @@ export async function startHost(opts: { gmName: string; password: string; resume
   gm.broker = true;
   try { sessionStorage.setItem('kinetik.gmActive', '1'); } catch { /* ignorieren */ }
   feed('Runde gestartet.');
-  peer.on('connection', onConnection);
-  peer.on('disconnected', () => {
+  bindPeer(peer);
+  unsubRoll = onRoll((r) => { if (!r.secret) broadcast({ t: 'roll', roll: r }); });
+  persistSession();
+}
+
+// ---------- Verbindung zum Vermittlungsserver halten ----------
+// Der Server trennt inaktive Peers (Tab im Hintergrund, Standby, kurze Netzausfälle). PeerJS verbindet sich nicht von
+// selbst neu, danach wäre der Raumcode für neue Spieler unauffindbar. Bestehende Spieler sind nie betroffen.
+let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
+let reconnectTry = 0;
+
+function bindPeer(p: Peer) {
+  p.on('connection', onConnection);
+  p.on('disconnected', () => {
+    if (peer !== p) return;
     gm.broker = false;
-    setTimeout(() => peer && !peer.destroyed && peer.reconnect(), 2000);
+    scheduleReconnect();
   });
-  peer.on('open', () => { gm.broker = true; });
-  peer.on('error', (err) => {
+  p.on('open', () => {
+    if (peer !== p) return;
+    // Auch nach einem Neuaufbau wird `open` erneut ausgelöst: nur den Zustand zurücksetzen, nichts neu starten.
+    const was = reconnectTry > 0;
+    clearTimeout(reconnectTimer);
+    reconnectTry = 0;
+    gm.broker = true;
+    gm.brokerNote = '';
+    if (was) { feed('Verbindung zum Vermittlungsserver wiederhergestellt.'); pushToast('Raum wieder online.', 'good', 3000); }
+  });
+  p.on('close', () => {
+    // Der Peer wurde zerstört (z.B. Raumcode vom Server noch belegt): neu aufbauen.
+    if (peer !== p || gm.status !== 'open') return;
+    gm.broker = false;
+    void restartPeer();
+  });
+  p.on('error', (err) => {
     const f = explainPeerError(err);
     if (f.kind !== 'peer-unavailable') pushToast(f.message, 'warn');
   });
-  unsubRoll = onRoll((r) => { if (!r.secret) broadcast({ t: 'roll', roll: r }); });
-  persistSession();
+}
+
+function scheduleReconnect() {
+  clearTimeout(reconnectTimer);
+  if (!peer || peer.destroyed) return;
+  if (reconnectTry >= RECONNECT_MAX_TRIES) {
+    gm.brokerNote = 'Vermittlungsserver nicht erreichbar. Neue Spieler können nicht beitreten.';
+    return;
+  }
+  const delay = backoffMs(reconnectTry);
+  reconnectTry++;
+  gm.brokerNote = `Neuer Versuch ${reconnectTry}/${RECONNECT_MAX_TRIES} in ${Math.round(delay / 1000)} s`;
+  reconnectTimer = setTimeout(async () => {
+    const p = peer;
+    if (!p || p.destroyed) return;
+    // Erst prüfen, ob der Server antwortet: ein fehlgeschlagener Neuaufbau zerstört bei PeerJS den Peer samt Spielerverbindungen.
+    if (!(await brokerReachable())) { if (peer === p) scheduleReconnect(); return; }
+    if (peer !== p || p.destroyed) return;
+    try { p.reconnect(); } catch { scheduleReconnect(); return; }
+    // Meldet der Server weder `open` noch einen Fehler, nach einer Weile erneut versuchen.
+    reconnectTimer = setTimeout(scheduleReconnect, 10000);
+  }, delay);
+}
+
+/** Der Peer ist zerstört: mit demselben Raumcode einen neuen anlegen. Spieler verbinden sich selbst neu. */
+async function restartPeer() {
+  const s = gm.session;
+  if (!s) return;
+  for (; reconnectTry < RECONNECT_MAX_TRIES; ) {
+    const delay = backoffMs(reconnectTry++);
+    gm.brokerNote = `Raum wird neu angelegt (Versuch ${reconnectTry}/${RECONNECT_MAX_TRIES})`;
+    await new Promise((r) => setTimeout(r, delay));
+    if (gm.status !== 'open' || !gm.session) return;
+    try {
+      const np = await openPeer(peerIdFor(s.code));
+      peer = np;
+      bindPeer(np);
+      reconnectTry = 0;
+      gm.broker = true;
+      gm.brokerNote = '';
+      feed('Raum neu angelegt, Spieler verbinden sich wieder.');
+      pushToast('Raum wieder online.', 'good', 3000);
+      return;
+    } catch { /* nächster Versuch */ }
+  }
+  gm.brokerNote = 'Vermittlungsserver nicht erreichbar. Neue Spieler können nicht beitreten.';
+}
+
+/** Der SL stößt den Neuaufbau selbst an (nach dem Aufgeben oder bei Ungeduld). */
+export function reconnectNow() {
+  clearTimeout(reconnectTimer);
+  reconnectTry = 0;
+  if (!peer) return;
+  if (peer.destroyed) void restartPeer();
+  else if (peer.disconnected) scheduleReconnect();
 }
 
 /** Nach einem Neuladen des SL-Tabs die Runde automatisch fortsetzen. */
@@ -217,10 +301,13 @@ export function stopHost() {
   viewers.clear();
   unsubRoll?.();
   unsubRoll = null;
+  clearTimeout(reconnectTimer);
+  reconnectTry = 0;
   peer?.destroy();
   peer = null;
   gm.status = 'idle';
   gm.broker = false;
+  gm.brokerNote = '';
   gm.pending = [];
   for (const p of gm.session?.players ?? []) p.connected = false;
   persistSession();

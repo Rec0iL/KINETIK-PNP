@@ -1,6 +1,6 @@
 <script lang="ts">
   import { untrack } from 'svelte';
-  import { gm, importSession, startHost, loadSavedSession, scheduleParty, persistSession, setSharedNotes, partyFor, commitCombat, type GmSession } from '../net/gm.svelte';
+  import { gm, reconnectNow, importSession, startHost, loadSavedSession, scheduleParty, persistSession, setSharedNotes, partyFor, commitCombat, type GmSession } from '../net/gm.svelte';
   import { settings } from '../lib/settings.svelte';
   import { formatCode } from '../net/protocol';
   import { pushToast } from '../ui/toasts.svelte';
@@ -99,6 +99,7 @@
     </div>
   </section>
 {:else if gm.session}
+  <div class="gmhead">
   <section class="top">
     <div>
       <span class="kicker">Spielleiter · {gm.session.state.gmName}</span>
@@ -109,7 +110,11 @@
       </div>
     </div>
     <div class="row">
-      <span class="chip" class:accent={gm.broker} class:danger={!gm.broker} title="Vermittlungsserver">{gm.broker ? 'Server erreichbar' : 'Server getrennt'}</span>
+      <span class="chip" class:accent={gm.broker} class:danger={!gm.broker} title={gm.broker ? 'Vermittlungsserver erreichbar' : 'Neue Spieler finden den Raum nur, wenn der Vermittlungsserver erreichbar ist. Verbundene Spieler sind nicht betroffen.'}>{gm.broker ? 'Raum online' : 'Raum offline'}</span>
+      {#if !gm.broker}
+        {#if gm.brokerNote}<span class="chip amber">{gm.brokerNote}</span>{/if}
+        <button class="btn sm" onclick={reconnectNow}>Jetzt neu verbinden</button>
+      {/if}
       <span class="chip">{online} / {gm.session.players.length} online</span>
       {#if gm.pending.length}<span class="chip amber">{gm.pending.length} Anfrage(n)</span>{/if}
     </div>
@@ -125,8 +130,9 @@
     <button role="tab" aria-selected={tab === 'notes'} onclick={() => (tab = 'notes')}>Notizen</button>
     <button role="tab" aria-selected={tab === 'settings'} onclick={() => (tab = 'settings')}>Einstellungen</button>
   </div>
+  </div>
 
-  <div class="content">
+  <div class="content" class:narrow={tab === 'notes' || tab === 'settings' || tab === 'dice'}>
     {#if tab === 'players'}
       <div class="cols">
         <GmPlayers />
@@ -136,7 +142,7 @@
         </section>
       </div>
     {:else if tab === 'combat'}
-      <div class="combatgrid"><GmCombat /><CombatSidebar /></div>
+      <div class="combatgrid"><GmCombat /><CombatSidebar situationsOnly /></div>
     {:else if tab === 'handouts'}
       <GmHandouts />
     {:else if tab === 'map'}
@@ -177,10 +183,23 @@
   .mono { font-family: var(--font-mono); }
   .top { display: flex; justify-content: space-between; align-items: end; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
   .codewrap { display: flex; gap: 0.7rem; align-items: center; flex-wrap: wrap; margin-top: 0.3rem; }
+  /* Breite Bildschirme: Raumcode, Tabs und Status in einer Zeile, die Höhe gehört der Karte. */
+  @media (min-width: 1200px) {
+    .gmhead { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: end; gap: 0 1.6rem; border-bottom: 1px solid var(--line); }
+    .gmhead .top { display: contents; }
+    .gmhead .top > div:first-child { grid-column: 1; grid-row: 1; }
+    .gmhead .top > .row { grid-column: 3; grid-row: 1; align-self: center; flex-wrap: wrap; justify-content: flex-end; }
+    .gmhead .tabs { grid-column: 2; grid-row: 1; border-bottom: 0; align-self: end; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+    .gmhead .code { font-size: 2.5rem; }
+    .gmhead .codewrap { margin-top: 0.1rem; }
+    .gmhead .top { margin-bottom: 0; }
+  }
   .code { font: 400 3.4rem/1 var(--font-display); letter-spacing: 0.22em; color: var(--accent-2); text-shadow: var(--hard-shadow); }
   .content { padding-top: 1rem; }
+  /* Reine Textseiten bleiben lesbar schmal, auch auf Ultrawide. */
+  .content.narrow { max-width: 1280px; }
   .cols { display: grid; grid-template-columns: 1fr 260px; gap: 1rem; align-items: start; }
-  .combatgrid { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 1rem; align-items: start; }
+  .combatgrid { display: grid; grid-template-columns: minmax(0, 1fr) clamp(380px, 22vw, 520px); gap: 1rem; align-items: start; }
   @media (max-width: 1200px) { .combatgrid { grid-template-columns: 1fr; } }
   .feed .f { padding: 0.3rem 0; border-bottom: 1px solid var(--line); font-size: 0.9rem; }
   @media (max-width: 900px) { .cols { grid-template-columns: 1fr; } }

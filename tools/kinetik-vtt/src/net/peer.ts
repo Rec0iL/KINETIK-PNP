@@ -2,6 +2,7 @@
 import Peer, { type PeerOptions, type DataConnection } from 'peerjs';
 import { settings } from '../lib/settings.svelte';
 import { buildIceConfig, explainFailedJoin, hasCustomTurn } from './ice';
+import { brokerProbeUrl } from './backoff';
 import { currentIceSettings } from './icetest';
 
 export type { DataConnection };
@@ -74,4 +75,19 @@ export async function diagnoseJoin(conn: DataConnection): Promise<string> {
     });
   } catch { /* ohne Statistik: allgemeine Meldung */ }
   return explainFailedJoin(local, remote, hasCustomTurn(currentIceSettings()));
+}
+
+/** Ist der Vermittlungsserver erreichbar? Ein Neuaufbau bei toter Leitung würde den Peer samt Spielerverbindungen zerstören. */
+export async function brokerReachable(timeoutMs = 5000): Promise<boolean> {
+  const o = peerOptions();
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), timeoutMs);
+  try {
+    await fetch(brokerProbeUrl({ host: o.host, port: o.port, path: o.path, secure: o.secure }), { cache: 'no-store', signal: ctl.signal });
+    return true; // jede HTTP-Antwort heißt: der Server lebt
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(t);
+  }
 }

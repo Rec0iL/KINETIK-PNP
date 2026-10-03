@@ -106,3 +106,17 @@ describe('Kampfverwaltung', () => {
     expect(publicCombat(c).enemies).toEqual([]);
   });
 });
+
+import { backoffMs, brokerProbeUrl, RECONNECT_MAX_MS, RECONNECT_MAX_TRIES } from '../src/net/backoff';
+describe('Neuaufbau zum Vermittlungsserver', () => {
+  it('Wartezeit verdoppelt sich ab 2 s und ist bei 30 s gedeckelt', () => {
+    expect(Array.from({ length: RECONNECT_MAX_TRIES }, (_, i) => backoffMs(i))).toEqual([2000, 4000, 8000, 16000, 30000, 30000, 30000, 30000]);
+    expect(backoffMs(99)).toBe(RECONNECT_MAX_MS);
+    expect(backoffMs(-1)).toBe(2000);
+  });
+  it('Prüfadresse wie bei PeerJS: Standard-Server und eigener Server', () => {
+    expect(brokerProbeUrl({})).toMatch(/^https:\/\/0\.peerjs\.com:443\/peerjs\/id\?ts=\d+$/);
+    expect(brokerProbeUrl({ host: 'localhost', port: 9000, path: '/', secure: false })).toMatch(/^http:\/\/localhost:9000\/peerjs\/id/);
+    expect(brokerProbeUrl({ host: 'x.org', port: 443, path: 'mein/pfad', secure: true })).toMatch(/^https:\/\/x\.org:443\/mein\/pfad\/peerjs\/id/);
+  });
+});

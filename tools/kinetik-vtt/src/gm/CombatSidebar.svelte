@@ -6,6 +6,8 @@
   import { patchPlayer } from '../net/gm.svelte';
   import SitCard from './SitCard.svelte';
 
+  /** Im Kampf-Tab stehen Runde, Marker und Spielerliste schon links: hier nur Bewegung, Situationen und Gegner-Angriffe. */
+  let { situationsOnly = false }: { situationsOnly?: boolean } = $props();
   const combat = $derived(gm.session!.combat);
   const party = $derived(partyFor(null).filter((p) => p.vitals));
   const sideName = (s: Side) => (s === 'players' ? 'Spieler' : 'Gegner');
@@ -43,6 +45,7 @@
 </script>
 
 <aside class="side">
+  {#if !situationsOnly || !combat.active}
   <section class="panel">
     <div class="row">
       <h2>Kampf</h2>
@@ -74,6 +77,7 @@
       </div>
     {/if}
   </section>
+  {/if}
 
   {#if combat.active}
     {#if combat.moveRequests.length}
@@ -108,6 +112,7 @@
       </div>
     </section>
 
+    {#if !situationsOnly}
     <section class="panel">
       <h2>Spieler</h2>
       {#each party as p (p.id)}
@@ -122,6 +127,7 @@
         </div>
       {:else}<p class="dim">Keine Spielerbögen sichtbar.</p>{/each}
     </section>
+    {/if}
 
     <section class="panel">
       <h2>Gegner</h2>

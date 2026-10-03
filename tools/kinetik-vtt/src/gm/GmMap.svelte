@@ -26,7 +26,9 @@
   let enemyType = $state<NpcType>('schlaeger');
   let enemyName = $state('');
   let enemyCount = $state(3);
-  let sideOpen = $state(true);
+  /** Spalten einklappbar: auf kleineren Bildschirmen gehört der Platz der Karte. */
+  let sideOpen = $state(typeof innerWidth === 'undefined' || innerWidth >= 1500);
+  let leftOpen = $state(true);
 
   const scenes = $derived(gm.session?.scenes ?? []);
   const scene = $derived(scenes.find((s) => s.id === selectedId) ?? null);
@@ -200,7 +202,8 @@
   ];
 </script>
 
-<div class="gmmap">
+<div class="gmmap" class:noleft={!leftOpen} class:noright={!sideOpen}>
+  {#if leftOpen}
   <aside class="stack">
     <section class="panel">
       <div class="row"><h2>Karten</h2><span class="spacer"></span>
@@ -306,6 +309,7 @@
       </section>
     {/if}
   </aside>
+  {/if}
 
   <section class="stagewrap">
     {#if scene}
@@ -313,7 +317,8 @@
         {#each tools as t}<button class="btn sm" class:primary={tool === t.key} onclick={() => (tool = t.key)} title={t.title}>{t.label}</button>{/each}
         <span class="spacer"></span>
         <label class="check"><input type="checkbox" bind:checked={snap} /> Einrasten</label>
-        <button class="btn sm" class:primary={sideOpen} onclick={() => (sideOpen = !sideOpen)}>Kampf{#if combat.active} · R{combat.round}{/if}{#if combat.moveRequests.length} ({combat.moveRequests.length}){/if}</button>
+        <button class="btn sm" class:primary={leftOpen} onclick={() => (leftOpen = !leftOpen)} title="Karten, Tokens, Nebel und Raster ein- oder ausblenden">Werkzeuge</button>
+        <button class="btn sm" class:primary={sideOpen} onclick={() => (sideOpen = !sideOpen)} title="Kampf-Seitenleiste ein- oder ausblenden">Kampf{#if combat.active} · R{combat.round}{/if}{#if combat.moveRequests.length} ({combat.moveRequests.length}){/if}</button>
         <button class="btn sm" onclick={() => view?.fit()}>Einpassen</button>
       </div>
       <div class="stage"><MapView bind:this={view} map={scene} role="gm" {tool} {brush} {snap} {ghosts} bind:selected={selectedToken} onops={handle} /></div>
@@ -328,9 +333,13 @@
 </div>
 
 <style>
-  .gmmap { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 1rem; align-items: start; }
-  .gmmap:has(.combatcol) { grid-template-columns: 320px minmax(0, 1fr) 380px; }
-  .combatcol { max-height: calc(100vh - 90px); overflow-y: auto; position: sticky; top: 64px; padding-right: 2px; }
+  /* Karte nutzt die Höhe des Fensters, die Seitenspalten wachsen mit der Breite. Höhe der Bühne = Fenster minus Kopf und Tabs. */
+  .gmmap { --stage-h: clamp(420px, calc(100dvh - 215px), 1800px); display: grid; grid-template-columns: clamp(280px, 17vw, 400px) minmax(0, 1fr); gap: 1rem; align-items: start; }
+  .gmmap:has(.combatcol) { grid-template-columns: clamp(280px, 15vw, 380px) minmax(0, 1fr) clamp(340px, 22vw, 480px); }
+  .gmmap.noleft { grid-template-columns: minmax(0, 1fr); }
+  .gmmap.noleft:has(.combatcol) { grid-template-columns: minmax(0, 1fr) clamp(340px, 22vw, 480px); }
+  .gmmap > aside { max-height: calc(100dvh - 96px); overflow-y: auto; position: sticky; top: 64px; padding-right: 2px; scrollbar-width: thin; }
+  .combatcol { max-height: calc(100dvh - 96px); overflow-y: auto; position: sticky; top: 64px; padding-right: 2px; scrollbar-width: thin; }
   .enemy { padding: 0.6rem; background: var(--raised); border-left: 3px solid var(--danger); }
   .enemy h3 { margin: 0; }
   .list { list-style: none; margin: 0.6rem 0; padding: 0; display: grid; gap: 2px; }
@@ -342,11 +351,17 @@
   .color { width: 40px; min-height: 32px; padding: 2px; flex: none; }
   .tok { margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid var(--line); }
   .check { display: flex; gap: 0.4em; align-items: center; font-size: 0.9rem; }
-  .stagewrap { display: grid; gap: 0.5rem; position: sticky; top: 64px; }
+  .stagewrap { display: grid; gap: 0.5rem; position: sticky; top: 64px; min-width: 0; }
   .toolbar { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
-  .stage { height: min(72vh, 760px); min-height: 360px; }
+  .stage { height: var(--stage-h); min-height: 360px; }
   .empty { min-height: 300px; display: grid; place-items: center; }
   input[type='range'] { padding: 0; min-height: 28px; }
-  @media (max-width: 1300px) { .gmmap:has(.combatcol) { grid-template-columns: 300px minmax(0, 1fr); } .combatcol { grid-column: 1 / -1; position: static; max-height: none; } }
-  @media (max-width: 1000px) { .gmmap, .gmmap:has(.combatcol) { grid-template-columns: 1fr; } .stagewrap { position: static; order: -1; } }
+  /* Schmaler als ~1300 px: Kampfleiste unter die Karte. */
+  @media (max-width: 1300px) { .gmmap:has(.combatcol) { grid-template-columns: 300px minmax(0, 1fr); } .gmmap.noleft:has(.combatcol) { grid-template-columns: minmax(0, 1fr); } .combatcol { grid-column: 1 / -1; position: static; max-height: none; } }
+  @media (max-width: 1000px) {
+    .gmmap, .gmmap:has(.combatcol), .gmmap.noleft, .gmmap.noleft:has(.combatcol) { grid-template-columns: 1fr; }
+    .gmmap > aside { position: static; max-height: none; }
+    .stagewrap { position: static; order: -1; }
+    .stage { height: min(72vh, 560px); }
+  }
 </style>
