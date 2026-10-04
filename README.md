@@ -46,6 +46,8 @@ Alles Weitere steht im [Regelwerk](regelwerk/KINETIK_Regelwerk.md) (aktuell **v3
 
 **[rec0il.github.io/KINETIK-PNP](https://rec0il.github.io/KINETIK-PNP/)**: im Browser, auch offline nutzbar, auf Handy und Desktop.
 
+**Kompatibel mit [PenNodePaper](https://github.com/Rec0iL/PenNodePaper)**: Die Spielleitung kann die Runde mit der Vorbereitungs-App koppeln, siehe [PenNodePaper-Brücke](#pennodepaper-brücke-sl).
+
 <table>
 <tr>
 <td width="50%"><a href="https://rec0il.github.io/KINETIK-PNP/#/charaktere"><img src="tools/kinetik-vtt/public/art/card-player.webp" alt="Spieler" width="100%"></a><br><b>Spieler</b><br>Charakterbogen mit Assistent, Körpersilhouette, Moves und Würfeln. Speichert im Browser, Export als JSON.</td>
@@ -84,6 +86,22 @@ Alles, was die Regeln ableiten (Energie- und WK-Maximum, Momentum-Deckel, Meiste
 <td><img src="docs/screenshots/builder.jpg" alt="Move-Builder" width="100%"><br><sub>Move-Builder mit Kosten nach Titel-Level</sub></td>
 </tr>
 </table>
+
+### 🧭 PenNodePaper-Brücke (SL)
+
+Das SL-Dashboard lässt sich mit **[PenNodePaper](https://github.com/Rec0iL/PenNodePaper)** verbinden, einem KI-gestützten Welten- und Story-Baukasten für Pen & Paper. Was dort vorbereitet wurde, landet per Knopfdruck in der laufenden Runde (Spielleiter → Einstellungen → **PenNodePaper-Verbindung**: Adresse und Kopplungs-Token stehen in PenNodePaper unter ⚙ Einstellungen → *VTT link*). Die Verbindung gilt, solange die Runde läuft.
+
+| PenNodePaper schickt … | … und die Web-App macht daraus |
+|---|---|
+| **Handout** (Text oder Bild) | Eintrag bei den **Handouts**, auf Wunsch sofort an alle oder einzelne Spieler |
+| **Karte** (mit Raster und Tokens) oder **Bild** | **Szene** im Karten-Tab, das Bild als Hintergrund (ohne Raster), auf Wunsch gleich freigegeben |
+| **Gegner** (mit Moves und Porträt) | **Kampf-Gegner** mit Porträt und Moves im Kampf-Tab, auf der Karte als Token |
+| **NPC** | **Token** mit Notiz und Porträt |
+| **Musik-Stichwort** | wird über den **Musik-Tab** abgespielt, die App kennt auch deine eigenen Titel |
+| *(Gegenrichtung)* die **Spielergruppe** | PenNodePaper zeigt deine Spielercharaktere (Konzept, Attribute, Ressourcen, Tags, Moves, Waffen, Porträt, online). Sie werden nur gemeldet, nie überschrieben |
+| *(Gegenrichtung)* **Aufbau von Gegnern und NPCs** | die App meldet, wie Gegner und NPCs nach den Regeldaten aufgebaut sind |
+
+Die Brücke steckt in `tools/kinetik-vtt/src/net/pnp.ts` (Protokoll siehe [vtt-bridge-spec](https://github.com/Rec0iL/PenNodePaper/blob/main/docs/vtt-bridge-spec.md)). Ohne Verbindung ändert sich nichts. Hex-Raster werden abgelehnt, und beim Datei-Export für den Offline-Import erscheinen NPCs noch nicht als Token.
 
 ### Das Regelwerk in der App
 
@@ -163,6 +181,7 @@ Nach Änderungen am Regelwerk: `python3 scripts/build_rulebook_web.py` (Regelwer
 - [x] Druckversion (PDF) und Regelwerk in der App
 - [x] Gift-Mechanik in der Web-App (3.11): Energieverlust am Rundenende, Verzögerung, Stufen, Gegenmittel-Probe, Überlauf-Zähler
 - [x] Karte und Kampf verknüpft: Gegner als Token, Bewegung per Anfrage, geplante Aktionen als Kampfsituationen mit Freigabe, Bullet Time, Tags, Ein-Klick-Abwicklung
+- [x] PenNodePaper-Brücke: Handouts, Karten, Gegner, NPCs und Musik aus der Vorbereitungs-App in die Runde, Spielergruppe zurück
 - [ ] Schnellreferenz
 
 ## Credits
