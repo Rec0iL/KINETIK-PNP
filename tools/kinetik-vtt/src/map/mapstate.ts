@@ -35,6 +35,8 @@ export interface Token {
   npcId?: string;
   /** Der Gegner ist ausgeschaltet. */
   out?: boolean;
+  /** Herkunft, wenn von PenNodePaper übergeben (`pnp:<id>`). */
+  src?: string;
 }
 
 export type FogShape =

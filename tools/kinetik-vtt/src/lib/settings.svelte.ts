@@ -25,10 +25,14 @@ interface Settings {
   turnPass: string;
   /** Nur über den Relay-Server verbinden. */
   relayOnly: boolean;
+  /** SL: Verbindung zu PenNodePaper (Vorbereitungs-App) halten, solange die Runde läuft. */
+  pnpEnabled: boolean;
+  pnpUrl: string;
+  pnpToken: string;
 }
 
 function load(): Settings {
-  const d: Settings = { autoShock: true, dice3d: true, musicAutoNext: false, autoPayMoves: false, displayName: '', peerHost: '', peerPort: 443, peerPath: '/', peerSecure: true, iceJson: '', turnUrl: '', turnUser: '', turnPass: '', relayOnly: false };
+  const d: Settings = { autoShock: true, dice3d: true, musicAutoNext: false, autoPayMoves: false, displayName: '', peerHost: '', peerPort: 443, peerPath: '/', peerSecure: true, iceJson: '', turnUrl: '', turnUser: '', turnPass: '', relayOnly: false, pnpEnabled: false, pnpUrl: 'ws://127.0.0.1:4317/bridge', pnpToken: '' };
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) return { ...d, ...JSON.parse(raw) };

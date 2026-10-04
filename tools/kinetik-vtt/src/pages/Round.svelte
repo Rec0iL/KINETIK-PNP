@@ -122,7 +122,7 @@
       </div>
       {#if combat.enemies.length}
         <div class="row who">
-          {#each combat.enemies as e}<span class="chip" class:danger={!e.out} title={e.tags.map((t) => t.name).join(', ')}>{e.name} · {ROUGH_LABEL[e.state]}{e.tags.length ? ` · ${e.tags.map((t) => t.name).join(', ')}` : ''}</span>{/each}
+          {#each combat.enemies as e}<span class="chip" class:danger={!e.out} title={e.tags.map((t) => t.name).join(', ')}>{#if e.img}<img class="av" src={e.img} alt="" />{/if}{e.name} · {ROUGH_LABEL[e.state]}{e.tags.length ? ` · ${e.tags.map((t) => t.name).join(', ')}` : ''}</span>{/each}
         </div>
       {/if}
     </section>
@@ -211,6 +211,7 @@
 </Dialog>
 
 <style>
+  .chip .av { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; object-position: top; vertical-align: -6px; margin-right: 6px; border: 1px solid var(--danger); }
   .head { display: flex; justify-content: space-between; align-items: end; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
   .banner { margin: 0 0 1rem; border-color: var(--accent-2); }
   .layout { display: grid; grid-template-columns: minmax(300px, 1fr) minmax(320px, 1.3fr); gap: 1rem; align-items: start; }

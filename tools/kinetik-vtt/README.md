@@ -55,6 +55,7 @@ npm run build        # dist/
 | Pfad | Inhalt |
 |---|---|
 | `src/rules/` | Regel-Engine, reine Funktionen ohne DOM: abgeleitete Werte, Clash, Proben, Move-Kosten, NPC |
+| `src/net/pnp.ts` | Brücke zu PenNodePaper (rein, ohne DOM): Fähigkeiten melden, Handouts/Karten/Gegner/NPCs/Musik annehmen, Spielergruppe melden |
 | `src/themes/` | Themes über CSS-Variablen, Schriften |
 | `src/i18n/` | Texte |
 | `src/lib/` | Router, Theme-Zustand |
@@ -73,8 +74,11 @@ npm run build        # dist/
 - M8 Karte und Kampf verknüpft: Gegner aufstellen legt Token und Kampf-Gegner zusammen an (Goons als Einzeltoken einer Gruppe). Im Kampf bewegen sich Spieler per Anfrage (Geisterbild, der SL bestätigt). Der Spieler klickt einen Gegner an und plant Angriff, Durchatmen oder Sammeln mit Attribut, Technik und genutzten Tags. Beim SL entsteht eine Kampfsituation: Erleichtern/Erschweren, Tags streichen, Gift setzen, Bullet Time vergeben (einmal pro Spieler und Runde), freigeben, Würfe, Vorschlag der Folgen (Treffer-Kaskade, Goons, Belohnungen, Kinetik-Marker, Bedrängnis, „gehandelt“) mit Ein-Klick-Anwendung. Gegner greifen per „greift an“ an, der Spieler bekommt eine Verteidigungs-Abfrage (Heldenhafte Gegenwehr möglich). Move-Kosten zahlt der Spieler wie gewohnt nach dem Wurf.
 - M9 Gift (3.11): Gifte mit Stufe und Verzögerung am Bogen und an NPCs, Wirkung am Rundenende („Nächste Runde“ oder „Gift-Runde“), Lähmgift als großer Tag Gelähmt, tödliches Gift macht sterbend, Überlauf bei negativer Energie, Gegenmittel-Probe (MW 7/9/11) per Knopf, Kurze Rast beendet nicht-tödliches Gift. Gift-Moves tragen ihre Verzögerung im Move-Editor und wirken nur, wenn der Treffer den Körper erreicht (Schutz 0 oder Verletzung).
 - M6 SL-Werkzeuge: Kampf-Tab mit Seiten-Initiative und Kinetik-Marker, Bedrängnis-Zähler mit Regelanwendung, NPC-Manager nach NPC-Leiter (Goon-Gruppen, Schläger, Elite, Boss, Nemesis, Ausgeschaltet-Status, Überzahl), öffentliche Kampfanzeige für Spieler, Handouts (Text und Bild) an alle oder einzelne, Sitzung als Datei sichern und laden.
+- M10 PenNodePaper-Brücke: Die Runde lässt sich mit PenNodePaper (Vorbereitungs-App für den SL) koppeln (SL-Bereich → Einstellungen → PenNodePaper-Verbindung: Adresse und Kopplungs-Token). Von dort kommen Handouts (Text und Bild, auf Wunsch sofort an die Spieler), Karten (mit Raster und Tokens) und Bilder als Karten-Hintergrund (ohne Raster), Gegner mit Moves und Porträt, NPCs als Token mit Notiz und Musik-Befehle; die App kennt auch die eigenen Titel. Umgekehrt meldet die VTT, wie Gegner und NPCs aufgebaut sind (aus den Regeldaten abgeleitet), und die Spielercharaktere der laufenden Runde (Konzept, Attribute, Ressourcen, Tags, Moves, Waffen, Porträt, online), damit PenNodePaper sie als Gruppe zeigt. Spielercharaktere werden nur gemeldet, nie überschrieben. Protokoll: `docs/vtt-bridge-spec.md` im PenNodePaper-Projekt.
 - Als Nächstes:, Grafiken, Feinschliff und Deploy (M7).
 
 ## Offene Punkte (TODO)
+
+- **PenNodePaper-Brücke:** Die Verbindung steht nur, solange eine Runde läuft. Beim Datei-Export für den Offline-Import werden Gegner zu Kampf-Gegnern, NPCs erscheinen dort noch nicht als Token (live per Brücke schon). Hex-Raster werden abgelehnt.
 
 - **Kampf auf der Karte, Rest:** Experten-Regel 3.13 (der Spieler nennt nur Ziel, Attribut und Technik, der SL die Reaktion) ist nicht umgesetzt. Tischwürfel (echte Würfel) gibt es in Kampfsituationen nicht, der SL kann nur für Spieler ohne Gerät würfeln. Gift auf Goon-Gruppen wird nicht abgebildet. Überzahl ist ein Stepper an der Verteidigung (Vorgabe: Zahl der Goons). Gift tickt nur, wenn der betroffene Spieler verbunden ist oder lokal geführt wird.

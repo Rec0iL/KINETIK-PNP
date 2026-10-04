@@ -16,6 +16,7 @@
   import RollToast from './ui/RollToast.svelte';
   import DiceOverlay from './dice/DiceOverlay.svelte';
   import MusicRunner from './music/MusicRunner.svelte';
+  import PnpBridge from './net/PnpBridge.svelte';
   import MusicBar from './music/MusicBar.svelte';
   import Credits from './pages/Credits.svelte';
   import CreateStart from './pages/CreateStart.svelte';
@@ -110,6 +111,7 @@
 
 <Rulebook />
 <MusicRunner />
+<PnpBridge />
 <MusicBar />
 <RollToast />
 <DiceOverlay />

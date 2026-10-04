@@ -9,7 +9,7 @@
   import Stepper from '../ui/Stepper.svelte';
   import CombatSidebar from './CombatSidebar.svelte';
   import { rules, type NpcType } from '../rules';
-  import { newNpc, npcStatus } from './combat';
+  import { newNpc, npcStatus, type Npc } from './combat';
 
   let selectedId = $state<string | null>(null);
   let tool = $state<Tool>('move');
@@ -141,12 +141,10 @@
     return [cx, cy];
   }
 
-  /** Gegner aufstellen: Kampf-NPC und Token in einem Schritt. Goon-Gruppen bekommen einen Token je Mitglied. */
-  function addEnemy() {
+  /** Token für einen Kampf-NPC setzen (Goon-Gruppen: ein Token je Mitglied); mit Porträt, falls vorhanden. */
+  function spawnTokens(n: Npc) {
     if (!scene) return;
-    const n = newNpc(uid(), enemyType, enemyName.trim() || undefined, enemyCount);
-    combat.npcs.push(n);
-    const total = n.type === 'goon' ? n.count : 1;
+    const total = n.type === 'goon' ? Math.max(1, n.count) : 1;
     const size = n.type === 'boss' || n.type === 'nemesis' ? 2 : 1;
     const ops: MapOp[] = [];
     let last: Token | null = null;
@@ -155,14 +153,25 @@
       const [x, y] = freeSpot(placed, size);
       placed.push({ x, y, size });
       last = {
-        id: uid(), name: n.type === 'goon' ? `${n.name} ${i + 1}` : n.name, x, y, size, color: npcColor, kind: 'npc', hidden: false, npcId: n.id,
+        id: uid(), name: n.type === 'goon' ? `${n.name} ${i + 1}` : n.name, x, y, size, color: npcColor, kind: 'npc', hidden: false, npcId: n.id, img: n.token,
       };
       ops.push({ op: 'tok', token: last });
     }
     send(...ops);
     if (last) selectedToken = last.id;
+  }
+
+  /** Gegner aufstellen: Kampf-NPC und Token in einem Schritt. Goon-Gruppen bekommen einen Token je Mitglied. */
+  function addEnemy() {
+    if (!scene) return;
+    const n = newNpc(uid(), enemyType, enemyName.trim() || undefined, enemyCount);
+    combat.npcs.push(n);
+    spawnTokens(n);
     enemyName = '';
   }
+
+  /** Kampf-Gegner (z. B. von PenNodePaper übergeben), die auf dieser Karte noch keinen Token haben. */
+  const unplaced = $derived(scene ? combat.npcs.filter((n) => !scene.tokens.some((t) => t.npcId === n.id)) : []);
   function removeToken() {
     if (!token) return;
     const n = npcOf(token);
@@ -250,6 +259,14 @@
               <button class="btn sm danger" onclick={addEnemy}>+ Gegner</button>
             </div>
             <small class="dim">Es entstehen Token und Kampf-Gegner zusammen. Goons: ein Token je Mitglied.</small>
+            {#if unplaced.length}
+              <h3>Aus der Kampfliste</h3>
+              <div class="row">
+                {#each unplaced as n (n.id)}
+                  <button class="btn sm" onclick={() => spawnTokens(n)} title="Token für diesen Gegner auf der Karte setzen">{#if n.token}<img class="mini" src={n.token} alt="" />{/if}+ {n.name}</button>
+                {/each}
+              </div>
+            {/if}
           </div>
           <div class="row npc">
             <input bind:value={npcName} aria-label="Name" placeholder="Neutraler Token" />
@@ -333,6 +350,7 @@
 </div>
 
 <style>
+  .mini { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; vertical-align: -4px; margin-right: 4px; }
   /* Karte nutzt die Höhe des Fensters, die Seitenspalten wachsen mit der Breite. Höhe der Bühne = Fenster minus Kopf und Tabs. */
   .gmmap { --stage-h: clamp(420px, calc(100dvh - 215px), 1800px); display: grid; grid-template-columns: clamp(280px, 17vw, 400px) minmax(0, 1fr); gap: 1rem; align-items: start; }
   .gmmap:has(.combatcol) { grid-template-columns: clamp(280px, 15vw, 380px) minmax(0, 1fr) clamp(340px, 22vw, 480px); }

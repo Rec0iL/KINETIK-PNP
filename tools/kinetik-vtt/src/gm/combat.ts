@@ -27,6 +27,19 @@ export interface Npc {
   poisons: Poison[];
   /** Sterbend an tödlichem Gift: ausgeschaltet. */
   dying?: boolean;
+  /** Porträt (JPEG-Data-URL, ca. 256 px) für die Gegner-Karte. */
+  img?: string;
+  /** Kleines Porträt (ca. 96 px) für Token und die Spieleransicht. */
+  token?: string;
+  /** Besondere Fähigkeiten des Gegners (frei beschrieben). */
+  moves?: NpcMove[];
+  /** Herkunft, wenn von PenNodePaper übergeben (`pnp:<id>`): erneutes Senden aktualisiert statt zu duplizieren. */
+  src?: string;
+}
+
+export interface NpcMove {
+  name: string;
+  text: string;
 }
 
 export interface CombatState {
@@ -170,6 +183,8 @@ export interface PublicEnemy {
   state: RoughState;
   tags: { name: string; size: 'klein' | 'gross' }[];
   goon: boolean;
+  /** Kleines Porträt, falls vorhanden. */
+  img?: string;
 }
 
 /** Was Spieler vom Kampf sehen. */
@@ -193,7 +208,7 @@ export function publicCombat(c: CombatState): PublicCombat {
     enemies: c.showEnemies
       ? c.npcs.filter((n) => !n.hidden).map((n) => ({
         id: n.id, name: n.type === 'goon' ? `${n.name} (${n.count})` : n.name, out: npcStatus(n).out, state: roughState(n),
-        tags: n.tags.map((t) => ({ name: t, size: tagSize(t) })), goon: n.type === 'goon',
+        tags: n.tags.map((t) => ({ name: t, size: tagSize(t) })), goon: n.type === 'goon', img: n.token,
       }))
       : [],
     bulletUsed: Object.entries(c.bulletTime).filter(([, r]) => r === c.round).map(([id]) => id),

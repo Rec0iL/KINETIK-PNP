@@ -7,6 +7,8 @@
   import { pushToast } from '../ui/toasts.svelte';
   import { navigate } from '../lib/router.svelte';
   import type { Visibility } from '../net/protocol';
+  import { settings } from '../lib/settings.svelte';
+  import { pnp } from '../net/pnp.svelte';
 
   let fileInput = $state<HTMLInputElement>();
   let pick = $state('');
@@ -72,6 +74,22 @@
         <button class="btn danger" onclick={async () => { if (confirm('Runde beenden und alle Daten der Sitzung (Spieler, Notizen) löschen?')) { await endSession(); navigate('/sl'); } }}>Runde beenden und vergessen</button>
       </div>
       <p class="dim">Pausieren trennt alle Spieler, die Sitzung bleibt in diesem Browser gespeichert und lässt sich mit demselben Raumcode fortsetzen.</p>
+    </section>
+
+    <section class="panel">
+      <h2>PenNodePaper-Verbindung</h2>
+      <p class="dim">Verbindet diese Runde mit PenNodePaper, deiner Vorbereitungs-App: Handouts, Karten, Gegner und NPCs lassen sich von dort direkt in die Runde schicken, und die App kennt deine Musik (auch eigene Titel).</p>
+      <label class="check"><input type="checkbox" bind:checked={settings.pnpEnabled} /> Verbindung halten, solange die Runde läuft</label>
+      <div class="row">
+        <label class="field">Adresse<input bind:value={settings.pnpUrl} placeholder="ws://127.0.0.1:4317/bridge" spellcheck="false" /></label>
+        <label class="field">Kopplungs-Token<input type="password" bind:value={settings.pnpToken} placeholder="aus PenNodePaper: Einstellungen → VTT link" autocomplete="off" /></label>
+      </div>
+      <div class="row">
+        {#if pnp.status === 'connected'}<span class="chip accent">verbunden · {pnp.campaign}</span>
+        {:else if pnp.status === 'connecting'}<span class="chip amber">verbinde …</span>
+        {:else if pnp.status === 'error'}<span class="chip danger">{pnp.error}</span>
+        {:else}<span class="chip">{settings.pnpEnabled ? 'wartet auf eine laufende Runde' : 'aus'}</span>{/if}
+      </div>
     </section>
 
     <section class="panel">

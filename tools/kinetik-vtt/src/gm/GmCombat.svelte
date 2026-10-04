@@ -1,6 +1,8 @@
 <script lang="ts">
     import { rules, ueberzahlBonus, newPoison, describePoison, antidoteMw, GIFT, GIFT_LEVELS, MAX_GIFT_DELAY, type GiftLevel, type NpcType, type ZoneKey } from '../rules';
-  import { gm, patchPlayer, partyFor, advanceRound, poisonRound } from '../net/gm.svelte';
+  import { gm, patchPlayer, partyFor, advanceRound, poisonRound, gmMapOps } from '../net/gm.svelte';
+  import { imageToDataUrl, shrinkDataUrl } from '../lib/image';
+  import { pushToast } from '../ui/toasts.svelte';
   import {
     startCombat, endCombat, otherSide, bedraengnisHit, newNpc, npcNormalHit, npcInjury, npcStatus, type Npc, type Side,
   } from './combat';
@@ -40,6 +42,31 @@
     combat.npcs.push(n);
     newName = '';
   }
+  // Porträt: große Variante für die Karte, kleine für Token und Spieleransicht. Vorhandene Token ziehen mit.
+  let portraitInput = $state<HTMLInputElement>();
+  let portraitFor: Npc | null = null;
+  function pickPortrait(n: Npc) { portraitFor = n; portraitInput?.click(); }
+  async function onPortrait(e: Event & { currentTarget: HTMLInputElement }) {
+    const f = e.currentTarget.files?.[0];
+    const n = portraitFor;
+    e.currentTarget.value = '';
+    if (!f || !n) return;
+    try {
+      n.img = await imageToDataUrl(f, 256);
+      n.token = await shrinkDataUrl(n.img, 96);
+      syncTokenImages(n);
+    } catch { pushToast('Das Bild konnte nicht gelesen werden.', 'warn'); }
+  }
+  function clearPortrait(n: Npc) { n.img = undefined; n.token = undefined; syncTokenImages(n); }
+  function syncTokenImages(n: Npc) {
+    for (const sc of gm.session!.scenes) {
+      const ops = sc.tokens.filter((t) => t.npcId === n.id).map((t) => ({ op: 'tok' as const, token: { ...$state.snapshot(t), img: n.token } }));
+      if (ops.length) gmMapOps(sc.id, ops);
+    }
+  }
+  function addMove(n: Npc) { n.moves = [...(n.moves ?? []), { name: '', text: '' }]; }
+  function removeMove(n: Npc, i: number) { n.moves = (n.moves ?? []).filter((_, j) => j !== i); }
+
   function removeNpc(id: string) { combat.npcs = combat.npcs.filter((n) => n.id !== id); delete combat.done[id]; }
 
   function goonHit(playerId: string) {
@@ -145,6 +172,9 @@
       {@const st = npcStatus(n)}
       <article class="panel npc" class:out={st.out} class:hid={n.hidden}>
         <div class="row">
+          <button class="av" onclick={() => pickPortrait(n)} title={n.img ? 'Porträt ändern' : 'Porträt hinzufügen'} aria-label="Porträt">
+            {#if n.img}<img src={n.img} alt="" />{:else}<span>＋</span>{/if}
+          </button>
           <input class="nm" bind:value={n.name} aria-label="Name" />
           <span class="chip">{defaultsOf(n.type).name}</span>
           {#if st.out}<span class="chip danger" title={st.reason}>ausgeschaltet</span>{/if}
@@ -193,6 +223,16 @@
           </div>
         {/if}
         <label class="field">Notiz<input bind:value={n.note} placeholder="Verhalten, Schwäche, Beute" /></label>
+        <details class="moves" open={!!n.moves?.length}>
+          <summary>Moves &amp; Fähigkeiten ({n.moves?.length ?? 0}){#if n.img}<button class="btn sm ghost" onclick={(e) => { e.preventDefault(); clearPortrait(n); }} title="Porträt entfernen">Porträt entfernen</button>{/if}</summary>
+          {#each n.moves ?? [] as m, i}
+            <div class="mv">
+              <div class="row"><input class="mvn" bind:value={m.name} placeholder="Name" aria-label="Move-Name" /><button class="btn sm icon ghost" onclick={() => removeMove(n, i)} aria-label="Move entfernen">×</button></div>
+              <textarea bind:value={m.text} rows="2" placeholder="Was passiert, wenn der Gegner das einsetzt?" aria-label="Move-Wirkung"></textarea>
+            </div>
+          {/each}
+          <button class="btn sm" onclick={() => addMove(n)}>+ Move</button>
+        </details>
         <div class="row">
           <button class="btn sm primary" onclick={() => rollNpc(n)} title="2W6 + Bonus (+ Überzahl)">Würfeln {fmt(n.bonus + ueberzahlBonus(attackers))}</button>
           <button class="btn sm" onclick={() => hit(n)} title={n.type === 'goon' ? 'Ein Goon fällt' : 'Normaler Treffer: erst Schutz, dann Willenskraft'}>{n.type === 'goon' ? 'Goon fällt' : 'Treffer'}</button>
@@ -205,6 +245,8 @@
   </div>
   {#if !combat.npcs.length}<p class="dim">Noch keine Gegner. Füge oben Goon-Gruppen, Schläger, Elite, Bosse oder Nemesis hinzu, mit den Werten aus der NPC-Leiter (3.7).</p>{/if}
 </div>
+
+<input type="file" accept="image/*" bind:this={portraitInput} onchange={onPortrait} hidden />
 
 <style>
   .head .sides { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
@@ -229,6 +271,14 @@
   .npc.out { opacity: 0.55; }
   .npc.hid { border-left-style: dashed; }
   .nm { font: 400 1.5rem var(--font-display); letter-spacing: 0.05em; flex: 1; min-width: 120px; }
+  .av { width: 56px; height: 56px; flex: none; padding: 0; border: 1px solid var(--line); background: var(--raised); color: var(--ink-dim); font-size: 1.4rem; cursor: pointer; overflow: hidden; }
+  .av img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .av:hover { border-color: var(--accent); }
+  .moves { border: 1px solid var(--line); padding: 0.3rem 0.5rem; }
+  .moves summary { cursor: pointer; font: 600 0.78rem var(--font-head); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim); display: flex; justify-content: space-between; align-items: center; }
+  .mv { display: grid; gap: 4px; margin: 0.4rem 0; }
+  .mvn { flex: 1; font-weight: 600; }
+  .mv textarea { width: 100%; resize: vertical; }
   .stats { display: flex; gap: 0.8rem; flex-wrap: wrap; }
   .s { display: grid; gap: 3px; font: 600 0.7rem var(--font-head); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); }
   .pair { display: flex; align-items: center; gap: 4px; }
