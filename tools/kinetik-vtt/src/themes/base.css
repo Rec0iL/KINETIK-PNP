@@ -27,8 +27,8 @@ body::before {
 body::after {
   content: '';
   position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+  /* Schwarz mit Transparenz: normales Überblenden sieht wie multiply aus, kostet aber nicht bei jeder Bewegung darunter */
   background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, var(--scanlines)) 0 1px, transparent 1px 3px);
-  mix-blend-mode: multiply;
 }
 
 h1, h2, h3, h4 { margin: 0; font-family: var(--font-head); font-weight: 600; letter-spacing: var(--head-tracking); text-transform: var(--head-case); color: var(--ink-strong); }

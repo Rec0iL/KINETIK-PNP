@@ -11,6 +11,7 @@
   import Gm from './pages/Gm.svelte';
   import SessionBar from './ui/SessionBar.svelte';
   import Toasts from './ui/Toasts.svelte';
+  import RainFx from './ui/RainFx.svelte';
   import CharacterPage from './pages/CharacterPage.svelte';
   import RollPanel from './sheet/RollPanel.svelte';
   import RollToast from './ui/RollToast.svelte';
@@ -57,6 +58,8 @@
     { href: '#/sl', key: 'nav.gm', names: ['gm'] },
   ];
 </script>
+
+<RainFx />
 
 <header class="top" bind:this={headerEl}>
   <a class="brand" href="#/" aria-label={t('app.name')}>

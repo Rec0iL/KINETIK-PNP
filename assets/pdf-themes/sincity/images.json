@@ -4,7 +4,11 @@
     "seed": 1584312394,
     "kind": "cover",
     "title": "Cover: KINETIK",
-    "include_style": true
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "background": {
     "prompt": "unused (not shown in the web version)",
@@ -29,7 +33,11 @@
     "seed": 1548633836,
     "kind": "chapter",
     "title": "Der Charakter",
-    "include_style": true
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-2-1-die-attribute-2w6-system": {
     "prompt": "Inside a grand museum gallery flanked by marble statues, an athletic female martial artist executes a powerful flying kick. She violently hurls a tactical security guard in modern riot gear and ballistic helmet backwards through a shattering glass display case, sending glass fragments flying across the floor. A red sash flows from her waist.",
@@ -47,21 +55,36 @@
     "seed": 1914184727,
     "kind": "section",
     "title": "2.2 Das Titel-System (Level 1 bis 10)",
-    "include_style": true
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-2-3-ressourcen-verletzungen": {
-    "prompt": "In a dark, flooded subway corridor, an exhausted tactical operative slumps against a cracked concrete pillar after a firefight. She tightly binds a wounded forearm with a vivid red cloth bandage, spent shell casings scattered across the wet floor. Wide ground-level shot emphasizing physical trauma.",
-    "seed": 1569282130,
+    "prompt": "A wide landscape view of an expansive rain-slicked industrial rooftop. A battered street fighter drops to one knee beneath an overcast night sky, panting with raw exhaustion as steam rises from his bruised shoulders. He clenches his teeth through the pain of cracked ribs, wearing a single vivid red fingerless glove on his supporting fist.",
+    "seed": 855154566,
     "kind": "section",
     "title": "2.3 Ressourcen & Verletzungen",
-    "include_style": true
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-2-4-charaktererschaffung": {
     "prompt": "Inside a dim safehouse room, a focused female sniper sits at a bare table methodically assembling the receiver of a disassembled rifle. Moonlight cuts across her calm face, with a solitary bright red lighter resting beside neatly arranged weapon components. Wide cinematic interior shot.",
     "seed": 776041360,
     "kind": "section",
     "title": "2.4 Charaktererschaffung",
-    "include_style": true
+    "include_style": true,
+    "qc": {
+      "fits": false,
+      "problems": [
+        "Doppelter roter Farbakzent auf dem Tisch (zwei rote Objekte/Feuerzeuge statt eines einzelnen Akzents)",
+        "Angedeutete unleserliche Text- bzw. Schriftartefakte auf dem Zettel an der linken Wand"
+      ]
+    }
   },
   "sec-2-5-waffen-deckung": {
     "prompt": "A trench-coated operative ducks behind a bullet-riddled car door in an underground parking garage as incoming rounds shatter safety glass into flying shards. Returning fire around the smoking hood, his handgun casts a sharp red laser beam toward the darkness. Wide Dutch-angle action shot.",
