@@ -24,7 +24,7 @@
 <style>
   dialog { border: 0; padding: 0; background: transparent; color: var(--ink); max-width: min(560px, 94vw); width: 100%; margin: auto; }
   dialog.wide { max-width: min(900px, 96vw); }
-  dialog::backdrop { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(3px); }
+  dialog::backdrop { background: var(--scrim); backdrop-filter: blur(3px); }
   .inner { background: var(--panel-solid); border: 1px solid var(--accent-line); box-shadow: var(--glow); max-height: 90vh; overflow: auto; }
   .head { margin-bottom: 0.8rem; }
 </style>

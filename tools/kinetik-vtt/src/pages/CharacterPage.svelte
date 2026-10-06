@@ -104,7 +104,7 @@
   .mini { display: flex; align-items: center; gap: 0.4rem; font: 600 0.78rem var(--font-head); letter-spacing: 0.12em; color: var(--ink-dim); --c: var(--accent); }
   .mini.amber { --c: var(--accent-2); }
   .mini b { font: 500 0.82rem var(--font-mono); color: var(--ink); }
-  .mini .b { width: 70px; height: 8px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--line-strong); }
+  .mini .b { width: 70px; height: 8px; background: var(--track-bg); border: 1px solid var(--line-strong); }
   .mini i { display: block; height: 100%; background: var(--c); box-shadow: 0 0 8px var(--c); transition: width 0.4s; }
   .mom b { color: var(--accent-2); }
   .content { padding-top: 1rem; }

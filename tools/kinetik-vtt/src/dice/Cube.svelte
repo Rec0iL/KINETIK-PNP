@@ -76,12 +76,12 @@
   .cube { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
   .face {
     position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 14%;
-    background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 22%, #0c1016), #05070a);
-    border: 2px solid var(--accent); border-radius: 14%; backface-visibility: hidden;
+    background: linear-gradient(145deg, var(--die-a), var(--die-b));
+    border: 2px solid var(--accent); border-radius: var(--die-radius); backface-visibility: hidden;
     box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.7), 0 0 10px var(--accent-soft);
   }
   .face i { display: block; border-radius: 50%; margin: 14%; }
-  .face i.on { background: var(--ink-strong); box-shadow: 0 0 8px var(--accent), inset 0 0 3px rgba(0, 0, 0, 0.4); }
+  .face i.on { background: var(--die-pip); box-shadow: 0 0 8px var(--accent), inset 0 0 3px rgba(0, 0, 0, 0.4); }
   .front { transform: translateZ(calc(var(--s) / 2)); }
   .back { transform: rotateY(180deg) translateZ(calc(var(--s) / 2)); }
   .right { transform: rotateY(90deg) translateZ(calc(var(--s) / 2)); }

@@ -3,7 +3,7 @@
   import { newTitle, uid, type Character } from '../model/character';
   import { computeSheet } from '../model/sheet';
   import { imageToDataUrl } from '../lib/image';
-  import { PORTRAIT_PLACEHOLDER } from '../lib/art';
+  import { portraitPlaceholder } from '../lib/art';
   import Stepper from '../ui/Stepper.svelte';
   import Meter from '../ui/Meter.svelte';
   import Pips from '../ui/Pips.svelte';
@@ -75,7 +75,7 @@
   <!-- Identität -->
   <section class="panel ident">
     <label class="portrait" title="Bild wählen">
-      {#if char.portrait}<img src={char.portrait} alt="Porträt" />{:else}<img class="ph" src={PORTRAIT_PLACEHOLDER} alt="" /><span class="hintlbl">Bild wählen</span>{/if}
+      {#if char.portrait}<img src={char.portrait} alt="Porträt" />{:else}<img class="ph" src={portraitPlaceholder()} alt="" /><span class="hintlbl">Bild wählen</span>{/if}
       <input type="file" accept="image/*" onchange={onPortrait} class="sr-only" />
       {#if char.portrait}
         <button type="button" class="btn sm icon x" onclick={(e) => { e.preventDefault(); char.portrait = undefined; }} aria-label="Bild entfernen">✕</button>
@@ -234,7 +234,7 @@
   .resrow { display: grid; grid-template-columns: minmax(0, 2fr) minmax(250px, 1fr); gap: 1rem; align-items: start; }
   @media (max-width: 1050px) { .resrow { grid-template-columns: 1fr; } }
   .ident { display: grid; grid-template-columns: 150px 1fr; gap: 1.1rem; }
-  .portrait { position: relative; width: 150px; height: 190px; border: 1px dashed var(--line-strong); display: grid; place-items: center; color: var(--ink-dim); cursor: pointer; overflow: hidden; background: rgba(0, 0, 0, 0.35); font: 600 0.8rem var(--font-head); letter-spacing: 0.15em; text-transform: uppercase; }
+  .portrait { position: relative; width: 150px; height: 190px; border: 1px dashed var(--line-strong); display: grid; place-items: center; color: var(--ink-dim); cursor: pointer; overflow: hidden; background: var(--field-bg); font: 600 0.8rem var(--font-head); letter-spacing: 0.15em; text-transform: uppercase; }
   .portrait:hover { border-color: var(--accent); }
   .portrait img { width: 100%; height: 100%; object-fit: cover; }
   .portrait img.ph { opacity: 0.45; filter: saturate(0.6); }
@@ -277,7 +277,7 @@
   th { font: 600 0.78rem var(--font-head); letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); text-align: center; padding: 0.4em 0.6em; border-bottom: 1px solid var(--accent-line); }
   th:first-child, td:first-child { text-align: left; font-family: var(--font-body); }
   td { text-align: center; padding: 0.45em 0.6em; border-bottom: 1px solid var(--line); }
-  tr:nth-child(even) td { background: rgba(255, 255, 255, 0.025); }
+  tr:nth-child(even) td { background: var(--stripe); }
   td.lead { color: var(--accent-2); font-weight: 700; }
   tr.base td { color: var(--ink-dim); }
 

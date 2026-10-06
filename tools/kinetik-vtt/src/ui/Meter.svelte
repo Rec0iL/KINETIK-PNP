@@ -48,7 +48,7 @@
   .num { font: 400 1.6rem/1 var(--font-display); letter-spacing: 0.04em; color: var(--ink-strong); }
   .num b { color: var(--c); font-weight: 400; text-shadow: 0 0 12px color-mix(in srgb, var(--c) 50%, transparent); }
   .slash { color: var(--ink-dim); margin: 0 0.12em; }
-  .track { position: relative; height: 14px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--line-strong); clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 100%, 0 100%); }
+  .track { position: relative; height: 14px; background: var(--track-bg); border: 1px solid var(--line-strong); clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 100%, 0 100%); }
   .fill { height: 100%; background: linear-gradient(90deg, color-mix(in srgb, var(--c) 55%, #000), var(--c)); box-shadow: 0 0 14px color-mix(in srgb, var(--c) 60%, transparent); transition: width 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
   .ticks { position: absolute; inset: 0; pointer-events: none; }
   .ticks i { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(0, 0, 0, 0.55); }

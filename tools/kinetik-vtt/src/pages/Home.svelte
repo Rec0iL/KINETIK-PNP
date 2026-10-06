@@ -1,8 +1,7 @@
 <script lang="ts">
   import { t, type Key } from '../i18n';
+  import { art } from '../lib/art';
 
-  // Absolute URL: in url() einer Stylesheet-Variable würde sonst relativ zur CSS-Datei aufgelöst.
-  const base = new URL('.', document.baseURI).href;
   const cards: { href: string; title: Key; text: Key; cta: Key; accent: 'cyan' | 'amber'; soon?: boolean; no: string; art: string }[] = [
     { href: '#/charaktere', title: 'home.player.title', text: 'home.player.text', cta: 'home.player.cta', accent: 'cyan', no: '01', art: 'card-player' },
     { href: '#/beitreten', title: 'home.join.title', text: 'home.join.text', cta: 'home.join.cta', accent: 'cyan', no: '02', art: 'card-join' },
@@ -11,7 +10,7 @@
   ];
 </script>
 
-<div class="herobg" style:--img="url({base}art/hero.webp)" aria-hidden="true"></div>
+<div class="herobg" style:--img="url({art('hero')})" aria-hidden="true"></div>
 <section class="hero">
   <span class="kicker">{t('app.kicker')}</span>
   <h1 class="glitch" data-text={t('app.name')}>{t('app.name')}</h1>
@@ -20,7 +19,7 @@
 
 <section class="cards">
   {#each cards as c}
-    <a class="card panel" class:amber={c.accent === 'amber'} href={c.href} style:--img="url({base}art/{c.art}.webp)">
+    <a class="card panel" class:amber={c.accent === 'amber'} href={c.href} style:--img="url({art(c.art)})">
       <span class="bg" aria-hidden="true"></span>
       <span class="no">{c.no}</span>
       <h2>{t(c.title)}</h2>
@@ -41,7 +40,7 @@
   }
   :global(main) { position: relative; }
   .hero { padding: clamp(2rem, 8vw, 5rem) 0 2.2rem; display: grid; gap: 0.9rem; justify-items: start; }
-  .hero h1 { font-size: clamp(4rem, 17vw, 11rem); letter-spacing: 0.06em; line-height: 0.85; }
+  .hero h1 { font-size: var(--hero-size); letter-spacing: 0.06em; line-height: 0.85; }
   .tag { font: 500 1.2rem var(--font-head); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-dim); margin: 0; }
 
   .glitch { position: relative; display: inline-block; }
@@ -65,7 +64,7 @@
   }
 
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.1rem; }
-  .bg { position: absolute; inset: 0; z-index: -1; background: linear-gradient(to top, var(--panel-solid) 12%, rgba(8, 10, 14, 0.55) 70%, rgba(8, 10, 14, 0.2)), var(--img) center / cover no-repeat; opacity: 0.9; pointer-events: none; }
+  .bg { position: absolute; inset: 0; z-index: -1; background: linear-gradient(to top, var(--panel-solid) 12%, var(--card-fade-a) 70%, var(--card-fade-b)), var(--img) center / cover no-repeat; opacity: 0.9; pointer-events: none; }
   .card { display: grid; isolation: isolate; gap: 0.7rem; align-content: start; color: var(--ink); text-decoration: none; min-height: 250px; padding: 1.3rem; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; }
   .card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: var(--glow); text-decoration: none; }
   .card.amber::before, .card.amber::after { border-color: var(--accent-2); }

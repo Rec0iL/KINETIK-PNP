@@ -5,7 +5,7 @@
   import { downloadJson, exportCharacter, exportLibrary, fileNameFor, parseImport, ImportError } from '../model/io';
   import { computeSheet } from '../model/sheet';
   import { navigate } from '../lib/router.svelte';
-  import { PORTRAIT_PLACEHOLDER } from '../lib/art';
+  import { portraitPlaceholder } from '../lib/art';
 
   let fileInput = $state<HTMLInputElement>();
   let message = $state('');
@@ -84,7 +84,7 @@
       {@const s = computeSheet(c)}
       <article class="panel card">
         <a class="open" href={`#/charakter/${c.id}`} aria-label={`${c.name} öffnen`}>
-          <div class="pic">{#if c.portrait}<img src={c.portrait} alt="" />{:else}<img class="ph" src={PORTRAIT_PLACEHOLDER} alt="" />{/if}</div>
+          <div class="pic">{#if c.portrait}<img src={c.portrait} alt="" />{:else}<img class="ph" src={portraitPlaceholder()} alt="" />{/if}</div>
           <div class="info">
             <h2>{c.name}</h2>
             {#if c.alias}<span class="kicker">„{c.alias}“</span>{/if}
@@ -118,7 +118,7 @@
   .card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: var(--glow); }
   .open { display: grid; grid-template-columns: 82px 1fr; gap: 0.9rem; color: inherit; text-decoration: none; }
   .open:hover { text-decoration: none; }
-  .pic { width: 82px; height: 104px; background: linear-gradient(160deg, var(--accent-soft), rgba(0, 0, 0, 0.5)); border: 1px solid var(--line-strong); display: grid; place-items: center; overflow: hidden; }
+  .pic { width: 82px; height: 104px; background: linear-gradient(160deg, var(--accent-soft), var(--track-bg)); border: 1px solid var(--line-strong); display: grid; place-items: center; overflow: hidden; }
   .pic img { width: 100%; height: 100%; object-fit: cover; }
   .pic img.ph { opacity: 0.6; filter: saturate(0.7); }
   .info { display: grid; gap: 0.25rem; align-content: start; min-width: 0; }

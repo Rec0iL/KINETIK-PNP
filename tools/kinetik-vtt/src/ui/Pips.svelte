@@ -33,7 +33,7 @@
   .slash { color: var(--ink-dim); margin: 0 0.12em; }
   .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .pip {
-    width: 30px; height: 30px; cursor: pointer; padding: 0; background: rgba(0, 0, 0, 0.45);
+    width: 30px; height: 30px; cursor: pointer; padding: 0; background: var(--track-bg);
     border: 2px solid var(--accent-2); transform: rotate(45deg) scale(0.82);
     transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
   }

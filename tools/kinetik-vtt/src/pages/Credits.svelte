@@ -26,7 +26,7 @@
 
   <section class="panel">
     <h2>Schriften</h2>
-    <p class="dim">Barlow, Barlow Condensed, Bebas Neue und Oswald (Google Fonts), SIL Open Font License 1.1.</p>
+    <p class="dim">Barlow, Barlow Condensed, Bebas Neue, Oswald, Press Start 2P, Silkscreen, VT323, Big Shoulders, Special Elite, Tektur, Noto Serif SC, Bangers, Rye, Arvo, Shippori Mincho, Zen Kaku Gothic New und Courier Prime (Google Fonts), SIL Open Font License 1.1.</p>
   </section>
 
   <section class="panel">

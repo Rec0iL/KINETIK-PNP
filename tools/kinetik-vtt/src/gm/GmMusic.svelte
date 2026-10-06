@@ -109,7 +109,7 @@
 <style>
   .titles { display: grid; }
   .t { font: 400 1.8rem/1 var(--font-display); letter-spacing: 0.05em; color: var(--accent); }
-  .seek { height: 12px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--line-strong); cursor: pointer; margin: 0.6rem 0 0.3rem; }
+  .seek { height: 12px; background: var(--track-bg); border: 1px solid var(--line-strong); cursor: pointer; margin: 0.6rem 0 0.3rem; }
   .seek i { display: block; height: 100%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
   .opts { margin-top: 0.8rem; align-items: end; }
   .vol { min-width: 200px; flex: 1; }

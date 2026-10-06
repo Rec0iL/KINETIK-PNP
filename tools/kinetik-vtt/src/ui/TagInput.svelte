@@ -21,7 +21,7 @@
 </div>
 
 <style>
-  .ti { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; padding: 4px; background: rgba(0, 0, 0, 0.35); border: 1px solid var(--line); min-height: 38px; }
+  .ti { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; padding: 4px; background: var(--field-bg); border: 1px solid var(--line); min-height: 38px; }
   .ti:focus-within { border-color: var(--accent); }
   .ti input { flex: 1; min-width: 9em; border: 0; background: transparent; min-height: 28px; padding: 0.2em 0.4em; }
   .ti input:focus { box-shadow: none; }

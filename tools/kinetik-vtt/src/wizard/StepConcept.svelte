@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Character } from '../model/character';
   import { imageToDataUrl } from '../lib/image';
-  import { PORTRAIT_PLACEHOLDER } from '../lib/art';
+  import { portraitPlaceholder } from '../lib/art';
 
   let { char }: { char: Character } = $props();
 
@@ -25,7 +25,7 @@
     <small class="dim">Das Titel-Level misst den Rang innerhalb des Settings, nicht eine absolute Stärke. Frag den Tisch, wie hoch die Decke der Welt liegt.</small>
   </div>
   <label class="portrait" title="Bild wählen">
-    {#if char.portrait}<img src={char.portrait} alt="Porträt" />{:else}<img class="ph" src={PORTRAIT_PLACEHOLDER} alt="" /><span>Porträt wählen (optional)</span>{/if}
+    {#if char.portrait}<img src={char.portrait} alt="Porträt" />{:else}<img class="ph" src={portraitPlaceholder()} alt="" /><span>Porträt wählen (optional)</span>{/if}
     <input type="file" accept="image/*" onchange={onPortrait} class="sr-only" />
   </label>
 </div>
@@ -34,7 +34,7 @@
   .grid2 { display: grid; grid-template-columns: 1fr 200px; gap: 1.2rem; align-items: start; }
   .intro { margin: 0; }
   .grow { flex: 1; min-width: 150px; }
-  .portrait { position: relative; width: 200px; height: 250px; border: 1px dashed var(--line-strong); display: grid; place-items: end center; cursor: pointer; overflow: hidden; background: rgba(0, 0, 0, 0.35); font: 600 0.78rem var(--font-head); letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink); }
+  .portrait { position: relative; width: 200px; height: 250px; border: 1px dashed var(--line-strong); display: grid; place-items: end center; cursor: pointer; overflow: hidden; background: var(--field-bg); font: 600 0.78rem var(--font-head); letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink); }
   .portrait:hover { border-color: var(--accent); }
   .portrait img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .portrait img.ph { opacity: 0.45; filter: saturate(0.6); }

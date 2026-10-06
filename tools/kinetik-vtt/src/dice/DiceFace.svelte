@@ -18,11 +18,11 @@
 <style>
   .die {
     display: inline-grid; place-items: center; width: var(--s); height: var(--s); position: relative;
-    background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 14%, #0a0d12), #05070a);
+    background: linear-gradient(145deg, var(--die-a), var(--die-b));
     border: 2px solid var(--accent); box-shadow: 0 0 14px var(--accent-soft), inset 0 0 12px rgba(0, 0, 0, 0.6);
-    border-radius: 12%; color: var(--accent);
+    border-radius: var(--die-radius); color: var(--accent);
   }
-  .d6 { border-radius: 16%; }
+  .d6 { border-radius: var(--die-radius); }
   .animate { animation: tumble 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) var(--d) both; }
   @keyframes tumble {
     0% { transform: translateY(-40px) rotate(-360deg) scale(0.4); opacity: 0; }
@@ -31,7 +31,7 @@
   }
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); width: 70%; height: 70%; gap: 2px; }
   .grid i { display: block; border-radius: 50%; margin: 12%; }
-  .grid i.on { background: var(--ink-strong); box-shadow: 0 0 6px var(--accent); }
-  .num { font: 400 calc(var(--s) * 0.5)/1 var(--font-display); color: var(--ink-strong); }
+  .grid i.on { background: var(--die-pip); box-shadow: 0 0 6px var(--accent); }
+  .num { font: 400 calc(var(--s) * 0.5)/1 var(--font-display); color: var(--die-pip); }
   .sd { position: absolute; bottom: 2px; right: 4px; font: 600 0.55rem var(--font-mono); opacity: 0.6; }
 </style>

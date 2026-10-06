@@ -126,7 +126,7 @@
   .top {
     position: sticky; top: 0; z-index: 50;
     display: flex; align-items: center; gap: 1.2rem; padding: 0.55rem max(16px, 3vw);
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.35));
+    background: var(--header-bg);
     border-bottom: 1px solid var(--line); backdrop-filter: blur(10px);
   }
   .brand { display: flex; align-items: center; gap: 0.6rem; color: var(--ink-strong); text-decoration: none; }

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PlayerInfo } from '../net/protocol';
   import type { Snippet } from 'svelte';
-  import { PORTRAIT_PLACEHOLDER } from '../lib/art';
+  import { portraitPlaceholder } from '../lib/art';
 
   let { p, me = false, onopen, children }: { p: PlayerInfo; me?: boolean; onopen?: () => void; children?: Snippet } = $props();
   const v = $derived(p.vitals);
@@ -9,7 +9,7 @@
 </script>
 
 <article class="pc panel flat" class:off={!p.connected} class:me>
-  <div class="pic">{#if p.portrait}<img src={p.portrait} alt="" />{:else}<img class="ph" src={PORTRAIT_PLACEHOLDER} alt="" />{/if}</div>
+  <div class="pic">{#if p.portrait}<img src={p.portrait} alt="" />{:else}<img class="ph" src={portraitPlaceholder()} alt="" />{/if}</div>
   <div class="main">
     <div class="row top">
       <b class="nm">{p.characterName || p.name}</b>{#if p.alias}<span class="dim">„{p.alias}“</span>{/if}
@@ -44,7 +44,7 @@
   .pc { display: grid; grid-template-columns: 64px 1fr; gap: 0.8rem; padding: 0.7rem; border-left: 3px solid var(--accent); }
   .pc.me { border-left-color: var(--accent-2); }
   .pc.off { opacity: 0.6; border-left-color: var(--line-strong); }
-  .pic { width: 64px; height: 82px; background: linear-gradient(160deg, var(--accent-soft), rgba(0, 0, 0, 0.5)); border: 1px solid var(--line-strong); display: grid; place-items: center; overflow: hidden; }
+  .pic { width: 64px; height: 82px; background: linear-gradient(160deg, var(--accent-soft), var(--track-bg)); border: 1px solid var(--line-strong); display: grid; place-items: center; overflow: hidden; }
   .pic img { width: 100%; height: 100%; object-fit: cover; }
   .pic img.ph { opacity: 0.55; filter: saturate(0.6); }
   .main { display: grid; gap: 0.35rem; min-width: 0; align-content: start; }
@@ -53,7 +53,7 @@
   .bars { display: grid; gap: 4px; }
   .b { display: grid; grid-template-columns: 24px 1fr 52px; gap: 6px; align-items: center; font: 600 0.72rem var(--font-head); letter-spacing: 0.1em; color: var(--ink-dim); --c: var(--accent); }
   .b.amber { --c: var(--accent-2); }
-  .t { height: 8px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--line-strong); }
+  .t { height: 8px; background: var(--track-bg); border: 1px solid var(--line-strong); }
   .t i { display: block; height: 100%; background: var(--c); box-shadow: 0 0 8px var(--c); transition: width 0.4s; }
   em { font: normal 500 0.78rem var(--font-mono); color: var(--ink); text-align: right; }
   .chips { display: flex; flex-wrap: wrap; gap: 4px; }

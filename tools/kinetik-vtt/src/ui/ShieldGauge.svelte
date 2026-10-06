@@ -40,7 +40,7 @@
   .shield { position: relative; width: 190px; height: 200px; --c: var(--accent); }
   .shield.over { --c: var(--warn); }
   svg { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 0 14px color-mix(in srgb, var(--c) 40%, transparent)); }
-  .body { fill: rgba(0, 0, 0, 0.55); }
+  .body { fill: var(--track-bg); }
   .level { fill: color-mix(in srgb, var(--c) 38%, transparent); transition: all 0.4s; }
   .rim { fill: none; stroke: var(--c); stroke-width: 3; stroke-linejoin: round; }
   .inner { fill: none; stroke: var(--c); stroke-width: 0.8; opacity: 0.4; stroke-dasharray: 3 3; }

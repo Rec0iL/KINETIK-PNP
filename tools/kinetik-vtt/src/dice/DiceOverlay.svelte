@@ -45,7 +45,7 @@
   .overlay { position: fixed; inset: 0; z-index: 150; pointer-events: none; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1.5rem; padding-bottom: 12vh; }
   .group { display: grid; justify-items: center; gap: 1.1rem; animation: out 0.5s ease-in 4.3s forwards; }
   .dice { display: flex; gap: 1.2rem; min-height: 90px; align-items: center; }
-  .badge { display: flex; align-items: baseline; gap: 0.7rem; flex-wrap: wrap; justify-content: center; padding: 0.5rem 1.2rem; background: rgba(5, 8, 12, 0.82); border: 1px solid var(--accent-line); box-shadow: var(--glow); backdrop-filter: blur(6px); opacity: 0; animation: pop 0.4s ease-out 1.5s forwards; }
+  .badge { display: flex; align-items: baseline; gap: 0.7rem; flex-wrap: wrap; justify-content: center; padding: 0.5rem 1.2rem; background: color-mix(in srgb, var(--panel-solid) 88%, transparent); border: 1px solid var(--accent-line); box-shadow: var(--glow); backdrop-filter: blur(6px); opacity: 0; animation: pop 0.4s ease-out 1.5s forwards; }
   .who { font: 600 0.95rem var(--font-head); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-strong); }
   .lbl { color: var(--ink-dim); font-size: 0.9rem; }
   .tot { font: 400 3rem/1 var(--font-display); color: var(--accent-2); text-shadow: var(--hard-shadow); }

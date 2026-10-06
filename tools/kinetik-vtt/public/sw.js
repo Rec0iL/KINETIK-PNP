@@ -1,6 +1,6 @@
 // Offline-Hülle: Die App läuft nach dem ersten Laden auch ohne Internet (Charakterbogen, Builder, lokaler Tisch).
 // HTML: erst Netz, dann Cache. Gehashte Dateien und Grafiken: Cache zuerst. Musik und Vermittlungsserver nie.
-const CACHE = 'kinetik-v3';
+const CACHE = 'kinetik-v4';
 
 self.addEventListener('install', (e) => { self.skipWaiting(); });
 self.addEventListener('activate', (e) => {

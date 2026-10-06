@@ -213,7 +213,7 @@
   .rbcontent :global(table) { width: 100%; border-collapse: collapse; border-top: 2px solid var(--accent); font-size: 0.9rem; }
   .rbcontent :global(th) { font: 600 0.78rem var(--font-head); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); text-align: left; padding: 0.45em 0.6em; border-bottom: 1px solid var(--accent-line); }
   .rbcontent :global(td) { padding: 0.45em 0.6em; border-bottom: 1px solid var(--line); vertical-align: top; }
-  .rbcontent :global(tr:nth-child(even) td) { background: rgba(255, 255, 255, 0.025); }
+  .rbcontent :global(tr:nth-child(even) td) { background: var(--stripe); }
   .rbcontent :global(figure) { margin: 1rem 0; }
   .rbcontent :global(figure img) { max-width: 100%; display: block; margin: 0 auto; }
   .rbcontent :global(figcaption) { text-align: center; font-size: 0.8rem; color: var(--ink-dim); margin-top: 0.3rem; }

@@ -1,5 +1,7 @@
 @import './fonts.css';
+@import './fonts-themes.css';
 @import './themes.css';
+@import './chrome.css';
 
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -8,7 +10,7 @@ body {
   min-height: 100vh;
   background: var(--bg);
   color: var(--ink);
-  font: 400 16px/1.45 var(--font-body);
+  font: 400 var(--body-size) / var(--body-lh) var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
 /* Hintergrund: Verlaufsnebel + feines Raster + Scanlines */
@@ -30,7 +32,7 @@ body::after {
 }
 
 h1, h2, h3, h4 { margin: 0; font-family: var(--font-head); font-weight: 600; letter-spacing: var(--head-tracking); text-transform: var(--head-case); color: var(--ink-strong); }
-h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(2.4rem, 6vw, 4.4rem); line-height: 0.95; text-shadow: var(--hard-shadow); }
+h1 { font-family: var(--font-display); font-weight: var(--display-weight, 400); font-size: var(--h1-size, clamp(2.4rem, 6vw, 4.4rem)); line-height: 0.95; text-shadow: var(--hard-shadow); }
 h2 { font-size: 1.35rem; }
 h3 { font-size: 1.05rem; color: var(--accent); }
 p { margin: 0 0 0.6em; }
@@ -89,7 +91,7 @@ small, .dim { color: var(--ink-dim); }
 /* Formulare */
 input, select, textarea {
   font: inherit; color: var(--ink); width: 100%;
-  background: rgba(0, 0, 0, 0.35); border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--field-bg); border: 1px solid var(--line); border-radius: var(--radius);
   padding: 0.5em 0.65em; min-height: 38px;
 }
 input:hover, select:hover, textarea:hover { border-color: var(--line-strong); }

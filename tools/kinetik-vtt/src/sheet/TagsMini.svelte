@@ -50,7 +50,7 @@
   .tag { display: flex; gap: 4px; align-items: center; padding: 3px 4px; background: var(--raised); border-left: 3px solid var(--accent); }
   .tag.big { border-left-color: var(--accent-2); }
   .tag input { flex: 1; min-width: 0; min-height: 28px; padding: 0.15em 0.4em; border-color: transparent; background: transparent; font-weight: 600; }
-  .tag input:focus { background: rgba(0, 0, 0, 0.35); }
+  .tag input:focus { background: var(--field-bg); }
   .sz { min-width: 2.2em; background: var(--accent-soft); border: 1px solid var(--accent-line); color: var(--accent); font: 700 0.8rem var(--font-mono); cursor: pointer; padding: 0.25em 0.3em; }
   .big .sz { background: var(--accent-2-soft); border-color: var(--accent-2); color: var(--accent-2); }
   .none { margin: 0.2rem 0; font-size: 0.9rem; }
