@@ -10,7 +10,10 @@ Bildsätze je Theme: Liegt unter assets/pdf-themes/<theme>/images/ ein Satz (erz
 landet er als img/<theme>/<schlüssel>.webp in der Ausgabe; rulebook.json nennt unter "themed", welche Schlüssel es je Theme gibt.
 Die Seite nimmt dann automatisch die Bilder des gewählten Themes (fehlende Schlüssel: die Standardbilder). Standard ist noir.
 
-Ausgabe: tools/kinetik-vtt/public/rulebook/ (rulebook.json, img/*.webp, img/<theme>/*.webp, das PDF zum Herunterladen).
+PDFs je Theme: export/KINETIK_Regelwerk_<theme>.pdf (erzeugt von gen_rulebook_themes.py --pdf) wird als KINETIK_Regelwerk_<theme>.pdf
+mitgeliefert, rulebook.json nennt sie unter "pdfs". Die Download-Schaltfläche der Seite bietet das PDF zum gewählten Theme an.
+
+Ausgabe: tools/kinetik-vtt/public/rulebook/ (rulebook.json, img/*.webp, img/<theme>/*.webp, die PDFs zum Herunterladen).
 """
 import json
 import re
@@ -147,10 +150,17 @@ def main():
         pdf_name = "KINETIK_Regelwerk.pdf"
         shutil.copy(pdf[-1], OUT / pdf_name)
 
-    data = {"version": version, "title": doc.title or "KINETIK", "intro": render(doc.intro_md), "cover": cover, "pdf": pdf_name, "themed": themed, "chapters": chapters}
+    pdfs = {}
+    for f in sorted((ROOT / "export").glob("KINETIK_Regelwerk_*.pdf")):
+        m = re.fullmatch(r"KINETIK_Regelwerk_([a-z]+)\.pdf", f.name)
+        if m and m.group(1) in themed:
+            shutil.copy(f, OUT / f.name)
+            pdfs[m.group(1)] = f.name
+
+    data = {"version": version, "title": doc.title or "KINETIK", "intro": render(doc.intro_md), "cover": cover, "pdf": pdf_name, "themed": themed, "pdfs": pdfs, "chapters": chapters}
     (OUT / "rulebook.json").write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
     size = sum(f.stat().st_size for f in OUT.rglob("*") if f.is_file())
-    print(f"Regelwerk v{version}: {len(chapters)} Kapitel, {sum(len(c['sections']) for c in chapters)} Abschnitte, {len(written)} Bilder, Bildsätze: {', '.join(f'{t} ({len(k)})' for t, k in themed.items()) or 'keine'}, {size // 1024} KB")
+    print(f"Regelwerk v{version}: {len(chapters)} Kapitel, {sum(len(c['sections']) for c in chapters)} Abschnitte, {len(written)} Bilder, Bildsätze: {', '.join(f'{t} ({len(k)})' for t, k in themed.items()) or 'keine'}, PDFs: {', '.join(pdfs) or 'nur Standard'}, {size // 1024} KB")
 
 
 if __name__ == "__main__":

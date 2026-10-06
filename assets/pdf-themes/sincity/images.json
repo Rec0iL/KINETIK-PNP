@@ -73,46 +73,65 @@
     }
   },
   "sec-2-4-charaktererschaffung": {
-    "prompt": "Inside a dim safehouse room, a focused female sniper sits at a bare table methodically assembling the receiver of a disassembled rifle. Moonlight cuts across her calm face, with a solitary bright red lighter resting beside neatly arranged weapon components. Wide cinematic interior shot.",
-    "seed": 776041360,
+    "prompt": "A focused female sniper sits alone at a bare wooden table in a dimly lit safehouse room, carefully cleaning the bolt of a disassembled rifle. Detached barrel, magazines, cleaning rod, and a single red flip-top lighter lie neatly arranged on the table. Moonlight through a rain-streaked window illuminates her face.",
+    "seed": 854796328,
     "kind": "section",
     "title": "2.4 Charaktererschaffung",
     "include_style": true,
     "qc": {
-      "fits": false,
-      "problems": [
-        "Doppelter roter Farbakzent auf dem Tisch (zwei rote Objekte/Feuerzeuge statt eines einzelnen Akzents)",
-        "Angedeutete unleserliche Text- bzw. Schriftartefakte auf dem Zettel an der linken Wand"
-      ]
+      "fits": true,
+      "problems": []
     }
   },
   "sec-2-5-waffen-deckung": {
-    "prompt": "A trench-coated operative ducks behind a bullet-riddled car door in an underground parking garage as incoming rounds shatter safety glass into flying shards. Returning fire around the smoking hood, his handgun casts a sharp red laser beam toward the darkness. Wide Dutch-angle action shot.",
-    "seed": 484398027,
+    "prompt": "A tactical operative in a trench coat crouches low behind a bullet-damaged car door for cover in a dim garage. Shattered window glass flies through the air as muzzle flashes illuminate the scene, with the operative leaning around the hood to aim a pistol forward, projecting a single red laser sight.",
+    "seed": 1425790076,
     "kind": "section",
     "title": "2.5 Waffen & Deckung",
-    "include_style": true
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "ch-3-der-kampf-das-clash-system": {
     "prompt": "An ex-assassin in a long dark coat and a syndicate enforcer clash violently on a rain-drenched suspension bridge walkway high above a glowing metropolis, steel blade sparking against raised pistol barrel under flickering sodium streetlamps. Low-angle wide composition, intense kinetic tension, rain whipping across the dark cables.",
     "seed": 403186702,
     "kind": "chapter",
     "title": "Der Kampf (Das Clash-System)",
-    "include_style": true
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": [
+        "Die Klinge und der Funkenschlag beim Aufeinandertreffen fehlen; die Szene zeigt stattdessen einen Handgemenge-/Pistolen-Clash."
+      ]
+    }
   },
   "sec-3-1-die-wuerfelmechanik-der-clash": {
-    "prompt": "Two martial artists in an underground subway concourse collide mid-strike: an operative throwing an explosive straight punch while a suited bodyguard pivots into an evasive arm-parry. Dynamic eye-level wide composition, shattered ceramic tiles flying, water dripping from rusted ceiling grates under harsh emergency lighting.",
-    "seed": 339477839,
+    "prompt": "A trench-coated assassin lunges forward with a tactical knife against a broad-shouldered bodyguard aiming a handgun at point-blank range on a rainy rooftop. Puddles splash violently beneath their heavy boots during the clash, while only the assassin wears a vivid crimson tie blowing in the wind.",
+    "seed": 1585454979,
     "kind": "section",
     "title": "3.1 Die Würfelmechanik (Der Clash)",
-    "include_style": true
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-2-die-wirkung-eines-treffers-kaskade": {
-    "prompt": "A tactical operator in heavy ballistic armor takes a devastating shotgun blast point-blank inside a dim dockside warehouse, reinforced ceramic plates shattering outward and shedding sharp fragments under overhead floodlights. Ground-level wide composition, violent kinetic recoil, dense haze drifting over industrial shipping crates.",
-    "seed": 42108423,
+    "prompt": "A SWAT operator in cracked tactical body armor flying backward through the air from the kinetic impact of a shotgun blast. Shattered ceramic armor shards, sparks, and dense powder smoke burst from his chest rig, inside a dark industrial warehouse with towering shipping containers.",
+    "seed": 1384581750,
     "kind": "section",
     "title": "3.2 Die Wirkung eines Treffers (Kaskade)",
-    "include_style": true
+    "include_style": true,
+    "qc": {
+      "fits": false,
+      "problems": [
+        "Der Operator springt aktiv vorwärts mit der Waffe im Anschlag, anstatt durch die Wucht eines Treffers nach hinten geschleudert zu werden.",
+        "Kein erkennbarer Einschlag: Keine zerberstende ballistische Weste, keine zersplitternden Keramikplatten und kein Pulverqualm an der Brust.",
+        "Eine zusätzliche schwarze Silhouette im linken Bildbereich wirkt unklar und lenkt vom Geschehen ab."
+      ]
+    }
   },
   "sec-3-3-tags": {
     "prompt": "A battered street brawler pinned flat against wet asphalt in a narrow back alley flicks a smoking brass bullet casing straight toward the face of a looming enforcer to break his chokehold. Close-up wide composition, desperate gritty struggle amidst overflowing dumpsters, flickering neon reflections in rain puddles.",

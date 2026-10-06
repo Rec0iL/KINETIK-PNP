@@ -1,12 +1,16 @@
 <script lang="ts">
   import { tick, untrack } from 'svelte';
-  import { rulebook, closeRulebook, rbUrl, rbImg, rbFill, plainText, type RbChapter } from './rulebook.svelte';
+  import { rulebook, closeRulebook, rbUrl, rbImg, rbFill, rbPdf, plainText, type RbChapter } from './rulebook.svelte';
+  import { t } from '../i18n';
+  import { theme } from '../lib/theme.svelte';
 
   let scroller = $state<HTMLDivElement>();
   let query = $state('');
   let navOpen = $state(false);
 
   const data = $derived(rulebook.data);
+  /** PDF im Stil des gewählten Themes (reaktiv auf den Themewechsel) */
+  const pdf = $derived(rbPdf());
   const q = $derived(query.trim().toLowerCase());
 
   interface Hit { id: string; chapter: string; title: string; snippet: string }
@@ -71,8 +75,8 @@
 <aside class="rb" class:open={rulebook.open} class:wide={rulebook.wide} aria-label="Regelwerk" aria-hidden={!rulebook.open}>
   <header>
     <div class="titlebar">
-      {#if data?.pdf}
-        <a class="dl" href={rbUrl(data.pdf)} download={`KINETIK_Regelwerk_v${data.version}.pdf`} title="Regelwerk als PDF herunterladen">
+      {#if data?.pdf && pdf}
+        <a class="dl" href={pdf.href} download={pdf.filename} title={pdf.theme ? `Regelwerk als PDF herunterladen (${t(`theme.${theme.current}`)})` : 'Regelwerk als PDF herunterladen'}>
           <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 3v11m0 0l-4.5-4.5M12 14l4.5-4.5M4 15v4a2 2 0 002 2h12a2 2 0 002-2v-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
           <b>Regelwerk</b><small>v{data.version}</small>
           <span class="sr-only">als PDF herunterladen</span>
@@ -118,7 +122,7 @@
             <span class="kicker">Cinematic Action Roleplaying</span>
             <h1>KINETIK</h1>
             <div class="rbcontent">{@html data.intro}</div>
-            {#if data.pdf}<a class="btn sm" href={rbUrl(data.pdf)} download={`KINETIK_Regelwerk_v${data.version}.pdf`}>PDF herunterladen</a>{/if}
+            {#if pdf}<a class="btn sm" href={pdf.href} download={pdf.filename}>PDF herunterladen{pdf.theme ? ` (${t(`theme.${theme.current}`)})` : ''}</a>{/if}
           </div>
         </div>
       {/if}

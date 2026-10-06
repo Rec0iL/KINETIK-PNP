@@ -14,14 +14,21 @@ Voraussetzungen: ComfyUI läuft, agy ist angemeldet (siehe tools/rulebook-pdf/RE
     python3 scripts/gen_rulebook_themes.py --plan-only          # nur Prompts schreiben lassen
     python3 scripts/gen_rulebook_themes.py --no-qc              # ohne Bildkontrolle (schneller)
 
-Danach: python3 scripts/build_rulebook_web.py baut die Web-Fassung mit allen Bildsätzen.
+PDFs je Theme (nach den Bildern; baut aus einer temporären Kopie, das laufende Projekt bleibt unberührt):
+
+    python3 scripts/gen_rulebook_themes.py --pdf                # alle Themes -> export/KINETIK_Regelwerk_<theme>.pdf
+    python3 scripts/gen_rulebook_themes.py --pdf --theme wushu --pdf-out /tmp/test.pdf
+
+Danach: python3 scripts/build_rulebook_web.py baut die Web-Fassung mit allen Bildsätzen und PDFs.
 Neu erzeugen: Datei in assets/pdf-themes/<theme>/images/ löschen und das Skript erneut starten.
 """
 import argparse
 import copy
 import json
+import re
 import shutil
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -31,6 +38,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from PIL import Image  # noqa: E402
 
 import gen_web_assets as art  # noqa: E402  (Stile, Negative und Nachbearbeitung der Themes)
+import pdf_backgrounds  # noqa: E402
+from pdf_theme_styles import STYLES as PDF_STYLES  # noqa: E402
 from rpdf import comfy, pipeline, planner  # noqa: E402
 from rpdf import project as proj  # noqa: E402
 
@@ -97,9 +106,9 @@ def make_project(theme):
     p.entry("cover").update(prompt=COVER[theme], include_style=True)
     p.entry("background").update(prompt="unused (not shown in the web version)", include_style=False)
     bg = p.image_path("background")
-    if not bg.exists():
-        bg.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy(MAIN / "images" / "background.jpg", bg)
+    bg.parent.mkdir(parents=True, exist_ok=True)
+    if not bg.exists() or new:
+        pdf_backgrounds.make(theme, bg)   # Seitenhintergrund des PDFs, prozedural im Ton des Themes
     p.save()
     return p
 
@@ -126,19 +135,87 @@ def patch_save(theme):
     return orig
 
 
+WEB_FONTS = ROOT / "tools" / "kinetik-vtt" / "src" / "assets" / "fonts"
+PDF_FONTS = ROOT / "tools" / "rulebook-pdf" / "rpdf" / "fonts"
+
+
+def sync_pdf_fonts():
+    """Die gekürzten Theme-Schriften der Web-App (nur Latin) auch für die PDF-Vorlage bereitstellen."""
+    css = (ROOT / "tools" / "kinetik-vtt" / "src" / "themes" / "fonts-themes.css").read_text(encoding="utf-8")
+    files = set(re.findall(r"url\('\.\./assets/fonts/([^']+)'\)", css))
+    for f in files:
+        shutil.copy(WEB_FONTS / f, PDF_FONTS / f)
+    (PDF_FONTS / "fonts-themes.css").write_text(css.replace("url('../assets/fonts/", "url('fonts/"), encoding="utf-8")
+    return len(files)
+
+
+def apply_pdf_style(cfg, theme):
+    """Schriften, Farben und Zusatz-CSS des Themes in eine Projektkonfiguration schreiben."""
+    st = PDF_STYLES[theme]
+    cfg["theme"].update(st["colors"])
+    cfg["theme"].update(st["fonts"])
+    cfg["theme"]["extra_css"] = st["extra_css"]
+    cfg["layout"]["font_size_pt"] = st["font_size_pt"]
+    return cfg
+
+
+def build_pdf(theme, out):
+    """Baut das PDF eines Themes aus einer temporären Kopie des Projekts (Bilder verlinkt, Stil des Themes eingesetzt)."""
+    if not (OUT / theme / "project.json").exists():
+        make_project(theme)     # nur Konfiguration und Seitenhintergrund, noch keine Bilder
+    src = proj.Project(OUT / theme)
+    cfg = apply_pdf_style(copy.deepcopy(src.config), theme)
+    # Füllbilder nur, wenn es welche gibt (Phase --fillers): sie sitzen genau in den Lücken dieses Layouts
+    cfg["layout"]["fill_gaps"] = any(f.name.startswith("fill-") for f in src.images_dir.glob("*.jpg"))
+    cfg["source"] = str((src.root / cfg["source"]).resolve())
+    cfg["output"] = str(Path(out).resolve())
+    tmp = Path(tempfile.mkdtemp(prefix=f"kpdf-{theme}-"))
+    (tmp / "images").mkdir()
+    for f in src.images_dir.glob("*.jpg"):
+        (tmp / "images" / f.name).symlink_to(f)
+    pdf_backgrounds.make(theme, tmp / "images" / "background.jpg") if not (tmp / "images" / "background.jpg").exists() else None
+    (tmp / "project.json").write_text(json.dumps(cfg, indent=2, ensure_ascii=False), encoding="utf-8")
+    shutil.copy(src.root / "images.json", tmp / "images.json")
+    p = proj.Project(tmp)
+    ctx = pipeline.Context(log=lambda m: print("   ", m, flush=True))
+    path, pages = pipeline.build(p, ctx)
+    have = len([f for f in src.images_dir.glob("*.jpg") if f.stem != "background"])
+    print(f"{theme}: {path.name}, {pages} Seiten, {have} Bilder", flush=True)
+    shutil.rmtree(tmp, ignore_errors=True)
+    return path
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--theme", action="append", choices=ORDER)
     ap.add_argument("--keys", nargs="*", help="nur diese Bildplätze (z.B. cover ch-1-grundphilosophie)")
     ap.add_argument("--plan-only", action="store_true")
     ap.add_argument("--no-qc", action="store_true")
+    ap.add_argument("--pdf", action="store_true", help="PDFs bauen (export/KINETIK_Regelwerk_<theme>.pdf) statt Bilder erzeugen")
+    ap.add_argument("--fillers", action="store_true",
+                    help="Füllbilder für die Lücken im PDF-Satz des Themes planen und erzeugen (nach den Hauptbildern)")
+    ap.add_argument("--pdf-out", help="Zieldatei bei --pdf mit genau einem Theme")
     ap.add_argument("--force-plan", action="store_true", help="vorhandene Prompts neu schreiben lassen")
     args = ap.parse_args()
+
+    if args.pdf:
+        n = sync_pdf_fonts()
+        print(f"{n} Theme-Schriften für die PDF-Vorlage bereitgestellt", flush=True)
+        for theme in args.theme or ORDER:
+            out = args.pdf_out if args.pdf_out and args.theme and len(args.theme) == 1 else ROOT / "export" / f"KINETIK_Regelwerk_{theme}.pdf"
+            build_pdf(theme, out)
+        return
 
     ctx = pipeline.Context(log=lambda m: print(m, flush=True), progress=lambda d, t: None)
     for theme in args.theme or ORDER:
         print(f"\n=== {theme} ===", flush=True)
         p = make_project(theme)
+        if args.fillers:
+            # Layout des Themes (Schriften!) fest im Projekt ablegen: die Lücken werden gegen genau diesen Satz gemessen
+            apply_pdf_style(p.config, theme)
+            p.config["layout"]["fill_gaps"] = True
+            p.save()
+            sync_pdf_fonts()
         if args.no_qc:
             p.config["qc"]["enabled"] = False
         keys = set(args.keys) if args.keys else None

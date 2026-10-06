@@ -312,10 +312,20 @@ def build_html(project, doc, fillers=None):
 
     fonts_css = (PKG / "fonts" / "fonts.css").read_text(encoding="utf-8").replace(
         "url('fonts/", f"url('{(PKG / 'fonts').as_uri()}/")
+    extra_fonts = PKG / "fonts" / "fonts-themes.css"
+    if extra_fonts.exists():    # Schriften der Themes (nur Latin), von scripts/theme_fonts.py und fetch_google_fonts.py
+        fonts_css += extra_fonts.read_text(encoding="utf-8").replace("url('fonts/", f"url('{(PKG / 'fonts').as_uri()}/")
     css = Template((PKG / "theme.css").read_text(encoding="utf-8")).substitute(
         bg=theme["bg"], ink=theme["ink"], ink_dim=_hex_rgba(theme["ink"], .62),
         accent=theme["accent"], accent2=theme["accent2"],
         accent_soft=_hex_rgba(theme["accent"], .10), accent_line=_hex_rgba(theme["accent"], .35),
+        # Optional look of a project (theme.* in project.json); the defaults reproduce the original dark neon design
+        ink_strong=theme.get("ink_strong", "#fff"), em_color=theme.get("em", "#d7dce4"),
+        rule=theme.get("rule", "rgba(255,255,255,0.10)"), card=theme.get("card", "rgba(16,18,24,0.88)"),
+        stripe=theme.get("stripe", "rgba(255,255,255,.025)"), scrim=theme.get("scrim", "0,0,0"),
+        font_display=theme.get("font_display", "'Bebas Neue'"), font_head=theme.get("font_head", "'Oswald'"),
+        font_label=theme.get("font_label", "'Barlow Condensed'"), font_body=theme.get("font_body", "'Barlow'"),
+        extra_css=theme.get("extra_css", ""),
         font_size=lay.get("font_size_pt", 9.6), lead_size=round(lay.get("font_size_pt", 9.6) * 1.08, 2),
         text_align="justify" if lay.get("justify", True) else "left",
         filler_gap=FILLER_SPACING_MM - 3,

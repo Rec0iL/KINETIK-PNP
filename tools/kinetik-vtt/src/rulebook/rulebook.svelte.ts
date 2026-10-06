@@ -9,6 +9,8 @@ export interface RbData {
   version: string; title: string; intro: string; cover: string | null; pdf: string | null; chapters: RbChapter[];
   /** Bildsätze je Theme: Schlüssel der Bilder, die es unter img/<theme>/ gibt. */
   themed?: Record<string, string[]>;
+  /** PDF je Theme (Dateiname unter rulebook/); fehlt eins, gilt `pdf`. */
+  pdfs?: Record<string, string>;
 }
 
 export const rulebook = $state<{
@@ -76,4 +78,13 @@ export const rbFill = (path: string | null): string | null => (path && !themeSet
 /** Reiner Text eines HTML-Abschnitts für die Suche. */
 export function plainText(html: string): string {
   return html.replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;|&#\d+;/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/** PDF zum gewählten Theme: Dateiname und ein Name für den Download. */
+export function rbPdf(): { href: string; filename: string; theme: string | null } | null {
+  const d = rulebook.data;
+  if (!d?.pdf) return null;
+  const art = THEME_INFO[theme.current].art;
+  const own = d.pdfs?.[art];
+  return { href: rbUrl(own ?? d.pdf), filename: `KINETIK_Regelwerk_v${d.version}${own ? `_${art}` : ''}.pdf`, theme: own ? art : null };
 }

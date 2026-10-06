@@ -1,0 +1,62 @@
+{
+  "source": "../../../regelwerk/KINETIK_Regelwerk.md",
+  "output": "../../../export/KINETIK_Regelwerk_western.pdf",
+  "title": "KINETIK",
+  "subtitle": "Cinematic Action Roleplaying",
+  "kicker": "GUN-FU · KAMPFKUNST · ANIME",
+  "tagline": "Ein Tabletop-Regelwerk für grenzenlose, filmische Action · Version 3.5",
+  "running_title": "KINETIK",
+  "chapter_label": "Kapitel",
+  "language": "de",
+  "chapter_level": 0,
+  "appendix_patterns": [
+    "^Anhang",
+    "^Appendix",
+    "^Änderungsprotokoll",
+    "^Changelog"
+  ],
+  "theme": {
+    "bg": "#0b0c10",
+    "ink": "#e6eaf0",
+    "accent": "#dba94a",
+    "accent2": "#d2603f"
+  },
+  "layout": {
+    "section_images": true,
+    "page_texture": true,
+    "justify": true,
+    "font_size_pt": 9.6,
+    "fill_gaps": false,
+    "filler_min_mm": 55
+  },
+  "qc": {
+    "enabled": true,
+    "auto_fix": true,
+    "rounds": 3,
+    "radical": true
+  },
+  "content_type": "rulebook",
+  "style_preset": "",
+  "style_wish": "",
+  "style": "vintage 1960s widescreen western film still, faded warm sepia tones, heavy film grain, dust haze, harsh low sun, anamorphic look, painterly cinematic photograph, gritty",
+  "negative": "worst quality, low quality, blurry, jpeg artifacts, bad anatomy, watermark, text, letters, signature, logo, deformed, extra limbs, lowres, modern, neon, cyberpunk, anime, cartoon, text, letters, watermark, bright saturated colors",
+  "world": "Modern-day cinematic action roleplaying: gun-fu, martial arts and over-the-top fights, ex-assassins, SWAT operators, street brawlers and legendary masters. Reimagined as a spaghetti western: dusty frontier town, saloon, duels at high noon, gunslingers and a wandering kung fu master, desert, trains, canyon ambushes.",
+  "agy": {
+    "model": "gemini-3.8-flash-medium"
+  },
+  "comfy": {
+    "url": "http://127.0.0.1:8188",
+    "models_dir": "",
+    "workflow": "anima",
+    "unet": "krea2TurboOfficialComfy_krea2TurboInt8.safetensors",
+    "clip": "qwen3vl_4b_fp8_scaled.safetensors",
+    "clip_type": "krea2",
+    "vae": "qwen_image_vae.safetensors",
+    "checkpoint": "",
+    "custom_workflow": "",
+    "steps": 8,
+    "cfg": 1.0,
+    "sampler": "euler",
+    "scheduler": "simple"
+  }
+}

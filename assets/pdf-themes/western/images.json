@@ -1,0 +1,238 @@
+{
+  "cover": {
+    "prompt": "tall film poster composition, a gunslinger in a long duster and a martial artist facing off in a dusty frontier street at high noon, heat haze, empty plain sky at the very top and plain ground at the very bottom, no logo, no title, no lettering",
+    "seed": 914500689,
+    "kind": "cover",
+    "title": "Cover: KINETIK",
+    "include_style": true
+  },
+  "background": {
+    "prompt": "unused (not shown in the web version)",
+    "seed": 989509548,
+    "kind": "background",
+    "title": "Seitenhintergrund",
+    "include_style": false
+  },
+  "ch-1-grundphilosophie": {
+    "prompt": "",
+    "seed": 846313081,
+    "kind": "chapter",
+    "title": "Grundphilosophie"
+  },
+  "ch-2-der-charakter": {
+    "prompt": "",
+    "seed": 992174079,
+    "kind": "chapter",
+    "title": "Der Charakter"
+  },
+  "sec-2-1-die-attribute-2w6-system": {
+    "prompt": "",
+    "seed": 1384970146,
+    "kind": "section",
+    "title": "2.1 Die Attribute (2W6-System)"
+  },
+  "sec-2-2-das-titel-system-level-1-bis-10": {
+    "prompt": "",
+    "seed": 2103946015,
+    "kind": "section",
+    "title": "2.2 Das Titel-System (Level 1 bis 10)"
+  },
+  "sec-2-3-ressourcen-verletzungen": {
+    "prompt": "",
+    "seed": 1007326051,
+    "kind": "section",
+    "title": "2.3 Ressourcen & Verletzungen"
+  },
+  "sec-2-4-charaktererschaffung": {
+    "prompt": "",
+    "seed": 1295256922,
+    "kind": "section",
+    "title": "2.4 Charaktererschaffung"
+  },
+  "sec-2-5-waffen-deckung": {
+    "prompt": "",
+    "seed": 1616983302,
+    "kind": "section",
+    "title": "2.5 Waffen & Deckung"
+  },
+  "ch-3-der-kampf-das-clash-system": {
+    "prompt": "",
+    "seed": 1256894102,
+    "kind": "chapter",
+    "title": "Der Kampf (Das Clash-System)"
+  },
+  "sec-3-1-die-wuerfelmechanik-der-clash": {
+    "prompt": "",
+    "seed": 683704420,
+    "kind": "section",
+    "title": "3.1 Die Würfelmechanik (Der Clash)"
+  },
+  "sec-3-2-die-wirkung-eines-treffers-kaskade": {
+    "prompt": "",
+    "seed": 1142646314,
+    "kind": "section",
+    "title": "3.2 Die Wirkung eines Treffers (Kaskade)"
+  },
+  "sec-3-3-tags": {
+    "prompt": "",
+    "seed": 411042381,
+    "kind": "section",
+    "title": "3.3 Tags"
+  },
+  "sec-3-4-die-helden-schwelle": {
+    "prompt": "",
+    "seed": 27252504,
+    "kind": "section",
+    "title": "3.4 Die Helden-Schwelle"
+  },
+  "sec-3-5-ausser-reichweite-klassenunterschied": {
+    "prompt": "",
+    "seed": 1997486392,
+    "kind": "section",
+    "title": "3.5 Außer Reichweite (Klassenunterschied)"
+  },
+  "sec-3-6-der-rundenablauf-seiten-initiative-mit-kinet": {
+    "prompt": "",
+    "seed": 181122061,
+    "kind": "section",
+    "title": "3.6 Der Rundenablauf: Seiten-Initiative mit Kinetik-Marker"
+  },
+  "sec-3-7-mehrere-gegner-goons-elite-und-bosse": {
+    "prompt": "",
+    "seed": 249479729,
+    "kind": "section",
+    "title": "3.7 Mehrere Gegner: Goons, Elite und Bosse"
+  },
+  "sec-3-8-momentum": {
+    "prompt": "",
+    "seed": 679721684,
+    "kind": "section",
+    "title": "3.8 Momentum"
+  },
+  "sec-3-9-bullet-time-rule-of-cool": {
+    "prompt": "",
+    "seed": 2003050029,
+    "kind": "section",
+    "title": "3.9 Bullet Time (Rule of Cool)"
+  },
+  "sec-3-10-regeneration-ohnmacht-und-gebrochen": {
+    "prompt": "",
+    "seed": 7372140,
+    "kind": "section",
+    "title": "3.10 Regeneration, Ohnmacht und Gebrochen"
+  },
+  "sec-3-11-ausgeschaltet-sterben-und-heilung": {
+    "prompt": "",
+    "seed": 1108920597,
+    "kind": "section",
+    "title": "3.11 Ausgeschaltet, Sterben und Heilung"
+  },
+  "sec-3-12-moves-einsetzen-und-bezahlen": {
+    "prompt": "",
+    "seed": 488323010,
+    "kind": "section",
+    "title": "3.12 Moves einsetzen und bezahlen"
+  },
+  "sec-3-13-optionale-experten-regel-erst-wuerfeln-dann": {
+    "prompt": "",
+    "seed": 2081049316,
+    "kind": "section",
+    "title": "3.13 Optionale Experten-Regel: Erst würfeln, dann erzählen (\"Fortune in the Middle\")"
+  },
+  "ch-4-proben-gegen-die-umgebung-nicht-kampf-skills": {
+    "prompt": "",
+    "seed": 1116305825,
+    "kind": "chapter",
+    "title": "Proben gegen die Umgebung (Nicht-Kampf-Skills)"
+  },
+  "sec-4-1-heimlichkeit-und-infiltration": {
+    "prompt": "",
+    "seed": 1389940016,
+    "kind": "section",
+    "title": "4.1 Heimlichkeit und Infiltration"
+  },
+  "ch-5-moves": {
+    "prompt": "",
+    "seed": 541357334,
+    "kind": "chapter",
+    "title": "Moves"
+  },
+  "sec-5-1-das-bewertungs-framework-effektpunkte": {
+    "prompt": "",
+    "seed": 189104448,
+    "kind": "section",
+    "title": "5.1 Das Bewertungs-Framework (Effektpunkte)"
+  },
+  "sec-5-2-move-beispiele-richtwerte": {
+    "prompt": "",
+    "seed": 496701584,
+    "kind": "section",
+    "title": "5.2 Move-Beispiele (Richtwerte)"
+  },
+  "sec-5-3-gemeisterte-moves": {
+    "prompt": "",
+    "seed": 1630610548,
+    "kind": "section",
+    "title": "5.3 Gemeisterte Moves"
+  },
+  "sec-5-4-meister-moves-und-legendaere-moves": {
+    "prompt": "",
+    "seed": 291553089,
+    "kind": "section",
+    "title": "5.4 Meister-Moves und Legendäre Moves"
+  },
+  "ch-6-spielbeispiele-am-tisch": {
+    "prompt": "",
+    "seed": 1389651405,
+    "kind": "chapter",
+    "title": "Spielbeispiele am Tisch"
+  },
+  "sec-beispiel-charakterbogen": {
+    "prompt": "",
+    "seed": 1465229593,
+    "kind": "section",
+    "title": "Beispiel-Charakterbogen"
+  },
+  "sec-beispiel-1-kampf-gegen-horden-goons": {
+    "prompt": "",
+    "seed": 1166453139,
+    "kind": "section",
+    "title": "Beispiel 1: Kampf gegen Horden (Goons)"
+  },
+  "sec-beispiel-2-ruestung-und-verletzung-boss-kampf": {
+    "prompt": "",
+    "seed": 1678374555,
+    "kind": "section",
+    "title": "Beispiel 2: Rüstung und Verletzung (Boss-Kampf)"
+  },
+  "sec-beispiel-3-pvp-spieler-gegen-spieler": {
+    "prompt": "",
+    "seed": 248138107,
+    "kind": "section",
+    "title": "Beispiel 3: PvP (Spieler gegen Spieler)"
+  },
+  "sec-beispiel-4-charakterentwicklung-und-titel-leveli": {
+    "prompt": "",
+    "seed": 334304638,
+    "kind": "section",
+    "title": "Beispiel 4: Charakterentwicklung und Titel-Leveling"
+  },
+  "sec-beispiel-5-heimlichkeit-goons-und-elite": {
+    "prompt": "",
+    "seed": 2121981303,
+    "kind": "section",
+    "title": "Beispiel 5: Heimlichkeit (Goons und Elite)"
+  },
+  "sec-beispiel-6-gift-und-toeten": {
+    "prompt": "",
+    "seed": 1871950172,
+    "kind": "section",
+    "title": "Beispiel 6: Gift und Töten"
+  },
+  "sec-beispiel-7-den-move-nicht-einsetzen-variante-von": {
+    "prompt": "",
+    "seed": 1464177021,
+    "kind": "section",
+    "title": "Beispiel 7: Den Move nicht einsetzen (Variante von Beispiel 2)"
+  }
+}

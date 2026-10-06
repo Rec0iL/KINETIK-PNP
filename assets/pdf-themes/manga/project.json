@@ -1,0 +1,62 @@
+{
+  "source": "../../../regelwerk/KINETIK_Regelwerk.md",
+  "output": "../../../export/KINETIK_Regelwerk_manga.pdf",
+  "title": "KINETIK",
+  "subtitle": "Cinematic Action Roleplaying",
+  "kicker": "GUN-FU · KAMPFKUNST · ANIME",
+  "tagline": "Ein Tabletop-Regelwerk für grenzenlose, filmische Action · Version 3.5",
+  "running_title": "KINETIK",
+  "chapter_label": "Kapitel",
+  "language": "de",
+  "chapter_level": 0,
+  "appendix_patterns": [
+    "^Anhang",
+    "^Appendix",
+    "^Änderungsprotokoll",
+    "^Changelog"
+  ],
+  "theme": {
+    "bg": "#0b0c10",
+    "ink": "#e6eaf0",
+    "accent": "#15151c",
+    "accent2": "#ffd400"
+  },
+  "layout": {
+    "section_images": true,
+    "page_texture": true,
+    "justify": true,
+    "font_size_pt": 9.6,
+    "fill_gaps": false,
+    "filler_min_mm": 55
+  },
+  "qc": {
+    "enabled": true,
+    "auto_fix": true,
+    "rounds": 3,
+    "radical": true
+  },
+  "content_type": "rulebook",
+  "style_preset": "",
+  "style_wish": "",
+  "style": "black and white manga ink illustration, bold clean linework, screentone halftone dot shading, dramatic dynamic angle, speed lines, high contrast, white paper background, a single flat bright yellow accent color on exactly one element",
+  "negative": "worst quality, low quality, blurry, jpeg artifacts, bad anatomy, watermark, text, letters, signature, logo, deformed, extra limbs, lowres, color photo, many colors, painting, 3d render, realistic, gray gradients, text, letters, speech bubbles, sound effects, watermark",
+  "world": "Modern-day cinematic action roleplaying: gun-fu, martial arts and over-the-top fights, ex-assassins, SWAT operators, street brawlers and legendary masters. Told as a shonen action manga: dramatic angles, speed lines, impact bursts, rival fighters, training arcs, exaggerated expressions.",
+  "agy": {
+    "model": "gemini-3.8-flash-medium"
+  },
+  "comfy": {
+    "url": "http://127.0.0.1:8188",
+    "models_dir": "",
+    "workflow": "anima",
+    "unet": "krea2TurboOfficialComfy_krea2TurboInt8.safetensors",
+    "clip": "qwen3vl_4b_fp8_scaled.safetensors",
+    "clip_type": "krea2",
+    "vae": "qwen_image_vae.safetensors",
+    "checkpoint": "",
+    "custom_workflow": "",
+    "steps": 8,
+    "cfg": 1.0,
+    "sampler": "euler",
+    "scheduler": "simple"
+  }
+}
