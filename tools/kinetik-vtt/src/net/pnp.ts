@@ -36,7 +36,7 @@ export type PnpReply = { t: 'result'; id: string; ok: boolean; error?: string; d
 // ---------- Fähigkeiten, die wir melden ----------
 interface Field {
   key: string; label: string; type: 'text' | 'longtext' | 'number' | 'boolean' | 'select' | 'tags' | 'list';
-  options?: { value: string; label?: string }[]; min?: number; max?: number; step?: number; default?: unknown;
+  options?: { value: string; label?: string }[]; suggestions?: string[]; min?: number; max?: number; step?: number; default?: unknown;
   required?: boolean; group?: string; help?: string; item?: Field[]; showIf?: { key: string; equals?: unknown; notEquals?: unknown };
 }
 
@@ -54,9 +54,9 @@ export function enemyRole(): Role {
     { key: 'schutz', label: 'Schutz', type: 'number', min: 0, max: 9, group: 'Ressourcen', showIf: { key: 'tier', notEquals: 'goon' } },
     { key: 'wk', label: 'Willenskraft (WK)', type: 'number', min: 0, max: 30, group: 'Ressourcen', showIf: { key: 'tier', notEquals: 'goon' } },
     { key: 'energie', label: 'Energie', type: 'number', min: 0, max: 30, default: 6, group: 'Ressourcen', showIf: { key: 'tier', notEquals: 'goon' } },
-    { key: 'tags', label: 'Tags', type: 'tags', group: 'Zustand', help: 'z. B. „Am Boden“' },
+    { key: 'tags', label: 'Tags', type: 'tags', group: 'Zustand', suggestions: [...rules.tags.klein, ...rules.tags.gross], help: 'kleine und große Tags aus dem Regelwerk, z. B. „Am Boden“' },
     { key: 'moves', label: 'Moves / Fähigkeiten', type: 'list', group: 'Fähigkeiten', item: [
-      { key: 'name', label: 'Name', type: 'text', required: true },
+      { key: 'name', label: 'Name', type: 'text', required: true, suggestions: rules.moves.moves.map((m) => m.name) },
       { key: 'text', label: 'Wirkung', type: 'longtext' },
     ] },
     { key: 'note', label: 'Verhalten, Schwäche, Beute', type: 'longtext', group: 'Notizen' },
