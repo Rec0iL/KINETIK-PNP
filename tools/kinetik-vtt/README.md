@@ -4,7 +4,7 @@ Web-App für KINETIK: Charakterbogen, Multiplayer über WebRTC (PeerJS), SL-Dash
 
 Kompatibel mit [PenNodePaper](https://github.com/Rec0iL/PenNodePaper), der Vorbereitungs-App für die Spielleitung (siehe M10 unten).
 
-Stack: Vite, Svelte 5, TypeScript. Deutsche Oberfläche (alle Texte in `src/i18n/de.ts`). Drei Looks: Neo-Noir, Terminal, Hybrid.
+Stack: Vite, Svelte 5, TypeScript. Deutsche Oberfläche (alle Texte in `src/i18n/de.ts`). Zehn Looks: Neo-Noir, Film Noir (Sin-City-Stil), Manga (hell, Marker-Gelb), Wushu (Tusche auf Reispapier, hell), Ukiyo-e (Holzschnitt, Indigo), Western (Leder und Messing), Akte (Dossier, hell), 8-Bit (Pixelrahmen, Pixelschrift), Terminal (CRT) und Cyberdeck (Hybrid).
 
 ## Kurzanleitung
 
@@ -38,7 +38,7 @@ Nach jeder Regelwerk-Änderung neu ausführen und das Ergebnis einchecken.
 
 ## Grafiken neu erzeugen
 
-`python3 scripts/gen_web_assets.py` erzeugt die Bilder in `public/art` mit Krea 2 in ComfyUI (Einstellungen aus `assets/pdf/project.json`, ComfyUI muss laufen). Vorhandene Dateien werden übersprungen, `--force` erzeugt neu. Vor einer öffentlichen Nutzung die Lizenz des Bildmodells (Krea 2) für die erzeugten Bilder prüfen.
+`python3 scripts/gen_web_assets.py` erzeugt die Bilder in `public/art/<theme>/` mit Krea 2 in ComfyUI (jedes Theme hat einen eigenen Satz mit eigenem Stil und eigener Nachbearbeitung: Phosphorgrün, Schwarzweiß mit Rot, Pixelraster; `--theme sincity` für ein Theme, `--seed 3` zum Neuwürfeln) (Einstellungen aus `assets/pdf/project.json`, ComfyUI muss laufen). Vorhandene Dateien werden übersprungen, `--force` erzeugt neu. Vor einer öffentlichen Nutzung die Lizenz des Bildmodells (Krea 2) für die erzeugten Bilder prüfen.
 
 ## Entwickeln
 
@@ -58,7 +58,7 @@ npm run build        # dist/
 |---|---|
 | `src/rules/` | Regel-Engine, reine Funktionen ohne DOM: abgeleitete Werte, Clash, Proben, Move-Kosten, NPC |
 | `src/net/pnp.ts` | Brücke zu PenNodePaper (rein, ohne DOM): Fähigkeiten melden, Handouts/Karten/Gegner/NPCs/Musik annehmen, Spielergruppe melden |
-| `src/themes/` | Themes über CSS-Variablen, Schriften |
+| `src/themes/` | `themes.css` (Farben, Schriften, Flächen je Theme), `chrome.css` (Form und Effekte je Theme), Schriften; `scripts/theme_fonts.py` und `scripts/fetch_google_fonts.py` erzeugen die gekürzten Theme-Schriften |
 | `src/i18n/` | Texte |
 | `src/lib/` | Router, Theme-Zustand |
 | `src/pages/` | Seiten |

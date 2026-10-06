@@ -119,7 +119,7 @@ Der Knopf „Regelwerk“ öffnet das gesamte Regelwerk als Seitenleiste: gleich
 - **Musik** vom SL, für alle synchron, mit Überblendung (neun mitgelieferte Titel).
 - **Kampf-Werkzeuge**: Seiten-Initiative, Bedrängnis, Gegner mit Schutz, Willenskraft und Verletzungen, Handouts.
 - **Kampf auf der Karte**: Der SL stellt Gegner auf der Karte auf, Spieler fragen Bewegung an und planen ihre Aktion mit Ziel, Technik und Tags. Der SL gibt frei, vergibt Bullet Time und wickelt das Ergebnis mit einem Klick ab. Gift tickt am Rundenende.
-- **Drei Looks** (Neo-Noir, Terminal, Hybrid), deutsche Oberfläche, Offline-Cache.
+- **Zehn Looks** (Neo-Noir, Film Noir, Manga, Wushu, Ukiyo-e, Western, Akte, 8-Bit, Terminal, Cyberdeck) mit eigener Form, Schrift, Effekten und eigenen Bildern, deutsche Oberfläche, Offline-Cache.
 
 ### So geht es los
 
@@ -189,7 +189,7 @@ Nach Änderungen am Regelwerk: `python3 scripts/build_rulebook_web.py` (Regelwer
 - **Regelwerk und Idee**: Rec0iL
 - **Bilder** (Hero, Kartenmotive, PDF, Beispielkarte): erzeugt mit Krea 2 in ComfyUI
 - **Musik**: Kevin MacLeod ([incompetech.com](https://incompetech.com)), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), siehe [`CREDITS.md`](tools/kinetik-vtt/public/music/CREDITS.md)
-- **Schriften**: Barlow, Barlow Condensed, Bebas Neue, Oswald (Google Fonts, SIL OFL 1.1)
+- **Schriften**: Barlow, Barlow Condensed, Bebas Neue, Oswald, Press Start 2P, Silkscreen, VT323, Big Shoulders, Special Elite, Tektur, Noto Serif SC, Bangers, Rye, Arvo, Shippori Mincho, Zen Kaku Gothic New, Courier Prime (Google Fonts, SIL OFL 1.1)
 - **Software**: Svelte, Vite, PeerJS, idb-keyval
 
 ## Lizenz

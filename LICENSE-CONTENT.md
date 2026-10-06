@@ -32,4 +32,4 @@ Die Bilder wurden mit dem Bildmodell **Krea 2** lokal in ComfyUI erzeugt. Die Nu
 
 - **Quellcode** (`tools/`, `scripts/`, `.github/`): MIT-Lizenz, siehe [`LICENSE`](LICENSE).
 - **Musik** in `tools/kinetik-vtt/public/music`: Kevin MacLeod ([incompetech.com](https://incompetech.com)), CC BY 4.0, siehe [`CREDITS.md`](tools/kinetik-vtt/public/music/CREDITS.md). Die Musik darf nur mit Namensnennung weiterverwendet werden.
-- **Schriften** (Barlow, Barlow Condensed, Bebas Neue, Oswald): SIL Open Font License 1.1.
+- **Schriften** (Barlow, Barlow Condensed, Bebas Neue, Oswald, Press Start 2P, Silkscreen, VT323, Big Shoulders, Special Elite, Tektur, Noto Serif SC, Bangers, Rye, Arvo, Shippori Mincho, Zen Kaku Gothic New, Courier Prime): SIL Open Font License 1.1. Die Theme-Schriften sind auf Latin (und wenige Zierzeichen) gekürzt, siehe `scripts/theme_fonts.py`.
