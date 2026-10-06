@@ -14,3 +14,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 *.log
+
+# Regelwerk-Bildsätze der Themes: die Quell-JPGs bleiben lokal (die Web-Fassung liegt als WebP in tools/kinetik-vtt/public/rulebook/img/<theme>/)
+assets/pdf-themes/*/images/

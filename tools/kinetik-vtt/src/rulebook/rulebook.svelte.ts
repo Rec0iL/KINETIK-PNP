@@ -1,10 +1,15 @@
 // Regelwerk als HTML (gebaut von scripts/build_rulebook_web.py). Lädt erst, wenn es gebraucht wird.
+import { theme, THEME_INFO } from '../lib/theme.svelte';
 export interface RbSection { id: string; title: string; html: string; image: string | null; fill: string | null }
 export interface RbChapter {
   id: string; number: number | null; title: string; subtitle: string; appendix: boolean;
   image: string | null; fill: string | null; html: string; sections: RbSection[];
 }
-export interface RbData { version: string; title: string; intro: string; cover: string | null; pdf: string | null; chapters: RbChapter[] }
+export interface RbData {
+  version: string; title: string; intro: string; cover: string | null; pdf: string | null; chapters: RbChapter[];
+  /** Bildsätze je Theme: Schlüssel der Bilder, die es unter img/<theme>/ gibt. */
+  themed?: Record<string, string[]>;
+}
 
 export const rulebook = $state<{
   open: boolean;
@@ -53,6 +58,20 @@ function absolutize(d: RbData): RbData {
 }
 
 export const rbUrl = (path: string) => new URL(`rulebook/${path}`, document.baseURI).href;
+
+/** Bildsatz des gewählten Themes (z.B. 'wushu'), falls es einen gibt. */
+const themeSet = () => (rulebook.data?.themed ?? {})[THEME_INFO[theme.current].art] ?? null;
+
+/** Adresse eines Regelwerk-Bilds im Stil des gewählten Themes. Fehlt dem Satz ein Bild, gilt das Standardbild. Reaktiv auf den Themewechsel. */
+export function rbImg(path: string | null): string | null {
+  if (!path) return null;
+  const set = themeSet();
+  const key = path.replace(/^img\//, '').replace(/\.webp$/, '');
+  return rbUrl(set?.includes(key) ? `img/${THEME_INFO[theme.current].art}/${key}.webp` : path);
+}
+
+/** Füllbilder gibt es nur im Standardstil (sie sind auf die PDF-Lücken zugeschnitten): bei einem eigenen Bildsatz entfallen sie. */
+export const rbFill = (path: string | null): string | null => (path && !themeSet() ? rbUrl(path) : null);
 
 /** Reiner Text eines HTML-Abschnitts für die Suche. */
 export function plainText(html: string): string {

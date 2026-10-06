@@ -1,0 +1,283 @@
+{
+  "cover": {
+    "prompt": "tall poster composition, a lone man in a trench coat and a woman in a red dress standing back to back in heavy rain under a street lamp, white rain streaks, black city skyline, empty plain black sky at the very top and plain ground at the very bottom, no logo, no title, no lettering",
+    "seed": 1584312394,
+    "kind": "cover",
+    "title": "Cover: KINETIK",
+    "include_style": true
+  },
+  "background": {
+    "prompt": "unused (not shown in the web version)",
+    "seed": 390234834,
+    "kind": "background",
+    "title": "Seitenhintergrund",
+    "include_style": false
+  },
+  "ch-1-grundphilosophie": {
+    "prompt": "A hitman in a dark suit knee-slides across a wet skyscraper roof, deflecting an overhead machete strike using the steel slide of his pistol. Close-up combat clash at midnight with frozen raindrops, airborne brass casings, and a single floating crimson necktie.",
+    "seed": 1835853033,
+    "kind": "chapter",
+    "title": "Grundphilosophie",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "ch-2-der-charakter": {
+    "prompt": "A lone hitman in a dark trench coat stands on a rain-swept skyscraper ledge overlooking a sprawling nocturnal city. Wind whips his coat as he gazes into the abyss, holding a silenced pistol downward, his vibrant red silk tie glowing against deep shadows. Wide low-angle shot beneath heavy rain.",
+    "seed": 1548633836,
+    "kind": "chapter",
+    "title": "Der Charakter",
+    "include_style": true
+  },
+  "sec-2-1-die-attribute-2w6-system": {
+    "prompt": "Inside a grand museum gallery flanked by marble statues, an athletic female martial artist executes a powerful flying kick. She violently hurls a tactical security guard in modern riot gear and ballistic helmet backwards through a shattering glass display case, sending glass fragments flying across the floor. A red sash flows from her waist.",
+    "seed": 2035663436,
+    "kind": "section",
+    "title": "2.1 Die Attribute (2W6-System)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "sec-2-2-das-titel-system-level-1-bis-10": {
+    "prompt": "Inside a shadowy warehouse sparring ring beneath a single hanging light, an elderly martial arts master effortlessly redirects a strike from an aggressive young street brawler. Red hand wraps on the brawler's clenched fist stand out against the dark figures. Wide eye-level action shot capturing disciplined technique.",
+    "seed": 1914184727,
+    "kind": "section",
+    "title": "2.2 Das Titel-System (Level 1 bis 10)",
+    "include_style": true
+  },
+  "sec-2-3-ressourcen-verletzungen": {
+    "prompt": "In a dark, flooded subway corridor, an exhausted tactical operative slumps against a cracked concrete pillar after a firefight. She tightly binds a wounded forearm with a vivid red cloth bandage, spent shell casings scattered across the wet floor. Wide ground-level shot emphasizing physical trauma.",
+    "seed": 1569282130,
+    "kind": "section",
+    "title": "2.3 Ressourcen & Verletzungen",
+    "include_style": true
+  },
+  "sec-2-4-charaktererschaffung": {
+    "prompt": "Inside a dim safehouse room, a focused female sniper sits at a bare table methodically assembling the receiver of a disassembled rifle. Moonlight cuts across her calm face, with a solitary bright red lighter resting beside neatly arranged weapon components. Wide cinematic interior shot.",
+    "seed": 776041360,
+    "kind": "section",
+    "title": "2.4 Charaktererschaffung",
+    "include_style": true
+  },
+  "sec-2-5-waffen-deckung": {
+    "prompt": "A trench-coated operative ducks behind a bullet-riddled car door in an underground parking garage as incoming rounds shatter safety glass into flying shards. Returning fire around the smoking hood, his handgun casts a sharp red laser beam toward the darkness. Wide Dutch-angle action shot.",
+    "seed": 484398027,
+    "kind": "section",
+    "title": "2.5 Waffen & Deckung",
+    "include_style": true
+  },
+  "ch-3-der-kampf-das-clash-system": {
+    "prompt": "An ex-assassin in a long dark coat and a syndicate enforcer clash violently on a rain-drenched suspension bridge walkway high above a glowing metropolis, steel blade sparking against raised pistol barrel under flickering sodium streetlamps. Low-angle wide composition, intense kinetic tension, rain whipping across the dark cables.",
+    "seed": 403186702,
+    "kind": "chapter",
+    "title": "Der Kampf (Das Clash-System)",
+    "include_style": true
+  },
+  "sec-3-1-die-wuerfelmechanik-der-clash": {
+    "prompt": "Two martial artists in an underground subway concourse collide mid-strike: an operative throwing an explosive straight punch while a suited bodyguard pivots into an evasive arm-parry. Dynamic eye-level wide composition, shattered ceramic tiles flying, water dripping from rusted ceiling grates under harsh emergency lighting.",
+    "seed": 339477839,
+    "kind": "section",
+    "title": "3.1 Die Würfelmechanik (Der Clash)",
+    "include_style": true
+  },
+  "sec-3-2-die-wirkung-eines-treffers-kaskade": {
+    "prompt": "A tactical operator in heavy ballistic armor takes a devastating shotgun blast point-blank inside a dim dockside warehouse, reinforced ceramic plates shattering outward and shedding sharp fragments under overhead floodlights. Ground-level wide composition, violent kinetic recoil, dense haze drifting over industrial shipping crates.",
+    "seed": 42108423,
+    "kind": "section",
+    "title": "3.2 Die Wirkung eines Treffers (Kaskade)",
+    "include_style": true
+  },
+  "sec-3-3-tags": {
+    "prompt": "A battered street brawler pinned flat against wet asphalt in a narrow back alley flicks a smoking brass bullet casing straight toward the face of a looming enforcer to break his chokehold. Close-up wide composition, desperate gritty struggle amidst overflowing dumpsters, flickering neon reflections in rain puddles.",
+    "seed": 1916556867,
+    "kind": "section",
+    "title": "3.3 Tags",
+    "include_style": true
+  },
+  "sec-3-4-die-helden-schwelle": {
+    "prompt": "A trench-coated detective effortlessly side-steps a street thug's clumsy iron pipe swing beneath a solitary lamppost, delivering a swift palm strike to the throat that lifts the attacker clean off the pavement. Low-angle wide composition down a misty cobblestone alley, rolling trash cans and deep looming shadows.",
+    "seed": 1351295636,
+    "kind": "section",
+    "title": "3.4 Die Helden-Schwelle",
+    "include_style": true
+  },
+  "sec-3-5-ausser-reichweite-klassenunterschied": {
+    "prompt": "An elderly martial arts master standing perfectly composed with one hand tucked behind his back in a dark rooftop greenhouse parries a frantic knife-thrust with a casual flick of his forearm, sending the outclassed assassin stumbling off-balance. Wide side-profile composition against a panoramic midnight skyline during a downpour.",
+    "seed": 7260685,
+    "kind": "section",
+    "title": "3.5 Außer Reichweite (Klassenunterschied)",
+    "include_style": true
+  },
+  "sec-3-6-der-rundenablauf-seiten-initiative-mit-kinet": {
+    "prompt": "Two rival gun crews crouch behind bullet-riddled luxury sedans in an abandoned multi-story parking garage, while a single heavy brass token rolls across the oil-slicked concrete floor between them. Tense wide Dutch-angle shot capturing the suspended silence between deafening volleys, steam rising from cracked radiators.",
+    "seed": 932402820,
+    "kind": "section",
+    "title": "3.6 Der Rundenablauf: Seiten-Initiative mit Kinetik-Marker",
+    "include_style": true
+  },
+  "sec-3-7-mehrere-gegner-goons-elite-und-bosse": {
+    "prompt": "A lone operative in a black turtleneck cuts through a squad of masked syndicate foot soldiers in a trashed VIP nightclub lounge, dropping two attackers simultaneously with a sweeping kick while a massive armored syndicate boss watches coldly from the balcony. Sweeping wide-angle shot, overturned plush sofas, shattered champagne glasses.",
+    "seed": 458140447,
+    "kind": "section",
+    "title": "3.7 Mehrere Gegner: Goons, Elite und Bosse",
+    "include_style": true
+  },
+  "sec-3-8-momentum": {
+    "prompt": "A female assassin slides across a wet glass conference table on her knees, twin handguns firing in rapid rhythmic succession toward flanking corporate security guards, ejected brass casings suspended in mid-air. Dynamic wide tracking shot, floor-to-ceiling skyscraper windows framing a storm-swept metropolis at midnight.",
+    "seed": 650820545,
+    "kind": "section",
+    "title": "3.8 Momentum",
+    "include_style": true
+  },
+  "sec-3-9-bullet-time-rule-of-cool": {
+    "prompt": "A lone marksman dives horizontally through a shattered penthouse window into the rainy night, suspended weightlessly in mid-air while a single high-caliber bullet cuts through suspended water droplets toward an airborne surveillance drone. Cinematic extreme wide freeze-frame perspective, sparkling glass shards hanging frozen against dark cloudy skies.",
+    "seed": 1844906606,
+    "kind": "section",
+    "title": "3.9 Bullet Time (Rule of Cool)",
+    "include_style": true
+  },
+  "sec-3-10-regeneration-ohnmacht-und-gebrochen": {
+    "prompt": "An exhausted undercover detective slumps against the damp concrete wall of an industrial fire escape, cupping trembling hands to light a crushed cigarette while blood drips from bruised knuckles onto the iron grate. Intimate wide atmospheric shot, heavy shadows concealing his battered face as mist rolls through the alley below.",
+    "seed": 1333216037,
+    "kind": "section",
+    "title": "3.10 Regeneration, Ohnmacht und Gebrochen",
+    "include_style": true
+  },
+  "sec-3-11-ausgeschaltet-sterben-und-heilung": {
+    "prompt": "A tactical medic drags a wounded SWAT officer behind a collapsed concrete blast barrier inside a ruined freight terminal, urgently pressing a field trauma bandage against his shoulder while red emergency strobes flash through smoke. Low-angle wide composition, rain pouring through a breached ceiling onto pooling water.",
+    "seed": 1642385708,
+    "kind": "section",
+    "title": "3.11 Ausgeschaltet, Sterben und Heilung",
+    "include_style": true
+  },
+  "sec-3-12-moves-einsetzen-und-bezahlen": {
+    "prompt": "A parkour brawler rebounds off an iron girder in an abandoned railyard warehouse, driving a ferocious downward axe-kick onto an elite guard's tactical riot shield and driving him to one knee. High-angle wide action composition, sparks showering across rusted train cars and wet gravel under harsh security lights.",
+    "seed": 793661368,
+    "kind": "section",
+    "title": "3.12 Moves einsetzen und bezahlen",
+    "include_style": true
+  },
+  "sec-3-13-optionale-experten-regel-erst-wuerfeln-dann": {
+    "prompt": "A skilled fighter in a flying dark trench coat catches an incoming steel baton with bare cross-locked forearms, twisting her torso mid-impact to vault over her opponent's shoulders and transition into an inverted rear choke. Wide panoramic shot atop a rain-slicked water tower platform overlooking a sprawling neon city.",
+    "seed": 1203114827,
+    "kind": "section",
+    "title": "3.13 Optionale Experten-Regel: Erst würfeln, dann erzählen (\"Fortune in the Middle\")",
+    "include_style": true
+  },
+  "ch-4-proben-gegen-die-umgebung-nicht-kampf-skills": {
+    "prompt": "A lone operative in a billowing trench coat leaps across a perilous chasm between two wet skyscraper rooftops at night. One outstretched hand reaches for an iron fire escape ladder above a dizzying fall into the darkness below. Dramatic low-angle wide shot, driving rain and distant lightning.",
+    "seed": 383932189,
+    "kind": "chapter",
+    "title": "Proben gegen die Umgebung (Nicht-Kampf-Skills)",
+    "include_style": true
+  },
+  "sec-4-1-heimlichkeit-und-infiltration": {
+    "prompt": "An agile infiltrator in dark tactical gear crouches silently behind an oblivious armed guard patrolling a flooded industrial basement corridor. Heavy steam vents hiss overhead while isolated cone lights cut through the murky passage, illuminating shallow puddles on the concrete floor. Tense eye-level wide shot, suspenseful and quiet atmosphere.",
+    "seed": 708152703,
+    "kind": "section",
+    "title": "4.1 Heimlichkeit und Infiltration",
+    "include_style": true
+  },
+  "ch-5-moves": {
+    "prompt": "A gun-fu operative executes an acrobatic spinning dive across a rain-slicked gravel rooftop, firing dual suppressed pistols sideways through the downpour as rival mercenaries scramble behind ventilation shafts. Broken glass scatters across wet puddles under skyscraper spotlights. A bright red silk lining flashes inside his fluttering open trench coat. Wide dynamic angle.",
+    "seed": 33928233,
+    "kind": "chapter",
+    "title": "Moves",
+    "include_style": true
+  },
+  "sec-5-1-das-bewertungs-framework-effektpunkte": {
+    "prompt": "In a damp underground parking garage, a tactical operative executes a calculated joint lock, twisting an assault rifle from an armored bodyguard's grip while driving a low sweep into the opponent's knee. Puddles splash over cracked concrete under harsh overhead lamps. A vivid red laser sight dots a nearby pillar. Wide landscape composition.",
+    "seed": 700794890,
+    "kind": "section",
+    "title": "5.1 Das Bewertungs-Framework (Effektpunkte)",
+    "include_style": true
+  },
+  "sec-5-2-move-beispiele-richtwerte": {
+    "prompt": "An urban brawler launches an explosive flying dropkick off a rusted iron fire escape, slamming boots-first into an armored security guard who crashes back through wooden pallets in a narrow, rain-drenched alleyway. Water cascades down brick walls beside towering fire escapes. The brawler wears bright red sneakers. Wide low-angle action shot.",
+    "seed": 2054053875,
+    "kind": "section",
+    "title": "5.2 Move-Beispiele (Richtwerte)",
+    "include_style": true
+  },
+  "sec-5-3-gemeisterte-moves": {
+    "prompt": "Inside an abandoned, flooded subway terminal, an ex-assassin strides calmly past defeated syndicate goons, effortlessly redirecting an ambusher's knife strike with a single palm thrust without breaking stride. Water ripples across the tiled platform as rain leaks through high vaulted ceilings. A vivid red scarf trails around his collar. Wide tracking shot.",
+    "seed": 455547145,
+    "kind": "section",
+    "title": "5.3 Gemeisterte Moves",
+    "include_style": true
+  },
+  "sec-5-4-meister-moves-und-legendaere-moves": {
+    "prompt": "An exhausted martial arts master stands victorious amidst a ring of incapacitated syndicate elites sprawled across a shattered glass penthouse terrace. Rain pours into the ruins as midnight lightning silhouettes distant city towers. The master drops to one knee clutching an injured arm, wearing a vivid red sash that flutters in the wind. Extreme wide panorama.",
+    "seed": 970928038,
+    "kind": "section",
+    "title": "5.4 Meister-Moves und Legendäre Moves",
+    "include_style": true
+  },
+  "ch-6-spielbeispiele-am-tisch": {
+    "prompt": "A wide panoramic shot of a rain-swept city intersection under flickering streetlamps. A solitary assassin in an unbuttoned trench coat with a vivid red necktie stands among fallen syndicate enforcers on wet asphalt, holding dual pistols in a gun-fu stance as rain pours through blinding headlights.",
+    "seed": 796691791,
+    "kind": "chapter",
+    "title": "Spielbeispiele am Tisch",
+    "include_style": true
+  },
+  "sec-beispiel-charakterbogen": {
+    "prompt": "A wide landscape view inside a dimly lit safehouse apartment. An assassin in black tactical attire sits on the edge of a bare cot, tightening a concealed vest beneath an open shirt. A stripped-down automatic pistol, extra magazines, and a single crimson origami crane rest on a wooden crate beside him.",
+    "seed": 147729459,
+    "kind": "section",
+    "title": "Beispiel-Charakterbogen",
+    "include_style": true
+  },
+  "sec-beispiel-1-kampf-gegen-horden-goons": {
+    "prompt": "A wide dynamic action shot down a long, narrow hotel corridor with peeling wallpaper. An acrobatic assassin rebounds off a wall while firing two handguns mid-air into a crowd of charging henchmen in dark suits. One falling enforcer clutches his chest, dropping a small bright red silk handkerchief onto the carpet.",
+    "seed": 105469951,
+    "kind": "section",
+    "title": "Beispiel 1: Kampf gegen Horden (Goons)",
+    "include_style": true
+  },
+  "sec-beispiel-2-ruestung-und-verletzung-boss-kampf": {
+    "prompt": "A wide landscape shot inside a cavernous, derelict industrial hall. A lean martial artist executes an aggressive over-the-shoulder judo throw on a massive tactical SWAT officer in heavy body armor. The armored giant crashes hard onto the cracked concrete, while an unholstered pistol slides away toward a small vivid red tool case.",
+    "seed": 1215696832,
+    "kind": "section",
+    "title": "Beispiel 2: Rüstung und Verletzung (Boss-Kampf)",
+    "include_style": true
+  },
+  "sec-beispiel-3-pvp-spieler-gegen-spieler": {
+    "prompt": "A wide landscape view inside a wrecked office with broken Venetian blinds and drifting paper. A detective crouching behind a massive overturned wooden desk kicks the heavy furniture violently forward into an approaching shooter, catching the gunman by the shins while a single bright red apple rolls across the polished floorboards.",
+    "seed": 1189292797,
+    "kind": "section",
+    "title": "Beispiel 3: PvP (Spieler gegen Spieler)",
+    "include_style": true
+  },
+  "sec-beispiel-4-charakterentwicklung-und-titel-leveli": {
+    "prompt": "A wide composition of an underground illegal fight arena surrounded by chain-link fences and shadowed spectators. A veteran female brawler with taped knuckles stands completely relaxed in the center of the dirt ring, stepping over unconscious heavyweights, wearing a single vibrant red bandana tied around her neck.",
+    "seed": 1455236550,
+    "kind": "section",
+    "title": "Beispiel 4: Charakterentwicklung und Titel-Leveling",
+    "include_style": true
+  },
+  "sec-beispiel-5-heimlichkeit-goons-und-elite": {
+    "prompt": "A wide overhead view through iron warehouse rafters above an industrial depot. A silent infiltrator creeps along a shadowy steel beam directly above a lighted glass office where a wary bodyguard sits watchful at a desk. In the background, four unaware guards play cards around a single glowing red lantern.",
+    "seed": 995392356,
+    "kind": "section",
+    "title": "Beispiel 5: Heimlichkeit (Goons und Elite)",
+    "include_style": true
+  },
+  "sec-beispiel-6-gift-und-toeten": {
+    "prompt": "A wide landscape scene in the dark corridor behind stacked cargo containers. A crouching assassin in a dark coat maintains a sleeper hold on an unconscious bodyguard slumped against steel lockers. Farther down the rainy alleyway, a trench-coated detective observes through the shadows under a lone glowing red emergency lamp.",
+    "seed": 1944319954,
+    "kind": "section",
+    "title": "Beispiel 6: Gift und Töten",
+    "include_style": true
+  },
+  "sec-beispiel-7-den-move-nicht-einsetzen-variante-von": {
+    "prompt": "A wide dynamic shot in a subterranean parking garage with water puddles. A bruised martial artist and a heavily armored tactical officer collide in an unpolished grapple. The officer absorbs an imperfect throw, rolling through the impact while driving a vicious body hook into the attacker's ribs beside a vivid red fire extinguisher.",
+    "seed": 2037599790,
+    "kind": "section",
+    "title": "Beispiel 7: Den Move nicht einsetzen (Variante von Beispiel 2)",
+    "include_style": true
+  }
+}

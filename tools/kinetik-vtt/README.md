@@ -84,3 +84,14 @@ npm run build        # dist/
 - **PenNodePaper-Brücke:** Die Verbindung steht nur, solange eine Runde läuft. Beim Datei-Export für den Offline-Import werden Gegner zu Kampf-Gegnern, NPCs erscheinen dort noch nicht als Token (live per Brücke schon). Hex-Raster werden abgelehnt.
 
 - **Kampf auf der Karte, Rest:** Experten-Regel 3.13 (der Spieler nennt nur Ziel, Attribut und Technik, der SL die Reaktion) ist nicht umgesetzt. Tischwürfel (echte Würfel) gibt es in Kampfsituationen nicht, der SL kann nur für Spieler ohne Gerät würfeln. Gift auf Goon-Gruppen wird nicht abgebildet. Überzahl ist ein Stepper an der Verteidigung (Vorgabe: Zahl der Goons). Gift tickt nur, wenn der betroffene Spieler verbunden ist oder lokal geführt wird.
+
+## Regelwerk je Theme
+
+Die Regelwerk-Seite (Buch-Knopf in der Kopfleiste) nimmt automatisch die Bilder des gewählten Themes: Cover, Kapitelbalken und Abschnittsbilder. Fehlt einem Theme ein Bild, gilt das Standardbild (Neo-Noir); Füllbilder gibt es nur im Standardstil.
+
+```bash
+python3 scripts/gen_rulebook_themes.py --theme wushu   # Prompts (agy), Bilder (Krea 2) und Bildkontrolle im 3x3-Modus
+python3 scripts/build_rulebook_web.py                  # WebP nach public/rulebook/img/<theme>/, "themed" in rulebook.json
+```
+
+`gen_rulebook_themes.py` legt je Theme ein PDF-Projekt unter `assets/pdf-themes/<theme>/` an (Welt und Stil des Themes, Nachbearbeitung wie bei den Seitenbildern) und nutzt die Pipeline aus `tools/rulebook-pdf`. Pro Bild bis zu 3 Konzepte mit je 3 Versuchen, geprüft von agy. Das dauert (grob 2 bis 10 Minuten pro Bild, 36 Bilder pro Theme). Vorhandene Bilder werden übersprungen, ein Bild neu erzeugen: Datei in `assets/pdf-themes/<theme>/images/` löschen und das Skript wieder starten. Die Quell-JPGs bleiben lokal (`.gitignore`), eingecheckt sind Projekt, Prompts und die WebP-Dateien.

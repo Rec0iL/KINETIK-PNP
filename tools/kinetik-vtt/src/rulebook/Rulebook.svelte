@@ -1,6 +1,6 @@
 <script lang="ts">
   import { tick, untrack } from 'svelte';
-  import { rulebook, closeRulebook, rbUrl, plainText, type RbChapter } from './rulebook.svelte';
+  import { rulebook, closeRulebook, rbUrl, rbImg, rbFill, plainText, type RbChapter } from './rulebook.svelte';
 
   let scroller = $state<HTMLDivElement>();
   let query = $state('');
@@ -113,7 +113,7 @@
 
       {#if showCover}
         <div class="cover">
-          <img class="coverimg" src={rbUrl(data.cover!)} alt="Cover" />
+          <img class="coverimg" src={rbImg(data.cover)} alt="Cover" />
           <div class="covertxt">
             <span class="kicker">Cinematic Action Roleplaying</span>
             <h1>KINETIK</h1>
@@ -126,7 +126,7 @@
       {#each data.chapters as c (c.id)}
         <article class="chapter" id={`rb-${c.id}`}>
           <div class="banner">
-            {#if c.image}<img class="bannerimg" src={rbUrl(c.image)} alt="" loading="lazy" />{/if}
+            {#if c.image}<img class="bannerimg" src={rbImg(c.image)} alt="" loading="lazy" />{/if}
             <div class="bannertxt">
               {#if c.number}<span class="no">Kapitel {c.number}</span>{:else if c.appendix}<span class="no">Anhang</span>{/if}
               <h2>{c.title}</h2>
@@ -135,14 +135,14 @@
           </div>
           <div class="rbcontent pad">
             {@html c.html}
-            {#if c.fill && !c.sections.length}<img class="fill" src={rbUrl(c.fill)} alt="" loading="lazy" />{/if}
+            {#if c.fill && !c.sections.length && rbFill(c.fill)}<img class="fill" src={rbFill(c.fill)} alt="" loading="lazy" />{/if}
           </div>
           {#each c.sections as s (s.id)}
             <section class="sec" id={`rb-${s.id}`}>
-              {#if s.image}<img class="secimg" src={rbUrl(s.image)} alt="" loading="lazy" />{/if}
+              {#if s.image}<img class="secimg" src={rbImg(s.image)} alt="" loading="lazy" />{/if}
               <h3>{s.title}</h3>
               <div class="rbcontent">{@html s.html}</div>
-              {#if s.fill}<img class="fill" src={rbUrl(s.fill)} alt="" loading="lazy" />{/if}
+              {#if s.fill && rbFill(s.fill)}<img class="fill" src={rbFill(s.fill)} alt="" loading="lazy" />{/if}
             </section>
           {/each}
         </article>
@@ -203,7 +203,7 @@
   .rbcontent :global(p) { margin: 0 0 0.7em; }
   .rbcontent :global(h4), .rbcontent :global(h5) { font-size: 1.05rem; color: var(--accent); margin: 1rem 0 0.4rem; }
   .rbcontent :global(strong) { color: var(--ink-strong); }
-  .rbcontent :global(em) { color: #d7dce4; }
+  .rbcontent :global(em) { color: var(--ink-strong); }
   .rbcontent :global(ul), .rbcontent :global(ol) { padding-left: 1.3em; margin: 0 0 0.8em; }
   .rbcontent :global(li) { margin: 0.2em 0; }
   .rbcontent :global(hr) { border: 0; border-top: 1px solid var(--line); margin: 1rem 0; }

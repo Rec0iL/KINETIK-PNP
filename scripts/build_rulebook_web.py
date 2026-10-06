@@ -6,7 +6,11 @@ und die Bilder aus assets/pdf/images (zugeordnet über Kapitel- und Abschnittssc
 
     python3 scripts/build_rulebook_web.py
 
-Ausgabe: tools/kinetik-vtt/public/rulebook/ (rulebook.json, img/*.webp, das PDF zum Herunterladen).
+Bildsätze je Theme: Liegt unter assets/pdf-themes/<theme>/images/ ein Satz (erzeugt von scripts/gen_rulebook_themes.py),
+landet er als img/<theme>/<schlüssel>.webp in der Ausgabe; rulebook.json nennt unter "themed", welche Schlüssel es je Theme gibt.
+Die Seite nimmt dann automatisch die Bilder des gewählten Themes (fehlende Schlüssel: die Standardbilder). Standard ist noir.
+
+Ausgabe: tools/kinetik-vtt/public/rulebook/ (rulebook.json, img/*.webp, img/<theme>/*.webp, das PDF zum Herunterladen).
 """
 import json
 import re
@@ -28,6 +32,8 @@ PROJECT = json.loads((ROOT / "assets" / "pdf" / "project.json").read_text(encodi
 MANIFEST = json.loads((ROOT / "assets" / "pdf" / "images.json").read_text(encoding="utf-8"))
 
 WIDTH = {"ch": 1400, "sec": 1000, "fill": 1000}
+THEME_DIR = ROOT / "assets" / "pdf-themes"
+PIXEL_THEMES = {"pixel"}   # Pixelbilder verlustfrei speichern, die Seite skaliert sie ungeglättet
 
 
 def render(md):
@@ -66,6 +72,40 @@ def image(key, kind, written):
     return f"img/{key}.webp"
 
 
+def kind_of(key):
+    return "ch" if key == "cover" or key.startswith("ch-") else "sec"
+
+
+def themed_images():
+    """Konvertiert die Bildsätze der Themes. Liefert {theme: [schlüssel, ...]}."""
+    out = {}
+    if not THEME_DIR.exists():
+        return out
+    for tdir in sorted(THEME_DIR.iterdir()):
+        src_dir = tdir / "images"
+        if not src_dir.is_dir():
+            continue
+        keys = []
+        for src in sorted(src_dir.glob("*.jpg")):
+            key = src.stem
+            if key == "background" or key.startswith("fill-"):
+                continue
+            dst = OUT / "img" / tdir.name / f"{key}.webp"
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            im = Image.open(src).convert("RGB")
+            w = WIDTH[kind_of(key)]
+            if tdir.name in PIXEL_THEMES:
+                im.save(dst, "WEBP", lossless=True, method=6)
+            else:
+                if im.width > w:
+                    im = im.resize((w, round(im.height * w / im.width)), Image.LANCZOS)
+                im.save(dst, "WEBP", quality=76, method=6)
+            keys.append(key)
+        if keys:
+            out[tdir.name] = keys
+    return out
+
+
 def main():
     md = SRC.read_text(encoding="utf-8")
     doc = parse(md, chapter_level=PROJECT.get("chapter_level") or None, appendix_patterns=PROJECT.get("appendix_patterns", []))
@@ -75,8 +115,11 @@ def main():
     (OUT / "img").mkdir(parents=True, exist_ok=True)
     for old in OUT.iterdir():
         if old.is_dir():
-            for f in old.iterdir():
-                f.unlink()
+            for f in old.rglob("*"):
+                if f.is_file():
+                    f.unlink()
+            for d in sorted((d for d in old.rglob("*") if d.is_dir()), reverse=True):
+                d.rmdir()
         else:
             old.unlink()
     shutil.copy(ROOT / "assets" / "grafiken" / "koerper-silhouette.svg", OUT / "img" / "koerper-silhouette.svg")
@@ -97,16 +140,17 @@ def main():
         })
 
     cover = image("cover", "ch", written)
+    themed = themed_images()
     pdf = sorted((ROOT / "export").glob(f"KINETIK_Regelwerk_v{version}*.pdf"))
     pdf_name = None
     if pdf:
         pdf_name = "KINETIK_Regelwerk.pdf"
         shutil.copy(pdf[-1], OUT / pdf_name)
 
-    data = {"version": version, "title": doc.title or "KINETIK", "intro": render(doc.intro_md), "cover": cover, "pdf": pdf_name, "chapters": chapters}
+    data = {"version": version, "title": doc.title or "KINETIK", "intro": render(doc.intro_md), "cover": cover, "pdf": pdf_name, "themed": themed, "chapters": chapters}
     (OUT / "rulebook.json").write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
     size = sum(f.stat().st_size for f in OUT.rglob("*") if f.is_file())
-    print(f"Regelwerk v{version}: {len(chapters)} Kapitel, {sum(len(c['sections']) for c in chapters)} Abschnitte, {len(written)} Bilder, {size // 1024} KB")
+    print(f"Regelwerk v{version}: {len(chapters)} Kapitel, {sum(len(c['sections']) for c in chapters)} Abschnitte, {len(written)} Bilder, Bildsätze: {', '.join(f'{t} ({len(k)})' for t, k in themed.items()) or 'keine'}, {size // 1024} KB")
 
 
 if __name__ == "__main__":
