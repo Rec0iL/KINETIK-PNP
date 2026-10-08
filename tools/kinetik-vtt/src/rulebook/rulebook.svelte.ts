@@ -1,5 +1,5 @@
 // Regelwerk als HTML (gebaut von scripts/build_rulebook_web.py). Lädt erst, wenn es gebraucht wird.
-import { theme, THEME_INFO } from '../lib/theme.svelte';
+import { theme, THEMES, THEME_INFO, type ThemeKey } from '../lib/theme.svelte';
 export interface RbSection { id: string; title: string; html: string; image: string | null; fill: string | null }
 export interface RbChapter {
   id: string; number: number | null; title: string; subtitle: string; appendix: boolean;
@@ -11,6 +11,8 @@ export interface RbData {
   themed?: Record<string, string[]>;
   /** PDF je Theme (Dateiname unter rulebook/); fehlt eins, gilt `pdf`. */
   pdfs?: Record<string, string>;
+  /** Dateigrößen in Byte je Theme; "noir" ist das Standard-PDF. */
+  pdfSizes?: Record<string, number>;
 }
 
 export const rulebook = $state<{
@@ -80,11 +82,20 @@ export function plainText(html: string): string {
   return html.replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;|&#\d+;/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
-/** PDF zum gewählten Theme: Dateiname und ein Name für den Download. */
-export function rbPdf(): { href: string; filename: string; theme: string | null } | null {
+export interface RbPdf { key: ThemeKey; href: string; filename: string; size: number | null; current: boolean }
+
+/** Alle Regelwerk-PDFs für das Download-Menü: Standard (Neo-Noir) zuerst, dann die gestalteten in der Reihenfolge der Themes.
+ *  Das PDF zum gewählten Theme ist als `current` markiert (reaktiv auf den Themewechsel). */
+export function rbPdfs(): RbPdf[] {
   const d = rulebook.data;
-  if (!d?.pdf) return null;
-  const art = THEME_INFO[theme.current].art;
-  const own = d.pdfs?.[art];
-  return { href: rbUrl(own ?? d.pdf), filename: `KINETIK_Regelwerk_v${d.version}${own ? `_${art}` : ''}.pdf`, theme: own ? art : null };
+  if (!d?.pdf) return [];
+  const list: RbPdf[] = [{ key: 'noir', href: rbUrl(d.pdf), filename: `KINETIK_Regelwerk_v${d.version}.pdf`, size: d.pdfSizes?.noir ?? null, current: false }];
+  for (const key of THEMES) {
+    const f = d.pdfs?.[key];
+    if (key !== 'noir' && f) list.push({ key, href: rbUrl(f), filename: `KINETIK_Regelwerk_v${d.version}_${key}.pdf`, size: d.pdfSizes?.[key] ?? null, current: false });
+  }
+  // Ist für das gewählte Theme kein eigenes PDF da, gilt das Standard-PDF als aktuell
+  const cur = list.find((p) => p.key === theme.current) ?? list[0];
+  cur.current = true;
+  return list;
 }

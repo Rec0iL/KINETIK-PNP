@@ -1,6 +1,6 @@
 <script lang="ts">
   import { tick, untrack } from 'svelte';
-  import { rulebook, closeRulebook, rbUrl, rbImg, rbFill, rbPdf, plainText, type RbChapter } from './rulebook.svelte';
+  import { rulebook, closeRulebook, rbUrl, rbImg, rbFill, rbPdfs, plainText, type RbChapter } from './rulebook.svelte';
   import { t } from '../i18n';
   import { theme } from '../lib/theme.svelte';
 
@@ -13,8 +13,13 @@
   let ticking = false;
 
   const data = $derived(rulebook.data);
-  /** PDF im Stil des gewählten Themes (reaktiv auf den Themewechsel) */
-  const pdf = $derived(rbPdf());
+  /** Alle PDFs fürs Download-Menü, das zum gewählten Theme ist markiert (reaktiv auf den Themewechsel) */
+  const pdfs = $derived(rbPdfs());
+  let dlOpen = $state(false);
+  const fmtSize = (b: number) => `${(b / 1048576).toFixed(1).replace('.', ',')} MB`;
+  function outside(e: MouseEvent) {
+    if (dlOpen && !(e.target as HTMLElement).closest('.dlmenu')) dlOpen = false;
+  }
   const q = $derived(query.trim().toLowerCase());
 
   interface Hit { id: string; chapter: string; title: string; snippet: string }
@@ -93,12 +98,12 @@
   });
 
   function onKey(e: KeyboardEvent) {
-    if (e.key === 'Escape' && rulebook.open) { if (navOpen) navOpen = false; else closeRulebook(); }
+    if (e.key === 'Escape' && rulebook.open) { if (dlOpen) dlOpen = false; else if (navOpen) navOpen = false; else closeRulebook(); }
   }
   const showCover = $derived(!!data?.cover);
 </script>
 
-<svelte:window onkeydown={onKey} />
+<svelte:window onkeydown={onKey} onclick={outside} />
 
 {#if rulebook.open}
   <button class="scrim" onclick={closeRulebook} aria-label="Regelwerk schließen" tabindex="-1"></button>
@@ -107,10 +112,29 @@
 <aside class="rb" class:open={rulebook.open} class:wide={rulebook.wide} aria-label="Regelwerk" aria-hidden={!rulebook.open}>
   <header>
     <div class="titlebar">
-      {#if data?.pdf && pdf}
-        <a class="dl" href={pdf.href} download={pdf.filename} title={pdf.theme ? `Regelwerk als PDF herunterladen (${t(`theme.${theme.current}`)})` : 'Regelwerk als PDF herunterladen'}>
+      {#if pdfs.length > 1}
+        <div class="dlmenu">
+          <button type="button" class="dl" aria-haspopup="menu" aria-expanded={dlOpen} onclick={() => (dlOpen = !dlOpen)} title="Regelwerk als PDF herunterladen">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 3v11m0 0l-4.5-4.5M12 14l4.5-4.5M4 15v4a2 2 0 002 2h12a2 2 0 002-2v-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            <b>Regelwerk</b><small>v{data?.version}</small><span class="caret" aria-hidden="true">▾</span>
+            <span class="sr-only">als PDF herunterladen, Auswahl öffnen</span>
+          </button>
+          {#if dlOpen}
+            <div class="dlpop" role="menu" aria-label="Regelwerk als PDF herunterladen">
+              <p class="dlhead">PDF herunterladen</p>
+              {#each pdfs as p (p.key)}
+                <a role="menuitem" class="dlitem" class:cur={p.current} href={p.href} download={p.filename} onclick={() => (dlOpen = false)}>
+                  <span class="nm">{t(`theme.${p.key}`)}{#if p.key === 'noir'}<small>Standard</small>{/if}</span>
+                  <span class="meta">{#if p.current}<em>aktiv</em>{/if}{#if p.size}<span>{fmtSize(p.size)}</span>{/if}</span>
+                </a>
+              {/each}
+            </div>
+          {/if}
+        </div>
+      {:else if pdfs.length === 1}
+        <a class="dl" href={pdfs[0].href} download={pdfs[0].filename} title="Regelwerk als PDF herunterladen">
           <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 3v11m0 0l-4.5-4.5M12 14l4.5-4.5M4 15v4a2 2 0 002 2h12a2 2 0 002-2v-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-          <b>Regelwerk</b><small>v{data.version}</small>
+          <b>Regelwerk</b><small>v{data?.version}</small>
           <span class="sr-only">als PDF herunterladen</span>
         </a>
       {:else}
@@ -147,7 +171,6 @@
             <span class="kicker">Cinematic Action Roleplaying</span>
             <h1>KINETIK</h1>
             <div class="rbcontent">{@html data.intro}</div>
-            {#if pdf}<a class="btn sm" href={pdf.href} download={pdf.filename}>PDF herunterladen{pdf.theme ? ` (${t(`theme.${theme.current}`)})` : ''}</a>{/if}
           </div>
         </div>
       {/if}
@@ -203,10 +226,25 @@
   header { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--line); background: var(--panel-solid); display: grid; gap: 0.5rem; }
   .titlebar { display: flex; align-items: center; gap: 0.3rem; }
   .titlebar b { font: 400 1.6rem var(--font-display); letter-spacing: 0.1em; color: var(--accent); }
+  .dlmenu { position: relative; }
+  button.dl { appearance: none; background: none; font: inherit; cursor: pointer; }
   .dl { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--accent); text-decoration: none; padding: 0.15rem 0.5rem 0.15rem 0.3rem; margin-left: -0.3rem; border: 1px solid transparent; transition: background 0.15s, border-color 0.15s; }
   .dl:hover { background: var(--accent-soft); border-color: var(--accent-line); text-decoration: none; }
   .dl small { color: var(--ink-dim); font-size: 0.8rem; }
   .dl svg { flex: none; }
+  .dl .caret { font-size: 0.8rem; opacity: 0.8; margin-left: -0.1rem; transition: transform 0.15s; }
+  .dl[aria-expanded='true'] .caret { transform: rotate(180deg); }
+  .dl[aria-expanded='true'] { background: var(--accent-soft); border-color: var(--accent-line); }
+  /* Aufklappmenü mit allen PDF-Fassungen */
+  .dlpop { position: absolute; z-index: 10; top: calc(100% + 6px); left: -0.3rem; width: min(340px, calc(100vw - 24px)); padding: 0.35rem; display: grid; gap: 2px; background: var(--panel-solid); border: 1px solid var(--accent-line); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5); animation: tocin 0.14s ease-out; }
+  .dlhead { margin: 0; padding: 0.35rem 0.6rem 0.25rem; font: 600 0.72rem var(--font-head); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim); }
+  .dlitem { display: flex; justify-content: space-between; align-items: baseline; gap: 0.8rem; padding: 0.5rem 0.6rem; color: var(--ink); text-decoration: none; border-left: 3px solid transparent; }
+  .dlitem:hover { background: var(--accent-soft); color: var(--accent); text-decoration: none; }
+  .dlitem.cur { border-left-color: var(--accent); background: var(--accent-soft); }
+  .dlitem .nm { font: 600 0.95rem var(--font-head); letter-spacing: 0.06em; }
+  .dlitem .nm small { margin-left: 0.6em; font: 400 0.75rem var(--font-body); letter-spacing: 0; color: var(--ink-dim); }
+  .dlitem .meta { display: inline-flex; gap: 0.6rem; align-items: baseline; font-size: 0.78rem; color: var(--ink-dim); white-space: nowrap; }
+  .dlitem .meta em { font-style: normal; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
   .bodywrap { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
   .body { flex: 1; overflow-y: auto; overscroll-behavior: contain; }
   .pad { padding: 1rem 1.2rem; }

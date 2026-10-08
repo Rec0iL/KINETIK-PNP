@@ -157,7 +157,12 @@ def main():
             shutil.copy(f, OUT / f.name)
             pdfs[m.group(1)] = f.name
 
-    data = {"version": version, "title": doc.title or "KINETIK", "intro": render(doc.intro_md), "cover": cover, "pdf": pdf_name, "themed": themed, "pdfs": pdfs, "chapters": chapters}
+    # Dateigrößen fürs Download-Menü der Seite ("noir" = das Standard-PDF)
+    sizes = {t: (OUT / f).stat().st_size for t, f in pdfs.items()}
+    if pdf_name:
+        sizes["noir"] = (OUT / pdf_name).stat().st_size
+
+    data = {"version": version, "title": doc.title or "KINETIK", "intro": render(doc.intro_md), "cover": cover, "pdf": pdf_name, "themed": themed, "pdfs": pdfs, "pdfSizes": sizes, "chapters": chapters}
     (OUT / "rulebook.json").write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
     size = sum(f.stat().st_size for f in OUT.rglob("*") if f.is_file())
     print(f"Regelwerk v{version}: {len(chapters)} Kapitel, {sum(len(c['sections']) for c in chapters)} Abschnitte, {len(written)} Bilder, Bildsätze: {', '.join(f'{t} ({len(k)})' for t, k in themed.items()) or 'keine'}, PDFs: {', '.join(pdfs) or 'nur Standard'}, {size // 1024} KB")
