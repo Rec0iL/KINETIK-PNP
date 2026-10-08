@@ -102,7 +102,8 @@ def comfy_alive(url):
         return False
 
 
-COMFY_MAX_RSS_GB = 14   # darüber startet das Skript ComfyUI zwischen zwei Bildern neu (es wächst über die Stunden auf 20 bis 27 GB)
+COMFY_MAX_ANON_GB = 16  # darüber startet das Skript ComfyUI zwischen zwei Bildern neu. Normal sind 9 bis 10 GB, beim Absturz waren es 27 GB.
+                        # Gemessen wird nur der anonyme Speicher: die Modelldateien (weitere ~10 GB) liegen im Dateicache und gibt der Kernel selbst frei.
 
 
 def comfy_pid():
@@ -118,12 +119,13 @@ def comfy_pid():
 
 
 def comfy_rss_gb():
+    """Anonymer Speicher von ComfyUI in GB (RssAnon), ohne gemappte Modelldateien."""
     pid = comfy_pid()
     if not pid:
         return 0.0
     try:
         for line in open(f"/proc/{pid}/status"):
-            if line.startswith("VmRSS:"):
+            if line.startswith("RssAnon:"):
                 return int(line.split()[1]) / 1048576
     except OSError:
         pass
@@ -139,7 +141,7 @@ def start_comfy():
     log = open(ROOT / "assets" / "pdf-themes" / "comfyui.log", "ab")
     cmd = [str(py), "main.py", "--reserve-vram", "3"]
     if shutil.which("systemd-run"):
-        cmd = ["systemd-run", "--user", "--scope", "--collect", "-p", "MemoryMax=18G", "-p", "MemorySwapMax=0", "--"] + cmd
+        cmd = ["systemd-run", "--user", "--scope", "--collect", "-p", "MemoryMax=22G", "-p", "MemorySwapMax=0", "--"] + cmd
     subprocess.Popen(cmd, cwd=COMFY_DIR, stdout=log, stderr=log, stdin=subprocess.DEVNULL, start_new_session=True,
                      env={**os.environ, "PYTORCH_ENABLE_MPS_FALLBACK": "1", "TOKENIZERS_PARALLELISM": "false"})
     return True
@@ -201,8 +203,8 @@ def harden_comfy():
             if state["n"] and state["n"] % FREE_EVERY == 0:
                 free(self)
             rss = comfy_rss_gb()
-            if rss > COMFY_MAX_RSS_GB:
-                restart_comfy(self.url, f"{rss:.1f} GB RAM")
+            if rss > COMFY_MAX_ANON_GB:
+                restart_comfy(self.url, f"{rss:.1f} GB anonymer RAM")
             state["n"] += 1
             try:
                 return orig(self, wf, *a, **kw)

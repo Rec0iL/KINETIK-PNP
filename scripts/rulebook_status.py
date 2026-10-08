@@ -148,7 +148,7 @@ def comfy_info():
     if pid:
         try:
             for line in open(f"/proc/{pid}/status"):
-                if line.startswith("VmRSS:"):
+                if line.startswith("RssAnon:"):
                     rss = int(line.split()[1]) / 1048576
         except OSError:
             pass
@@ -247,7 +247,7 @@ def render():
     out.append("")
 
     cs = col("läuft", "green") if alive else col("antwortet nicht", "red")
-    rss_txt = f"{rss:.1f} GB RAM (Neustart ab 14)" if rss else "–"
+    rss_txt = f"{rss:.1f} GB RAM (Neustart ab 16)" if rss else "–"
     out.append(f"ComfyUI:   {cs}   {rss_txt}   Warteschlange: {queue or '–'}")
     sw = f"{swap_used:.0f}/{swap_total:.0f} GB"
     out.append(f"System:    {avail:.0f} GB RAM frei von {total:.0f}   Swap {col(sw, 'red') if swap_total and swap_used / swap_total > 0.85 else sw}")
