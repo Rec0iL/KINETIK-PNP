@@ -33,7 +33,8 @@
     "enabled": true,
     "auto_fix": true,
     "rounds": 3,
-    "radical": true
+    "radical": true,
+    "lenient": true
   },
   "content_type": "rulebook",
   "style_preset": "",

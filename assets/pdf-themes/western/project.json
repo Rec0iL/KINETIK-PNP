@@ -16,24 +16,36 @@
     "^Changelog"
   ],
   "theme": {
-    "bg": "#0b0c10",
-    "ink": "#e6eaf0",
+    "bg": "#170f0a",
+    "ink": "#ecdcb9",
     "accent": "#dba94a",
-    "accent2": "#d2603f"
+    "accent2": "#d2603f",
+    "ink_strong": "#fff3d6",
+    "em": "#ecdcb9",
+    "rule": "rgba(219,169,74,0.28)",
+    "card": "rgba(40,27,18,0.92)",
+    "stripe": "rgba(255,220,160,.04)",
+    "scrim": "23,15,10",
+    "font_display": "'Rye'",
+    "font_head": "'Arvo'",
+    "font_label": "'Arvo'",
+    "font_body": "'Arvo'",
+    "extra_css": "\n.cover-title{ font-size:92pt !important; letter-spacing:.03em; color:#f2d38a; text-shadow:4px 4px 0 #000; }\n.cover-sub, .chapter-sub{ font-weight:700; letter-spacing:.14em; }\n.opener h2{ font-size:30pt; line-height:1.05; color:#f2d38a; text-shadow:3px 3px 0 #000; }\n.appendix h2{ font-size:24pt; color:#f2d38a; }\n.dropcap{ font-size:36pt; }\n.sub-head h3, .appendix-body h3{ font-weight:700; border-bottom:3px double var(--rule); font-size:12.5pt; }\n.sub-head h3::before{ content:'\\2605\\00A0'; color:var(--magenta); }\n.cols h3, .cols h4, .cols h5, .cols h6{ font-weight:700; font-size:9.5pt; }\n.sub-figure img, .side-figure img, .filler img{ border:2px solid #5d4217; padding:2px; background:#2a1c12; }\ntable.rules-table{ border-top:2px solid #b8862b; }\ntable.rules-table th{ background:#b8862b; color:#1d1206; font-weight:700; }\nstrong{ font-weight:700; }\n"
   },
   "layout": {
     "section_images": true,
     "page_texture": true,
     "justify": true,
-    "font_size_pt": 9.6,
-    "fill_gaps": false,
+    "font_size_pt": 8.8,
+    "fill_gaps": true,
     "filler_min_mm": 55
   },
   "qc": {
     "enabled": true,
     "auto_fix": true,
     "rounds": 3,
-    "radical": true
+    "radical": true,
+    "lenient": true
   },
   "content_type": "rulebook",
   "style_preset": "",

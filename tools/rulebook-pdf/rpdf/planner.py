@@ -374,9 +374,34 @@ IMAGE_FORMAT_NOTE = ("Do NOT judge or mention image size, aspect ratio or orient
                      "the tool sets the format on purpose.")
 
 
-def check_image(image_path, work_dir, slot, prompt_used, world, model=None, style="", kind="rulebook"):
-    """Let agy look at one generated image and judge whether it fits its section."""
+def check_image(image_path, work_dir, slot, prompt_used, world, model=None, style="", kind="rulebook", lenient=False):
+    """Let agy look at one generated image and judge whether it fits its section.
+
+    lenient: the image only has to suit the section's topic and mood and be free of serious defects; details of the
+    prompt (exact pose, exact props, how many objects) do not matter."""
     pr = profile(kind)
+    if lenient:
+        prompt = f"""The image was generated to illustrate a {pr['noun']}.
+{pr['world_label']}: {world or 'unknown'}
+{style_for_judging(style)}
+Section: "{slot.title}"
+Section text (excerpt):
+{slot.context_md[:1500]}
+
+Intended motif (only a rough guide, it does NOT have to be matched exactly): {prompt_used}
+
+Be generous. Accept the image if BOTH are true:
+- It suits the section: its topic, mood and the {pr['book']}'s world. A different pose, setting, number of people or props than the motif is fine.
+- It has no serious defect: no readable or garbled text, letters or logos, no clearly broken anatomy (extra limbs, fused hands, two heads, merged bodies), nothing that clearly does not belong ({pr['judge_misfit']}).
+Do NOT reject because details of the motif are missing or different, or because it is merely not perfect.
+{IMAGE_FORMAT_NOTE}
+fits=true if it is acceptable for print. problems: short German bullet points, only about the serious defects or a clear
+topic mismatch (empty if fits). better_prompt: an improved English motif prompt (25-60 words, no style words, no text in
+the image), only needed if fits is false."""
+        schema = {"type": "object", "properties": {
+            "fits": {"type": "boolean"}, "problems": {"type": "array", "items": {"type": "string"}},
+            "better_prompt": {"type": "string"}}, "required": ["fits", "problems", "better_prompt"]}
+        return _run_on_image(image_path, work_dir, prompt, schema, model)
     prompt = f"""The image was generated to illustrate a {pr['noun']}.
 {pr['world_label']}: {world or 'unknown'}
 {style_for_judging(style)}

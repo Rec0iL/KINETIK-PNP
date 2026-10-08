@@ -16,24 +16,36 @@
     "^Changelog"
   ],
   "theme": {
-    "bg": "#0b0c10",
-    "ink": "#e6eaf0",
+    "bg": "#0e2135",
+    "ink": "#f3e9d2",
     "accent": "#ff7a5c",
-    "accent2": "#e8c26a"
+    "accent2": "#e8c26a",
+    "ink_strong": "#fffaec",
+    "em": "#f3e9d2",
+    "rule": "rgba(243,233,210,0.25)",
+    "card": "rgba(18,44,68,0.92)",
+    "stripe": "rgba(243,233,210,.045)",
+    "scrim": "14,33,53",
+    "font_display": "'Shippori Mincho'",
+    "font_head": "'Shippori Mincho'",
+    "font_label": "'Zen Kaku Gothic New'",
+    "font_body": "'Zen Kaku Gothic New'",
+    "extra_css": "\n.cover-title{ font-size:86pt !important; font-weight:800; text-shadow:4px 4px 0 #c8372d; letter-spacing:.03em; }\n.opener h2, .appendix h2{ font-weight:800; text-shadow:3px 3px 0 #c8372d; }\n.chapter-num{ color:var(--magenta); }\n.chapter-num::before{ content:'\\25C6\\00A0'; color:#c8372d; }\n.sub-head h3, .cols h3, .cols h4, .cols h5, .cols h6, .appendix-body h3{ text-transform:none; font-weight:700; letter-spacing:.03em; }\n.sub-head h3{ font-size:14pt; color:var(--magenta); border-bottom:1px solid var(--rule); }\n.sub-head h3::before{ content:'\\25C6\\00A0'; color:#c8372d; font-size:.6em; vertical-align:.15em; }\n.sub-figure img, .side-figure img, .filler img{ border:1px solid var(--magenta); padding:3px; background:#142f48; }\ntable.rules-table{ border-top:2px solid #c8372d; }\ntable.rules-table th{ background:rgba(232,194,106,.12); color:var(--magenta); text-transform:none; letter-spacing:.03em; }\n"
   },
   "layout": {
     "section_images": true,
     "page_texture": true,
     "justify": true,
-    "font_size_pt": 9.6,
-    "fill_gaps": false,
+    "font_size_pt": 9.4,
+    "fill_gaps": true,
     "filler_min_mm": 55
   },
   "qc": {
     "enabled": true,
     "auto_fix": true,
     "rounds": 3,
-    "radical": true
+    "radical": true,
+    "lenient": true
   },
   "content_type": "rulebook",
   "style_preset": "",

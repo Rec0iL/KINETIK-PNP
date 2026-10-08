@@ -16,24 +16,36 @@
     "^Changelog"
   ],
   "theme": {
-    "bg": "#0b0c10",
-    "ink": "#e6eaf0",
+    "bg": "#e8dec6",
+    "ink": "#261f17",
     "accent": "#b9301d",
-    "accent2": "#8a6416"
+    "accent2": "#8a6416",
+    "ink_strong": "#0e0a06",
+    "em": "#261f17",
+    "rule": "rgba(38,31,23,0.22)",
+    "card": "rgba(249,243,228,0.92)",
+    "stripe": "rgba(70,45,10,.05)",
+    "scrim": "232,222,198",
+    "font_display": "'Noto Serif SC'",
+    "font_head": "'Noto Serif SC'",
+    "font_label": "'Noto Serif SC'",
+    "font_body": "'Noto Serif SC'",
+    "extra_css": "\n.cover-title{ font-size:90pt !important; font-weight:900; text-shadow:none; letter-spacing:.03em; }\n.cover-kicker, .chapter-num{ letter-spacing:.3em; }\n.opener h2, .appendix h2{ font-weight:900; font-size:36pt; text-transform:none; }\n.chapter-sub, .cover-sub{ text-transform:none; letter-spacing:.06em; font-weight:700; }\n.sub-head h3, .cols h3, .cols h4, .cols h5, .cols h6, .appendix-body h3{ text-transform:none; font-weight:700; letter-spacing:.02em; }\n.sub-head h3{ font-size:13.5pt; border-bottom:1px solid var(--ink); }\n.sub-head h3::before{ content:'\\25C6\\00A0'; color:var(--cyan); font-size:.7em; }\n.sub-figure img, .side-figure img, .filler img{ border:1px solid var(--ink); padding:3px; background:#f6eedb; }\nstrong{ font-weight:700; }\ntable.rules-table th{ text-transform:none; letter-spacing:.02em; background:rgba(185,48,29,.1); }\ntable.rules-table{ border-top:2px solid var(--ink); }\n"
   },
   "layout": {
     "section_images": true,
     "page_texture": true,
     "justify": true,
-    "font_size_pt": 9.6,
-    "fill_gaps": false,
+    "font_size_pt": 9.0,
+    "fill_gaps": true,
     "filler_min_mm": 55
   },
   "qc": {
     "enabled": true,
     "auto_fix": true,
     "rounds": 3,
-    "radical": true
+    "radical": true,
+    "lenient": true
   },
   "content_type": "rulebook",
   "style_preset": "",

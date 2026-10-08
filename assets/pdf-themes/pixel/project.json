@@ -16,24 +16,36 @@
     "^Changelog"
   ],
   "theme": {
-    "bg": "#0b0c10",
-    "ink": "#e6eaf0",
+    "bg": "#1a1c2c",
+    "ink": "#f4f4f4",
     "accent": "#ffcd75",
-    "accent2": "#41a6f6"
+    "accent2": "#41a6f6",
+    "ink_strong": "#ffffff",
+    "em": "#94b0c2",
+    "rule": "rgba(148,176,194,0.45)",
+    "card": "rgba(38,43,68,0.95)",
+    "stripe": "rgba(255,255,255,.05)",
+    "scrim": "26,28,44",
+    "font_display": "'Press Start 2P'",
+    "font_head": "'Silkscreen'",
+    "font_label": "'Silkscreen'",
+    "font_body": "'VT323'",
+    "extra_css": "\nimg{ image-rendering:pixelated; }\nbody{ line-height:1.15; }\n.cover-title{ font-size:50pt !important; line-height:1; text-shadow:4px 4px 0 #3b5dc9; letter-spacing:0; }\n.cover-sub{ font-size:11pt; letter-spacing:.08em; }\n.cover-kicker{ font-size:8pt; letter-spacing:.2em; }\n.opener h2{ font-size:19pt; line-height:1.25; text-shadow:3px 3px 0 #3b5dc9; letter-spacing:0; }\n.appendix h2{ font-size:15pt; line-height:1.3; letter-spacing:0; }\n.chapter-num{ font-size:7pt; letter-spacing:.15em; }\n.chapter-sub{ font-size:8pt; letter-spacing:.05em; }\n.dropcap{ font-size:30pt; line-height:1; }\n.sub-head h3{ font-size:9pt; line-height:1.5; letter-spacing:.02em; border-bottom:3px solid var(--rule); }\n.cols h3, .cols h4, .cols h5, .cols h6, .appendix-body h3{ font-size:7.5pt; letter-spacing:.02em; }\n.sub-figure img, .side-figure img, .filler img{ border:4px solid #f4f4f4; }\ntable.rules-table{ font-size:11pt; line-height:1.1; border-top:4px solid #f4f4f4; }\ntable.rules-table th{ font-size:6.5pt; letter-spacing:.02em; background:var(--cyan); color:#1a1c2c; }\nstrong{ font-weight:400; color:var(--cyan); }\nblockquote{ font-style:normal; }\ncode{ font-size:1em; }\n"
   },
   "layout": {
     "section_images": true,
     "page_texture": true,
     "justify": true,
-    "font_size_pt": 9.6,
-    "fill_gaps": false,
+    "font_size_pt": 12.5,
+    "fill_gaps": true,
     "filler_min_mm": 55
   },
   "qc": {
     "enabled": true,
     "auto_fix": true,
     "rounds": 3,
-    "radical": true
+    "radical": true,
+    "lenient": true
   },
   "content_type": "rulebook",
   "style_preset": "",

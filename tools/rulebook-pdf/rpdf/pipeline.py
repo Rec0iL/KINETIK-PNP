@@ -250,7 +250,8 @@ def _check_and_fix(project, client, cfg, slot, ctx, fix, rounds, radical=False):
             e = project.entry(slot.key)
             result = planner.check_image(project.image_path(slot.key), project.build_dir / "qc" / slot.key,
                                          slot, e.get("prompt", ""), _world(project), model,
-                                         project.config.get("style", ""), _kind(project))
+                                         project.config.get("style", ""), _kind(project),
+                                         lenient=bool(project.config.get("qc", {}).get("lenient")))
             e["qc"] = {"fits": result["fits"], "problems": result["problems"]}
             project.save_manifest()
             where = f" (Konzept {concept + 1}/{concepts}, Bild {attempt + 1}/{tries})" if radical else ""

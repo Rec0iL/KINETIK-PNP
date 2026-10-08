@@ -3,7 +3,8 @@
 
 Pro Theme entsteht ein eigenes Projekt unter assets/pdf-themes/<theme>/ (Welt und Stil des Themes, Prompts von agy,
 Bilder von Krea 2 in ComfyUI). Jedes Bild geht durch die Bildkontrolle von agy im 3x3-Modus: bis zu 3 Konzepte mit
-je 3 Bildern, sobald eins passt, ist Schluss. Die Nachbearbeitung des Themes (Phosphorgrün, Schwarzweiß mit Rot,
+je 3 Bildern, sobald eins passt, ist Schluss. Die Kontrolle ist großzügig (qc.lenient): Ein Bild gilt als gut, wenn es zum
+Kapitel passt und keine groben Fehler hat, auch wenn es nicht genau dem Prompt entspricht. Die Nachbearbeitung des Themes (Phosphorgrün, Schwarzweiß mit Rot,
 Pixelraster …) läuft vor der Kontrolle, agy beurteilt also das fertige Aussehen.
 
 Voraussetzungen: ComfyUI läuft, agy ist angemeldet (siehe tools/rulebook-pdf/README.md).
@@ -229,7 +230,7 @@ def make_project(theme):
         cfg["style_preset"], cfg["style_wish"] = "", ""
         cfg["theme"]["accent"], cfg["theme"]["accent2"] = ACCENT[theme]
         cfg["layout"]["fill_gaps"] = False
-        cfg["qc"] = {"enabled": True, "auto_fix": True, "rounds": 3, "radical": True}
+        cfg["qc"] = {"enabled": True, "auto_fix": True, "rounds": 3, "radical": True, "lenient": True}
         p.config = proj._merge(proj.DEFAULTS, cfg)
         p.save()
     # Cover und Hintergrund: Cover bekommt ein eigenes Motiv, der Hintergrund wird für die Web-Fassung nicht gebraucht.

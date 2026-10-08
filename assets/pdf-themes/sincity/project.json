@@ -16,24 +16,36 @@
     "^Changelog"
   ],
   "theme": {
-    "bg": "#0b0c10",
-    "ink": "#e6eaf0",
+    "bg": "#000000",
+    "ink": "#f2f2f2",
     "accent": "#ec1c24",
-    "accent2": "#ffffff"
+    "accent2": "#ffffff",
+    "ink_strong": "#ffffff",
+    "em": "#ffffff",
+    "rule": "rgba(255,255,255,0.35)",
+    "card": "rgba(0,0,0,0.92)",
+    "stripe": "rgba(255,255,255,.07)",
+    "scrim": "0,0,0",
+    "font_display": "'Big Shoulders'",
+    "font_head": "'Big Shoulders'",
+    "font_label": "'Big Shoulders'",
+    "font_body": "'Barlow'",
+    "extra_css": "\n.cover-title{ font-weight:900; letter-spacing:.02em; text-shadow:5px 5px 0 var(--cyan); }\n.cover-sub, .chapter-sub{ font-weight:700; color:#fff; }\n.opener h2, .appendix h2{ font-weight:900; text-shadow:3px 3px 0 var(--cyan); }\n.sub-head h3, .appendix-body h3{ font-weight:900; font-size:15pt; color:#fff; border-bottom:3px solid var(--cyan); }\n.cols h3, .cols h4, .cols h5, .cols h6{ font-weight:800; color:#fff; font-size:11.5pt; }\n.sub-figure img, .side-figure img, .filler img{ border:2px solid #fff; }\ntable.rules-table{ border-top:3px solid #fff; }\ntable.rules-table th{ background:#fff; color:#000; font-weight:900; }\nblockquote{ border-left:3px solid var(--cyan); color:#fff; }\ncode{ color:#fff; }\n"
   },
   "layout": {
     "section_images": true,
     "page_texture": true,
     "justify": true,
     "font_size_pt": 9.6,
-    "fill_gaps": false,
+    "fill_gaps": true,
     "filler_min_mm": 55
   },
   "qc": {
     "enabled": true,
     "auto_fix": true,
     "rounds": 3,
-    "radical": true
+    "radical": true,
+    "lenient": true
   },
   "content_type": "rulebook",
   "style_preset": "",

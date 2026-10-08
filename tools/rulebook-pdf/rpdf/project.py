@@ -38,6 +38,7 @@ DEFAULTS = {
         "auto_fix": True,          # rewrite the prompt and regenerate when an image does not fit
         "rounds": 1,
         "radical": False,          # after 3 failed tries rewrite the prompt radically: up to 3 concepts x 3 images
+        "lenient": False,          # accept an image that suits the section even if it does not match the prompt exactly
     },
     "content_type": "rulebook",    # rulebook (PnP) | document (README, tutorial, docs ...): changes the agy prompts
     "style_preset": "",

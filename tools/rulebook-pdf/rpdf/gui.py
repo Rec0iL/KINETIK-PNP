@@ -501,7 +501,13 @@ class MainWindow(QMainWindow):
             "Hauptmotiv, anderer Ort, andere Perspektive, aber weiter passend zum Abschnitt. Insgesamt höchstens "
             "3 Konzepte mit je 3 Bildern. Die Zahl der Neuversuche gilt dann nicht.")
         self.chk_qc_radical.toggled.connect(lambda on: self.sp_qc_rounds.setEnabled(not on))
+        self.chk_qc_lenient = QCheckBox("Großzügig: Bild passt zum Kapitel, nicht unbedingt zum Prompt")
+        self.chk_qc_lenient.setToolTip(
+            "Ein Bild gilt als passend, wenn es zum Thema und zur Stimmung des Abschnitts passt und keine groben "
+            "Fehler hat (lesbarer Text, kaputte Anatomie, Fremdkörper). Abweichungen vom Prompt (Pose, Gegenstände, "
+            "Anzahl der Personen) führen nicht mehr zu einer Neuerzeugung. Spart viele Durchläufe.")
         f.addRow("", self.chk_qc)
+        f.addRow("", self.chk_qc_lenient)
         f.addRow("", self.chk_qc_fix)
         f.addRow("Neuversuche", self.sp_qc_rounds)
         f.addRow("", self.chk_qc_radical)
@@ -648,6 +654,7 @@ class MainWindow(QMainWindow):
         self.chk_qc_fix.setChecked(qc.get("auto_fix", True))
         self.sp_qc_rounds.setValue(int(qc.get("rounds", 1)))
         self.chk_qc_radical.setChecked(qc.get("radical", False))
+        self.chk_qc_lenient.setChecked(qc.get("lenient", False))
         t = c["theme"]
         self.col_bg.set_color(t["bg"])
         self.col_ink.set_color(t["ink"])
@@ -695,7 +702,8 @@ class MainWindow(QMainWindow):
                            justify=self.chk_justify.isChecked(), font_size_pt=round(self.sp_font.value(), 2),
                            fill_gaps=self.chk_fill.isChecked(), filler_min_mm=self.sp_fill.value())
         c.setdefault("qc", {}).update(enabled=self.chk_qc.isChecked(), auto_fix=self.chk_qc_fix.isChecked(),
-                                      rounds=self.sp_qc_rounds.value(), radical=self.chk_qc_radical.isChecked())
+                                      rounds=self.sp_qc_rounds.value(), radical=self.chk_qc_radical.isChecked(),
+                                      lenient=self.chk_qc_lenient.isChecked())
         c["theme"].update(bg=self.col_bg.color, ink=self.col_ink.color,
                           accent=self.col_accent.color, accent2=self.col_accent2.color)
         preset = self.cb_preset.currentText()
