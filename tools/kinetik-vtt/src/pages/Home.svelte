@@ -1,6 +1,8 @@
 <script lang="ts">
   import { t, type Key } from '../i18n';
   import { art } from '../lib/art';
+  import { openRulebook, rbCover } from '../rulebook/rulebook.svelte';
+  import RulebookDownload from '../rulebook/RulebookDownload.svelte';
 
   const cards: { href: string; title: Key; text: Key; cta: Key; accent: 'cyan' | 'amber'; soon?: boolean; no: string; art: string }[] = [
     { href: '#/charaktere', title: 'home.player.title', text: 'home.player.text', cta: 'home.player.cta', accent: 'cyan', no: '01', art: 'card-player' },
@@ -30,6 +32,18 @@
       {#if c.soon}<span class="chip amber soon">{t('home.soon')}</span>{/if}
     </a>
   {/each}
+
+  <!-- Fünfter Menüpunkt: das Regelwerk lesen oder als PDF laden (Look wählbar). Keine Verlinkung als Ganzes, hier stecken zwei Schaltflächen drin. -->
+  <div class="card panel rb" style:--img="url({rbCover()})">
+    <span class="bg" aria-hidden="true"></span>
+    <span class="no">05</span>
+    <h2>{t('home.rb.title')}</h2>
+    <p class="dim">{t('home.rb.text')}</p>
+    <div class="row actions">
+      <button type="button" class="btn primary" onclick={() => openRulebook()}>{t('home.rb.read')}</button>
+      <RulebookDownload variant="button" label={t('home.rb.pdf')} />
+    </div>
+  </div>
 </section>
 
 <style>
@@ -71,6 +85,13 @@
   .card.amber:hover { border-color: var(--accent-2); box-shadow: 0 0 18px rgba(255, 184, 0, 0.25); }
   .card h2 { font-family: var(--font-display); font-weight: 400; font-size: 2.3rem; letter-spacing: 0.06em; text-shadow: var(--hard-shadow); }
   .card .btn { justify-self: start; margin-top: auto; }
+  /* Regelwerk-Karte (05): über die ganze Breite unter den vier, Titelbild des Regelwerks dahinter, Schaltflächen nebeneinander */
+  .card.rb { grid-column: 1 / -1; min-height: 0; padding-block: 1.3rem; }
+  .card.rb:hover { transform: none; }
+  .card.rb p { max-width: 62ch; margin: 0; }
+  .card.rb .actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.4rem; }
+  .card.rb .actions :global(.btn) { margin-top: 0; }
+  .card.rb .bg { background: linear-gradient(to right, var(--panel-solid) 28%, var(--card-fade-a) 62%, var(--card-fade-b)), var(--img) center 28% / cover no-repeat; }
   .no { font: 500 0.8rem var(--font-mono); color: var(--accent-2); letter-spacing: 0.2em; }
   .soon { position: absolute; top: 0.9rem; right: 1rem; }
 </style>

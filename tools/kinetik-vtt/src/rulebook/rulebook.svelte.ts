@@ -99,3 +99,10 @@ export function rbPdfs(): RbPdf[] {
   cur.current = true;
   return list;
 }
+
+/** Titelbild des Regelwerks im Stil des gewählten Themes, auch bevor rulebook.json geladen ist (alle Looks haben ein Cover, nur Neo-Noir nutzt das Standardbild). */
+export function rbCover(): string {
+  const art = THEME_INFO[theme.current].art;
+  if (rulebook.data) return rbImg(rulebook.data.cover) ?? rbUrl('img/cover.webp');
+  return rbUrl(art === 'noir' ? 'img/cover.webp' : `img/${art}/cover.webp`);
+}
