@@ -77,14 +77,15 @@
     94% { transform: translate(3px, 0); clip-path: inset(75% 0 0 0); }
   }
 
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.1rem; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 1.1rem; }
   .bg { position: absolute; inset: 0; z-index: -1; background: linear-gradient(to top, var(--panel-solid) 12%, var(--card-fade-a) 70%, var(--card-fade-b)), var(--img) center / cover no-repeat; opacity: 0.9; pointer-events: none; }
-  .card { display: grid; isolation: isolate; gap: 0.7rem; align-content: start; color: var(--ink); text-decoration: none; min-height: 250px; padding: 1.3rem; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; }
+  .card { container-type: inline-size; display: grid; isolation: isolate; gap: 0.7rem; align-content: stretch; grid-template-rows: auto auto 1fr auto; color: var(--ink); text-decoration: none; min-height: 250px; padding: 1.3rem; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; }
   .card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: var(--glow); text-decoration: none; }
   .card.amber::before, .card.amber::after { border-color: var(--accent-2); }
   .card.amber:hover { border-color: var(--accent-2); box-shadow: 0 0 18px rgba(255, 184, 0, 0.25); }
-  .card h2 { font-family: var(--font-display); font-weight: 400; font-size: 2.3rem; letter-spacing: 0.06em; text-shadow: var(--hard-shadow); }
-  .card .btn { justify-self: start; margin-top: auto; }
+  .card h2 { font-family: var(--font-display); font-weight: 400; font-size: min(2.3rem, calc(var(--card-h2-k, 14) * 1cqi)); overflow-wrap: break-word; letter-spacing: 0.06em; text-shadow: var(--hard-shadow); }
+  /* Zeilen: Nummer, Titel, Text (nimmt den Rest), Schaltfläche. So sitzt die Schaltfläche in jedem Theme am unteren Rand ihrer Karte. */
+  .card .btn { justify-self: start; align-self: end; margin-top: 0.4rem; }
   /* Regelwerk-Karte (05): über die ganze Breite unter den vier, Titelbild des Regelwerks dahinter, Schaltflächen nebeneinander */
   .card.rb { grid-column: 1 / -1; min-height: 0; padding-block: 1.3rem; }
   .card.rb:hover { transform: none; }

@@ -188,8 +188,9 @@
   }
   .rb.open { transform: none; visibility: visible; }
   .rb.wide { width: min(980px, 100vw); }
-  header { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--line); background: var(--panel-solid); display: grid; gap: 0.5rem; }
-  .titlebar { display: flex; align-items: center; gap: 0.3rem; }
+  header { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--line); background: var(--panel-solid); display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5rem; }
+  .titlebar { display: flex; align-items: center; gap: 0.3rem; min-width: 0; }
+  @media (max-width: 420px) { .titlebar { gap: 0.1rem; } }
   .bodywrap { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
   .body { flex: 1; overflow-y: auto; overscroll-behavior: contain; }
   .pad { padding: 1rem 1.2rem; }
@@ -203,9 +204,9 @@
 
   .banner { border-top: 2px solid var(--accent); }
   .bannerimg { display: block; width: 100%; height: auto; }
-  .bannertxt { padding: 0.9rem 1.4rem 0.7rem; background: linear-gradient(to bottom, var(--bg-2), var(--bg)); border-bottom: 1px solid var(--line); }
+  .bannertxt { container-type: inline-size; padding: 0.9rem 1.4rem 0.7rem; background: linear-gradient(to bottom, var(--bg-2), var(--bg)); border-bottom: 1px solid var(--line); }
   .banner .no { font: 600 0.8rem var(--font-head); letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent-2); }
-  .banner h2 { font-family: var(--font-display); font-weight: 400; font-size: 2.8rem; letter-spacing: 0.06em; line-height: 1; text-shadow: var(--hard-shadow); margin-top: 0.2rem; }
+  .banner h2 { font-family: var(--font-display); font-weight: 400; font-size: min(2.8rem, calc(var(--rb-h2-k, 10) * 1cqi)); overflow-wrap: break-word; letter-spacing: 0.06em; line-height: 1; text-shadow: var(--hard-shadow); margin-top: 0.2rem; }
   .banner .sub { color: var(--ink-dim); font-size: 0.95rem; }
   .sec { padding: 0.4rem 1.2rem 1.2rem; }
   .sec h3 { font-size: 1.3rem; margin: 1rem 0 0.5rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--accent-line); }

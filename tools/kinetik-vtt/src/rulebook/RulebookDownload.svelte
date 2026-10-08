@@ -73,6 +73,8 @@
   .dl:hover, .dl[aria-expanded='true'] { background: var(--accent-soft); border-color: var(--accent-line); text-decoration: none; }
   .dl b { font: 400 1.6rem var(--font-display); letter-spacing: 0.1em; color: var(--accent); }
   .dl small { color: var(--ink-dim); font-size: 0.8rem; }
+  /* Auf schmalen Bildschirmen: Version weglassen und die Schrift verkleinern, damit die drei Knöpfe daneben Platz haben */
+  @media (max-width: 420px) { .dl small { display: none; } .dl b { font-size: 1.25rem; } .dl { gap: 0.35rem; padding-right: 0.3rem; } }
   .dl svg { flex: none; }
 
   /* Variante Schaltfläche (Startseite) */

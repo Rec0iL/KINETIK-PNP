@@ -224,7 +224,7 @@
   .over summary { cursor: pointer; color: var(--ink-dim); }
   .over[open] { display: grid; gap: 0.5rem; }
   .bylevel { display: grid; gap: 0.4rem; }
-  .lvgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 4px; }
+  .lvgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(84px, 100%), 1fr)); gap: 4px; }
   .lv { display: grid; text-align: center; padding: 0.3rem 0.2rem; background: var(--raised); border: 1px solid var(--line); font: inherit; color: inherit; font-size: 0.82rem; }
   .lv:not(:disabled) { cursor: pointer; }
   .lv b { font: 600 0.78rem var(--font-head); letter-spacing: 0.1em; color: var(--accent-2); }

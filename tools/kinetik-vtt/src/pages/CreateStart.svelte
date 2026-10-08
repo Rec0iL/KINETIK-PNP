@@ -85,8 +85,8 @@
 <style>
   .wrap { display: grid; gap: 1.1rem; max-width: 1000px; }
   .lead { max-width: 70ch; margin: 0; }
-  .opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 0.9rem; }
-  .opts.two { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); gap: 0.9rem; }
+  .opts.two { grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); }
   .opt { text-align: left; cursor: pointer; display: grid; gap: 0.5rem; align-content: start; color: var(--ink); font: inherit; transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s; }
   .opt:hover { transform: translateY(-3px); border-color: var(--accent); }
   .opt.on { border-color: var(--accent); background: var(--accent-soft); box-shadow: var(--glow); }

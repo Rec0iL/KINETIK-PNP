@@ -214,7 +214,7 @@
   .chip .av { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; object-position: top; vertical-align: -6px; margin-right: 6px; border: 1px solid var(--danger); }
   .head { display: flex; justify-content: space-between; align-items: end; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
   .banner { margin: 0 0 1rem; border-color: var(--accent-2); }
-  .layout { display: grid; grid-template-columns: minmax(300px, 1fr) minmax(320px, 1.3fr); gap: 1rem; align-items: start; }
+  .layout { display: grid; grid-template-columns: minmax(min(300px, 100%), 1fr) minmax(320px, 1.3fr); gap: 1rem; align-items: start; }
   .mapsec { margin-bottom: 1rem; display: grid; gap: 0.6rem; }
   .stage { height: min(60vh, 640px); min-height: 300px; }
   .combat { margin-bottom: 1rem; border-color: var(--danger); display: grid; gap: 0.6rem; }

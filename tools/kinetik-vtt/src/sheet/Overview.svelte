@@ -231,7 +231,7 @@
 </div>
 
 <style>
-  .resrow { display: grid; grid-template-columns: minmax(0, 2fr) minmax(250px, 1fr); gap: 1rem; align-items: start; }
+  .resrow { display: grid; grid-template-columns: minmax(0, 2fr) minmax(min(250px, 100%), 1fr); gap: 1rem; align-items: start; }
   @media (max-width: 1050px) { .resrow { grid-template-columns: 1fr; } }
   .ident { display: grid; grid-template-columns: 150px 1fr; gap: 1.1rem; }
   .portrait { position: relative; width: 150px; height: 190px; border: 1px dashed var(--line-strong); display: grid; place-items: center; color: var(--ink-dim); cursor: pointer; overflow: hidden; background: var(--field-bg); font: 600 0.8rem var(--font-head); letter-spacing: 0.15em; text-transform: uppercase; }
@@ -240,12 +240,12 @@
   .portrait img.ph { opacity: 0.45; filter: saturate(0.6); }
   .portrait .hintlbl { position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; text-shadow: 0 1px 4px #000; color: var(--ink); }
   .portrait .x { position: absolute; top: 4px; right: 4px; }
-  .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.7rem; align-content: start; }
+  .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap: 0.7rem; align-content: start; }
   .wide { grid-column: 1 / -1; }
   .check { display: flex; gap: 0.5em; align-items: center; color: var(--ink-dim); font-size: 0.92rem; grid-column: 1 / -1; }
   .check.small { font-size: 0.8rem; }
 
-  .attrs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.7rem; }
+  .attrs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 0.7rem; }
   .attr { display: grid; justify-items: center; gap: 0.3rem; padding: 0.8rem 0.5rem; background: var(--raised); border: 1px solid var(--line); position: relative; }
   .attr.warn { border-color: var(--warn); }
   .kurz { position: absolute; top: 6px; left: 8px; font: 500 0.68rem var(--font-mono); color: var(--accent-2); letter-spacing: 0.15em; }
@@ -257,7 +257,7 @@
 
   .states { display: flex; gap: 6px; flex-wrap: wrap; min-height: 0; margin-bottom: 0.4rem; }
   .states:empty { display: none; }
-  .res { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem 1.6rem; align-items: start; }
+  .res { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 1.2rem 1.6rem; align-items: start; }
   .lbl { display: block; font: 600 0.8rem var(--font-head); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim); }
   .schutz, .passiv, .mom { display: grid; gap: 0.5rem; }
   .shieldrow { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }

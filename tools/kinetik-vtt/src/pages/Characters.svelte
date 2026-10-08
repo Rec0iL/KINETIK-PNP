@@ -113,7 +113,7 @@
   .head { display: flex; justify-content: space-between; align-items: end; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
   .banner { margin: 0 0 1rem; }
   .banner.danger { border-color: var(--danger); color: var(--danger); }
-  .cards { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+  .cards { grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); }
   .card { display: grid; gap: 0.6rem; padding: 0.9rem; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; }
   .card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: var(--glow); }
   .open { display: grid; grid-template-columns: 82px 1fr; gap: 0.9rem; color: inherit; text-decoration: none; }

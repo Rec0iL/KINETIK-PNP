@@ -83,7 +83,7 @@
 </div>
 
 <style>
-  .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+  .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 1rem; }
   .h { display: grid; gap: 0.6rem; align-content: start; }
   .h img { max-width: 100%; max-height: 220px; object-fit: contain; background: #000; }
   .txt { white-space: pre-wrap; margin: 0; max-height: 8em; overflow: auto; color: var(--ink-dim); }

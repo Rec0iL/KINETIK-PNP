@@ -64,7 +64,7 @@
 <style>
   summary { cursor: pointer; color: var(--ink-dim); }
   .adv { margin-top: 0.7rem; }
-  .box { display: grid; gap: 0.6rem; padding: 0.8rem; background: var(--raised); border-left: 3px solid var(--line-strong); }
+  .box { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: 0.6rem; padding: 0.8rem; background: var(--raised); border-left: 3px solid var(--line-strong); }
   .box h3 { margin: 0; }
   .check { display: flex; gap: 0.4em; align-items: center; }
   .row :global(.field) { flex: 1; min-width: 100px; }

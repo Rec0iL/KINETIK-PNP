@@ -31,8 +31,10 @@
 </div>
 
 <style>
-  .stepper { display: inline-flex; align-items: stretch; gap: 3px; }
-  .stepper input { width: 3.4em; min-height: 30px; padding: 0.2em; text-align: center; -moz-appearance: textfield; appearance: textfield; }
+  .stepper { display: inline-flex; align-items: stretch; gap: 3px; max-width: 100%; }
+  /* Die Themes geben Schaltflächen eigene Ränder und Innenabstände (Pixelrahmen, Schrägen): hier bleiben sie kompakt, damit die Zeile in schmale Karten passt */
+  .stepper :global(.btn) { padding-inline: 0.5em !important; margin: 2px !important; min-width: 28px !important; }
+  .stepper input { width: min(3.4em, 3.1rem) !important; margin: 2px !important; min-width: 0; flex: 0 1 auto; min-height: 30px; padding: 0.2em; text-align: center; -moz-appearance: textfield; appearance: textfield; }
   .stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .warn input { border-color: var(--warn); color: var(--warn); }
 </style>

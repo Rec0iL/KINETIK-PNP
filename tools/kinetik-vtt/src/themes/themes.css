@@ -3,6 +3,8 @@
    stehen in chrome.css. Der Bildsatz je Theme wird in lib/theme.svelte.ts gewählt. */
 :root,
 :root[data-theme='noir'] {
+  --rb-h2-k: 11.1; /* Kapitelüberschrift im Regelwerk: größte Schriftgröße in % der Breite, damit das längste Wort passt */
+  --card-h2-k: 21.8; /* Kartentitel: größte Schriftgröße in % der Kartenbreite, damit das längste Wort hineinpasst */
   color-scheme: dark;
   --bg: #0b0c10;
   --bg-2: #10131a;
@@ -67,6 +69,8 @@
 
 /* Terminal: grüner Phosphor auf Schwarz, alles Monospace. */
 :root[data-theme='terminal'] {
+  --rb-h2-k: 10.3; /* Kapitelüberschrift im Regelwerk: größte Schriftgröße in % der Breite, damit das längste Wort passt */
+  --card-h2-k: 18.8; /* Kartentitel: größte Schriftgröße in % der Kartenbreite, damit das längste Wort hineinpasst */
   --bg: #030605;
   --bg-2: #08100d;
   --panel: rgba(5, 12, 9, 0.9);
@@ -113,6 +117,8 @@
 
 /* Hybrid · Cyberdeck: Indigo-Nacht, Magenta und Cyan, HUD-Klammern. Eigener Bildsatz. */
 :root[data-theme='hybrid'] {
+  --rb-h2-k: 7.2; /* Kapitelüberschrift im Regelwerk: größte Schriftgröße in % der Breite, damit das längste Wort passt */
+  --card-h2-k: 13.7; /* Kartentitel: größte Schriftgröße in % der Kartenbreite, damit das längste Wort hineinpasst */
   --bg: #07061a;
   --bg-2: #0d0b28;
   --panel: rgba(14, 11, 42, 0.84);
@@ -163,6 +169,8 @@
 
 /* Film Noir: Schwarz, Weiß und ein einziges Rot. */
 :root[data-theme='sincity'] {
+  --rb-h2-k: 9.3; /* Kapitelüberschrift im Regelwerk: größte Schriftgröße in % der Breite, damit das längste Wort passt */
+  --card-h2-k: 19.2; /* Kartentitel: größte Schriftgröße in % der Kartenbreite, damit das längste Wort hineinpasst */
   --bg: #000000;
   --bg-2: #090909;
   --panel: rgba(0, 0, 0, 0.93);
@@ -215,6 +223,8 @@
 
 /* Wushu: Reispapier, Tusche, Zinnoberrot. Das einzige helle Theme. */
 :root[data-theme='wushu'] {
+  --rb-h2-k: 8.0; /* Kapitelüberschrift im Regelwerk: größte Schriftgröße in % der Breite, damit das längste Wort passt */
+  --card-h2-k: 16.0; /* Kartentitel: größte Schriftgröße in % der Kartenbreite, damit das längste Wort hineinpasst */
   color-scheme: light;
   --bg: #e8dec6;
   --bg-2: #f0e7d1;
@@ -242,7 +252,7 @@
   --font-note: var(--font-body);
   --body-size: 16px;
   --body-lh: 1.6;
-  --hero-size: clamp(3.6rem, 15vw, 9.5rem);
+  --hero-size: clamp(3rem, 14vw, 9.5rem);
   --head-case: none;
   --head-tracking: 0.04em;
   --cut: 0px;
@@ -274,6 +284,8 @@
 
 /* 8-Bit: 16-Farben-Palette, harte Pixelkanten. */
 :root[data-theme='pixel'] {
+  --rb-h2-k: 4.5; /* Kapitelüberschrift im Regelwerk: größte Schriftgröße in % der Breite, damit das längste Wort passt */
+  --card-h2-k: 8.1; /* Kartentitel: größte Schriftgröße in % der Kartenbreite, damit das längste Wort hineinpasst */
   --bg: #1a1c2c;
   --bg-2: #262b44;
   --panel: #333c57;
@@ -332,6 +344,8 @@
 
 /* Manga: Papier, Tusche, ein Marker-Gelb. Hell. */
 :root[data-theme='manga'] {
+  --rb-h2-k: 10.7; /* Kapitelüberschrift im Regelwerk: größte Schriftgröße in % der Breite, damit das längste Wort passt */
+  --card-h2-k: 22.1; /* Kartentitel: größte Schriftgröße in % der Kartenbreite, damit das längste Wort hineinpasst */
   color-scheme: light;
   --bg: #f1eee6;
   --bg-2: #ffffff;
@@ -388,6 +402,8 @@
 
 /* Western: Leder, Messing, Staub. Dunkel. */
 :root[data-theme='western'] {
+  --rb-h2-k: 6.2; /* Kapitelüberschrift im Regelwerk: größte Schriftgröße in % der Breite, damit das längste Wort passt */
+  --card-h2-k: 12.2; /* Kartentitel: größte Schriftgröße in % der Kartenbreite, damit das längste Wort hineinpasst */
   --bg: #170f0a;
   --bg-2: #20150d;
   --panel: rgba(40, 27, 18, 0.93);
@@ -442,6 +458,8 @@
 
 /* Ukiyo-e: Indigo, Creme, Zinnober, Gold. Dunkel. */
 :root[data-theme='ukiyo'] {
+  --rb-h2-k: 7.8; /* Kapitelüberschrift im Regelwerk: größte Schriftgröße in % der Breite, damit das längste Wort passt */
+  --card-h2-k: 16.2; /* Kartentitel: größte Schriftgröße in % der Kartenbreite, damit das längste Wort hineinpasst */
   --bg: #0e2135;
   --bg-2: #14304a;
   --panel: rgba(18, 44, 68, 0.93);
@@ -467,7 +485,7 @@
   --font-body: 'Zen Kaku Gothic New', 'Barlow', system-ui, sans-serif;
   --head-case: none;
   --head-tracking: 0.05em;
-  --hero-size: clamp(3.6rem, 15vw, 9.6rem);
+  --hero-size: clamp(3rem, 14vw, 9.6rem);
   --cut: 0px;
   --radius: 2px;
   --hard-shadow: 3px 3px 0 #c8372d;
@@ -495,6 +513,8 @@
 
 /* Akte: Aktenordner-Manila, Schreibmaschine, Stempelrot. Hell. */
 :root[data-theme='akte'] {
+  --rb-h2-k: 7.2; /* Kapitelüberschrift im Regelwerk: größte Schriftgröße in % der Breite, damit das längste Wort passt */
+  --card-h2-k: 13.3; /* Kartentitel: größte Schriftgröße in % der Kartenbreite, damit das längste Wort hineinpasst */
   color-scheme: light;
   --bg: #d9c8a0;
   --bg-2: #e4d6b2;

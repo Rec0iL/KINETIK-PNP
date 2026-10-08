@@ -116,7 +116,7 @@
 {/if}
 
 <style>
-  .modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.6rem; margin: 0.6rem 0; }
+  .modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 0.6rem; margin: 0.6rem 0; }
   .mode { display: grid; gap: 0.3rem; text-align: left; padding: 0.8rem; background: var(--raised); border: 1px solid var(--line); color: var(--ink); cursor: pointer; font: inherit; }
   .mode b { font: 600 1.05rem var(--font-head); letter-spacing: 0.1em; text-transform: uppercase; }
   .mode small { color: var(--ink-dim); }

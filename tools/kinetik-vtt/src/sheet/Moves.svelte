@@ -102,7 +102,7 @@
 <style>
   .adds { margin-top: 0.7rem; }
   .auto { display: flex; gap: 0.4em; align-items: center; font-size: 0.85rem; color: var(--ink-dim); cursor: pointer; }
-  .adds select { width: auto; max-width: 320px; }
+  .adds select { width: auto; max-width: min(320px, 100%); }
   .search { max-width: 220px; }
   .warn { color: var(--warn); margin: 0.6rem 0 0; }
   .move { border-left: 3px solid var(--line-strong); }

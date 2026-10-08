@@ -45,7 +45,7 @@ html::after { z-index: 9998; }
   .panel::after { content: '─┘'; bottom: -0.55em; right: 0.6rem; }
   .panel > h2:first-child::before, .panel > h3:first-child::before { content: '> '; color: var(--accent-2); }
   .panel > h2:first-child::after, .panel > h3:first-child::after { content: '_'; color: var(--accent); animation: term-blink 1.05s steps(1) infinite; margin-left: 0.15em; }
-  .btn { border-color: var(--accent-line); background: transparent; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; gap: 0.35em; }
+  .btn { border-color: var(--accent-line); background: transparent; text-transform: uppercase; letter-spacing: 0.06em; gap: 0.35em; text-align: center; }
   .btn.amber { background: transparent; color: var(--accent-2); border-color: var(--accent-2); }
   .btn.amber:hover { background: var(--accent-2); color: var(--accent-2-ink); }
   .btn::before { content: '['; color: var(--accent-2); }
@@ -610,7 +610,7 @@ html::after { z-index: 9998; }
   .bannerimg { border-bottom: 4px solid #000; }
   .secimg, .fill, .coverimg { border: 3px solid #000; box-shadow: 6px 6px 0 #000; }
   .bannertxt { background: #fff; border-bottom: 3px solid #000; }
-  .banner h2 { color: #fff; -webkit-text-stroke: 3px #000; paint-order: stroke fill; text-shadow: 4px 4px 0 var(--hl); font-size: 3.2rem; }
+  .banner h2 { color: #fff; -webkit-text-stroke: 3px #000; paint-order: stroke fill; text-shadow: 4px 4px 0 var(--hl); font-size: min(3.2rem, calc(var(--rb-h2-k, 10) * 1cqi)); }
   .banner .no { background: #000; color: #fff; padding: 0.2em 0.6em; }
   .sec h3 { background: linear-gradient(transparent 58%, var(--hl) 58% 92%, transparent 92%); display: inline-block; border-bottom: 0; padding-right: 0.4em; }
   .rbcontent th { background: #000; color: #fff; border-bottom: 0; }
@@ -673,3 +673,10 @@ html::after { z-index: 9998; }
   .sec h3::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line-strong), transparent); }
   .rbcontent th { background: var(--accent-2-soft); color: var(--accent-2); }
 }
+
+/* Schmale Bildschirme: breite Zierschriften in der Titelleiste des Regelwerks verkleinern */
+@media (max-width: 480px) {
+  :root[data-theme='pixel'] .rb .dl b { font-size: 0.8rem !important; letter-spacing: 0 !important; }
+  :root[data-theme='western'] .rb .dl b, :root[data-theme='akte'] .rb .dl b, :root[data-theme='ukiyo'] .rb .dl b, :root[data-theme='wushu'] .rb .dl b { font-size: 1.1rem !important; }
+}
+:root[data-theme='akte'] .rb .coverimg { transform: none; }

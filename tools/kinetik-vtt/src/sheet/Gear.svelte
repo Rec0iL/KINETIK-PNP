@@ -78,5 +78,5 @@
   .inv .n { flex: 2; }
   .inv .note { flex: 3; }
   .hands { margin-top: 0.7rem; }
-  select { width: auto; }
+  select { width: auto; max-width: 100%; }
 </style>

@@ -266,7 +266,7 @@
   .hz { margin-bottom: 0.4rem; }
   .hz select { width: auto; min-height: 30px; padding: 0.2em 0.4em; }
   .ueber { margin-top: 0.7rem; }
-  .npcs { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1rem; }
+  .npcs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr)); gap: 1rem; }
   .npc { display: grid; gap: 0.6rem; border-left: 3px solid var(--danger); }
   .npc.out { opacity: 0.55; }
   .npc.hid { border-left-style: dashed; }

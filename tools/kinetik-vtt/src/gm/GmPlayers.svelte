@@ -68,7 +68,7 @@
 
 <style>
   .pending { border-color: var(--accent-2); margin-bottom: 1rem; }
-  .cards { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+  .cards { grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); }
   .acts { margin-top: 0.3rem; flex-wrap: wrap; }
   .acts select { width: auto; min-height: 30px; padding: 0.2em 0.4em; font-size: 0.85rem; }
   .row input { min-height: 30px; padding: 0.2em 0.5em; }

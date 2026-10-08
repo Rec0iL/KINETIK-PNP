@@ -52,7 +52,7 @@
   .id h2 { font-family: var(--font-display); font-weight: 400; font-size: 2.2rem; letter-spacing: 0.05em; }
   .id p { margin: 0.2rem 0 0.5rem; }
   .chips { display: flex; flex-wrap: wrap; gap: 5px; }
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.6rem; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(120px, 100%), 1fr)); gap: 0.6rem; }
   .stats div { display: grid; padding: 0.4rem 0.6rem; background: var(--raised); }
   .stats b { font: 400 2rem/1 var(--font-display); color: var(--accent-2); }
   .lbl { font: 600 0.7rem var(--font-head); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim); }

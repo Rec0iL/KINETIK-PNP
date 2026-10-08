@@ -73,7 +73,7 @@
   .budget.over b { color: var(--danger); }
   .check { display: flex; gap: 0.4em; align-items: center; font-size: 0.9rem; }
   .note { margin: 0; color: var(--accent-2); font-size: 0.9rem; }
-  .attrs { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0.7rem; }
+  .attrs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr)); gap: 0.7rem; }
   .attr { display: grid; justify-items: center; gap: 0.35rem; padding: 0.8rem 0.6rem; background: var(--raised); border: 1px solid var(--line); text-align: center; }
   .attr.warn { border-color: var(--warn); }
   .head { display: flex; gap: 0.5rem; align-items: baseline; }
@@ -81,7 +81,7 @@
   .kurz { font: 500 0.7rem var(--font-mono); color: var(--accent-2); }
   .val { font: 400 3rem/1 var(--font-display); color: var(--accent); }
   .chips { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
-  .derived { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.7rem; }
+  .derived { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap: 0.7rem; }
   .derived div { padding: 0.6rem 0.8rem; background: var(--raised); border: 1px solid var(--line); display: grid; }
   .derived b { font: 400 2.2rem/1 var(--font-display); color: var(--accent-2); }
   .lbl { font: 600 0.72rem var(--font-head); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim); }

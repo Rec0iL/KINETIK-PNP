@@ -31,7 +31,7 @@ body::after {
   background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, var(--scanlines)) 0 1px, transparent 1px 3px);
 }
 
-h1, h2, h3, h4 { margin: 0; font-family: var(--font-head); font-weight: 600; letter-spacing: var(--head-tracking); text-transform: var(--head-case); color: var(--ink-strong); }
+h1, h2, h3, h4 { overflow-wrap: anywhere; hyphens: auto; margin: 0; font-family: var(--font-head); font-weight: 600; letter-spacing: var(--head-tracking); text-transform: var(--head-case); color: var(--ink-strong); }
 h1 { font-family: var(--font-display); font-weight: var(--display-weight, 400); font-size: var(--h1-size, clamp(2.4rem, 6vw, 4.4rem)); line-height: 0.95; text-shadow: var(--hard-shadow); }
 h2 { font-size: 1.35rem; }
 h3 { font-size: 1.05rem; color: var(--accent); }
@@ -90,6 +90,7 @@ small, .dim { color: var(--ink-dim); }
 
 /* Formulare */
 input, select, textarea {
+  max-width: 100%;
   font: inherit; color: var(--ink); width: 100%;
   background: var(--field-bg); border: 1px solid var(--line); border-radius: var(--radius);
   padding: 0.5em 0.65em; min-height: 38px;
@@ -118,11 +119,20 @@ label.field > input, label.field > select, label.field > textarea { color: var(-
 .tabs button[aria-selected='true'] { color: var(--accent); border-bottom-color: var(--accent); background: var(--accent-soft); }
 
 .row { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
-.stack { display: grid; gap: 0.8rem; }
-.grid { display: grid; gap: 0.9rem; }
+.stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.8rem; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.9rem; }
+.stack > *, .grid > * { min-width: 0; }
 .spacer { flex: 1; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* !important: die Themes stylen input, select und textarea (Breite, Rand, Außenabstand) und würden sonst auch die versteckten Felder aufblasen */
+.sr-only { position: absolute !important; width: 1px !important; height: 1px !important; min-height: 0 !important; margin: -1px !important; padding: 0 !important; border: 0 !important; box-shadow: none !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; white-space: nowrap; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }
+
+/* Lange Wörter, Pfade und Code brechen um, statt den Rahmen zu verlassen */
+p, li, small, label, .chip, .btn, td, th, summary { overflow-wrap: break-word; }
+code, a { overflow-wrap: anywhere; }
+select { max-width: 100%; text-overflow: ellipsis; }
+.row > select, .row > input { min-width: 0; }
+.btn { max-width: 100%; }

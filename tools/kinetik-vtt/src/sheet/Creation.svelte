@@ -46,7 +46,7 @@
   .cstufe { display: flex; gap: 1rem; flex-wrap: wrap; align-items: end; margin-top: 0.9rem; }
   .cstufe .nat { flex: 1 1 100%; color: var(--ink-dim); }
   .cact { margin-top: 0.8rem; }
-  .cgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 0.9rem; }
+  .cgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 1rem; margin-top: 0.9rem; }
   .cgrid b { display: block; font: 400 1.8rem var(--font-display); color: var(--accent); }
   .cgrid b.over { color: var(--danger); }
   .hints { margin: 0.7rem 0 0; padding-left: 1.2em; color: var(--warn); }
