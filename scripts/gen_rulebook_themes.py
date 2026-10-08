@@ -25,10 +25,15 @@ Neu erzeugen: Datei in assets/pdf-themes/<theme>/images/ löschen und das Skript
 import argparse
 import copy
 import json
+import os
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
+import time
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -79,6 +84,69 @@ ACCENT = {  # Farben für das (nicht genutzte) PDF-Theme des Projekts
     "manga": ("#15151c", "#ffd400"), "ukiyo": ("#ff7a5c", "#e8c26a"), "western": ("#dba94a", "#d2603f"),
     "akte": ("#b3202a", "#24477a"), "terminal": ("#29e0a0", "#d7e24a"), "hybrid": ("#ff2bd6", "#19e9ff"),
 }
+
+
+# ---------- Robustheit für lange Läufe ----------
+# Nach rund 30 Stunden hatte ComfyUI über 20 GB RAM belegt und wurde vom Kernel beendet. Deshalb: Speicher regelmäßig freigeben,
+# ein totes ComfyUI neu starten (wie Pinokio: main.py --reserve-vram 3, nur lokal) und nur zeitweilige Fehler (agy, Netz) überstehen.
+COMFY_DIR = Path(os.environ.get("COMFY_DIR", "/mnt/nvme-data/pinokio/api/comfy.git/app"))
+FREE_EVERY = 12      # alle n erzeugten Bilder Modelle entladen und den Cache leeren
+
+
+def comfy_alive(url):
+    try:
+        urllib.request.urlopen(url + "/system_stats", timeout=5).read()
+        return True
+    except Exception:
+        return False
+
+
+def ensure_comfy(url, wait=240):
+    """Wartet auf ComfyUI und startet es neu, falls es nicht mehr läuft (und ein Pfad bekannt ist)."""
+    for i in range(3):
+        if comfy_alive(url):
+            return True
+        time.sleep(10)
+    py = COMFY_DIR / "env" / "bin" / "python"
+    if not py.exists():
+        return False
+    print("ComfyUI läuft nicht mehr, starte es neu …", flush=True)
+    log = open(ROOT / "assets" / "pdf-themes" / "comfyui.log", "ab")
+    subprocess.Popen([str(py), "main.py", "--reserve-vram", "3"], cwd=COMFY_DIR, stdout=log, stderr=log, stdin=subprocess.DEVNULL,
+                     start_new_session=True, env={**os.environ, "PYTORCH_ENABLE_MPS_FALLBACK": "1", "TOKENIZERS_PARALLELISM": "false"})
+    for _ in range(wait // 5):
+        time.sleep(5)
+        if comfy_alive(url):
+            return True
+    return False
+
+
+def harden_comfy():
+    """Erzeugen mit Neustart bei Verbindungsabbruch und regelmäßigem Speicher freigeben."""
+    orig = comfy.Comfy.generate
+    state = {"n": 0}
+
+    def free(self):
+        try:
+            req = urllib.request.Request(self.url + "/free", data=json.dumps({"unload_models": True, "free_memory": True}).encode(),
+                                         headers={"Content-Type": "application/json"})
+            urllib.request.urlopen(req, timeout=15).read()
+        except Exception:
+            pass
+
+    def generate(self, wf, *a, **kw):
+        for attempt in range(4):
+            if state["n"] and state["n"] % FREE_EVERY == 0:
+                free(self)
+            state["n"] += 1
+            try:
+                return orig(self, wf, *a, **kw)
+            except (urllib.error.URLError, ConnectionError, TimeoutError) as e:
+                print(f"    ComfyUI nicht erreichbar ({e}), Versuch {attempt + 1}/4", flush=True)
+                if not ensure_comfy(self.url):
+                    raise comfy.ComfyError("ComfyUI ist weg und ließ sich nicht neu starten.")
+        raise comfy.ComfyError("ComfyUI blieb nach mehreren Versuchen unerreichbar.")
+    comfy.Comfy.generate = generate
 
 
 def make_project(theme):
@@ -207,6 +275,7 @@ def main():
         return
 
     ctx = pipeline.Context(log=lambda m: print(m, flush=True), progress=lambda d, t: None)
+    harden_comfy()
     for theme in args.theme or ORDER:
         print(f"\n=== {theme} ===", flush=True)
         p = make_project(theme)
@@ -219,17 +288,26 @@ def main():
         if args.no_qc:
             p.config["qc"]["enabled"] = False
         keys = set(args.keys) if args.keys else None
-        try:
-            pipeline.plan(p, ctx, force=args.force_plan, keys=keys)
-            if args.plan_only:
-                continue
-            orig = patch_save(theme)
+        # Zeitweilige Fehler (agy-Dienst gestört, ComfyUI neu gestartet) überstehen: dasselbe Theme erneut, Fertiges wird übersprungen
+        for attempt in range(1, 9):
             try:
-                pipeline.images(p, ctx, keys=keys)
-            finally:
-                comfy.save_image = orig
-        except (comfy.ComfyError, planner.AgyError) as e:
-            print(f"FEHLER bei {theme}: {e}", flush=True)
+                pipeline.plan(p, ctx, force=args.force_plan and attempt == 1, keys=keys)
+                if args.plan_only:
+                    break
+                orig = patch_save(theme)
+                try:
+                    pipeline.images(p, ctx, keys=keys)
+                finally:
+                    comfy.save_image = orig
+                break
+            except (comfy.ComfyError, planner.AgyError, OSError) as e:
+                print(f"FEHLER bei {theme} (Versuch {attempt}/8): {e}", flush=True)
+                time.sleep(min(300, 60 * attempt))
+                ensure_comfy(p.config["comfy"]["url"])
+                p = proj.Project(OUT / theme)      # Stand von der Platte, falls der Lauf unterbrochen wurde
+                if args.fillers:
+                    apply_pdf_style(p.config, theme)
+                    p.config["layout"]["fill_gaps"] = True
         p.save()
 
 
