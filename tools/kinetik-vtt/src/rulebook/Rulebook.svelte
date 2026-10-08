@@ -5,8 +5,12 @@
   import { theme } from '../lib/theme.svelte';
 
   let scroller = $state<HTMLDivElement>();
+  let tocEl = $state<HTMLElement>();
   let query = $state('');
   let navOpen = $state(false);
+  /** Kapitel oder Abschnitt, der gerade oben im Lesebereich steht (für das Inhaltsverzeichnis) */
+  let currentId = $state('');
+  let ticking = false;
 
   const data = $derived(rulebook.data);
   /** PDF im Stil des gewählten Themes (reaktiv auf den Themewechsel) */
@@ -41,6 +45,34 @@
     return c.number ? `${c.number}. ${c.title}` : c.title;
   }
 
+  /** Oberstes sichtbares Kapitel oder Abschnitt bestimmen. Wenige Dutzend Elemente, deshalb reicht ein Durchlauf pro Frame. */
+  function track() {
+    ticking = false;
+    if (!scroller) return;
+    const top = scroller.getBoundingClientRect().top + 48;
+    let found = '';
+    for (const el of scroller.querySelectorAll<HTMLElement>('[id^="rb-"]')) {
+      if (el.getBoundingClientRect().top <= top) found = el.id.slice(3);
+      else break;
+    }
+    currentId = found;
+  }
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(track);
+  }
+
+  // Beim Öffnen des Inhaltsverzeichnisses die aktuelle Stelle in die Mitte rücken
+  $effect(() => {
+    if (!navOpen || !tocEl) return;
+    track();
+    void tick().then(() => {
+      const cur = tocEl?.querySelector<HTMLElement>('.cur');
+      if (cur && tocEl) tocEl.scrollTop = Math.max(0, cur.offsetTop - tocEl.clientHeight / 2 + cur.offsetHeight / 2);
+    });
+  });
+
   async function goTo(id: string) {
     query = '';
     navOpen = false;
@@ -61,7 +93,7 @@
   });
 
   function onKey(e: KeyboardEvent) {
-    if (e.key === 'Escape' && rulebook.open) closeRulebook();
+    if (e.key === 'Escape' && rulebook.open) { if (navOpen) navOpen = false; else closeRulebook(); }
   }
   const showCover = $derived(!!data?.cover);
 </script>
@@ -92,7 +124,8 @@
     <input type="search" bind:value={query} placeholder="Suchen … (z.B. Dominanz, Schutz, MW)" aria-label="Im Regelwerk suchen" />
   </header>
 
-  <div class="body" bind:this={scroller}>
+  <div class="bodywrap">
+  <div class="body" bind:this={scroller} onscroll={onScroll}>
     {#if rulebook.loading && !data}<p class="dim pad">Lädt …</p>{/if}
     {#if rulebook.error}<p class="err pad">{rulebook.error}</p>{/if}
 
@@ -106,14 +139,6 @@
         {/each}
       </div>
     {:else if data}
-      {#if navOpen}
-        <nav class="toc pad" aria-label="Inhalt">
-          {#each data.chapters as c (c.id)}
-            <button class="ch" onclick={() => goTo(c.id)}>{chapterLabel(c)}</button>
-            {#each c.sections as s (s.id)}<button class="sc" onclick={() => goTo(s.id)}>{s.title}</button>{/each}
-          {/each}
-        </nav>
-      {/if}
 
       {#if showCover}
         <div class="cover">
@@ -153,6 +178,16 @@
       {/each}
     {/if}
   </div>
+
+  {#if navOpen && data && q.length < 2}
+    <nav class="toc" bind:this={tocEl} aria-label="Inhalt">
+      {#each data.chapters as c (c.id)}
+        <button class="ch" class:cur={currentId === c.id} onclick={() => goTo(c.id)} aria-current={currentId === c.id ? 'location' : undefined}>{chapterLabel(c)}</button>
+        {#each c.sections as s (s.id)}<button class="sc" class:cur={currentId === s.id} onclick={() => goTo(s.id)} aria-current={currentId === s.id ? 'location' : undefined}>{s.title}</button>{/each}
+      {/each}
+    </nav>
+  {/if}
+  </div>
 </aside>
 
 <style>
@@ -172,6 +207,7 @@
   .dl:hover { background: var(--accent-soft); border-color: var(--accent-line); text-decoration: none; }
   .dl small { color: var(--ink-dim); font-size: 0.8rem; }
   .dl svg { flex: none; }
+  .bodywrap { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
   .body { flex: 1; overflow-y: auto; overscroll-behavior: contain; }
   .pad { padding: 1rem 1.2rem; }
   .err { color: var(--danger); }
@@ -193,11 +229,15 @@
   .secimg, .fill { display: block; width: auto; max-width: 100%; height: auto; max-height: min(70vh, 560px); margin: 0.6rem auto; border: 1px solid var(--line); }
   .secimg { width: 100%; }
 
-  .toc { display: grid; gap: 2px; border-bottom: 1px solid var(--line); background: var(--panel-solid); }
-  .toc button { text-align: left; background: none; border: 0; color: var(--ink); font: inherit; cursor: pointer; padding: 0.3em 0.4em; }
+  /* Inhaltsverzeichnis: Panel direkt unter der Kopfleiste, liegt über dem Text und ist unabhängig von der Leseposition immer sichtbar */
+  .toc { position: absolute; inset: 0; z-index: 4; overflow-y: auto; overscroll-behavior: contain; display: block; padding: 0.6rem 0.8rem 1.2rem; background: var(--panel-solid); border-bottom: 1px solid var(--accent-line); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); animation: tocin 0.16s ease-out; }
+  @keyframes tocin { from { opacity: 0; transform: translateY(-6px); } }
+  .toc button { display: block; width: 100%; text-align: left; background: none; border: 0; border-left: 3px solid transparent; color: var(--ink); font: inherit; cursor: pointer; padding: 0.35em 0.5em; }
   .toc button:hover { background: var(--accent-soft); color: var(--accent); }
-  .toc .ch { font: 600 0.95rem var(--font-head); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.5rem; color: var(--accent-2); }
-  .toc .sc { padding-left: 1.2em; color: var(--ink-dim); font-size: 0.92rem; }
+  .toc .ch { font: 600 0.95rem var(--font-head); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.6rem; color: var(--accent-2); }
+  .toc .sc { padding-left: 1.4em; color: var(--ink-dim); font-size: 0.92rem; }
+  .toc .cur { border-left-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .toc .sc.cur::after, .toc .ch.cur::after { content: ' ◂ hier'; font-size: 0.72em; letter-spacing: 0.08em; opacity: 0.8; }
 
   .results .hit { display: grid; gap: 2px; width: 100%; text-align: left; padding: 0.55rem 0.6rem; margin-bottom: 4px; background: var(--raised); border: 1px solid var(--line); border-left: 3px solid var(--accent); color: var(--ink); cursor: pointer; font: inherit; }
   .results .hit:hover { border-color: var(--accent); }
