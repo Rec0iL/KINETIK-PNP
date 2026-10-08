@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
-# Läuft nach dem Haupt-Bildlauf von gen_rulebook_themes.py (wartet darauf) und erledigt den Rest in einem Rutsch:
-#   1. zweiter Durchgang (fehlende Bilder nachholen, z.B. nach einem agy-Fehler)
+# Erledigt nach (oder statt) dem Haupt-Bildlauf alles in einem Rutsch:
+#   1. Durchgang für fehlende Bilder (z.B. nach einem agy-Fehler)
 #   2. Füllbilder für die Lücken im PDF-Satz je Theme
 #   3. PDFs je Theme (export/KINETIK_Regelwerk_<theme>.pdf)
 #   4. Web-Fassung (Bilder, PDFs) neu bauen
-# Danach nur noch prüfen und committen. Log: assets/pdf-themes/nachlauf.log
+# Start am besten in einem eigenen systemd-Bereich, damit ein Speicherproblem im Rest des Rechners den Lauf nicht mitreißt:
+#   systemd-run --user --scope --collect -- scripts/rulebook_themes_nachlauf.sh > assets/pdf-themes/nachlauf3.log 2>&1 &
+# Danach nur noch prüfen und committen.
 cd "$(dirname "$0")/.." || exit 1
-echo "$(date '+%F %T') wartet auf den Bildlauf …"
+echo "$(date '+%F %T') startet …"
 while pgrep -f "python3 scripts/gen_rulebook_themes.py$" >/dev/null; do sleep 60; done
 run() { echo; echo "$(date '+%F %T') === $* ==="; "$@"; }
 run python3 scripts/gen_rulebook_themes.py

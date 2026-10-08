@@ -101,24 +101,85 @@ def comfy_alive(url):
         return False
 
 
+COMFY_MAX_RSS_GB = 14   # darüber startet das Skript ComfyUI zwischen zwei Bildern neu (es wächst über die Stunden auf 20 bis 27 GB)
+
+
+def comfy_pid():
+    """PID des ComfyUI-Pythonprozesses (nicht systemd-run, nicht eine Shell, die zufällig denselben Text enthält)."""
+    out = subprocess.run(["pgrep", "-f", "main.py --reserve-vram"], capture_output=True, text=True).stdout.split()
+    for pid in map(int, out):
+        try:
+            if "python" in Path(f"/proc/{pid}/comm").read_text():
+                return pid
+        except OSError:
+            continue
+    return None
+
+
+def comfy_rss_gb():
+    pid = comfy_pid()
+    if not pid:
+        return 0.0
+    try:
+        for line in open(f"/proc/{pid}/status"):
+            if line.startswith("VmRSS:"):
+                return int(line.split()[1]) / 1048576
+    except OSError:
+        pass
+    return 0.0
+
+
+def start_comfy():
+    """ComfyUI wie Pinokio starten, aber in einem eigenen Bereich (systemd-Scope) mit Speichergrenze: so reißt ein Speicherproblem
+    nur ComfyUI mit, nicht den Lauf und nicht den Rest des Rechners."""
+    py = COMFY_DIR / "env" / "bin" / "python"
+    if not py.exists():
+        return False
+    log = open(ROOT / "assets" / "pdf-themes" / "comfyui.log", "ab")
+    cmd = [str(py), "main.py", "--reserve-vram", "3"]
+    if shutil.which("systemd-run"):
+        cmd = ["systemd-run", "--user", "--scope", "--collect", "-p", "MemoryMax=18G", "-p", "MemorySwapMax=0", "--"] + cmd
+    subprocess.Popen(cmd, cwd=COMFY_DIR, stdout=log, stderr=log, stdin=subprocess.DEVNULL, start_new_session=True,
+                     env={**os.environ, "PYTORCH_ENABLE_MPS_FALLBACK": "1", "TOKENIZERS_PARALLELISM": "false"})
+    return True
+
+
+def stop_comfy():
+    pid = comfy_pid()
+    if pid:
+        try:
+            os.kill(pid, 15)
+        except OSError:
+            pass
+        for _ in range(30):
+            if not comfy_pid():
+                break
+            time.sleep(1)
+        if comfy_pid():
+            os.kill(comfy_pid(), 9)
+            time.sleep(2)
+
+
 def ensure_comfy(url, wait=240):
-    """Wartet auf ComfyUI und startet es neu, falls es nicht mehr läuft (und ein Pfad bekannt ist)."""
+    """Wartet auf ComfyUI und startet es neu, falls es nicht mehr läuft."""
     for i in range(3):
         if comfy_alive(url):
             return True
         time.sleep(10)
-    py = COMFY_DIR / "env" / "bin" / "python"
-    if not py.exists():
-        return False
     print("ComfyUI läuft nicht mehr, starte es neu …", flush=True)
-    log = open(ROOT / "assets" / "pdf-themes" / "comfyui.log", "ab")
-    subprocess.Popen([str(py), "main.py", "--reserve-vram", "3"], cwd=COMFY_DIR, stdout=log, stderr=log, stdin=subprocess.DEVNULL,
-                     start_new_session=True, env={**os.environ, "PYTORCH_ENABLE_MPS_FALLBACK": "1", "TOKENIZERS_PARALLELISM": "false"})
+    if not start_comfy():
+        return False
     for _ in range(wait // 5):
         time.sleep(5)
         if comfy_alive(url):
             return True
     return False
+
+
+def restart_comfy(url, reason):
+    print(f"ComfyUI wird neu gestartet ({reason}) …", flush=True)
+    stop_comfy()
+    return ensure_comfy(url)
 
 
 def harden_comfy():
@@ -138,6 +199,9 @@ def harden_comfy():
         for attempt in range(4):
             if state["n"] and state["n"] % FREE_EVERY == 0:
                 free(self)
+            rss = comfy_rss_gb()
+            if rss > COMFY_MAX_RSS_GB:
+                restart_comfy(self.url, f"{rss:.1f} GB RAM")
             state["n"] += 1
             try:
                 return orig(self, wf, *a, **kw)
