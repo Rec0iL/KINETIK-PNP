@@ -32,7 +32,7 @@ code{ color:#fff; }
         "fonts": dict(font_display="'Noto Serif SC'", font_head="'Noto Serif SC'", font_label="'Noto Serif SC'", font_body="'Noto Serif SC'"),
         "font_size_pt": 9.0,
         "extra_css": """
-.cover-title{ font-weight:900; text-shadow:none; letter-spacing:.04em; }
+.cover-title{ font-size:90pt !important; font-weight:900; text-shadow:none; letter-spacing:.03em; }
 .cover-kicker, .chapter-num{ letter-spacing:.3em; }
 .opener h2, .appendix h2{ font-weight:900; font-size:36pt; text-transform:none; }
 .chapter-sub, .cover-sub{ text-transform:none; letter-spacing:.06em; font-weight:700; }
@@ -100,7 +100,7 @@ code{ color:#000; }
         "fonts": dict(font_display="'Shippori Mincho'", font_head="'Shippori Mincho'", font_label="'Zen Kaku Gothic New'", font_body="'Zen Kaku Gothic New'"),
         "font_size_pt": 9.4,
         "extra_css": """
-.cover-title{ font-weight:800; text-shadow:4px 4px 0 #c8372d; letter-spacing:.04em; }
+.cover-title{ font-size:86pt !important; font-weight:800; text-shadow:4px 4px 0 #c8372d; letter-spacing:.03em; }
 .opener h2, .appendix h2{ font-weight:800; text-shadow:3px 3px 0 #c8372d; }
 .chapter-num{ color:var(--magenta); }
 .chapter-num::before{ content:'\\25C6\\00A0'; color:#c8372d; }
