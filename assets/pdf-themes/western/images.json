@@ -4,7 +4,11 @@
     "seed": 914500689,
     "kind": "cover",
     "title": "Cover: KINETIK",
-    "include_style": true
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "background": {
     "prompt": "unused (not shown in the web version)",
@@ -14,225 +18,564 @@
     "include_style": false
   },
   "ch-1-grundphilosophie": {
-    "prompt": "",
-    "seed": 846313081,
+    "prompt": "A low-angle view outside a wooden western saloon. A calm martial artist in a long duster deflects a heavy two-handed sledgehammer swing from a hulking, furious outlaw using a single open palm. Dense dust clouds and splintered wooden debris explode outward from the impact point.",
+    "seed": 1225060229,
     "kind": "chapter",
-    "title": "Grundphilosophie"
+    "title": "Grundphilosophie",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": [
+        "Das Schild am rechten Gebäude trägt schwer lesbare, verwaschene Schrift.",
+        "Der Angreifer ist zwar muskulös, wirkt aber nicht wie ein auffallend riesiger Hüne im Vergleich zum Kampfkünstler.",
+        "Der Kampfkünstler hält in seiner rechten Hand ein Messer, statt komplett unbewaffnet aufzutreten."
+      ]
+    }
   },
   "ch-2-der-charakter": {
-    "prompt": "",
-    "seed": 992174079,
+    "prompt": "A low-angle view inside an abandoned desert train station, where a scarred martial artist sits cross-legged on a wooden cargo crate. With a bandaged shoulder and unbuttoned denim work shirt, the fighter rests beside an open canvas gear bag revealing extra ammunition magazines and a polished tactical revolver.",
+    "seed": 639182965,
     "kind": "chapter",
-    "title": "Der Charakter"
+    "title": "Der Charakter",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": [
+        "Kämpfer sitzt nicht im Schneidersitz, sondern mit aufgesetzten Stiefeln auf der Holzkiste (wirkt allerdings sehr natürlich und filmisch)."
+      ]
+    }
   },
   "sec-2-1-die-attribute-2w6-system": {
-    "prompt": "",
-    "seed": 1384970146,
+    "prompt": "A martial artist in a flowing duster coat executes an agile diving roll in mid-air over a wooden saloon balcony. Right below, an explosive shotgun blast shatters the railing into flying timber splinters and smoke. Low-angle perspective looking up at the leaping figure gracefully clearing the destroyed railing.",
+    "seed": 1935394577,
     "kind": "section",
-    "title": "2.1 Die Attribute (2W6-System)"
+    "title": "2.1 Die Attribute (2W6-System)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-2-2-das-titel-system-level-1-bis-10": {
-    "prompt": "",
-    "seed": 2103946015,
+    "prompt": "Inside a red-rock desert canyon, an older martial arts master wearing a tactical chest rig over a rugged poncho side-steps and deflects a younger gunslinger's drawn revolver by striking the cylinder with an open palm. The younger duelist stumbles slightly off-balance in a dynamic training duel.",
+    "seed": 1455969442,
     "kind": "section",
-    "title": "2.2 Das Titel-System (Level 1 bis 10)"
+    "title": "2.2 Das Titel-System (Level 1 bis 10)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-2-3-ressourcen-verletzungen": {
-    "prompt": "",
+    "prompt": "A bloodied bounty hunter slumps against a battered adobe wall in a sunbaked alley, tightly wrapping a makeshift bandage around a gunshot wound on their upper shoulder. Empty brass casings litter the dry ground nearby. Medium-wide eye-level landscape shot conveying exhaustion and physical trauma.",
     "seed": 1007326051,
     "kind": "section",
-    "title": "2.3 Ressourcen & Verletzungen"
+    "title": "2.3 Ressourcen & Verletzungen",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-2-4-charaktererschaffung": {
-    "prompt": "",
+    "prompt": "A female marksman in a wide-brimmed hat and tactical plate carrier sits at a heavy wooden cantina table, carefully assembling a customized precision rifle alongside twin revolvers and field knives spread across the surface. Wide interior landscape shot, quiet and deliberate concentration.",
     "seed": 1295256922,
     "kind": "section",
-    "title": "2.4 Charaktererschaffung"
+    "title": "2.4 Charaktererschaffung",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-2-5-waffen-deckung": {
-    "prompt": "",
-    "seed": 1616983302,
+    "prompt": "From a low-angle wide shot in a ruined desert mission, a tactical gunslinger in a tattered duster crouches behind a thick, crumbling adobe pillar, racking a heavy shotgun. Incoming rifle rounds blast explosive chips of stone from the masonry, while an armored assailant charges across the courtyard firing an assault rifle.",
+    "seed": 1144274064,
     "kind": "section",
-    "title": "2.5 Waffen & Deckung"
+    "title": "2.5 Waffen & Deckung",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "ch-3-der-kampf-das-clash-system": {
-    "prompt": "",
-    "seed": 1256894102,
+    "prompt": "Inside a stone hacienda courtyard, a kung fu fighter in a sleeveless vest aggressively parries an outstretched revolver upward with his steel bracer. His opposite palm strikes hard into the staggered cowboy's chest, throwing him back against a dry stone fountain.",
+    "seed": 673340853,
     "kind": "chapter",
-    "title": "Der Kampf (Das Clash-System)"
+    "title": "Der Kampf (Das Clash-System)",
+    "include_style": true,
+    "qc": {
+      "fits": false,
+      "problems": [
+        "Kein Schlag gegen die Brust: Der Handflächenstoß fehlt komplett, der Kampfkünstler hat die zweite Hand nicht am Gegner.",
+        "Fehlende Trefferwirkung: Der Cowboy steht aufrecht und stabil, statt taumelnd gegen den Brunnen geschleudert zu werden.",
+        "Parade misslungen: Der Revolver zielt horizontal direkt auf Stirnhöhe des Kampfkünstlers statt nach oben abgewehrt zu sein.",
+        "Konfuse Hand- und Arm-Anatomie: Die Verknüpfung von Armen, Händen und Revolver im Zentrum ist unklar und wirkt wie eine überzählige/falsch angewachsene Hand.",
+        "Brunnen führt Wasser statt ausgetrocknet zu sein."
+      ]
+    }
   },
   "sec-3-1-die-wuerfelmechanik-der-clash": {
-    "prompt": "",
-    "seed": 683704420,
+    "prompt": "Two gritty gunslingers clashing in dynamic close-quarters martial arts combat on a dusty wooden saloon porch. One fighter parries an incoming punch while driving a palm strike forward, the other counters aggressively with a drawn revolver deflected sideways. Realistic anatomy, intense standoff action.",
+    "seed": 539404040,
     "kind": "section",
-    "title": "3.1 Die Würfelmechanik (Der Clash)"
+    "title": "3.1 Die Würfelmechanik (Der Clash)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-2-die-wirkung-eines-treffers-kaskade": {
-    "prompt": "",
-    "seed": 1142646314,
+    "prompt": "Side view of a bareheaded female gunslinger knocked backward on a dusty desert trail. A grazing bullet rips through her shirt at the shoulder with a puff of dust. Her single wide-brimmed hat tumbles through the air alongside flying brass casings as she winces in pain.",
+    "seed": 99690295,
     "kind": "section",
-    "title": "3.2 Die Wirkung eines Treffers (Kaskade)"
+    "title": "3.2 Die Wirkung eines Treffers (Kaskade)",
+    "include_style": true,
+    "qc": {
+      "fits": false,
+      "problems": [
+        "Figur ist größtenteils von hinten dargestellt; Gesicht und schmerzverzogene Mimik sind nicht sichtbar",
+        "Kein Treffereffekt erkennbar: Weder Stoffriss noch Staubwolke an der Schulter vorhanden",
+        "Mangelnde Dynamik: Die Schützin steht fast aufrecht, anstatt spürbar vom Treffer nach hinten geschleudert zu werden",
+        "Hut und Patronenhülsen wirken statisch in der Luft platziert statt im dynamischen Flug begriffen"
+      ]
+    }
   },
   "sec-3-3-tags": {
-    "prompt": "",
-    "seed": 411042381,
+    "prompt": "A gunslinger sliding aggressively across dusty wooden saloon boardwalk floorboards, kicking up a burst of sand toward the camera. One hand scoops a fallen revolver from the planks while aiming directly at an approaching opponent just outside the frame. Kinetic motion, frantic action scene.",
+    "seed": 773668737,
     "kind": "section",
-    "title": "3.3 Tags"
+    "title": "3.3 Tags",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-4-die-helden-schwelle": {
-    "prompt": "",
-    "seed": 27252504,
+    "prompt": "A confident gunfighter wearing a modern tactical vest over a western shirt walks forward, hand resting on his hip holster. Behind him in the rocky canyon, three defeated outlaws are slumped across the dusty ground in varied postures, disarmed, looking up in stunned disbelief at him.",
+    "seed": 41380100,
     "kind": "section",
-    "title": "3.4 Die Helden-Schwelle"
+    "title": "3.4 Die Helden-Schwelle",
+    "include_style": true,
+    "qc": {
+      "fits": false,
+      "problems": [
+        "Moderne taktische Weste fehlt vollständig; der Schütze trägt stattdessen eine rein historische Western-Weste, wodurch das moderne Action-Crossover des Settings verloren geht.",
+        "Auffällige weiße Artefakte an den Schuhsohlen der am Boden liegenden Gesetzlosen."
+      ]
+    }
   },
   "sec-3-5-ausser-reichweite-klassenunterschied": {
-    "prompt": "",
+    "prompt": "A legendary martial artist in a traveler cloak stands motionless on a rocky canyon ridge, effortlessly batting away the wild club swings of a massive canyon raider with a simple walking staff, utterly untouchable and calm. Extreme wide landscape shot against towering sandstone cliffs.",
     "seed": 1997486392,
     "kind": "section",
-    "title": "3.5 Außer Reichweite (Klassenunterschied)"
+    "title": "3.5 Außer Reichweite (Klassenunterschied)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-6-der-rundenablauf-seiten-initiative-mit-kinet": {
-    "prompt": "",
-    "seed": 181122061,
+    "prompt": "A single cylindrical brass revolver cartridge stands upright between dusty railroad ties in the foreground. Behind it, a poncho-wearing martial artist thrusts an open palm into an outlaw's chest, throwing him back. Two distinct gunslingers in long coats walk forward, aiming revolvers downrange at fleeing bandits in the desert background.",
+    "seed": 1209295530,
     "kind": "section",
-    "title": "3.6 Der Rundenablauf: Seiten-Initiative mit Kinetik-Marker"
+    "title": "3.6 Der Rundenablauf: Seiten-Initiative mit Kinetik-Marker",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-7-mehrere-gegner-goons-elite-und-bosse": {
-    "prompt": "",
-    "seed": 249479729,
+    "prompt": "Inside a ruined stone mission, an agile gunslinger leaps mid-air with a sweeping flying kick, knocking down two outlaw thugs who stumble back. A ring of masked henchmen aim revolvers from all sides, while a gang leader in a long duster stands watching on stone altar steps.",
+    "seed": 1333227705,
     "kind": "section",
-    "title": "3.7 Mehrere Gegner: Goons, Elite und Bosse"
+    "title": "3.7 Mehrere Gegner: Goons, Elite und Bosse",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-8-momentum": {
-    "prompt": "",
-    "seed": 679721684,
+    "prompt": "A tactical frontier lawman pushes aggressively into a wooden hideout, thrusting a scarred metal ballistic shield forward while firing a heavy revolver point-blank. Terrified outlaws in disarray scramble backwards in panic, stumbling over splintered floorboards and toppled chairs as they flee from the breach.",
+    "seed": 1036880848,
     "kind": "section",
-    "title": "3.8 Momentum"
+    "title": "3.8 Momentum",
+    "include_style": true,
+    "qc": {
+      "fits": false,
+      "problems": [
+        "Völlig statische Szene: Banditen stehen oder sitzen ruhig herum, statt in Panik zurückzuweichen oder zu fliehen.",
+        "Kein Momentum oder Durchbruch spürbar (keine umgestürzten Möbel, keine Splitter, keine Angriffsenergie).",
+        "Unklare Anatomie und Zuordnung am Schutzschild: Waffe und Arme wirken verworren mit der dahinterstehenden Figur verschmolzen."
+      ]
+    }
   },
   "sec-3-9-bullet-time-rule-of-cool": {
-    "prompt": "",
-    "seed": 2003050029,
+    "prompt": "A martial artist wearing a poncho and conical Asian straw hat bends deeply backward in an acrobatic bullet-dodge. A rifle bullet streaks through mid-air above his chest. From this low limbo lean, he points his revolver upward toward a sniper in an adobe bell tower, frozen dust surrounding them.",
+    "seed": 1053008846,
     "kind": "section",
-    "title": "3.9 Bullet Time (Rule of Cool)"
+    "title": "3.9 Bullet Time (Rule of Cool)",
+    "include_style": true,
+    "qc": {
+      "fits": false,
+      "problems": [
+        "Der Protagonist steht aufrecht, anstatt sich in einer extremen Rückbeuge akrobatisch unter der Kugel wegzuducken (die namensgebende Bullet-Time-Ausweichbewegung fehlt).",
+        "Die Kugelspur verläuft hoch am Himmel wie eine Sternschnuppe, statt knapp und greifbar über der Brust in Zeitlupe die Luft zu schneiden.",
+        "Keine sichtbare Kugel im Flug oder gefrorene Partikel/Verzerrungen in der Luft, die den Zeitlupeneffekt verdeutlichen."
+      ]
+    }
   },
   "sec-3-10-regeneration-ohnmacht-und-gebrochen": {
-    "prompt": "",
+    "prompt": "A wounded lawman leans against the shadowed adobe wall of an alleyway, taking a slow breath as he lights a match between scarred knuckles amidst spent brass and smoking rubble, steadying his trembling hands before re-entering the fight. Intimate medium shot bathed in sharp rim light.",
     "seed": 7372140,
     "kind": "section",
-    "title": "3.10 Regeneration, Ohnmacht und Gebrochen"
+    "title": "3.10 Regeneration, Ohnmacht und Gebrochen",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-11-ausgeschaltet-sterben-und-heilung": {
-    "prompt": "",
-    "seed": 1108920597,
+    "prompt": "Behind an overturned wooden cart, a gunslinger kneels over an injured ally lying on the dusty ground, applying a tight cloth bandage to the comrade's arm while aiming a revolver toward the horizon.",
+    "seed": 1987708216,
     "kind": "section",
-    "title": "3.11 Ausgeschaltet, Sterben und Heilung"
+    "title": "3.11 Ausgeschaltet, Sterben und Heilung",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": [
+        "Der Verband am Arm des Verletzten wirkt eher wie ein Stoffknäuel und ist nicht sofort als angelegter Notverband erkennbar.",
+        "Die Holzkonstruktion des umgestürzten Karrens (Achsen und Deichsel) ist stellenweise leicht diffus."
+      ]
+    }
   },
   "sec-3-12-moves-einsetzen-und-bezahlen": {
-    "prompt": "",
-    "seed": 488323010,
+    "prompt": "A lone martial-arts gunslinger in a duster stands dynamically at a desert crossroads, sweeping a curved saber outward with one hand while firing a revolver with the other. A shockwave violently shatters nearby wooden crates into flying splinters. Low-angle perspective looking up at the action.",
+    "seed": 1571387860,
     "kind": "section",
-    "title": "3.12 Moves einsetzen und bezahlen"
+    "title": "3.12 Moves einsetzen und bezahlen",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-13-optionale-experten-regel-erst-wuerfeln-dann": {
-    "prompt": "",
+    "prompt": "Two opposing duelists freeze mid-motion after an unpredictable clash on a dusty train roof; one fighter unexpectedly catches a spinning throwing blade between two gloved fingers before stepping forward to deliver a crushing disarm. Wide exterior side-view shot against rolling arid plains.",
     "seed": 2081049316,
     "kind": "section",
-    "title": "3.13 Optionale Experten-Regel: Erst würfeln, dann erzählen (\"Fortune in the Middle\")"
+    "title": "3.13 Optionale Experten-Regel: Erst würfeln, dann erzählen (\"Fortune in the Middle\")",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": [
+        "Das filigrane Detail des Fangens einer fliegenden Klinge mit zwei Fingern ist in der Totalen nicht eindeutig auszumachen; stattdessen sieht es nach einem beidhändigen Ringen um ein Messer aus.",
+        "Wenig spürbare Gun-Fu- oder Martial-Arts-Dynamik, wirkt eher wie ein klassischer Western-Messer-Schlagabtausch."
+      ]
+    }
   },
   "ch-4-proben-gegen-die-umgebung-nicht-kampf-skills": {
-    "prompt": "",
+    "prompt": "A rugged martial artist in a weathered canvas coat leaps across a massive sandstone canyon gap. Mid-air leap above a dizzying rocky gorge, one hand reaching for the opposite cliff edge. Distant desert mesas under open skies, tense and breathless atmosphere, wide low-angle shot.",
     "seed": 1116305825,
     "kind": "chapter",
-    "title": "Proben gegen die Umgebung (Nicht-Kampf-Skills)"
+    "title": "Proben gegen die Umgebung (Nicht-Kampf-Skills)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-4-1-heimlichkeit-und-infiltration": {
-    "prompt": "",
+    "prompt": "A cloaked infiltrator crouches silently along the high wooden rafters of a cavernous frontier warehouse. Below, three oblivious armed guards sit around a lantern-lit table, smoking and playing cards. Tense suspense, dark shadows contrasting with a warm pool of light, elevated wide-angle shot looking down.",
     "seed": 1389940016,
     "kind": "section",
-    "title": "4.1 Heimlichkeit und Infiltration"
+    "title": "4.1 Heimlichkeit und Infiltration",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "ch-5-moves": {
-    "prompt": "",
-    "seed": 541357334,
+    "prompt": "On the wooden roof of a speeding train racing through a sandstone canyon, a martial artist in a flowing poncho executes a dynamic flying roundhouse kick, striking an outlaw across the chest. The outlaw reels backward in mid-air, losing his grip on his rifle as dust churns around them.",
+    "seed": 409480476,
     "kind": "chapter",
-    "title": "Moves"
+    "title": "Moves",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-5-1-das-bewertungs-framework-effektpunkte": {
-    "prompt": "",
-    "seed": 189104448,
+    "prompt": "Low-angle wide shot atop a speeding wooden train car cutting through a desert canyon. A tough bounty hunter in a long coat violently slams an outlaw into the sun-bleached roof planks. The outlaw hits the deck hard, his revolver clattering across the wood as thick locomotive smoke billows behind them.",
+    "seed": 1910392264,
     "kind": "section",
-    "title": "5.1 Das Bewertungs-Framework (Effektpunkte)"
+    "title": "5.1 Das Bewertungs-Framework (Effektpunkte)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-5-2-move-beispiele-richtwerte": {
-    "prompt": "",
-    "seed": 496701584,
+    "prompt": "Low-angle wide shot of a duel on sunbaked railway tracks between red canyon cliffs and weathered wooden freight cars. A poncho-wearing swordsman in a deep crouch draws a curved katana facing an outlaw aiming a smoking revolver. Billowing dust and scattered gravel kick up around their boots.",
+    "seed": 1651732716,
     "kind": "section",
-    "title": "5.2 Move-Beispiele (Richtwerte)"
+    "title": "5.2 Move-Beispiele (Richtwerte)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-5-3-gemeisterte-moves": {
-    "prompt": "",
-    "seed": 1630610548,
+    "prompt": "A blindfolded female gunfighter in a faded poncho stands balanced atop a weathered stone wall in an abandoned mission courtyard. With calm precision born of muscle memory, she hip-fires a smoking revolver toward hanging iron bells, sending bright sparks flying. Wide low-angle shot, quiet concentration, dusty windswept ruin.",
+    "seed": 1660409257,
     "kind": "section",
-    "title": "5.3 Gemeisterte Moves"
+    "title": "5.3 Gemeisterte Moves",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-5-4-meister-moves-und-legendaere-moves": {
-    "prompt": "",
-    "seed": 291553089,
+    "prompt": "In a sandstone canyon, an exhausted Asian martial artist kneels on cracked desert earth, grimacing as he cradles a smoking, burned hand. Around him, an entire squad of defeated western gunslingers lies unconscious in the dust, with revolvers and rifles scattered uselessly across the ground.",
+    "seed": 110096373,
     "kind": "section",
-    "title": "5.4 Meister-Moves und Legendäre Moves"
+    "title": "5.4 Meister-Moves und Legendäre Moves",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "ch-6-spielbeispiele-am-tisch": {
-    "prompt": "",
-    "seed": 1389651405,
+    "prompt": "A martial arts gunslinger in a swirling duster coat performs a low, evasive combat slide along a wooden boardwalk. Across the dusty town street, scattered outlaws take cover at different depths behind wagons, porch pillars, and water barrels, exchanging chaotic revolver fire with muzzle smoke.",
+    "seed": 1914501851,
     "kind": "chapter",
-    "title": "Spielbeispiele am Tisch"
+    "title": "Spielbeispiele am Tisch",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-beispiel-charakterbogen": {
-    "prompt": "",
+    "prompt": "A focused East Asian gunslinger in a battered poncho sits on a weathered wooden crate outside an adobe cantina, meticulously loading silver cartridges into twin revolvers. Leather holsters, arm wraps, and a concealed vest lie beside him. Medium side profile shot bathed in harsh desert light.",
     "seed": 1465229593,
     "kind": "section",
-    "title": "Beispiel-Charakterbogen"
+    "title": "Beispiel-Charakterbogen",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-beispiel-1-kampf-gegen-horden-goons": {
-    "prompt": "",
-    "seed": 1166453139,
+    "prompt": "Low-angle wide shot inside a sunlit railway warehouse. A swift woman gunslinger in a leather coat slides low across the floorboards, firing a revolver. Two defeated outlaws lie sprawled motionless over overturned wooden barrels, while a third panicked bandit scrambles backward in terror, dropping his weapon amid rising floor dust.",
+    "seed": 1791718026,
     "kind": "section",
-    "title": "Beispiel 1: Kampf gegen Horden (Goons)"
+    "title": "Beispiel 1: Kampf gegen Horden (Goons)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": [
+        "Der dritte Bandit weicht leicht vom intendierten Motiv ab: Er lässt seine Waffen nicht fallen und weicht nicht panisch zurück, sondern stürmt mit zwei gezogenen Revolvern vor (funktioniert dramaturgisch dennoch hervorragend für die Szene)."
+      ]
+    }
   },
   "sec-beispiel-2-ruestung-und-verletzung-boss-kampf": {
-    "prompt": "",
-    "seed": 1678374555,
+    "prompt": "Ground-level wide shot of a massive enforcer clad in heavy welded iron plate armor sprawled flat on his back across splintered saloon floorboards, knocked breathless. In the immediate foreground, a dropped nickel revolver slides across the sawdust. Behind the fallen juggernaut, a lean martial artist in a dark open duster recoils into a low defensive stance.",
+    "seed": 69277247,
     "kind": "section",
-    "title": "Beispiel 2: Rüstung und Verletzung (Boss-Kampf)"
+    "title": "Beispiel 2: Rüstung und Verletzung (Boss-Kampf)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-beispiel-3-pvp-spieler-gegen-spieler": {
-    "prompt": "",
-    "seed": 248138107,
+    "prompt": "Low-angle view inside a sun-drenched livery stable. A wandering martial artist in a battered duster executes a sweeping low kick that violently upends an operative in a tactical vest, sending the rival airborne over scattered straw. A dislodged handgun spins through the air beside a splintered wooden trough.",
+    "seed": 785881938,
     "kind": "section",
-    "title": "Beispiel 3: PvP (Spieler gegen Spieler)"
+    "title": "Beispiel 3: PvP (Spieler gegen Spieler)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-beispiel-4-charakterentwicklung-und-titel-leveli": {
-    "prompt": "",
-    "seed": 334304638,
+    "prompt": "A wide elevated shot over a sun-drenched frontier rail yard. A calm Asian gunslinger in a frayed poncho stands atop a wooden water tower, surrounded by numerous identical duplicate copies of himself. The cloned figures leap across boxcars and rooftop shingles, brandishing paired revolvers in unison under blinding desert sunlight.",
+    "seed": 1178359919,
     "kind": "section",
-    "title": "Beispiel 4: Charakterentwicklung und Titel-Leveling"
+    "title": "Beispiel 4: Charakterentwicklung und Titel-Leveling",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": [
+        "Figuren stehen oder gehen statisch, statt wie vorgegeben dynamisch über Waggons und Dächer zu springen",
+        "Klone zielen meist nur mit einem einzelnen Revolver statt mit paarweisen Revolvern (Akimbo)",
+        "Asiatische Gesichtszüge durch Distanz und Gegenlicht-Silhouette nicht erkennbar"
+      ]
+    }
   },
   "sec-beispiel-5-heimlichkeit-goons-und-elite": {
-    "prompt": "",
+    "prompt": "A silent infiltrator in dark leather crouches among timber rafters above a dimly illuminated railroad depot, watching four oblivious card players around a table below while a hulking bodyguard sits in a lit doorway unaware. High-angle wide shot emphasizing creeping shadows and suspenseful depth.",
     "seed": 2121981303,
     "kind": "section",
-    "title": "Beispiel 5: Heimlichkeit (Goons und Elite)"
+    "title": "Beispiel 5: Heimlichkeit (Goons und Elite)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": [
+        "Nur drei statt der im Text beschriebenen vier Goons sitzen am Kartentisch (Chen sitzt separat im Hintergrund)."
+      ]
+    }
   },
   "sec-beispiel-6-gift-und-toeten": {
-    "prompt": "",
-    "seed": 1871950172,
+    "prompt": "Inside a dim frontier apothecary shop, an unconscious outlaw lies motionless across a wooden table covered in spilled medicine and knocked-over glass vials. A worried gunslinger in a duster bends close, two fingers pressed to the unconscious man's neck checking for a pulse. A dark silhouette slips out the rear door.",
+    "seed": 1151106892,
     "kind": "section",
-    "title": "Beispiel 6: Gift und Töten"
+    "title": "Beispiel 6: Gift und Töten",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-beispiel-7-den-move-nicht-einsetzen-variante-von": {
-    "prompt": "",
-    "seed": 1464177021,
+    "prompt": "High-angle shot of a rocky canyon floor beside sandstone cliffs. A female fighter in a long duster coat clutches bruised ribs while stumbling back. Facing her, a rugged outlaw in a damaged tactical vest reels back nursing a bloody jaw, both locked in an exhausted martial arts standoff over loose gravel.",
+    "seed": 151736978,
     "kind": "section",
-    "title": "Beispiel 7: Den Move nicht einsetzen (Variante von Beispiel 2)"
+    "title": "Beispiel 7: Den Move nicht einsetzen (Variante von Beispiel 2)",
+    "include_style": true,
+    "qc": {
+      "fits": false,
+      "problems": [
+        "Die Figuren zeigen weder Erschöpfung noch Trefferwirkung: Die Kämpferin hält sich nicht die Rippen und der Gegner fasst sich nicht an den Kiefer.",
+        "Die Posen wirken statisch und vorbereitend statt wie ein dynamisches Zurücktaumeln nach einem gleichzeitigen Trefferaustausch (Schlagabtausch).",
+        "Der Gegner trägt eine einfache Westernweste statt einer (beschädigten) taktischen Schutzweste."
+      ]
+    }
+  },
+  "fill-ch-1-grundphilosophie": {
+    "prompt": "A wide landscape view of an elderly martial artist in a rugged duster coat effortlessly parrying a massive brawler's haymaker strike on a dusty train depot platform. Swirling dust particles hang suspended in mid-air during the clash. Low wide-angle view, tense disciplined focus meeting raw explosive momentum.",
+    "seed": 1256310600,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: Grundphilosophie",
+    "after": "ch-1-grundphilosophie",
+    "chapter": "ch-1-grundphilosophie",
+    "h_mm": 87.8,
+    "w_mm": 176.0,
+    "include_style": true
+  },
+  "fill-sec-2-1-die-attribute-2w6-system": {
+    "prompt": "A wandering martial artist leaps gracefully between the rusted roofs of moving train boxcars, dodging a spray of ricocheting bullets with fluid agility and sheer instinct, wide tracking shot across a vast desert gorge under a blazing sun.",
+    "seed": 1845449529,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 2.1 Die Attribute (2W6-System)",
+    "after": "sec-2-1-die-attribute-2w6-system",
+    "chapter": "ch-2-der-charakter",
+    "h_mm": 88.5,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-2-3-ressourcen-verletzungen": {
+    "prompt": "A bloodied gunslinger sits slumped against a sun-baked sandstone boulder, grimacing with fierce resolve as he wrenches a tight leather strap around his shattered forearm, bullet impacts chipping stone powder overhead while empty brass casings litter the dry scrub, wide eye-level landscape framing.",
+    "seed": 308928073,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 2.3 Ressourcen & Verletzungen",
+    "after": "sec-2-3-ressourcen-verletzungen",
+    "chapter": "ch-2-der-charakter",
+    "h_mm": 82.7,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-2-5-waffen-deckung": {
+    "prompt": "A tactical operator in a worn vest crouches behind an overturned oak table inside a battered saloon, splinters bursting outward from heavy rifle impacts as he redirects an opponent's shotgun barrel with one gloved hand and draws his revolver, dynamic medium-close square composition.",
+    "seed": 625879080,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 2.5 Waffen & Deckung",
+    "after": "sec-2-5-waffen-deckung",
+    "chapter": "ch-2-der-charakter",
+    "h_mm": 183.9,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-4-1-heimlichkeit-und-infiltration": {
+    "prompt": "A high-angle square composition looking down from timber rafters of a shadowy frontier warehouse. A hooded gunslinger in a dark duster crouches motionless on an overhead beam, preparing an ambush. Far below, two oblivious sentries lean against wooden barrels under slatted shafts of sunlight, unaware of the lurking threat.",
+    "seed": 135901386,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 4.1 Heimlichkeit und Infiltration",
+    "after": "sec-4-1-heimlichkeit-und-infiltration",
+    "chapter": "ch-4-proben-gegen-die-umgebung-nicht-kampf-skills",
+    "h_mm": 161.9,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-5-4-meister-moves-und-legendaere-moves": {
+    "prompt": "Centered square framing of an exhausted wandering martial artist kneeling on one knee amid splintered boardwalk timber in a ghost town. Defeated outlaw gunfighters lie motionless around him. The fighter clutches a bruised, blackened hand, breathing heavily with a grim expression, framed by broken hitching posts and drifting powder smoke.",
+    "seed": 52567635,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 5.4 Meister-Moves und Legendäre Moves",
+    "after": "sec-5-4-meister-moves-und-legendaere-moves",
+    "chapter": "ch-5-moves",
+    "h_mm": 172.4,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-beispiel-6-gift-und-toeten": {
+    "prompt": "A wide low-angle view outside a desert railway depot. An imposing cartel boss stumbles backward against wooden freight crates, gasping and clutching his neck where a feathered venom dart strikes. Alarmed bodyguards draw revolvers toward empty rafters, while a shadowy assassin slips silently across the corrugated tin roof.",
+    "seed": 1763903290,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: Beispiel 6: Gift und Töten",
+    "after": "sec-beispiel-6-gift-und-toeten",
+    "chapter": "ch-6-spielbeispiele-am-tisch",
+    "h_mm": 100.6,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   }
 }

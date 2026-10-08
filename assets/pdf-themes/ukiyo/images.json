@@ -1,10 +1,14 @@
 {
   "cover": {
     "prompt": "tall woodblock print composition, a ronin and a martial artist facing each other on a wooden bridge under a great stylized wave and a pale mountain, empty plain sky at the very top and plain ground at the very bottom, no logo, no title, no lettering",
-    "seed": 921037401,
+    "seed": 734550345,
     "kind": "cover",
     "title": "Cover: KINETIK",
-    "include_style": true
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "background": {
     "prompt": "unused (not shown in the web version)",
@@ -14,225 +18,579 @@
     "include_style": false
   },
   "ch-1-grundphilosophie": {
-    "prompt": "",
-    "seed": 1723419604,
+    "prompt": "A calm traveling monk strides across rain-slicked stone temple steps through a suspended barrage of matchlock gunfire. Frozen in cinematic bullet time, musket balls and severed autumn leaves hover in midair around his raised wooden staff, while masked marksmen stagger backward in the misty background. Wide low-angle shot under tall pines.",
+    "seed": 422631433,
     "kind": "chapter",
-    "title": "Grundphilosophie"
+    "title": "Grundphilosophie",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "ch-2-der-charakter": {
-    "prompt": "",
+    "prompt": "A battle-hardened ronin concealing flintlock pistols and a cloaked female scout standing together beneath the grand wooden gate of a hillside fortress at twilight. Wind whips through their garments as banners flutter overhead. Tense, cinematic atmosphere, wide panoramic establishing shot framing strong silhouettes against a pale orange sky.",
     "seed": 694978158,
     "kind": "chapter",
-    "title": "Der Charakter"
+    "title": "Der Charakter",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-2-1-die-attribute-2w6-system": {
-    "prompt": "",
-    "seed": 1745062048,
+    "prompt": "A nimble martial artist monk leaping across wooden poles over a raging river gorge, swinging a wooden bo staff to knock flying arrows out of the air mid-leap, dynamic acrobatic posture, water splashing below, sweeping mountain valley in the background.",
+    "seed": 873964887,
     "kind": "section",
-    "title": "2.1 Die Attribute (2W6-System)"
+    "title": "2.1 Die Attribute (2W6-System)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-2-2-das-titel-system-level-1-bis-10": {
-    "prompt": "",
-    "seed": 834803545,
+    "prompt": "A hooded assassin strides forward along a wooden corridor, holding twin smoking matchlock pistols. Defeated bodyguards lie unconscious beside timber pillars. Frightened noblemen hide behind ornate standing screens in asymmetric positions. Drifting gunsmoke floats above polished floorboards, illuminated by warm hanging lanterns.",
+    "seed": 1172119834,
     "kind": "section",
-    "title": "2.2 Das Titel-System (Level 1 bis 10)"
+    "title": "2.2 Das Titel-System (Level 1 bis 10)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-2-3-ressourcen-verletzungen": {
-    "prompt": "",
-    "seed": 2139036811,
+    "prompt": "A battered samurai kneeling in a rain-drenched bamboo grove at twilight, grimacing as he binds a bleeding cut on his forearm with cloth. Splintered bamboo canes and muddy puddles surround him on the forest floor, rain streaming down from dark storm clouds.",
+    "seed": 188260131,
     "kind": "section",
-    "title": "2.3 Ressourcen & Verletzungen"
+    "title": "2.3 Ressourcen & Verletzungen",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-2-4-charaktererschaffung": {
-    "prompt": "",
+    "prompt": "A sharp-eyed female marksman in travel gear meticulously cleaning a long-barrel matchlock firearm on the wooden porch of an isolated mountain lodge. Metal tools, powder flasks, and leather scrolls rest beside her under the morning sun. Quiet concentration, wide cinematic perspective showing deep pine valleys in the misty backdrop.",
     "seed": 746517206,
     "kind": "section",
-    "title": "2.4 Charaktererschaffung"
+    "title": "2.4 Charaktererschaffung",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-2-5-waffen-deckung": {
-    "prompt": "",
+    "prompt": "A furious gun-fu clash inside a ruined pavilion. A crouching shooter fires dual pistols from behind a splintering heavy oak table as wood chips erupt from musket balls, while an armored guard charges forward with an overhead blade strike. Explosive action, dynamic low-angle composition filled with smoke and shattered paper screens.",
     "seed": 879637282,
     "kind": "section",
-    "title": "2.5 Waffen & Deckung"
+    "title": "2.5 Waffen & Deckung",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "ch-3-der-kampf-das-clash-system": {
-    "prompt": "",
-    "seed": 727045373,
+    "prompt": "A rogue ronin in a dark travel coat fires a matchlock pistol at point-blank range against an armored samurai guard swinging a katana overhead. Locked in fierce melee duel on a wet wooden arched bridge spanning a misty gorge during a heavy rainstorm at dusk, water splashing underfoot.",
+    "seed": 1794322085,
     "kind": "chapter",
-    "title": "Der Kampf (Das Clash-System)"
+    "title": "Der Kampf (Das Clash-System)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-1-die-wuerfelmechanik-der-clash": {
-    "prompt": "",
-    "seed": 1701202610,
+    "prompt": "Two martial artists fighting on a wooden tea house balcony by the sea. One warrior ducks low beneath an overextended punch, driving a powerful palm strike directly into the attacker's exposed ribs. Splintered wooden railing pieces and torn paper lanterns tumble dynamically through the air across the terrace.",
+    "seed": 1954267663,
     "kind": "section",
-    "title": "3.1 Die Würfelmechanik (Der Clash)"
+    "title": "3.1 Die Würfelmechanik (Der Clash)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-2-die-wirkung-eines-treffers-kaskade": {
-    "prompt": "",
-    "seed": 1792493571,
+    "prompt": "A barefoot martial artist in dark robes lunges forward in profile, driving a powerful open palm strike into the chest of a heavily armored samurai. Broken armor fragments, snapped cords, and red maple leaves burst from the point of impact across a raked gravel zen garden.",
+    "seed": 1710439103,
     "kind": "section",
-    "title": "3.2 Die Wirkung eines Treffers (Kaskade)"
+    "title": "3.2 Die Wirkung eines Treffers (Kaskade)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-3-tags": {
-    "prompt": "",
-    "seed": 2142684940,
+    "prompt": "Inside a dark wooden temple hall, a calm Buddhist monk kneels over an armored samurai, pinning him face-down in a tight Kimura armlock. The samurai struggles on the floorboards, desperately stretching his free hand toward his dropped katana lying just out of reach while autumn maple leaves drift inside.",
+    "seed": 1516339265,
     "kind": "section",
-    "title": "3.3 Tags"
+    "title": "3.3 Tags",
+    "include_style": true,
+    "qc": {
+      "fits": false,
+      "problems": [
+        "Kein Hebelgriff: Der Mönch hält keinen Kimura-Armhebel, sondern legt die Hände ruhig und flach wie bei einer Massage auf den Rücken des Samurai.",
+        "Keine Gegenwehr oder Dramatik: Der Samurai liegt vollkommen entspannt und regungslos am Boden, statt mit vollem Körpereinsatz zu ringen.",
+        "Kein Strecken nach der Waffe: Beide Arme liegen entspannt nach vorne gelegt, ohne erkennbares verzweifeltes Greifen nach dem Katana.",
+        "Fehlplatzierte Schwertscheide schwebt lose hinter der Hüfte des Mönchs."
+      ]
+    }
   },
   "sec-3-4-die-helden-schwelle": {
-    "prompt": "",
-    "seed": 2102808194,
+    "prompt": "A calm wandering gunslinger in a black kimono strides down an evening village lane lined with glowing paper lanterns. He wields a matchlock pistol in each outstretched hand, firing in opposite directions. Shocked armored ashigaru guards stumble backward, dropping their spears onto the road amid billowing white gunsmoke.",
+    "seed": 1229344344,
     "kind": "section",
-    "title": "3.4 Die Helden-Schwelle"
+    "title": "3.4 Die Helden-Schwelle",
+    "include_style": true,
+    "qc": {
+      "fits": false,
+      "problems": [
+        "Auffällig symmetrisch gespiegelte, fast identische Ashigaru-Figuren auf beiden Seiten.",
+        "Fehlerhafte Waffenlogik: Überzählige Speerschäfte ragen ohne erkennbare Führung oder Halterung aus den Hüften der Wachen.",
+        "Die Wachen stolpern nicht zurück und lassen ihre Waffen nicht fallen, sondern verharren in gefestigter Kampfhaltung."
+      ]
+    }
   },
   "sec-3-5-ausser-reichweite-klassenunterschied": {
-    "prompt": "",
-    "seed": 244321636,
+    "prompt": "A wide landscape view of a mist-shrouded riverbank at dawn. A calm female warrior balances effortlessly atop a tall wooden mooring post with arms crossed. Below her in the shallow water, an armored brute lunges fruitlessly forward, his sword splashing harmlessly into the empty river. Dramatic low-angle perspective, tense cinematic atmosphere.",
+    "seed": 1750471366,
     "kind": "section",
-    "title": "3.5 Außer Reichweite (Klassenunterschied)"
+    "title": "3.5 Außer Reichweite (Klassenunterschied)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-6-der-rundenablauf-seiten-initiative-mit-kinet": {
-    "prompt": "",
+    "prompt": "Two opposing combat factions facing each other down a muddy village street under torrential rain, magistrates with heavy shields on one side and rebel marksmen on the other. A dashing assassin surges forward to seize the opening, splashing water underfoot. Tense standoff, wide establishing angle.",
     "seed": 10560084,
     "kind": "section",
-    "title": "3.6 Der Rundenablauf: Seiten-Initiative mit Kinetik-Marker"
+    "title": "3.6 Der Rundenablauf: Seiten-Initiative mit Kinetik-Marker",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-7-mehrere-gegner-goons-elite-und-bosse": {
-    "prompt": "",
-    "seed": 674430531,
+    "prompt": "On a high tiled castle rooftop swept by gale-force night wind, a ronin gunslinger with dual matchlock pistols fires point-blank into a surrounding circle of straw-coat henchmen reeling backward over the eaves, while behind them an armored elite swordswoman and an imposing masked syndicate boss stride forward with unsheathed blades.",
+    "seed": 2007291944,
     "kind": "section",
-    "title": "3.7 Mehrere Gegner: Goons, Elite und Bosse"
+    "title": "3.7 Mehrere Gegner: Goons, Elite und Bosse",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-8-momentum": {
-    "prompt": "",
-    "seed": 538656561,
+    "prompt": "An agile rooftop runner delivers an explosive flying kick directly into the chest of an armored samurai sentry on a curved tiled castle rooftop. The impacted sentry staggers backward under a full moon and starlit sky, while loose roof tiles dislodge from the powerful mid-air collision.",
+    "seed": 1999227991,
     "kind": "section",
-    "title": "3.8 Momentum"
+    "title": "3.8 Momentum",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-9-bullet-time-rule-of-cool": {
-    "prompt": "",
+    "prompt": "An ex-assassin suspended mid-air in slow motion through a shattered sliding paper screen, twin matchlock pistols aimed downward with lethal calm as wooden splinters and cherry blossom petals hang frozen in the air. Moonlit garden background, dramatic low-angle cinematic freeze-frame.",
     "seed": 1152282256,
     "kind": "section",
-    "title": "3.9 Bullet Time (Rule of Cool)"
+    "title": "3.9 Bullet Time (Rule of Cool)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": [
+        "Kopf der Figur ist am oberen Bildrand leicht abgeschnitten.",
+        "Die Papierschiebetür (Shoji) steht intakt am Rand, anstatt dass der Attentäter direkt durch das zersplitternde Gitter bricht."
+      ]
+    }
   },
   "sec-3-10-regeneration-ohnmacht-und-gebrochen": {
-    "prompt": "",
-    "seed": 1315271375,
+    "prompt": "In a serene pine grove at twilight, a wounded ronin in ragged dark robes catches his breath, resting one hand against a tall stone lantern. Nearby, his defeated companion in pale travel clothes lies completely unconscious and slumped against the base of a tilted wooden handcart. Faint rays of moonlight.",
+    "seed": 100493081,
     "kind": "section",
-    "title": "3.10 Regeneration, Ohnmacht und Gebrochen"
+    "title": "3.10 Regeneration, Ohnmacht und Gebrochen",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-11-ausgeschaltet-sterben-und-heilung": {
-    "prompt": "",
+    "prompt": "A hooded field doctor kneeling over a wounded samurai on a muddy riverbank amidst battle debris, pressing clean linen onto a bleeding torso wound while a watchful archer stands guard with a drawn bow. Somber overcast sky, emotionally tense wide landscape framing.",
     "seed": 1781803946,
     "kind": "section",
-    "title": "3.11 Ausgeschaltet, Sterben und Heilung"
+    "title": "3.11 Ausgeschaltet, Sterben und Heilung",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-12-moves-einsetzen-und-bezahlen": {
-    "prompt": "",
-    "seed": 1224337930,
+    "prompt": "Inside a grand wooden temple hall, a fierce martial artist stomps forward, cracking stone floor tiles with explosive force. A concentrated shockwave blasts an armored enemy backwards through split wooden pillars and flying tatami mats. Splintered wood and debris fill the air around the violent impact.",
+    "seed": 1428994294,
     "kind": "section",
-    "title": "3.12 Moves einsetzen und bezahlen"
+    "title": "3.12 Moves einsetzen und bezahlen",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-3-13-optionale-experten-regel-erst-wuerfeln-dann": {
-    "prompt": "",
-    "seed": 1877164280,
+    "prompt": "A female martial artist executes a dynamic judo throw on a masked assassin crashing through a shattered paper shoji screen. She grips his wrist, redirecting his modern handgun skyward amidst splintered wood lattice. Outside, a moonlit Japanese garden reveals splashing water in a stone koi pond.",
+    "seed": 580521183,
     "kind": "section",
-    "title": "3.13 Optionale Experten-Regel: Erst würfeln, dann erzählen (\"Fortune in the Middle\")"
+    "title": "3.13 Optionale Experten-Regel: Erst würfeln, dann erzählen (\"Fortune in the Middle\")",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "ch-4-proben-gegen-die-umgebung-nicht-kampf-skills": {
-    "prompt": "",
+    "prompt": "A lone hooded courier leaps boldly across a sheer mountain ravine between jagged cliffs, reaching toward a weathered wooden rope bridge in mid-air. Deep mist billows through the gorge below under a tempestuous sky, sweeping wind catching flowing garments, wide dramatic side-angle view emphasizing vertical scale and perilous tension.",
     "seed": 153865196,
     "kind": "chapter",
-    "title": "Proben gegen die Umgebung (Nicht-Kampf-Skills)"
+    "title": "Proben gegen die Umgebung (Nicht-Kampf-Skills)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-4-1-heimlichkeit-und-infiltration": {
-    "prompt": "",
+    "prompt": "A masked infiltrator crouches silently upon high wooden roof beams beneath ornate castle eaves, watching two armored guards patrolling a moonlit veranda below with glowing paper lanterns. Drifting night mist blankets the courtyard, creating a suspenseful stealthy mood, high-angle wide composition contrasting deep architectural shadows with soft lantern light.",
     "seed": 1332720255,
     "kind": "section",
-    "title": "4.1 Heimlichkeit und Infiltration"
+    "title": "4.1 Heimlichkeit und Infiltration",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "ch-5-moves": {
-    "prompt": "",
-    "seed": 1354704774,
+    "prompt": "A dynamic duel on an arched wooden castle bridge during a rainstorm at dusk. An acrobatic martial artist leaps forward, extending a powerful flying kick with one foot striking toward an armored samurai. The samurai braces on the bridge deck, aiming a smoking matchlock pistol directly at the attacker. Paper lanterns hang from wooden posts.",
+    "seed": 1068460915,
     "kind": "chapter",
-    "title": "Moves"
+    "title": "Moves",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-5-1-das-bewertungs-framework-effektpunkte": {
-    "prompt": "",
-    "seed": 987250940,
+    "prompt": "An elderly martial arts master in dark robes stands directly beside a focused young student on an open wooden veranda. The master gently places his hands on the student's shoulder and elbow, correcting a forward palm strike. A wooden training dummy stands nearby against a misty bamboo garden.",
+    "seed": 405676343,
     "kind": "section",
-    "title": "5.1 Das Bewertungs-Framework (Effektpunkte)"
+    "title": "5.1 Das Bewertungs-Framework (Effektpunkte)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-5-2-move-beispiele-richtwerte": {
-    "prompt": "",
+    "prompt": "A dynamic eye-level landscape across a lantern-lit night market alley. A ronin executes a lightning-fast iaijutsu blade draw against an advancing swordsman, while a street brawler in rolled sleeves slams a rival onto a wooden merchant cart with a sweeping judo throw. Paper lanterns sway wildly overhead.",
     "seed": 1716159773,
     "kind": "section",
-    "title": "5.2 Move-Beispiele (Richtwerte)"
+    "title": "5.2 Move-Beispiele (Richtwerte)",
+    "include_style": true
   },
   "sec-5-3-gemeisterte-moves": {
-    "prompt": "",
-    "seed": 1716472123,
+    "prompt": "A blindfolded ronin in dark hakama lowers a drawn katana after an impossible strike. Before him in a zen gravel garden, a massive bronze temple bell cleanly splits into two distinct falling halves, collapsing onto raked white stones beneath an open wooden pavilion amidst swirling red maple leaves.",
+    "seed": 1826542618,
     "kind": "section",
-    "title": "5.3 Gemeisterte Moves"
+    "title": "5.3 Gemeisterte Moves",
+    "include_style": true,
+    "qc": {
+      "fits": false,
+      "problems": [
+        "Die bronzene Tempelglocke ist vollkommen intakt und unbeschädigt, anstatt in zwei Hälften gespalten herabzustürzen.",
+        "Der visuelle Beweis des vollbrachten Meisterstreichs (der unmögliche Schnitt durch massives Metall) fehlt vollständig."
+      ]
+    }
   },
   "sec-5-4-meister-moves-und-legendaere-moves": {
-    "prompt": "",
+    "prompt": "A dramatic wide panoramic view of a moonlit castle courtyard shattered by impact. An elite warrior with smoking, blackened hands kneels breathless on cracked stone tiles, suffering severe exhaustion after executing a lethal palm strike against a giant armored warlord who collapses into the dust.",
     "seed": 187024928,
     "kind": "section",
-    "title": "5.4 Meister-Moves und Legendäre Moves"
+    "title": "5.4 Meister-Moves und Legendäre Moves",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "ch-6-spielbeispiele-am-tisch": {
-    "prompt": "",
-    "seed": 220584146,
+    "prompt": "In a spacious wooden dojo with open sliding screens facing rain and pine trees, four martial artists spar. A ronin with twin flintlock pistols, an armored samurai raising a katana, a hooded ninja throwing smoke, and a monk wielding a wooden staff clash in distinct, dynamic battle stances across polished floorboards.",
+    "seed": 451143949,
     "kind": "chapter",
-    "title": "Spielbeispiele am Tisch"
+    "title": "Spielbeispiele am Tisch",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": [
+        "Keine nennenswerten Bildfehler oder Artefakte vorhanden; Anatomie, Posen und Requisiten sind sauber umgesetzt.",
+        "Der Mönch trägt unüblicherweise zusätzlich ein Katana am Gürtel, was im RPG-Kontext aber nicht weiter stört."
+      ]
+    }
   },
   "sec-beispiel-charakterbogen": {
-    "prompt": "",
-    "seed": 1615680369,
+    "prompt": "A hooded assassin in dark ninja attire and armored chest vest crouches on a wet tiled castle roof in falling rain at dusk. He pins down a defeated guard with one knee while aiming a tactical pistol forward into the shadows. Distant pagoda rooftops and glowing paper lanterns.",
+    "seed": 262970650,
     "kind": "section",
-    "title": "Beispiel-Charakterbogen"
+    "title": "Beispiel-Charakterbogen",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-beispiel-1-kampf-gegen-horden-goons": {
-    "prompt": "",
-    "seed": 224552007,
+    "prompt": "Inside an Edo estate corridor, a dynamic ronin runs horizontally along a wooden wall mid-air, dual-wielding smoking matchlock pistols. In the hallway ahead, two henchmen collapse backward through shattering paper shoji screens, while a third panicked guard draws a katana.",
+    "seed": 186223647,
     "kind": "section",
-    "title": "Beispiel 1: Kampf gegen Horden (Goons)"
+    "title": "Beispiel 1: Kampf gegen Horden (Goons)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-beispiel-2-ruestung-und-verletzung-boss-kampf": {
-    "prompt": "",
-    "seed": 1806673506,
+    "prompt": "A barefoot martial artist in dark indigo robes firmly grips the lapel of a hulking, heavily armored samurai and executes a dynamic shoulder throw. The armored warrior flies mid-air above polished wooden floorboards of a fortress hall. A single antique flintlock pistol slides across the floor in the foreground.",
+    "seed": 1281506279,
     "kind": "section",
-    "title": "Beispiel 2: Rüstung und Verletzung (Boss-Kampf)"
+    "title": "Beispiel 2: Rüstung und Verletzung (Boss-Kampf)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-beispiel-3-pvp-spieler-gegen-spieler": {
-    "prompt": "",
-    "seed": 1519927122,
+    "prompt": "A female martial artist in a dark kimono dynamically throws a male opponent over her hip onto the wooden planks of a river pier at night. The man is caught mid-air, crashing downward. Beside them, moored wooden boats float on dark water under the moon, with a dropped tanto dagger on the deck.",
+    "seed": 1634326020,
     "kind": "section",
-    "title": "Beispiel 3: PvP (Spieler gegen Spieler)"
+    "title": "Beispiel 3: PvP (Spieler gegen Spieler)",
+    "include_style": true,
+    "qc": {
+      "fits": false,
+      "problems": [
+        "Anatomiefehler beim gestürzten Mann: Es sind drei nackte Füße bzw. Beine sichtbar (zwei Beine in der Luft und ein dritter Fuß ragt unter seinem Rumpf hervor).",
+        "Fehlende physische Verbindung beim Wurf: Die Kämpferin hält den Gegner nicht fest, sondern posiert aufrecht daneben, sodass der Hüftwurf unverbunden wirkt.",
+        "Der im beabsichtigten Motiv geforderte Mond am Nachthimmel ist nicht im Bildausschnitt zu sehen."
+      ]
+    }
   },
   "sec-beispiel-4-charakterentwicklung-und-titel-leveli": {
-    "prompt": "",
+    "prompt": "A legendary master shinobi stands composed atop a curved stone bridge at twilight, commanding dozens of leaping shadow clones that overwhelm a charging gang of rival swordsmen across pine trees and rooftops. Dramatic low-angle wide view, swirling autumn leaves, glowing lanterns, and an aura of effortless dominance.",
     "seed": 1959914180,
     "kind": "section",
-    "title": "Beispiel 4: Charakterentwicklung und Titel-Leveling"
+    "title": "Beispiel 4: Charakterentwicklung und Titel-Leveling",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-beispiel-5-heimlichkeit-goons-und-elite": {
-    "prompt": "",
+    "prompt": "A wide low-angle view inside a shadowy timber warehouse. A hooded assassin crouches silently behind an open sliding shoji screen, gripping a drawn tanto dagger behind a muscular bodyguard who abruptly freezes at a low table. In the blurred background, four oblivious sentries huddle around a dice game under hanging paper lanterns.",
     "seed": 1573033043,
     "kind": "section",
-    "title": "Beispiel 5: Heimlichkeit (Goons und Elite)"
+    "title": "Beispiel 5: Heimlichkeit (Goons und Elite)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-beispiel-6-gift-und-toeten": {
-    "prompt": "",
-    "seed": 1581134184,
+    "prompt": "Inside a dimly lit tatami room overlooking heavy night rain, an armored warlord lies completely collapsed face down across a low black lacquer table. His limp arm dangles beside an overturned small ceramic flask with spilled dark liquid. In the open background doorway, a female assassin in dark hooded robes quietly slips away.",
+    "seed": 851049040,
     "kind": "section",
-    "title": "Beispiel 6: Gift und Töten"
+    "title": "Beispiel 6: Gift und Töten",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "sec-beispiel-7-den-move-nicht-einsetzen-variante-von": {
-    "prompt": "",
-    "seed": 865451983,
+    "prompt": "Dynamic martial arts clash on a wet wooden castle terrace scattered with red autumn leaves. An unarmored ronin in ragged blue robes forcefully grapples and begins a hip throw on a heavily armored samurai guard, who simultaneously punches an armored fist into the ronin's ribs.",
+    "seed": 1295298420,
     "kind": "section",
-    "title": "Beispiel 7: Den Move nicht einsetzen (Variante von Beispiel 2)"
+    "title": "Beispiel 7: Den Move nicht einsetzen (Variante von Beispiel 2)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-ch-1-grundphilosophie": {
+    "prompt": "A sleek ronin gunfighter slides low across the polished timber floor of an opulent gambling hall, dodging thrown shuriken frozen mid-air in bullet time. He aims a matchlock pistol upward at a leaping muscular brawler wielding a heavy iron club, amidst drifting smoke and glowing paper lanterns. Wide dynamic shot.",
+    "seed": 331077258,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: Grundphilosophie",
+    "after": "ch-1-grundphilosophie",
+    "chapter": "ch-1-grundphilosophie",
+    "h_mm": 82.6,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-2-1-die-attribute-2w6-system": {
+    "prompt": "A blindfolded warrior monk leaps gracefully across an arched wooden bridge over a stormy mountain river, twisting his body in mid-air to deflect a volley of whistling projectiles with an iron staff. Low-angle wide landscape shot, dramatic spray of water, mist-shrouded pine trees, dynamic physical agility and absolute focus.",
+    "seed": 1785720635,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 2.1 Die Attribute (2W6-System)",
+    "after": "sec-2-1-die-attribute-2w6-system",
+    "chapter": "ch-2-der-charakter",
+    "h_mm": 83.8,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-2-3-ressourcen-verletzungen": {
+    "prompt": "A wounded female warrior kneels in a dark bamboo grove beside a mossy stone lantern. She grits her teeth in pain, tightly wrapping white linen bandages around a bleeding shoulder cut using one hand while gripping the cloth strip with her teeth. Broken armor pieces lie scattered on the ground.",
+    "seed": 65923683,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 2.3 Ressourcen & Verletzungen",
+    "after": "sec-2-3-ressourcen-verletzungen",
+    "chapter": "ch-2-der-charakter",
+    "h_mm": 81.0,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-2-5-waffen-deckung": {
+    "prompt": "A grizzled ronin crouches low behind a thick stone pillar during heavy rain. He calmly primes the firing mechanism of a heavy matchlock musket. A single katana rests securely in its scabbard at his hip. High on the outer flank of the pillar, a bullet impact shatters stone into flying chips and sparks.",
+    "seed": 1856520316,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 2.5 Waffen & Deckung",
+    "after": "sec-2-5-waffen-deckung",
+    "chapter": "ch-2-der-charakter",
+    "h_mm": 191.7,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-3-3-tags": {
+    "prompt": "An armored samurai warrior losing his balance and tumbling backward into breaking wooden cargo crates on a wet river barge deck. In the foreground, a low-angled martial artist on the deck extends a sweeping kick into the warrior's ankles beneath a massive stone arch bridge surrounded by river spray.",
+    "seed": 1350804207,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 3.3 Tags",
+    "after": "sec-3-3-tags",
+    "chapter": "ch-3-der-kampf-das-clash-system",
+    "h_mm": 68.5,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-3-8-momentum": {
+    "prompt": "A masked agile rogue in dark flowing clothes leaps dynamically between tiled Edo rooftops, dual-wielding twin short blades. Three samurai guards recoil and stumble backward in staggered succession across the roof ridges, knocked off balance by rapid strikes, set against a massive full moon with swirling autumn leaves.",
+    "seed": 647522827,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 3.8 Momentum",
+    "after": "sec-3-8-momentum",
+    "chapter": "ch-3-der-kampf-das-clash-system",
+    "h_mm": 56.2,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-4-1-heimlichkeit-und-infiltration": {
+    "prompt": "Square framing, high-angle bird's-eye view looking down from ceiling rafters. A hooded female infiltrator in dark fitted wraps balances silently on an overhead timber beam, clutching a vermilion scroll. Below on polished cedar floors, an armored guard carrying a paper lantern patrols past sliding screens. Tense stealth, stark lantern light, deep shadows.",
+    "seed": 1930559287,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 4.1 Heimlichkeit und Infiltration",
+    "after": "sec-4-1-heimlichkeit-und-infiltration",
+    "chapter": "ch-4-proben-gegen-die-umgebung-nicht-kampf-skills",
+    "h_mm": 162.3,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": [
+        "Leichte Unregelmäßigkeit an der Schriftrolle (ungewöhnlicher Steg/Griff in der Mitte)",
+        "Rötliche Flecken/Schatten auf dem Holzfußboden hinter der Wache wirken leicht diffus"
+      ]
+    }
+  },
+  "fill-sec-5-4-meister-moves-und-legendaere-moves": {
+    "prompt": "Low-angle view of a weary martial artist with an ink-blackened poison hand standing on a rain-swept wooden veranda. Behind her, a massive armored warlord stumbles backward clutching his chest, while defeated guards lie sprawled around them beneath a dark storm.",
+    "seed": 182366586,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 5.4 Meister-Moves und Legendäre Moves",
+    "after": "sec-5-4-meister-moves-und-legendaere-moves",
+    "chapter": "ch-5-moves",
+    "h_mm": 209.1,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-beispiel-6-gift-und-toeten": {
+    "prompt": "Low-angle wide shot inside a shadowy riverfront warehouse: a martial artist locks a collapsed rival in a deadly chokehold on the timber floorboards. From the side, an ally lunges forward with outstretched hands to break the grip, illuminated by a swinging paper lantern casting stark shadows across stacked cargo crates.",
+    "seed": 179189653,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: Beispiel 6: Gift und Töten",
+    "after": "sec-beispiel-6-gift-und-toeten",
+    "chapter": "ch-6-spielbeispiele-am-tisch",
+    "h_mm": 102.9,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": false,
+      "problems": [
+        "Zentrales Motiv verfehlt: Kein Würgegriff vorhanden. Es sind nur zwei Personen zu sehen, wovon eine allein auf dem Boden liegt, anstatt zweier im Bodenkampf verschlungener Kämpfer.",
+        "Die dritte beteiligte Person fehlt komplett.",
+        "Die Papierlaterne schwebt frei in der Luft ohne Aufhängung oder Seil."
+      ]
+    }
   }
 }

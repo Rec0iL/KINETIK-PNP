@@ -16,17 +16,28 @@
     "^Changelog"
   ],
   "theme": {
-    "bg": "#0b0c10",
-    "ink": "#e6eaf0",
+    "bg": "#d9c8a0",
+    "ink": "#1d1a14",
     "accent": "#b3202a",
-    "accent2": "#24477a"
+    "accent2": "#24477a",
+    "ink_strong": "#000000",
+    "em": "#1d1a14",
+    "rule": "rgba(29,26,20,0.28)",
+    "card": "rgba(241,231,201,0.92)",
+    "stripe": "rgba(60,40,10,.05)",
+    "scrim": "217,200,160",
+    "font_display": "'Special Elite'",
+    "font_head": "'Courier Prime'",
+    "font_label": "'Courier Prime'",
+    "font_body": "'Courier Prime'",
+    "extra_css": "\n.cover-title{ font-size:84pt !important; color:#000; text-shadow:none; text-transform:uppercase; }\n.cover-kicker{ background:#111; color:#efe4c4; display:inline-block; padding:1mm 4mm; }\n.opener h2{ font-size:34pt; text-transform:uppercase; }\n.appendix h2{ font-size:24pt; text-transform:uppercase; }\n.sub-head h3, .appendix-body h3{ font-weight:700; border-bottom:1px solid #1d1a14; font-size:12pt; }\n.sub-head h3::before{ content:'\\25A0\\00A0'; color:var(--cyan); font-size:.7em; }\n.chapter-num{ background:#111; color:#efe4c4; display:inline-block; padding:.6mm 3mm; letter-spacing:.2em; }\n.sub-figure img, .side-figure img, .filler img{ border:8px solid #fffdf4; border-bottom-width:18px; }\ntable.rules-table{ border-top:2px solid #111; }\ntable.rules-table th{ background:#111; color:#efe4c4; }\nstrong{ font-weight:700; }\n"
   },
   "layout": {
     "section_images": true,
     "page_texture": true,
     "justify": true,
-    "font_size_pt": 9.6,
-    "fill_gaps": false,
+    "font_size_pt": 8.8,
+    "fill_gaps": true,
     "filler_min_mm": 55
   },
   "qc": {
