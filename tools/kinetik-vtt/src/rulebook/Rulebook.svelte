@@ -114,14 +114,15 @@
     <div class="titlebar">
       {#if pdfs.length > 1}
         <div class="dlmenu">
-          <button type="button" class="dl" aria-haspopup="menu" aria-expanded={dlOpen} onclick={() => (dlOpen = !dlOpen)} title="Regelwerk als PDF herunterladen">
+          <button type="button" class="dl" aria-haspopup="menu" aria-expanded={dlOpen} onclick={() => (dlOpen = !dlOpen)} title="Regelwerk als PDF herunterladen, Look wählen">
             <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 3v11m0 0l-4.5-4.5M12 14l4.5-4.5M4 15v4a2 2 0 002 2h12a2 2 0 002-2v-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
             <b>Regelwerk</b><small>v{data?.version}</small><span class="caret" aria-hidden="true">▾</span>
-            <span class="sr-only">als PDF herunterladen, Auswahl öffnen</span>
+            <span class="sr-only">als PDF herunterladen, Look wählen</span>
           </button>
           {#if dlOpen}
-            <div class="dlpop" role="menu" aria-label="Regelwerk als PDF herunterladen">
-              <p class="dlhead">PDF herunterladen</p>
+            <div class="dlpop" role="menu" aria-label="Regelwerk als PDF herunterladen, Look wählen">
+              <p class="dlhead">PDF · Look wählen</p>
+              <p class="dlnote">Es ist immer dasselbe Regelwerk (v{data?.version}). Nur Gestaltung, Schrift und Bilder unterscheiden sich.</p>
               {#each pdfs as p (p.key)}
                 <a role="menuitem" class="dlitem" class:cur={p.current} href={p.href} download={p.filename} onclick={() => (dlOpen = false)}>
                   <span class="nm">{t(`theme.${p.key}`)}{#if p.key === 'noir'}<small>Standard</small>{/if}</span>
@@ -238,6 +239,7 @@
   /* Aufklappmenü mit allen PDF-Fassungen */
   .dlpop { position: absolute; z-index: 10; top: calc(100% + 6px); left: -0.3rem; width: min(340px, calc(100vw - 24px)); padding: 0.35rem; display: grid; gap: 2px; background: var(--panel-solid); border: 1px solid var(--accent-line); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5); animation: tocin 0.14s ease-out; }
   .dlhead { margin: 0; padding: 0.35rem 0.6rem 0.25rem; font: 600 0.72rem var(--font-head); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim); }
+  .dlnote { margin: 0; padding: 0 0.6rem 0.5rem; font-size: 0.8rem; line-height: 1.35; color: var(--ink-dim); border-bottom: 1px solid var(--line); margin-bottom: 0.2rem; }
   .dlitem { display: flex; justify-content: space-between; align-items: baseline; gap: 0.8rem; padding: 0.5rem 0.6rem; color: var(--ink); text-decoration: none; border-left: 3px solid transparent; }
   .dlitem:hover { background: var(--accent-soft); color: var(--accent); text-decoration: none; }
   .dlitem.cur { border-left-color: var(--accent); background: var(--accent-soft); }

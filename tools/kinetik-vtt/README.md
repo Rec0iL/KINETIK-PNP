@@ -87,7 +87,7 @@ npm run build        # dist/
 
 ## Regelwerk je Theme
 
-Die Regelwerk-Seite (Buch-Knopf in der Kopfleiste) nimmt automatisch die Bilder des gewählten Themes: Cover, Kapitelbalken und Abschnittsbilder. Fehlt einem Theme ein Bild, gilt das Standardbild (Neo-Noir); Füllbilder gibt es nur im Standardstil.
+Die Regelwerk-Seite (Buch-Knopf in der Kopfleiste) nimmt automatisch die Bilder des gewählten Themes: Cover, Kapitelbalken und Abschnittsbilder. Der Regeltext ist in allen Themes derselbe, nur Gestaltung, Schrift und Bilder unterscheiden sich; das gilt auch für die PDFs. Fehlt einem Theme ein Bild, gilt das Standardbild (Neo-Noir); Füllbilder gibt es nur im Standardstil.
 
 ```bash
 python3 scripts/gen_rulebook_themes.py --theme wushu   # Prompts (agy), Bilder (Krea 2) und Bildkontrolle im 3x3-Modus
@@ -96,4 +96,4 @@ python3 scripts/build_rulebook_web.py                  # WebP nach public/rulebo
 
 `gen_rulebook_themes.py` legt je Theme ein PDF-Projekt unter `assets/pdf-themes/<theme>/` an (Welt und Stil des Themes, Nachbearbeitung wie bei den Seitenbildern) und nutzt die Pipeline aus `tools/rulebook-pdf`. Pro Bild bis zu 3 Konzepte mit je 3 Versuchen, geprüft von agy. Das dauert (grob 2 bis 10 Minuten pro Bild, 36 Bilder pro Theme). Vorhandene Bilder werden übersprungen, ein Bild neu erzeugen: Datei in `assets/pdf-themes/<theme>/images/` löschen und das Skript wieder starten. Die Quell-JPGs bleiben lokal (`.gitignore`), eingecheckt sind Projekt, Prompts und die WebP-Dateien.
 
-**PDFs je Theme:** `gen_rulebook_themes.py --pdf` setzt aus denselben Bildern ein PDF pro Theme (Schriften, Farben, Seitenhintergrund und Rahmen je Theme aus `scripts/pdf_theme_styles.py` und `scripts/pdf_backgrounds.py`; die PDF-Vorlage in `tools/rulebook-pdf` kennt dafür optionale `theme.*`-Werte, ohne sie bleibt das Neon-Standard-PDF unverändert). Vorher füllt `--fillers` die Lücken nach kurzen Abschnitten mit Füllbildern. Die Regelwerk-Seite bietet das PDF zum gewählten Theme zum Download an. `scripts/rulebook_themes_nachlauf.sh` führt nach dem Bildlauf alles am Stück aus (zweiter Durchgang, Füllbilder, PDFs, Web-Build).
+**PDFs je Theme:** `gen_rulebook_themes.py --pdf` setzt aus denselben Bildern ein PDF pro Theme (Schriften, Farben, Seitenhintergrund und Rahmen je Theme aus `scripts/pdf_theme_styles.py` und `scripts/pdf_backgrounds.py`; die PDF-Vorlage in `tools/rulebook-pdf` kennt dafür optionale `theme.*`-Werte, ohne sie bleibt das Neon-Standard-PDF unverändert). Vorher füllt `--fillers` die Lücken nach kurzen Abschnitten mit Füllbildern. Die Regelwerk-Seite bietet alle PDFs als Auswahl "Look wählen" an (dasselbe Regelwerk, nur anders gestaltet), das zum gewählten Theme ist markiert. `scripts/rulebook_themes_nachlauf.sh` führt nach dem Bildlauf alles am Stück aus (zweiter Durchgang, Füllbilder, PDFs, Web-Build).
