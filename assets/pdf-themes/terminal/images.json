@@ -517,7 +517,7 @@
     "prompt": "Inside a concrete underground parking garage, a suited hitman crouches tightly behind a damaged structural pillar under heavy rifle fire. Concrete chunks and debris explode outward from violent impacts. The operative holds two semi-automatic pistols ready, bracing for a counterattack amid ricochet sparks and falling rubble.",
     "seed": 1773898920,
     "kind": "filler",
-    "active": true,
+    "active": false,
     "title": "Füllbild: 2.5 Waffen & Deckung",
     "after": "sec-2-5-waffen-deckung",
     "chapter": "ch-2-der-charakter",
@@ -579,13 +579,40 @@
   },
   "fill-sec-5-4-meister-moves-und-legendaere-moves": {
     "prompt": "An elderly martial arts master delivers an overwhelming open-palm strike to the armored chestplate of a towering mercenary warlord on a rain-slicked penthouse helipad. The kinetic impact shatters reinforced armor plates outward, buckling the ground beneath their feet. Symmetrical square composition, dramatic front-facing angle, raw climactic exhaustion and devastating power.",
-    "seed": 1504970036,
+    "seed": 516133195,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 5.4 Meister-Moves und Legendäre Moves",
     "after": "sec-5-4-meister-moves-und-legendaere-moves",
     "chapter": "ch-5-moves",
-    "h_mm": 178.0,
+    "h_mm": 153.1,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "Wide low-angle view of a tactical breacher detonating an explosive breach charge into a subterranean warehouse. A violent shockwave erupts inward, sending shattered debris flying and hurling three armed mercenaries off their feet simultaneously through the air as dense smoke plumes billow outward.",
+    "seed": 2134055089,
+    "kind": "section",
+    "title": "3.14 Flächenangriffe (AoE)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "Wide high-angle view looking down at an abandoned subway concourse. A lone operative in a trench coat drops low between turnstiles, tossing a concussion grenade that bursts into an expanding circular blast wave, violently shoving a ring of surrounding riot-gear enforcers backward into tiled pillars.",
+    "seed": 1335507500,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 3.14 Flächenangriffe (AoE)",
+    "after": "sec-3-14-flaechenangriffe-aoe",
+    "chapter": "ch-3-der-kampf-das-clash-system",
+    "h_mm": 61.1,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {

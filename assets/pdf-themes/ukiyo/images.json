@@ -492,13 +492,13 @@
   },
   "fill-sec-2-5-waffen-deckung": {
     "prompt": "A grizzled ronin crouches low behind a thick stone pillar during heavy rain. He calmly primes the firing mechanism of a heavy matchlock musket. A single katana rests securely in its scabbard at his hip. High on the outer flank of the pillar, a bullet impact shatters stone into flying chips and sparks.",
-    "seed": 1856520316,
+    "seed": 1387713803,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 2.5 Waffen & Deckung",
     "after": "sec-2-5-waffen-deckung",
     "chapter": "ch-2-der-charakter",
-    "h_mm": 191.7,
+    "h_mm": 103.5,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -559,13 +559,13 @@
   },
   "fill-sec-5-4-meister-moves-und-legendaere-moves": {
     "prompt": "Low-angle view of a weary martial artist with an ink-blackened poison hand standing on a rain-swept wooden veranda. Behind her, a massive armored warlord stumbles backward clutching his chest, while defeated guards lie sprawled around them beneath a dark storm.",
-    "seed": 182366586,
+    "seed": 1860207738,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 5.4 Meister-Moves und Legendäre Moves",
     "after": "sec-5-4-meister-moves-und-legendaere-moves",
     "chapter": "ch-5-moves",
-    "h_mm": 209.1,
+    "h_mm": 149.0,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -591,6 +591,33 @@
         "Die dritte beteiligte Person fehlt komplett.",
         "Die Papierlaterne schwebt frei in der Luft ohne Aufhängung oder Seil."
       ]
+    }
+  },
+  "sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "A fierce ronin with twin smoking matchlock pistols spinning mid-stride on an arched wooden bridge during a torrential downpour, unleashing a sweeping radial blast that knocks back four masked attackers simultaneously. Flying water droplets and splintered planks surround them. Dynamic low-angle wide shot, cinematic tension.",
+    "seed": 1236688677,
+    "kind": "section",
+    "title": "3.14 Flächenangriffe (AoE)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "A battle-hardened warrior monk swings a long crescent-bladed polearm in a wide circular arc across a lantern-lit temple courtyard, striking down three advancing spearmen in one continuous sweep. Swirling dust and scattered stone lanterns frame the impact. Centered square composition, eye-level angle, dramatic twilight atmosphere.",
+    "seed": 1452971612,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 3.14 Flächenangriffe (AoE)",
+    "after": "sec-3-14-flaechenangriffe-aoe",
+    "chapter": "ch-3-der-kampf-das-clash-system",
+    "h_mm": 74.1,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
     }
   }
 }

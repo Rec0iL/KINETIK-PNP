@@ -37,8 +37,11 @@ describe('Themes', () => {
     for (const f of files) expect(existsSync(`src/assets/fonts/${f}`), f).toBe(true);
   });
   it('kein Theme setzt eine Schrift ohne @font-face, die nicht systemweit sicher ist', () => {
-    const fams = [...css.matchAll(/--font-(?:display|head|body):\s*'([^']+)'/g)].map((m) => m[1]);
+    // alle genannten Familien jeder Schriftliste (nicht nur die erste), außer Systemschriften ohne @font-face
+    const fams = [...css.matchAll(/--font-(?:display|head|body):\s*([^;]+);/g)].flatMap((m) => [...m[1].matchAll(/'([^']+)'/g)].map((x) => x[1]));
+    const system = new Set(['Impact', 'Songti SC', 'Noto Serif CJK SC', 'Georgia', 'Oswald', 'Barlow Condensed', 'Bebas Neue', 'Barlow', 'JetBrains Mono', 'DejaVu Sans Mono', 'Liberation Mono', 'Courier New', 'Special Elite', 'Courier Prime', 'Zen Kaku Gothic New', 'Arvo']);
     for (const f of new Set(fams)) {
+      if (system.has(f) && !fontsCss.includes(`font-family: '${f}'`) && !readFileSync('src/themes/fonts.css', 'utf8').includes(`font-family: '${f}'`)) continue;
       const known = css.includes(`'${f}'`) && (fontsCss.includes(`font-family: '${f}'`) || readFileSync('src/themes/fonts.css', 'utf8').includes(`font-family: '${f}'`));
       expect(known, `@font-face für ${f}`).toBe(true);
     }

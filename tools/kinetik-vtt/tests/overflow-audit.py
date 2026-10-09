@@ -20,7 +20,7 @@ from playwright.sync_api import sync_playwright
 
 THEMES = ["noir", "sincity", "manga", "wushu", "ukiyo", "western", "akte", "pixel", "terminal", "hybrid"]
 WIDTHS = [320, 390, 768, 1100, 1440, 1920]
-BASE = "http://localhost:5173/"
+BASE = "http://localhost:5173/"  # per --base änderbar
 
 # Wird im Browser ausgeführt: liefert eine Liste von Funden für die aktuelle Seite.
 FIND = r"""
@@ -189,13 +189,16 @@ def audit(theme, width, chrome, quick):
 
 
 def main():
+    global BASE
     ap = argparse.ArgumentParser()
     ap.add_argument("--themes", nargs="*", default=THEMES)
     ap.add_argument("--widths", nargs="*", type=int, default=WIDTHS)
     ap.add_argument("--chrome", default="/usr/bin/google-chrome")
     ap.add_argument("--json")
     ap.add_argument("--quick", action="store_true")
+    ap.add_argument("--base", default=BASE, help="Adresse der App (Entwicklungs- oder Vorschauserver)")
     args = ap.parse_args()
+    BASE = args.base
 
     allf = []
     for theme in args.themes:

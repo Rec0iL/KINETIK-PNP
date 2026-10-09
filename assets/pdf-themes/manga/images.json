@@ -501,13 +501,13 @@
   },
   "fill-sec-2-5-waffen-deckung": {
     "prompt": "A lone undercover agent in a rumpled suit presses his back tightly against a crumbling concrete pillar, sheltering from intense automatic gunfire. Concrete chips and dust clouds erupt around the masonry. With focused composure, he slides a fresh magazine into the grip of his handgun before re-engaging.",
-    "seed": 1016360088,
+    "seed": 1888282454,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 2.5 Waffen & Deckung",
     "after": "sec-2-5-waffen-deckung",
     "chapter": "ch-2-der-charakter",
-    "h_mm": 183.2,
+    "h_mm": 100.9,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -565,13 +565,13 @@
   },
   "fill-sec-5-4-meister-moves-und-legendaere-moves": {
     "prompt": "Vertical portrait framing. A battered veteran martial artist standing amidst shattered concrete rubble, breathing heavily with steam rising from his bruised knuckles. His heavily taped right arm hangs limp from the devastating recoil of a legendary strike, his focused gaze locked forward while his defeated opponent lies motionless in the dim background.",
-    "seed": 1222725908,
+    "seed": 1885521268,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 5.4 Meister-Moves und Legendäre Moves",
     "after": "sec-5-4-meister-moves-und-legendaere-moves",
     "chapter": "ch-5-moves",
-    "h_mm": 208.4,
+    "h_mm": 148.0,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -595,6 +595,33 @@
       "problems": [
         "Das Opfer trägt eine Schirmmütze, die eher an einen Wachmann oder Bahnangestellten erinnert als an einen Syndikats-Schläger."
       ]
+    }
+  },
+  "sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "A wide low-angle view inside a wrecked industrial warehouse where a tactical operative hurls a canister into a cluster of enforcers. A concussive detonation erupts in the center with a bright yellow shockwave expanding outward, hurling armed thugs and splintered crates backward through the smoky air in violent arcs.",
+    "seed": 1414327777,
+    "kind": "section",
+    "title": "3.14 Flächenangriffe (AoE)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "A square high-angle view on a tiled subway platform. A martial artist slams both fists down into the ground, triggering an explosive kinetic sweep with a bright yellow radial impact ring that blasts an encircling crowd of masked guards off their feet, throwing them into the air in all directions.",
+    "seed": 1264564980,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 3.14 Flächenangriffe (AoE)",
+    "after": "sec-3-14-flaechenangriffe-aoe",
+    "chapter": "ch-3-der-kampf-das-clash-system",
+    "h_mm": 71.9,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
     }
   }
 }

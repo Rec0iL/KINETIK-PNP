@@ -343,13 +343,23 @@ def build_html(project, doc, fillers=None):
         filler_gap=FILLER_SPACING_MM - 3,
         cover_title_size=118 if len(title) <= 10 else max(48, int(118 * 10 / len(title))))
 
-    return _text_emoji(f"""<!doctype html>
+    return _arrows(_text_emoji(f"""<!doctype html>
 <html lang="{_esc(cfg.get('language', 'de'))}"><head><meta charset="utf-8">
 <title>{_esc(title + (f' · Version {ver.group(1)}' if ver else ''))}</title><style>{fonts_css}
 {css}</style></head>
 <body>
 {chr(10).join(parts)}
-</body></html>""")
+</body></html>"""))
+
+
+def _arrows(html):
+    """Arrows (→ ← ↑ ↓) in text are set in the system's standard sans font: many display fonts lack them or draw them oddly.
+    Only the arrow gets its own span (a font stack with the system font in front would change the line metrics of all text).
+    Tags and <style> are left alone (string-set values of the running heads live in attributes)."""
+    out = []
+    for part in re.split(r"(<style.*?</style>|<[^>]+>)", html, flags=re.S):
+        out.append(part if part.startswith("<") else re.sub(r"([\u2190-\u2193])", r'<span class="arr">\1</span>', part))
+    return "".join(out)
 
 
 FILLER_SPACING_MM = 9   # breathing room above a filler and safety margin below

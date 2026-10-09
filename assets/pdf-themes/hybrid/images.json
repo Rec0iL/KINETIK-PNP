@@ -505,13 +505,13 @@
   },
   "fill-sec-2-5-waffen-deckung": {
     "prompt": "Square composition centered on a tactical operative crouched behind a riddled automobile door. Sparks and pulverized glass burst outward as heavy incoming caliber rounds chew through the metal barrier, while the shooter retaliates blindly with a compact submachine gun. Tight medium shot capturing the frantic close-quarters ambush.",
-    "seed": 1340162305,
+    "seed": 1788940221,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 2.5 Waffen & Deckung",
     "after": "sec-2-5-waffen-deckung",
     "chapter": "ch-2-der-charakter",
-    "h_mm": 183.2,
+    "h_mm": 100.9,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -569,13 +569,13 @@
   },
   "fill-sec-5-4-meister-moves-und-legendaere-moves": {
     "prompt": "Vertical portrait framing. A hooded martial arts assassin stands over a defeated heavy enforcer on a rain-drenched rooftop terrace. The assassin cradles a blackened, trembling right hand that steams with dark vapor, showing the severe toll of a lethal strike. Storm clouds and towering skyscrapers rise in the background under moody downpour.",
-    "seed": 478522365,
+    "seed": 772912618,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 5.4 Meister-Moves und Legendäre Moves",
     "after": "sec-5-4-meister-moves-und-legendaere-moves",
     "chapter": "ch-5-moves",
-    "h_mm": 208.4,
+    "h_mm": 148.2,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -592,6 +592,33 @@
     "after": "sec-beispiel-6-gift-und-toeten",
     "chapter": "ch-6-spielbeispiele-am-tisch",
     "h_mm": 101.5,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "Low-angle wide shot of a trench-coated operative sliding across a rain-slick rooftop helipad as a fragmentation grenade detonates behind her. The fiery shockwave blasts outward in an expanding perimeter, blowing three armored syndicate goons backward off their feet amid flying shrapnel, splashing puddles, and scattering debris in a kinetic explosion.",
+    "seed": 1777475709,
+    "kind": "section",
+    "title": "3.14 Flächenangriffe (AoE)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "Square composition, eye-level framing of a heavy tactical SWAT breacher in a cramped underground subway terminal firing an underslung grenade launcher. An intense concussive blast blooms violently down the tiled hallway, tearing through shattered concrete pillars and engulfing a cluster of rushing corporate mercenaries diving desperately for cover.",
+    "seed": 1217791833,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 3.14 Flächenangriffe (AoE)",
+    "after": "sec-3-14-flaechenangriffe-aoe",
+    "chapter": "ch-3-der-kampf-das-clash-system",
+    "h_mm": 72.1,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {

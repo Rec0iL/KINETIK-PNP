@@ -191,3 +191,13 @@
   src: url('fonts/courierprime-700-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+00D7;
 }
+
+/* Pfeile (→ ← ↑ ↓) stehen in der Standardschrift des Systems, in allen Looks. Viele Zierschriften haben das Zeichen nicht oder zeichnen es unpassend.
+   Die Familie 'Pfeil' steht in den Schriftlisten (themes.css) ganz vorn und greift dank unicode-range nur bei Pfeilen. */
+@font-face {
+  font-family: 'Pfeil';
+  font-style: normal;
+  font-weight: 100 900;
+  src: local('DejaVu Sans'), local('Arial'), local('Helvetica Neue'), local('Helvetica'), local('Liberation Sans'), local('Noto Sans'), local('Roboto'), local('Segoe UI'), local('Ubuntu'), local('Cantarell');
+  unicode-range: U+2190-2193;
+}

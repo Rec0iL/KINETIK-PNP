@@ -511,13 +511,13 @@
   },
   "fill-sec-2-5-waffen-deckung": {
     "prompt": "A tactical operative crouches behind a crumbling concrete pillar in a shadowy parking structure. One gloved hand blind-fires a heavy pistol around the bullet-chipped corner into darkness. A sharp red laser beam cuts straight across concrete dust and flying debris.",
-    "seed": 1411456870,
+    "seed": 1339699965,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 2.5 Waffen & Deckung",
     "after": "sec-2-5-waffen-deckung",
     "chapter": "ch-2-der-charakter",
-    "h_mm": 183.2,
+    "h_mm": 100.9,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -578,13 +578,13 @@
   },
   "fill-sec-5-4-meister-moves-und-legendaere-moves": {
     "prompt": "Vertical portrait composition, low-angle shot. A weary veteran martial arts master in an unbuttoned trench coat stands exhausted in a deluge-soaked alleyway, his scarred hand wrapped in a frayed red ribbon. Broken concrete and a snapped steel blade lie at his feet, his intense, shadowed gaze fixed forward in somber triumph.",
-    "seed": 1197199885,
+    "seed": 1745141978,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 5.4 Meister-Moves und Legendäre Moves",
     "after": "sec-5-4-meister-moves-und-legendaere-moves",
     "chapter": "ch-5-moves",
-    "h_mm": 208.4,
+    "h_mm": 148.0,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -608,6 +608,33 @@
       "problems": [
         "Der Enforcer stützt sich mit der Hand am Boden ab, anstatt sich an den Hals zu greifen; der Giftpfeil ist nicht sichtbar."
       ]
+    }
+  },
+  "sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "A wide low-angle shot in a rain-drenched brick alleyway. A lone operative in a trench coat dives sideways as a detonating grenade blasts five syndicate goons backward off their feet. Concrete debris and shattering crates spray across the narrow street beneath shadows of looming tenement fire escapes.",
+    "seed": 1736449752,
+    "kind": "section",
+    "title": "3.14 Flächenangriffe (AoE)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "Low-angle square composition of a fragmentation grenade exploding in a narrow, wet alley. A massive shockwave hurls four masked syndicate enforcers backward into brick walls and dumpsters. In the foreground, an operative in a trench coat and vivid red necktie ducks behind a pillar to brace against the flying debris.",
+    "seed": 400109588,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 3.14 Flächenangriffe (AoE)",
+    "after": "sec-3-14-flaechenangriffe-aoe",
+    "chapter": "ch-3-der-kampf-das-clash-system",
+    "h_mm": 71.2,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
     }
   }
 }

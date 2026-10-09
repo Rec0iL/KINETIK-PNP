@@ -464,7 +464,7 @@
     "prompt": "A focused street brawler sits on a worn wooden bench inside a dimly lit urban gym, methodically wrapping plain white cloth tape around his knuckles. In the background, a plain unbranded dark leather punching bag hangs beside an open canvas duffle bag. Warm amber light and deep cyan shadows illuminate the floor.",
     "seed": 1691838070,
     "kind": "filler",
-    "active": true,
+    "active": false,
     "title": "Füllbild: 2.4 Charaktererschaffung",
     "after": "sec-2-4-charaktererschaffung",
     "chapter": "ch-2-der-charakter",
@@ -480,7 +480,7 @@
     "prompt": "An armored operator in a ballistic tactical vest crouches behind a crumbling concrete pillar inside a train station, reloading dual semi-automatic pistols. Bright sparks and flying stone fragments erupt around the pillar edges from heavy incoming gunfire. Square framing, dramatic medium shot, high-contrast cool blue and muzzle flash illumination.",
     "seed": 1453561047,
     "kind": "filler",
-    "active": true,
+    "active": false,
     "title": "Füllbild: 2.5 Waffen & Deckung",
     "after": "sec-2-5-waffen-deckung",
     "chapter": "ch-2-der-charakter",
@@ -512,7 +512,7 @@
     "prompt": "A trench-coated martial artist hurls a suited syndicate enforcer through a floor-to-ceiling penthouse window. Massive shards of shattered glass burst outward into the stormy night sky above glowing city streets. Low-angle wide shot capturing the violent momentum, intense backlighting, and decisive airborne collision.",
     "seed": 1545823062,
     "kind": "filler",
-    "active": true,
+    "active": false,
     "title": "Füllbild: 3.13 Optionale Experten-Regel: Erst würfeln, dann erzählen (\"Fortune in the Middle\")",
     "after": "sec-3-13-optionale-experten-regel-erst-wuerfeln-dann",
     "chapter": "ch-3-der-kampf-das-clash-system",
@@ -542,21 +542,18 @@
   },
   "fill-sec-5-4-meister-moves-und-legendaere-moves": {
     "prompt": "An exhausted martial artist with a tattered white gi kneels on cracked marble floor, head bowed, bruised smoking fists pressed down. In the background, a massive defeated armored crime syndicate boss crashes backward through shattering glass and collapsing stone pillars, mid-fall, backlit by blinding sunlight.",
-    "seed": 1812261329,
+    "seed": 1804586309,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 5.4 Meister-Moves und Legendäre Moves",
     "after": "sec-5-4-meister-moves-und-legendaere-moves",
     "chapter": "ch-5-moves",
-    "h_mm": 142.1,
+    "h_mm": 50.6,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
       "fits": true,
-      "problems": [
-        "Kein sichtbarer Rauch an den Fäusten des Kampfkünstlers",
-        "Zweites Bein des Bosses im Sturz verdeckt bzw. anatomisch unklar"
-      ]
+      "problems": []
     }
   },
   "fill-sec-beispiel-charakterbogen": {
@@ -591,6 +588,49 @@
       "problems": [
         "Der Schläger greift sich nicht aktiv an den Hals, sondern lässt die Hände bereits kraftlos auf Knie und Boden sinken (unterstreicht die Giftwirkung jedoch ebenfalls glaubhaft)."
       ]
+    }
+  },
+  "sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "Wide low-angle shot in a tiled subway terminal. A tactical operative in heavy body armor detonates a stun grenade against the platform floor. Three masked enforcers are flung backward through the air by the expanding radial blast, surrounded by flying debris, smoke rings, and brilliant orange sparks beneath dim fluorescent lights.",
+    "seed": 740722215,
+    "kind": "section",
+    "title": "3.14 Flächenangriffe (AoE)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-5-2-move-beispiele-richtwerte": {
+    "prompt": "An agile urban fighter in a hooded jacket leaps horizontally from a metal fire escape, driving a crushing two-legged flying dropkick into an armored riot guard on a rain-drenched rooftop. Shards of broken glass and rain splash across wet gravel under flickering neon lights. Low dynamic wide-angle action view.",
+    "seed": 904666819,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 5.2 Move-Beispiele (Richtwerte)",
+    "after": "sec-5-2-move-beispiele-richtwerte",
+    "chapter": "ch-5-moves",
+    "h_mm": 55.3,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "Vertical portrait framing. A female demolitionist in a scorched ballistic vest and gas mask leaps backwards down a narrow stairwell. Below her, an explosive shockwave erupts in a blinding orange flash, hurling multiple masked syndicate enforcers off their feet amid billowing smoke, flying debris, and dramatic rim lighting.",
+    "seed": 1826679799,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 3.14 Flächenangriffe (AoE)",
+    "after": "sec-3-14-flaechenangriffe-aoe",
+    "chapter": "ch-3-der-kampf-das-clash-system",
+    "h_mm": 200.3,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
     }
   }
 }

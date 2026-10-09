@@ -487,13 +487,13 @@
   },
   "fill-sec-2-5-waffen-deckung": {
     "prompt": "A masked martial arts assassin in dark robes crouches behind a massive stone courtyard pillar for cover. Iron throwing daggers embed into the stone pillar with shattering impacts and stone chips flying. The warrior firmly grips the hilt of a drawn curved saber, ready to strike back under hanging lanterns.",
-    "seed": 2083901806,
+    "seed": 760348552,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 2.5 Waffen & Deckung",
     "after": "sec-2-5-waffen-deckung",
     "chapter": "ch-2-der-charakter",
-    "h_mm": 182.5,
+    "h_mm": 90.1,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -551,13 +551,13 @@
   },
   "fill-sec-5-4-meister-moves-und-legendaere-moves": {
     "prompt": "A kneeling grandmaster in torn silk robes breathes heavily on a cracked stone courtyard beneath a pagoda, clutching a blackened palm after unleashing an ultimate technique. Defeated swordsmen lie sprawled across the fractured flagstones amidst swirling mist and scattered red maple leaves. Square framing, eye-level shot, somber exhausted mood.",
-    "seed": 2021765585,
+    "seed": 1243119985,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 5.4 Meister-Moves und Legendäre Moves",
     "after": "sec-5-4-meister-moves-und-legendaere-moves",
     "chapter": "ch-5-moves",
-    "h_mm": 174.4,
+    "h_mm": 49.8,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -574,6 +574,49 @@
     "after": "sec-beispiel-6-gift-und-toeten",
     "chapter": "ch-6-spielbeispiele-am-tisch",
     "h_mm": 76.5,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "A lone martial artist in grey flowing robes unleashes a low circular sweep with a heavy wooden staff across a stone temple plaza. A ring of armed guards is thrown backward through the air by the kinetic blast, scattered amidst billowing dust and swirling red leaves. Wide-angle shot, dynamic motion.",
+    "seed": 377284310,
+    "kind": "section",
+    "title": "3.14 Flächenangriffe (AoE)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "A fierce female warrior spins in a whirlwind strike with dual curved broadswords across a narrow wooden suspension bridge. The wide circular slash cleaves the air, repelling three charging brigands simultaneously as shattered rope splinters erupt around them. Square composition, eye-level framing, dramatic high-stakes atmosphere.",
+    "seed": 763328174,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 3.14 Flächenangriffe (AoE)",
+    "after": "sec-3-14-flaechenangriffe-aoe",
+    "chapter": "ch-3-der-kampf-das-clash-system",
+    "h_mm": 73.5,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-5-2-move-beispiele-richtwerte": {
+    "prompt": "An unarmored monk smoothly twisting out of an armored warrior's joint lock, pivoting to sweep the attacker over his shoulder onto a rain-slicked stone courtyard beneath flowering plum trees. Wide landscape shot, dynamic martial clash, swirling robes, suspended tension.",
+    "seed": 1685020247,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 5.2 Move-Beispiele (Richtwerte)",
+    "after": "sec-5-2-move-beispiele-richtwerte",
+    "chapter": "ch-5-moves",
+    "h_mm": 94.2,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {

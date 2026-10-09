@@ -516,13 +516,13 @@
   },
   "fill-sec-2-5-waffen-deckung": {
     "prompt": "A tactical operator in a worn vest crouches behind an overturned oak table inside a battered saloon, splinters bursting outward from heavy rifle impacts as he redirects an opponent's shotgun barrel with one gloved hand and draws his revolver, dynamic medium-close square composition.",
-    "seed": 625879080,
+    "seed": 1008729425,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 2.5 Waffen & Deckung",
     "after": "sec-2-5-waffen-deckung",
     "chapter": "ch-2-der-charakter",
-    "h_mm": 183.9,
+    "h_mm": 97.9,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -548,13 +548,13 @@
   },
   "fill-sec-5-4-meister-moves-und-legendaere-moves": {
     "prompt": "Centered square framing of an exhausted wandering martial artist kneeling on one knee amid splintered boardwalk timber in a ghost town. Defeated outlaw gunfighters lie motionless around him. The fighter clutches a bruised, blackened hand, breathing heavily with a grim expression, framed by broken hitching posts and drifting powder smoke.",
-    "seed": 52567635,
+    "seed": 368829358,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 5.4 Meister-Moves und Legendäre Moves",
     "after": "sec-5-4-meister-moves-und-legendaere-moves",
     "chapter": "ch-5-moves",
-    "h_mm": 172.4,
+    "h_mm": 55.9,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -571,6 +571,49 @@
     "after": "sec-beispiel-6-gift-und-toeten",
     "chapter": "ch-6-spielbeispiele-am-tisch",
     "h_mm": 100.6,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "A gunslinger in a long duster slides across a wooden saloon floor as a dynamite blast erupts behind the bar counter, the concussive fireball throwing three armed bandits backward through splintering railings. Wide low-angle shot capturing the outward blast radius, flying timber, shattered bottles, and suspended smoke.",
+    "seed": 1704382792,
+    "kind": "section",
+    "title": "3.14 Flächenangriffe (AoE)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "A wandering martial artist in a patched poncho sweeps a heavy wooden staff in a full horizontal circle on a rocky canyon trail, knocking four surrounding masked outlaws backward off their feet simultaneously. Square composition, dynamic eye-level angle, with swirling gravel and loose dust spinning outward from the center.",
+    "seed": 425216908,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 3.14 Flächenangriffe (AoE)",
+    "after": "sec-3-14-flaechenangriffe-aoe",
+    "chapter": "ch-3-der-kampf-das-clash-system",
+    "h_mm": 75.5,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-5-2-move-beispiele-richtwerte": {
+    "prompt": "A wandering martial artist in a duster coat executes a dynamic hip throw against a masked outlaw over a splintered saloon poker table, while another gunslinger slides across the floor firing twin revolvers under flying chairs. Wide low-angle shot, chaotic tavern brawl atmosphere.",
+    "seed": 999067837,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 5.2 Move-Beispiele (Richtwerte)",
+    "after": "sec-5-2-move-beispiele-richtwerte",
+    "chapter": "ch-5-moves",
+    "h_mm": 87.1,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {

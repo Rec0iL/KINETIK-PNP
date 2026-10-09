@@ -526,7 +526,7 @@
     "prompt": "Square eye-level shot inside a subterranean parking structure. A suited bodyguard huddles tightly behind a pockmarked concrete column as high-caliber gunfire obliterates the outer corner, spraying pulverized stone and dust across the floor while he tightly grips a heavy shotgun angled upward in defense.",
     "seed": 677177611,
     "kind": "filler",
-    "active": true,
+    "active": false,
     "title": "Füllbild: 2.5 Waffen & Deckung",
     "after": "sec-2-5-waffen-deckung",
     "chapter": "ch-2-der-charakter",
@@ -604,13 +604,36 @@
   },
   "fill-sec-5-4-meister-moves-und-legendaere-moves": {
     "prompt": "Square composition, eye-level straight-on shot. A lone martial artist in a torn suit stands breathless in a trashed underground garage, his right hand swollen and trembling from an explosive impact. Ahead of him, a massive bodyguard collapses backward against a shattered pillar, defeated in a single decisive strike.",
-    "seed": 501886618,
+    "seed": 1923364652,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 5.4 Meister-Moves und Legendäre Moves",
     "after": "sec-5-4-meister-moves-und-legendaere-moves",
     "chapter": "ch-5-moves",
-    "h_mm": 184.8,
+    "h_mm": 152.8,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "A concussive breaching explosion erupts across a tiled subterranean transit tunnel, blowing heavy security gates outward. Multiple armored guards are violently thrown backward in all directions by the shockwave, while a lone tactical operative braces behind a ballistic shield. Debris, thick dust clouds, and shattered concrete shower the entire blast radius in sudden violent motion.",
+    "seed": 1588939697,
+    "kind": "section",
+    "title": "3.14 Flächenangriffe (AoE)",
+    "include_style": true
+  },
+  "fill-sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "A violent grenade explosion detonates in an underground parking garage, blasting fiery shockwaves and smoke between concrete pillars. Multiple armed enforcers in suits are thrown backward through the air by the concussive blast, while shattered car glass flies across the wet asphalt.",
+    "seed": 1364260923,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 3.14 Flächenangriffe (AoE)",
+    "after": "sec-3-14-flaechenangriffe-aoe",
+    "chapter": "ch-3-der-kampf-das-clash-system",
+    "h_mm": 61.5,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
