@@ -89,10 +89,10 @@ export interface RbPdf { key: ThemeKey; href: string; filename: string; size: nu
 export function rbPdfs(): RbPdf[] {
   const d = rulebook.data;
   if (!d?.pdf) return [];
-  const list: RbPdf[] = [{ key: 'noir', href: rbUrl(d.pdf), filename: `KINETIK_Regelwerk_v${d.version}.pdf`, size: d.pdfSizes?.noir ?? null, current: false }];
+  const list: RbPdf[] = [{ key: 'noir', href: rbUrl(d.pdf), filename: d.pdf, size: d.pdfSizes?.noir ?? null, current: false }];
   for (const key of THEMES) {
     const f = d.pdfs?.[key];
-    if (key !== 'noir' && f) list.push({ key, href: rbUrl(f), filename: `KINETIK_Regelwerk_v${d.version}_${key}.pdf`, size: d.pdfSizes?.[key] ?? null, current: false });
+    if (key !== 'noir' && f) list.push({ key, href: rbUrl(f), filename: f, size: d.pdfSizes?.[key] ?? null, current: false });
   }
   // Ist für das gewählte Theme kein eigenes PDF da, gilt das Standard-PDF als aktuell
   const cur = list.find((p) => p.key === theme.current) ?? list[0];

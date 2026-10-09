@@ -17,7 +17,7 @@ Voraussetzungen: ComfyUI läuft, agy ist angemeldet (siehe tools/rulebook-pdf/RE
 
 PDFs je Theme (nach den Bildern; baut aus einer temporären Kopie, das laufende Projekt bleibt unberührt):
 
-    python3 scripts/gen_rulebook_themes.py --pdf                # alle Themes -> export/KINETIK_Regelwerk_<theme>.pdf
+    python3 scripts/gen_rulebook_themes.py --pdf                # alle Themes -> export/KINETIK_Regelwerk_v<Version>_<theme>.pdf
     python3 scripts/gen_rulebook_themes.py --pdf --theme wushu --pdf-out /tmp/test.pdf
 
 Danach: python3 scripts/build_rulebook_web.py baut die Web-Fassung mit allen Bildsätzen und PDFs.
@@ -92,6 +92,17 @@ ACCENT = {  # Farben für das (nicht genutzte) PDF-Theme des Projekts
 # (wie Pinokio: main.py --reserve-vram 3, nur lokal) und zeitweilige Fehler (agy, Netz) überstehen.
 COMFY_DIR = Path(os.environ.get("COMFY_DIR", "/mnt/nvme-data/pinokio/api/comfy.git/app"))
 FREE_EVERY = 12      # alle n erzeugten Bilder Modelle entladen und den Cache leeren
+
+
+def rb_version():
+    """Version des Regelwerks aus seiner Untertitelzeile (\"Version 3.6.\")."""
+    m = re.search(r"Version\s+(\d+(?:\.\d+)*)", (ROOT / "regelwerk" / "KINETIK_Regelwerk.md").read_text(encoding="utf-8")[:600])
+    return m.group(1) if m else "x"
+
+
+def pdf_path(theme):
+    """export/KINETIK_Regelwerk_v<version>_<theme>.pdf: die Version steht im Dateinamen."""
+    return ROOT / "export" / f"KINETIK_Regelwerk_v{rb_version()}_{theme}.pdf"
 
 
 def cfg_url():
@@ -224,7 +235,7 @@ def make_project(theme):
         cfg = copy.deepcopy(main)
         th = art.THEMES[theme]
         cfg["source"] = "../../../regelwerk/KINETIK_Regelwerk.md"
-        cfg["output"] = f"../../../export/KINETIK_Regelwerk_{theme}.pdf"
+        cfg["output"] = f"../../../export/KINETIK_Regelwerk_v{rb_version()}_{theme}.pdf"
         cfg["style"] = th["style"]
         cfg["negative"] = f"{art.BASE_NEGATIVE}, {th['negative']}" if th["negative"] else art.BASE_NEGATIVE
         cfg["world"] = WORLD[theme]
@@ -325,7 +336,7 @@ def main():
     ap.add_argument("--keys", nargs="*", help="nur diese Bildplätze (z.B. cover ch-1-grundphilosophie)")
     ap.add_argument("--plan-only", action="store_true")
     ap.add_argument("--no-qc", action="store_true")
-    ap.add_argument("--pdf", action="store_true", help="PDFs bauen (export/KINETIK_Regelwerk_<theme>.pdf) statt Bilder erzeugen")
+    ap.add_argument("--pdf", action="store_true", help="PDFs bauen (export/KINETIK_Regelwerk_v<Version>_<theme>.pdf) statt Bilder erzeugen")
     ap.add_argument("--fillers", action="store_true",
                     help="Füllbilder für die Lücken im PDF-Satz des Themes planen und erzeugen (nach den Hauptbildern)")
     ap.add_argument("--pdf-out", help="Zieldatei bei --pdf mit genau einem Theme")
@@ -342,7 +353,7 @@ def main():
         n = sync_pdf_fonts()
         print(f"{n} Theme-Schriften für die PDF-Vorlage bereitgestellt", flush=True)
         for theme in args.theme or ORDER:
-            out = args.pdf_out if args.pdf_out and args.theme and len(args.theme) == 1 else ROOT / "export" / f"KINETIK_Regelwerk_{theme}.pdf"
+            out = args.pdf_out if args.pdf_out and args.theme and len(args.theme) == 1 else pdf_path(theme)
             build_pdf(theme, out)
         return
 

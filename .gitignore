@@ -20,12 +20,4 @@ assets/pdf-themes/*/images/
 
 # Gestaltete Regelwerk-PDFs je Theme: liegen als Download unter tools/kinetik-vtt/public/rulebook und lassen sich mit
 # scripts/gen_rulebook_themes.py --pdf neu bauen. Die Kopien in export/ sind nur Zwischenablage.
-export/KINETIK_Regelwerk_sincity.pdf
-export/KINETIK_Regelwerk_wushu.pdf
-export/KINETIK_Regelwerk_pixel.pdf
-export/KINETIK_Regelwerk_manga.pdf
-export/KINETIK_Regelwerk_ukiyo.pdf
-export/KINETIK_Regelwerk_western.pdf
-export/KINETIK_Regelwerk_akte.pdf
-export/KINETIK_Regelwerk_terminal.pdf
-export/KINETIK_Regelwerk_hybrid.pdf
+export/KINETIK_Regelwerk_v*_*.pdf

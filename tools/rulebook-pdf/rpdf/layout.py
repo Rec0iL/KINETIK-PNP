@@ -338,7 +338,7 @@ def build_html(project, doc, fillers=None):
 
     return _text_emoji(f"""<!doctype html>
 <html lang="{_esc(cfg.get('language', 'de'))}"><head><meta charset="utf-8">
-<title>{_esc(title)}</title><style>{fonts_css}
+<title>{_esc(title + (f' · Version {ver.group(1)}' if ver else ''))}</title><style>{fonts_css}
 {css}</style></head>
 <body>
 {chr(10).join(parts)}

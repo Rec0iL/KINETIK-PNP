@@ -10,7 +10,8 @@ Bildsätze je Theme: Liegt unter assets/pdf-themes/<theme>/images/ ein Satz (erz
 landet er als img/<theme>/<schlüssel>.webp in der Ausgabe; rulebook.json nennt unter "themed", welche Schlüssel es je Theme gibt.
 Die Seite nimmt dann automatisch die Bilder des gewählten Themes (fehlende Schlüssel: die Standardbilder). Standard ist noir.
 
-PDFs je Theme: export/KINETIK_Regelwerk_<theme>.pdf (erzeugt von gen_rulebook_themes.py --pdf) wird als KINETIK_Regelwerk_<theme>.pdf
+PDFs: Die Version steht in jedem Dateinamen. Standard export/KINETIK_Regelwerk_v<Version>.pdf, je Theme
+export/KINETIK_Regelwerk_v<Version>_<theme>.pdf (erzeugt von gen_rulebook_themes.py --pdf), beide werden unter demselben Namen
 mitgeliefert, rulebook.json nennt sie unter "pdfs". Die Download-Schaltfläche der Seite bietet das PDF zum gewählten Theme an.
 
 Ausgabe: tools/kinetik-vtt/public/rulebook/ (rulebook.json, img/*.webp, img/<theme>/*.webp, die PDFs zum Herunterladen).
@@ -144,15 +145,15 @@ def main():
 
     cover = image("cover", "ch", written)
     themed = themed_images()
-    pdf = sorted((ROOT / "export").glob(f"KINETIK_Regelwerk_v{version}*.pdf"))
+    pdf = [f for f in [ROOT / "export" / f"KINETIK_Regelwerk_v{version}.pdf"] if f.exists()]
     pdf_name = None
     if pdf:
-        pdf_name = "KINETIK_Regelwerk.pdf"
+        pdf_name = f"KINETIK_Regelwerk_v{version}.pdf"
         shutil.copy(pdf[-1], OUT / pdf_name)
 
     pdfs = {}
-    for f in sorted((ROOT / "export").glob("KINETIK_Regelwerk_*.pdf")):
-        m = re.fullmatch(r"KINETIK_Regelwerk_([a-z]+)\.pdf", f.name)
+    for f in sorted((ROOT / "export").glob(f"KINETIK_Regelwerk_v{version}_*.pdf")):
+        m = re.fullmatch(rf"KINETIK_Regelwerk_v{re.escape(version)}_([a-z]+)\.pdf", f.name)
         if m and m.group(1) in themed:
             shutil.copy(f, OUT / f.name)
             pdfs[m.group(1)] = f.name

@@ -274,16 +274,24 @@
     "include_style": true
   },
   "fill-sec-2-5-waffen-deckung": {
-    "prompt": "Behind a battered concrete pillar disintegrating under heavy gunfire, an ex-assassin in a drenched trench coat pushes aside a guard's shotgun barrel with one gloved hand while drawing a combat knife. Square composition, eye-level close-up angle, explosive muzzle flash, flying stone debris, rain puddles reflecting amber headlights, tense lethal standoff.",
-    "seed": 2115900829,
+    "prompt": "A female operative in a tactical harness crouches behind a bullet-chewed car door in an underground garage, slapping a fresh magazine into her assault rifle. Sparks and shattered safety glass shower the hood from heavy incoming gunfire, with spent brass casings bouncing across grease-slicked concrete. Low-angle wide shot.",
+    "seed": 1654979715,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 2.5 Waffen & Deckung",
     "after": "sec-2-5-waffen-deckung",
     "chapter": "ch-2-der-charakter",
-    "h_mm": 183.2,
+    "h_mm": 100.9,
     "w_mm": 176.0,
-    "include_style": true
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": [
+        "Mehrere Patronenhülsen wirken eher wie statisch in der Luft schwebend statt dynamisch fliegend.",
+        "Der beschriebene Magazinwechsel wird nicht aktiv gezeigt; die Waffe wird stattdessen beidhändig in Bereitschaft gehalten.",
+        "Der Einschlag auf der Motorhaube erinnert visuell stellenweise an spritzende weiße Flüssigkeit statt an berstendes Sicherheitsglas."
+      ]
+    }
   },
   "fill-sec-3-2-die-wirkung-eines-treffers-kaskade": {
     "prompt": "An unarmored karateka mid air, grabbing both hands onto the helmeted head of a heavily armored security guard to pull him downward into a brutal flying knee strike. Splintering armor fragments shatter on impact amid pouring rain, puddle splashes, and halogen floodlights in a shipping container yard.",
@@ -349,13 +357,13 @@
   },
   "fill-sec-5-4-meister-moves-und-legendaere-moves": {
     "prompt": "A battered master in a soaked trench coat stands trembling on a windswept rooftop helipad amidst smoking impact craters. Around them, a squad of heavily armed enforcers lies incapacitated in the rain. The master drops the hilt of a shattered blade, completely exhausted with steam rising from their trembling hands. Wide cinematic landscape framing against glowing skyscrapers.",
-    "seed": 174946435,
+    "seed": 1802800690,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 5.4 Meister-Moves und Legendäre Moves",
     "after": "sec-5-4-meister-moves-und-legendaere-moves",
     "chapter": "ch-5-moves",
-    "h_mm": 208.4,
+    "h_mm": 148.2,
     "w_mm": 176.0,
     "include_style": true
   },
@@ -518,5 +526,28 @@
       ]
     },
     "negative": "worst quality, low quality, bad anatomy, deformed, extra limbs, watermark, text, signature, walking toward viewer, approaching camera, sword, baton, calm expression, sitting comfortably"
+  },
+  "fill-sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "An ex-assassin in a wet trench coat discharges an incendiary shotgun down a dark brick alley. A massive, broad cone of fire and glowing embers spreads across the entire alleyway, engulfing three masked street brawlers diving into wet puddles amidst dense rising steam and rain.",
+    "seed": 1719789994,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 3.14 Flächenangriffe (AoE)",
+    "after": "sec-3-14-flaechenangriffe-aoe",
+    "chapter": "ch-3-der-kampf-das-clash-system",
+    "h_mm": 142.1,
+    "w_mm": 176.0,
+    "include_style": true
+  },
+  "sec-3-14-flaechenangriffe-aoe": {
+    "prompt": "A tactical operative in dark body armor dives sideways across a flooded subway concourse as an explosive grenade detonates. The concussive orange shockwave expands outward, hurling armed syndicate enforcers off their feet amidst flying debris and splashing water. Wide cinematic framing, low-angle perspective, billowing gray smoke and shattered tile fragments.",
+    "seed": 1495693821,
+    "kind": "section",
+    "title": "3.14 Flächenangriffe (AoE)",
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   }
 }

@@ -94,7 +94,7 @@ def theme_state(t):
         bad = sum(1 for k, v in man.items() if (v.get("qc") or {}).get("fits") is False and (d / "images" / f"{k}.jpg").exists())
     except Exception:
         pass
-    pdf = EXPORT / (f"KINETIK_Regelwerk_v{md_version()}.pdf" if t == "noir" else f"KINETIK_Regelwerk_{t}.pdf")
+    pdf = EXPORT / (f"KINETIK_Regelwerk_v{md_version()}.pdf" if t == "noir" else f"KINETIK_Regelwerk_v{md_version()}_{t}.pdf")
     measured = bool(active) and (d / "images.json").exists() and (d / "images.json").stat().st_mtime >= RUN_START
     return {"measured": measured, "main": len(main), "fills": len(fills), "active": active, "bad": bad, "pdf": pdf.exists(),
             "files": imgs, "pdf_time": pdf.stat().st_mtime if pdf.exists() else 0}
