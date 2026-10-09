@@ -145,6 +145,12 @@ def main():
 
     cover = image("cover", "ch", written)
     themed = themed_images()
+    # Körpersilhouette (2.3) je Look in dessen Farben (gleiche --term-*-Werte wie im VTT); "koerper-silhouette" in der Liste der Schlüssel
+    import themed_silhouette
+    tokens = themed_silhouette.term_tokens()
+    for theme in themed:
+        (OUT / "img" / theme / "koerper-silhouette.svg").write_text(themed_silhouette.make(theme, tokens), encoding="utf-8")
+        themed[theme].append("koerper-silhouette")
     pdf = [f for f in [ROOT / "export" / f"KINETIK_Regelwerk_v{version}.pdf"] if f.exists()]
     pdf_name = None
     if pdf:

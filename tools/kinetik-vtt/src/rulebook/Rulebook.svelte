@@ -1,6 +1,6 @@
 <script lang="ts">
   import { tick, untrack } from 'svelte';
-  import { rulebook, closeRulebook, rbUrl, rbImg, rbFill, plainText, type RbChapter } from './rulebook.svelte';
+  import { rulebook, closeRulebook, rbUrl, rbImg, rbFill, rbHtml, plainText, type RbChapter } from './rulebook.svelte';
   import RulebookDownload from './RulebookDownload.svelte';
 
   let scroller = $state<HTMLDivElement>();
@@ -135,7 +135,7 @@
           <div class="covertxt">
             <span class="kicker">Cinematic Action Roleplaying</span>
             <h1>KINETIK</h1>
-            <div class="rbcontent">{@html data.intro}</div>
+            <div class="rbcontent">{@html rbHtml(data.intro)}</div>
           </div>
         </div>
       {/if}
@@ -151,14 +151,14 @@
             </div>
           </div>
           <div class="rbcontent pad">
-            {@html c.html}
+            {@html rbHtml(c.html)}
             {#if c.fill && !c.sections.length && rbFill(c.fill)}<img class="fill" src={rbFill(c.fill)} alt="" loading="lazy" />{/if}
           </div>
           {#each c.sections as s (s.id)}
             <section class="sec" id={`rb-${s.id}`}>
               {#if s.image}<img class="secimg" src={rbImg(s.image)} alt="" loading="lazy" />{/if}
               <h3>{s.title}</h3>
-              <div class="rbcontent">{@html s.html}</div>
+              <div class="rbcontent">{@html rbHtml(s.html)}</div>
               {#if s.fill && rbFill(s.fill)}<img class="fill" src={rbFill(s.fill)} alt="" loading="lazy" />{/if}
             </section>
           {/each}

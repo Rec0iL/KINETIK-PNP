@@ -45,10 +45,10 @@ def _unfold_details(text):
     return re.sub(r"<summary[^>]*>(.*?)</summary>", r"\n\n\1\n\n", text, flags=re.S)
 
 
-def _md(text, base=None, extra_dirs=()):
+def _md(text, base=None, extra_dirs=(), overrides=None):
     text = _unfold_details(text)
     out = markdown.markdown(text, extensions=["tables", "sane_lists"])
-    return _wrap_tables(_figures(out, base, extra_dirs))
+    return _wrap_tables(_figures(out, base, extra_dirs, overrides))
 
 
 def _image_aspect(path):
@@ -64,15 +64,21 @@ def _image_aspect(path):
         return None
 
 
-def _figures(html, base, extra_dirs=()):
+def _figures(html, base, extra_dirs=(), overrides=None):
     """Images from the Markdown: resolve relative paths against the source file and
     turn stand-alone images into figures (alt text becomes the caption).
     If the file is not next to the source, the project's own folders (extra_dirs,
-    e.g. `bilder/`) are searched by relative path, then by file name."""
+    e.g. `bilder/`) are searched by relative path, then by file name.
+    overrides ({file name: path}, project.json "image_overrides") replace an image by name, e.g. a themed variant of a diagram."""
+    overrides = overrides or {}
+
     def resolve(src):
         if base is None or re.match(r"^(https?|file|data):", src):
             return src, None
         rel = htmllib.unescape(src)
+        if Path(rel).name in overrides:
+            path = Path(overrides[Path(rel).name]).resolve()
+            return path.as_uri(), path
         path = (base / rel).resolve()
         if not path.exists():
             for d in extra_dirs:
@@ -236,7 +242,8 @@ def build_html(project, doc, fillers=None):
     cfg = project.config
     base = project.source_path.parent if project.source_path else None
     image_dirs = [project.root / "bilder", project.root]
-    md = lambda text: _md(text, base, image_dirs)
+    overrides = {k: str(project.path(v)) for k, v in (cfg.get("image_overrides") or {}).items()}
+    md = lambda text: _md(text, base, image_dirs, overrides)
     theme, lay = cfg["theme"], cfg["layout"]
     img = lambda key: project.image_path(key).as_uri() if project.has_image(key) else None
     running = cfg.get("running_title") or (cfg.get("title") or doc.title or "").split(":")[0]

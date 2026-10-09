@@ -45,6 +45,7 @@ from PIL import Image  # noqa: E402
 
 import gen_web_assets as art  # noqa: E402  (Stile, Negative und Nachbearbeitung der Themes)
 import pdf_backgrounds  # noqa: E402
+import themed_silhouette  # noqa: E402
 from pdf_theme_styles import STYLES as PDF_STYLES  # noqa: E402
 from rpdf import comfy, pipeline, planner  # noqa: E402
 from rpdf import project as proj  # noqa: E402
@@ -310,6 +311,10 @@ def build_pdf(theme, out):
         make_project(theme)     # nur Konfiguration und Seitenhintergrund, noch keine Bilder
     src = proj.Project(OUT / theme)
     cfg = apply_pdf_style(copy.deepcopy(src.config), theme)
+    # Körpersilhouette (2.3) in den Farben des Looks, wie im VTT, statt der festen grünen Terminal-Grafik
+    sil = ROOT / "assets" / "grafiken" / f"koerper-silhouette-{theme}.svg"
+    sil.write_text(themed_silhouette.make(theme, themed_silhouette.term_tokens()), encoding="utf-8")
+    cfg["image_overrides"] = {"koerper-silhouette.svg": str(sil)}
     # Füllbilder nur, wenn es welche gibt (Phase --fillers): sie sitzen genau in den Lücken dieses Layouts
     cfg["layout"]["fill_gaps"] = any(f.name.startswith("fill-") for f in src.images_dir.glob("*.jpg"))
     cfg["source"] = str((src.root / cfg["source"]).resolve())

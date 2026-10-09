@@ -106,3 +106,11 @@ export function rbCover(): string {
   if (rulebook.data) return rbImg(rulebook.data.cover) ?? rbUrl('img/cover.webp');
   return rbUrl(art === 'noir' ? 'img/cover.webp' : `img/${art}/cover.webp`);
 }
+
+/** Regeltext mit den Abbildungen des gewählten Looks: Die Körpersilhouette (2.3) hat je Look eine eigene Fassung. Reaktiv auf den Themewechsel. */
+export function rbHtml(html: string): string {
+  if (!html.includes('koerper-silhouette')) return html;
+  const art = THEME_INFO[theme.current].art;
+  if (!(rulebook.data?.themed?.[art] ?? []).includes('koerper-silhouette')) return html;
+  return html.replace(rbUrl('img/koerper-silhouette.svg'), rbUrl(`img/${art}/koerper-silhouette.svg`));
+}
