@@ -76,12 +76,16 @@ def theme_state(t):
     d = ROOT / "assets" / "pdf" if t == "noir" else BASE / t
     imgs = list((d / "images").glob("*.jpg")) if (d / "images").exists() else []
     main = [f for f in imgs if not f.name.startswith(("fill-", "background"))]
-    fills = [f for f in imgs if f.name.startswith("fill-")]
+    fill_files = [f for f in imgs if f.name.startswith("fill-")]
     active = None
+    fills = fill_files
     if (d / "images.json").exists():
         try:
             man = json.loads((d / "images.json").read_text(encoding="utf-8"))
-            active = sum(1 for k, v in man.items() if k.startswith("fill-") and v.get("active"))
+            act = {k for k, v in man.items() if k.startswith("fill-") and v.get("active")}
+            active = len(act)
+            # Nur Bilder zählen, die in einer aktuellen Lücke sitzen: ältere Füllbilder aus früheren Layouts liegen noch auf der Platte
+            fills = [f for f in fill_files if f.stem in act]
         except Exception:
             pass
     # Prüfung: wie viele fertige Bilder trugen zuletzt "passt nicht"? (letzter Stand je Platz)
