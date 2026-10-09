@@ -49,7 +49,7 @@
     "url": "http://127.0.0.1:8188",
     "models_dir": "",
     "workflow": "anima",
-    "unet": "krea2TurboOfficialComfy_krea2TurboInt8.safetensors",
+    "unet": "krea2TurboOfficialComfy_krea2TurboMxfp8.safetensors",
     "clip": "qwen3vl_4b_fp8_scaled.safetensors",
     "clip_type": "krea2",
     "vae": "qwen_image_vae.safetensors",
