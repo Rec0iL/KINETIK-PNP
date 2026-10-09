@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://rec0il.github.io/KINETIK-PNP/"><b>Web-App öffnen</b></a> ·
-  <a href="export/KINETIK_Regelwerk_v3.5.pdf"><b>Regelwerk als PDF</b></a> ·
+  <a href="export/KINETIK_Regelwerk_v3.6.pdf"><b>Regelwerk als PDF</b></a> ·
   <a href="regelwerk/KINETIK_Regelwerk.md">Regeltext</a> ·
   <a href="CHANGELOG.md">Changelog</a>
 </p>
@@ -131,10 +131,10 @@ Wer im Büro- oder Uni-WLAN spielt, kann in den erweiterten Einstellungen einen 
 
 <table>
 <tr>
-<td width="28%"><a href="export/KINETIK_Regelwerk_v3.5.pdf"><img src="assets/pdf/images/cover.jpg" alt="Cover des Regelwerks" width="100%"></a></td>
+<td width="28%"><a href="export/KINETIK_Regelwerk_v3.6.pdf"><img src="assets/pdf/images/cover.jpg" alt="Cover des Regelwerks" width="100%"></a></td>
 <td valign="top">
 
-Das Regelwerk gibt es als gesetztes Buch mit Cover, Kapitel-Bannern und einem Bild pro Abschnitt: [`export/KINETIK_Regelwerk_v3.5.pdf`](export/KINETIK_Regelwerk_v3.5.pdf). Gebaut wird es mit [`tools/rulebook-pdf`](tools/rulebook-pdf/README.md): Der Text kommt aus der Markdown-Datei, die Bild-Prompts schreibt ein LLM, die Bilder entstehen lokal mit ComfyUI (Krea 2), gesetzt wird mit WeasyPrint. Das Werkzeug kann auch fremde Regelwerke und andere Dokumente illustrieren.
+Das Regelwerk gibt es als gesetztes Buch mit Cover, Kapitel-Bannern und einem Bild pro Abschnitt: [`export/KINETIK_Regelwerk_v3.6.pdf`](export/KINETIK_Regelwerk_v3.6.pdf). Gebaut wird es mit [`tools/rulebook-pdf`](tools/rulebook-pdf/README.md): Der Text kommt aus der Markdown-Datei, die Bild-Prompts schreibt ein LLM, die Bilder entstehen lokal mit ComfyUI (Krea 2), gesetzt wird mit WeasyPrint. Das Werkzeug kann auch fremde Regelwerke und andere Dokumente illustrieren.
 
 </td>
 </tr>

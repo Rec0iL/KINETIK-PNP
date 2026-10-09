@@ -1,6 +1,6 @@
 # PDF-Projekt: KINETIK-Regelwerk
 
-Projektordner für [`tools/rulebook-pdf`](../../tools/rulebook-pdf/). Er baut `export/KINETIK_Regelwerk_v3.4.pdf` aus `regelwerk/KINETIK_Regelwerk.md`.
+Projektordner für [`tools/rulebook-pdf`](../../tools/rulebook-pdf/). Er baut `export/KINETIK_Regelwerk_v3.6.pdf` aus `regelwerk/KINETIK_Regelwerk.md`.
 
 - `project.json`: Titel, Farben, Stil, ComfyUI-Einstellungen (Anima-Modell `trattoNero_nitrattoANIMA`)
 - `images.json`: Prompt und Seed pro Bild
