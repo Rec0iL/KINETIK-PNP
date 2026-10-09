@@ -63,6 +63,28 @@ def _detect(project, doc, ctx):
         run_isolated(project, "detect", ctx)
     else:
         layout.detect_fillers(project, doc, ctx.log)
+    drop_misfit_fillers(project, ctx)
+
+
+FILLER_ASPECT_TOLERANCE = 0.10
+
+
+def drop_misfit_fillers(project, ctx):
+    """After a text change a gap can keep its key but get a different size. A filler image made for the old size would then
+    sit letterboxed in the new gap, so it is taken out (moved to .build/removed, new seed) and regenerated at the right aspect."""
+    from PIL import Image
+    misfits = []
+    for key, e in project.manifest.items():
+        if e.get("kind") != "filler" or not e.get("active") or not project.has_image(key) or not e.get("h_mm"):
+            continue
+        with Image.open(project.image_path(key)) as im:
+            have = im.width / im.height
+        want = e["w_mm"] / e["h_mm"]
+        if abs(have / want - 1) > FILLER_ASPECT_TOLERANCE:
+            misfits.append(key)
+    if misfits:
+        remove_images(project, misfits)
+        ctx.log(f"{len(misfits)} Füllbild(er) passen nicht mehr zur Lücke und werden neu erzeugt: " + ", ".join(misfits))
 
 
 def plan(project, ctx, force=False, keys=None, suggest_style=None):

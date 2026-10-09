@@ -22,10 +22,23 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 BASE = ROOT / "assets" / "pdf-themes"
 EXPORT = ROOT / "export"
-THEMES = ["sincity", "wushu", "pixel", "manga", "ukiyo", "western", "akte", "terminal", "hybrid"]
-NAMES = {"sincity": "Film Noir", "wushu": "Wushu", "pixel": "8-Bit", "manga": "Manga", "ukiyo": "Ukiyo-e", "western": "Western",
+THEMES = ["noir", "sincity", "wushu", "pixel", "manga", "ukiyo", "western", "akte", "terminal", "hybrid"]
+NAMES = {"noir": "Neo-Noir", "sincity": "Film Noir", "wushu": "Wushu", "pixel": "8-Bit", "manga": "Manga", "ukiyo": "Ukiyo-e", "western": "Western",
          "akte": "Akte", "terminal": "Terminal", "hybrid": "Cyberdeck"}
-MAIN_TOTAL = 38
+
+
+def main_total():
+    """Anzahl der Hauptbilder (Cover, Kapitel, Abschnitte) laut aktuellem Regelwerk. Ersatzwert, falls die Pipeline nicht lädt."""
+    try:
+        sys.path.insert(0, str(ROOT / "tools" / "rulebook-pdf"))
+        from rpdf import project as proj
+        p = proj.Project(ROOT / "assets" / "pdf")
+        return len([x for x in p.slots() if x.kind in ("cover", "chapter", "section")])
+    except Exception:
+        return 39
+
+
+MAIN_TOTAL = main_total()
 FILL_GUESS = 7          # solange die Lücken eines Themes noch nicht gemessen sind
 COMFY = "http://127.0.0.1:8188"
 
@@ -54,8 +67,13 @@ def fmt_td(seconds):
     return f"{h} h {m:02d} min" if h else f"{m} min"
 
 
+def md_version():
+    m = re.search(r"Version\s+(\d+(?:\.\d+)*)", (ROOT / "regelwerk" / "KINETIK_Regelwerk.md").read_text(encoding="utf-8")[:600])
+    return m.group(1) if m else ""
+
+
 def theme_state(t):
-    d = BASE / t
+    d = ROOT / "assets" / "pdf" if t == "noir" else BASE / t
     imgs = list((d / "images").glob("*.jpg")) if (d / "images").exists() else []
     main = [f for f in imgs if not f.name.startswith(("fill-", "background"))]
     fills = [f for f in imgs if f.name.startswith("fill-")]
@@ -72,9 +90,13 @@ def theme_state(t):
         bad = sum(1 for k, v in man.items() if (v.get("qc") or {}).get("fits") is False and (d / "images" / f"{k}.jpg").exists())
     except Exception:
         pass
-    pdf = EXPORT / f"KINETIK_Regelwerk_{t}.pdf"
-    return {"main": len(main), "fills": len(fills), "active": active, "bad": bad, "pdf": pdf.exists(),
+    pdf = EXPORT / (f"KINETIK_Regelwerk_v{md_version()}.pdf" if t == "noir" else f"KINETIK_Regelwerk_{t}.pdf")
+    measured = bool(active) and (d / "images.json").exists() and (d / "images.json").stat().st_mtime >= RUN_START
+    return {"measured": measured, "main": len(main), "fills": len(fills), "active": active, "bad": bad, "pdf": pdf.exists(),
             "files": imgs, "pdf_time": pdf.stat().st_mtime if pdf.exists() else 0}
+
+
+RUN_START = 0.0
 
 
 def latest_log():
@@ -97,6 +119,10 @@ def activity(lines):
     """Phase, Theme und aktuelles Bild aus dem Log-Ende ableiten."""
     phase = theme = img = detail = None
     for ln in lines:
+        m = re.search(r"=== python3 tools/rulebook-pdf/rulebook_pdf.py (\w+) assets/pdf", ln)
+        if m:
+            theme = "noir"
+            phase = {"plan": "Neo-Noir: Prompts planen", "images": "Neo-Noir: Bilder und Füllbilder", "build": "Neo-Noir: PDF bauen"}.get(m.group(1), m.group(1))
         m = re.search(r"=== python3 scripts/(\S+)(?: (--\S+))?", ln)
         if m:
             phase = {None: "Hauptbilder (Durchgang)", "--fillers": "Füllbilder", "--pdf": "PDFs bauen"}.get(m.group(2), m.group(2))
@@ -172,8 +198,17 @@ def mem_info():
 
 
 def render():
+    global RUN_START
+    lg0 = latest_log()
+    if lg0:
+        try:
+            first = open(lg0, encoding="utf-8", errors="replace").readline()
+            m0 = re.match(r"(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d)", first)
+            RUN_START = time.mktime(time.strptime(m0.group(1), "%Y-%m-%d %H:%M:%S")) if m0 else os.path.getctime(lg0)
+        except Exception:
+            RUN_START = 0.0
     states = {t: theme_state(t) for t in THEMES}
-    lines = tail(latest_log()) if latest_log() else []
+    lines = tail(lg0) if lg0 else []
     phase, cur_theme, img, detail, finished = activity(lines)
     running = procs()
     alive, rss, queue = comfy_info()
@@ -206,23 +241,24 @@ def render():
     remaining = 0
     for t in THEMES:
         s = states[t]
-        fill_total = s["active"] if s["active"] else FILL_GUESS
-        measured = s["active"] is not None and s["active"] > 0
-        hint = "" if measured else col("~", "dim")
+        measured = s["measured"]
+        fill_total = s["active"] if measured else FILL_GUESS
         mark = col("▶", "yellow") if t == cur_theme and not finished and running else " "
         m_txt = f"{s['main']:>2}/{MAIN_TOTAL}"
-        f_txt = f"{s['fills']:>2}/{fill_total}{hint}" if (measured or s["fills"]) else col(" –  noch nicht gemessen", "dim")
+        fills_done = s["fills"] if measured else 0
+        f_txt = f"{fills_done:>2}/{fill_total}" if measured else col(" –  Lücken noch nicht neu gemessen", "dim")
+        f_bar = bar(fills_done, fill_total, 16)
         newest = max((f.stat().st_mtime for f in s["files"]), default=0)
         # ein PDF zählt erst, wenn es nach dem letzten Bild des Themes gebaut wurde
         pdf_txt = (col("✓", "green") if s["pdf_time"] > newest else col("alt", "yellow")) if s["pdf"] else col("·", "dim")
-        out.append(f"{mark}{NAMES[t]:<9} {bar(s['main'], MAIN_TOTAL, 16)} {m_txt:<6}  {bar(s['fills'], fill_total, 16)} {f_txt:<16} {pdf_txt}")
+        out.append(f"{mark}{NAMES[t]:<9} {bar(s['main'], MAIN_TOTAL, 16)} {m_txt:<6}  {f_bar} {f_txt:<16} {pdf_txt}")
         rows_main += s["main"]
-        rows_fill += s["fills"]
-        remaining += max(0, MAIN_TOTAL - s["main"]) + max(0, fill_total - s["fills"])
+        rows_fill += fills_done
+        remaining += max(0, MAIN_TOTAL - s["main"]) + max(0, fill_total - fills_done)
     out.append("")
     all_total = MAIN_TOTAL * len(THEMES)
     out.append(f"Hauptbilder gesamt  {bar(rows_main, all_total, 30)} {rows_main}/{all_total}")
-    fill_guess_total = sum((states[t]['active'] or FILL_GUESS) for t in THEMES)
+    fill_guess_total = sum((states[t]['active'] if states[t]['measured'] else FILL_GUESS) for t in THEMES)
     out.append(f"Füllbilder gesamt   {bar(rows_fill, fill_guess_total, 30)} {rows_fill}/~{fill_guess_total}")
     out.append("")
 

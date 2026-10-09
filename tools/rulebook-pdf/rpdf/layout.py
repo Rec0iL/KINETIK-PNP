@@ -241,6 +241,11 @@ def build_html(project, doc, fillers=None):
     img = lambda key: project.image_path(key).as_uri() if project.has_image(key) else None
     running = cfg.get("running_title") or (cfg.get("title") or doc.title or "").split(":")[0]
 
+    # The version on the cover follows the rulebook ("Version 3.6" in its subtitle line), so a new version needs no manual edit
+    ver = re.search(r"Version\s+(\d+(?:\.\d+)*)", doc.intro_md or "")
+    if ver and cfg.get("tagline"):
+        cfg = {**cfg, "tagline": re.sub(r"Version\s+\d+(?:\.\d+)*", f"Version {ver.group(1)}", cfg["tagline"])}
+
     parts = []
     if lay.get("page_texture") and img("background"):
         parts.append(f'<div class="pagebg" style="background-image:url(\'{img("background")}\')"></div>')

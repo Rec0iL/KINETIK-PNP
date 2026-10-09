@@ -1,6 +1,6 @@
 {
   "source": "../../regelwerk/KINETIK_Regelwerk.md",
-  "output": "../../export/KINETIK_Regelwerk_v3.5.pdf",
+  "output": "../../export/KINETIK_Regelwerk_v3.6.pdf",
   "title": "KINETIK",
   "subtitle": "Cinematic Action Roleplaying",
   "kicker": "GUN-FU · KAMPFKUNST · ANIME",
@@ -33,7 +33,8 @@
     "enabled": true,
     "auto_fix": true,
     "rounds": 3,
-    "radical": true
+    "radical": true,
+    "lenient": false
   },
   "content_type": "rulebook",
   "style_preset": "",
