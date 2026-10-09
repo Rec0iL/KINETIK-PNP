@@ -1,5 +1,5 @@
 // Datenmodell des Charakterbogens. Abgeleitete Werte werden nie gespeichert, nur Überschreibungen (`overrides`).
-import type { AttrKey, ZoneKey, Title, MoveSpec, Poison } from '../rules';
+import type { AttrKey, ZoneKey, Title, MoveSpec, Poison, AmmoState } from '../rules';
 import { ATTR_KEYS, ZONE_KEYS } from '../rules';
 
 export const SCHEMA_VERSION = 1;
@@ -39,12 +39,14 @@ export interface Move extends MoveSpec {
 export interface Weapon {
   id: string;
   name: string;
-  klasse: 'leicht' | 'schwer' | 'frei';
+  klasse: 'leicht' | 'schwer' | 'explosiv' | 'frei';
   ep: number;
   profilText: string;
   durchschlag: number;
   note?: string;
   templateId?: string;
+  /** Magazin und Vorrat (optionales Munitionstracking, 2.5). */
+  mag?: AmmoState;
 }
 export interface InventoryItem { id: string; name: string; qty: number; note?: string }
 export interface NoteEntry { id: string; title: string; text: string }
@@ -64,6 +66,8 @@ export interface Character {
   /** Noch in der Charaktererschaffung (Assistent oder manuell). */
   draft: boolean;
   naturtalent: boolean;
+  /** Munitionstracking (2.5, optional): Magazin mitzählen, Vorrat als zweite Stufe. */
+  munition?: { track: boolean; vorrat: boolean };
   setting: string;
   attributes: Record<AttrKey, number>;
   titles: Title[];

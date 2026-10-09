@@ -48,6 +48,8 @@ export interface Situation {
   hero: boolean;
   /** Gift des Angreifers (aus dem Move oder vom SL gesetzt, 3.11). */
   gift?: { level: GiftLevel; delay: number; ignoresSchutz: boolean };
+  /** Mehrzielangriff (5.1) oder Fläche (3.14): weitere Ziele würfeln einzeln. */
+  area?: 'ziele' | 'flaeche';
   status: SitStatus;
   pRoll?: SitRoll;
   nRoll?: SitRoll;
@@ -139,6 +141,8 @@ export interface Draft {
   tagsUsed: string[];
   /** Gift-Move: Stufe und Verzögerung aus dem vorgemerkten Move. */
   gift?: { level: GiftLevel; delay: number };
+  /** Der vorgemerkte Move trifft mehrere Ziele oder eine Fläche. */
+  area?: 'ziele' | 'flaeche';
 }
 
 export function createSituation(c: CombatState, id: string, playerId: string, d: Draft): Situation {
@@ -148,6 +152,7 @@ export function createSituation(c: CombatState, id: string, playerId: string, d:
     attr: d.attr, technique: d.technique.slice(0, 200), moveName: d.moveName.slice(0, 80), tagsUsed: d.tagsUsed.slice(0, 6),
     mod: 0, modReason: '', attackers: 1, hero: false,
     gift: d.gift && needsTarget ? { level: d.gift.level, delay: d.gift.delay, ignoresSchutz: false } : undefined,
+    area: d.area && d.kind === 'attack' ? d.area : undefined,
     status: c.autoRelease ? 'released' : 'planned',
   };
   c.situations.push(sit);
@@ -295,6 +300,15 @@ export function proposeResolution(i: ProposeInput): ProposalItem[] {
     add(`Der Kinetik-Marker geht an die ${pcGets ? 'Spieler' : 'Gegner'}`, { k: 'marker', side: pcGets ? 'players' : 'enemies' });
   }
 
+  if (sit.area) {
+    add(
+      sit.area === 'flaeche'
+        ? 'Fläche (3.14): alle Ziele in der Zone würfeln einzeln. Ein Konter heißt nur Entkommen, Goons: bis zu 5 fallen, Deckung zählt halb. Weitere Ziele am Tisch auswerten.'
+        : 'Mehrere Ziele (5.1): jedes weitere Ziel würfelt einzeln, bei Goons fallen bis zu 3. Ein Konter heißt nur Entkommen. Weitere Ziele am Tisch auswerten.',
+      { k: 'note' },
+      false,
+    );
+  }
   if (sit.bullet?.option === 'momentum') add(`${pcName}: +1 Momentum (Bullet Time)`, { k: 'pcRes', playerId: pc, momentum: 1 });
   if (sit.bullet?.option === 'ep') add('Bullet Time: kostenloser 1-EP-Effekt für die Aktion (erzählen und eintragen)', { k: 'note' }, false);
   if (sit.bullet?.option === 'zone' && !bulletZone) add('Bullet Time: der Spieler wählt die Zone der Verletzung', { k: 'note' }, false);

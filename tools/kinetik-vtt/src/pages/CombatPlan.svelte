@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ATTR_KEYS, GIFT, OUTCOME_LABEL, giftOfEffects, rules, type AttrKey, type ZoneKey } from '../rules';
+  import { ATTR_KEYS, GIFT, OUTCOME_LABEL, areaOfEffects, giftOfEffects, rules, type AttrKey, type ZoneKey } from '../rules';
   import type { Character } from '../model/character';
   import { computeSheet } from '../model/sheet';
   import { player, sendPlan, cancelPlan, sendBulletChoice } from '../net/player.svelte';
@@ -32,6 +32,7 @@
 
   const move = $derived(char?.moves.find((m) => m.id === moveId) ?? null);
   const gift = $derived(move ? giftOfEffects(move.effects.map((e) => e.id)) : null);
+  const area = $derived(move ? areaOfEffects(move.effects.map((e) => e.id)) : null);
   const tagBonus = $derived.by(() => {
     if (!enemy) return 0;
     let s = 0;
@@ -52,6 +53,7 @@
     sendPlan({
       kind, npcId: kind === 'attack' ? target : null, attr, technique: technique.trim(), moveName: move?.name ?? '',
       tagsUsed: kind === 'attack' ? [...tagsUsed] : [], gift: gift && kind === 'attack' ? { level: gift, delay: move?.giftDelay ?? 0 } : undefined,
+      area: area && kind === 'attack' ? area : undefined,
     });
     technique = '';
     tagsUsed = [];
@@ -131,6 +133,7 @@
         <label class="field">Move vormerken (optional, bezahlt wird nach dem Wurf)
           <select bind:value={moveId}><option value="">kein Move</option>{#each char.moves as m}<option value={m.id}>{m.name}</option>{/each}</select>
         </label>
+        {#if area}<small class="dim"><span class="chip accent">{area === 'flaeche' ? 'Fläche' : 'Mehrere Ziele'}</span> Ein Wurf, jedes weitere Ziel verteidigt einzeln. Ein Konter heißt nur Entkommen.</small>{/if}
         {#if gift}<small class="dim"><span class="chip danger">Gift {GIFT[gift].label}</span> Verzögerung {move?.giftDelay ?? 0} Runde(n). Wirkt nur, wenn der Treffer den Körper erreicht.</small>{/if}
       {:else}
         <small class="dim">{kind === 'breath' ? 'Durchatmen: +2 Energie. ' : 'Sammeln: +2 Willenskraft. '}Der nächste Clash gegen dich bekommt +1.</small>

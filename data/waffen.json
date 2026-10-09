@@ -1,15 +1,176 @@
 {
-  "rules_version": "3.5",
+  "rules_version": "3.6",
   "durchschlagStandard": 1,
   "waffen": [
-    { "id": "pistole", "name": "Pistole", "klasse": "leicht", "ep": 1, "profil": ["zone"], "profilText": "Zone wählen", "durchschlag": 1 },
-    { "id": "messer", "name": "Messer", "klasse": "leicht", "ep": 1, "profil": ["schaden2"], "profilText": "+2 Energie-Schaden (Schmerz, Blutverlust)", "durchschlag": 1 },
-    { "id": "schlagstock", "name": "Schlagstock / Tonfa", "klasse": "leicht", "ep": 1, "profil": ["tagKlein"], "profilText": "kleiner Tag Benommen", "tag": "Benommen", "durchschlag": 1 },
-    { "id": "akimbo", "name": "Akimbo-Pistolen", "klasse": "schwer", "ep": 2, "profil": ["ziel2", "zone"], "profilText": "zweites Ziel, Zone wählen", "durchschlag": 1 },
-    { "id": "sturmgewehr", "name": "Sturmgewehr", "klasse": "schwer", "ep": 2, "profil": ["ziel2", "schutzSchaden"], "profilText": "zweites Ziel, +1 Schutz-Schaden", "durchschlag": 1 },
-    { "id": "schrotflinte", "name": "Schrotflinte", "klasse": "schwer", "ep": 2, "profil": ["ziel2", "tagKlein"], "profilText": "zweites Ziel, kleiner Tag Am Boden", "tag": "Am Boden", "durchschlag": 1 },
-    { "id": "sniper50", "name": "Scharfschützengewehr (.50)", "klasse": "schwer", "ep": 2, "profil": ["tagKlein"], "profilText": "Durchschlag 2 statt 1, kleiner Tag Benommen (Druckwelle)", "tag": "Benommen", "durchschlag": 2 },
-    { "id": "katana", "name": "Katana", "klasse": "schwer", "ep": 2, "profil": ["zone", "schutzSchaden"], "profilText": "Zone wählen, +1 Schutz-Schaden", "durchschlag": 1 }
+    {
+      "id": "pistole",
+      "name": "Pistole",
+      "klasse": "leicht",
+      "ep": 1,
+      "profil": [
+        "zone"
+      ],
+      "profilText": "Zone wählen",
+      "durchschlag": 1,
+      "magazin": 6
+    },
+    {
+      "id": "messer",
+      "name": "Messer",
+      "klasse": "leicht",
+      "ep": 1,
+      "profil": [
+        "schaden2"
+      ],
+      "profilText": "+2 Energie-Schaden (Schmerz, Blutverlust)",
+      "durchschlag": 1
+    },
+    {
+      "id": "schlagstock",
+      "name": "Schlagstock / Tonfa",
+      "klasse": "leicht",
+      "ep": 1,
+      "profil": [
+        "tagKlein"
+      ],
+      "profilText": "kleiner Tag Benommen",
+      "tag": "Benommen",
+      "durchschlag": 1
+    },
+    {
+      "id": "akimbo",
+      "name": "Akimbo-Pistolen",
+      "klasse": "schwer",
+      "ep": 2,
+      "profil": [
+        "ziel2",
+        "zone"
+      ],
+      "profilText": "zweites Ziel, Zone wählen",
+      "durchschlag": 1,
+      "magazin": 6
+    },
+    {
+      "id": "sturmgewehr",
+      "name": "Sturmgewehr",
+      "klasse": "schwer",
+      "ep": 2,
+      "profil": [
+        "ziel2",
+        "schutzSchaden"
+      ],
+      "profilText": "zweites Ziel, +1 Schutz-Schaden",
+      "durchschlag": 1,
+      "magazin": 6
+    },
+    {
+      "id": "schrotflinte",
+      "name": "Schrotflinte",
+      "klasse": "schwer",
+      "ep": 2,
+      "profil": [
+        "ziel2",
+        "tagKlein"
+      ],
+      "profilText": "zweites Ziel, kleiner Tag Am Boden",
+      "tag": "Am Boden",
+      "durchschlag": 1,
+      "magazin": 6
+    },
+    {
+      "id": "sniper50",
+      "name": "Scharfschützengewehr (.50)",
+      "klasse": "schwer",
+      "ep": 2,
+      "profil": [
+        "tagKlein"
+      ],
+      "profilText": "Durchschlag 2 statt 1, kleiner Tag Benommen (Druckwelle)",
+      "tag": "Benommen",
+      "durchschlag": 2,
+      "magazin": 6
+    },
+    {
+      "id": "katana",
+      "name": "Katana",
+      "klasse": "schwer",
+      "ep": 2,
+      "profil": [
+        "zone",
+        "schutzSchaden"
+      ],
+      "profilText": "Zone wählen, +1 Schutz-Schaden",
+      "durchschlag": 1
+    },
+    {
+      "id": "splittergranate",
+      "name": "Splittergranate",
+      "klasse": "schwer",
+      "ep": 2,
+      "profil": [
+        "ziele3"
+      ],
+      "profilText": "bis zu 3 Ziele (Wegwurf)",
+      "durchschlag": 1,
+      "magazin": 1,
+      "wegwurf": true
+    },
+    {
+      "id": "blendgranate",
+      "name": "Blendgranate",
+      "klasse": "explosiv",
+      "ep": 3,
+      "profil": [
+        "ziele3",
+        "tagKlein"
+      ],
+      "profilText": "bis zu 3 Ziele, kleiner Tag Geblendet (Wegwurf)",
+      "tag": "Geblendet",
+      "durchschlag": 1,
+      "magazin": 1,
+      "wegwurf": true
+    },
+    {
+      "id": "lmg",
+      "name": "LMG (Dauerfeuer)",
+      "klasse": "schwer",
+      "ep": 2,
+      "profil": [
+        "ziel2",
+        "tagKlein"
+      ],
+      "profilText": "zweites Ziel, kleiner Tag Niedergehalten",
+      "tag": "Niedergehalten",
+      "durchschlag": 1,
+      "magazin": 3,
+      "schwerNachladen": true
+    },
+    {
+      "id": "raketenwerfer",
+      "name": "Raketenwerfer",
+      "klasse": "explosiv",
+      "ep": 3,
+      "profil": [
+        "flaeche"
+      ],
+      "profilText": "Fläche (ein Schuss)",
+      "durchschlag": 1,
+      "magazin": 1,
+      "schwerNachladen": true
+    }
   ],
-  "waffenlos": { "name": "Hände und Füße (Tödliche Hände)", "durchschlag": 1, "abLevel": 4, "profilText": "kein Profil, nur Durchschlag 1" }
+  "waffenlos": {
+    "name": "Hände und Füße (Tödliche Hände)",
+    "durchschlag": 1,
+    "abLevel": 4,
+    "profilText": "kein Profil, nur Durchschlag 1"
+  },
+  "munition": {
+    "magazin": 6,
+    "magazinSchwer": 3,
+    "magazinRakete": 1,
+    "vorrat": 3,
+    "vorratSchwer": 2,
+    "nachladenTag": "Nachladen"
+  }
 }

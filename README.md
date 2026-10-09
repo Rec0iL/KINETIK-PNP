@@ -40,7 +40,7 @@ Keine Lebenspunkte: Treffer kosten **Schutz**, dann **Willenskraft**, und erst h
 </tr>
 </table>
 
-Alles Weitere steht im [Regelwerk](regelwerk/KINETIK_Regelwerk.md) (aktuell **v3.5**, Alpha, in aktiver Entwicklung).
+Alles Weitere steht im [Regelwerk](regelwerk/KINETIK_Regelwerk.md) (aktuell **v3.6**, Alpha, in aktiver Entwicklung).
 
 ## Die Web-App
 

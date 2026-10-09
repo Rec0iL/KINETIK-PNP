@@ -6,3 +6,4 @@ export * from './probe';
 export * from './moves';
 export * from './npc';
 export * from './gift';
+export * from './ammo';

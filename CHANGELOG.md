@@ -2,6 +2,9 @@
 
 Alle wesentlichen Änderungen am Regelwerk. Details stehen jeweils im Änderungsprotokoll am Ende von `regelwerk/KINETIK_Regelwerk.md`.
 
+## v3.6 (2026-10-09)
+- Munition (optional) und Nachladen in 2.5, Flächenangriffe in 3.14 (Fläche 3 EP ab Level 1). Neue Waffen Granaten, LMG, Raketenwerfer. Neue Moves Wick Flick und Trommel-Salto.
+
 ## v3.5 (2026-10-01)
 - Power-Scale nach Setting (Kapitel 1): frei vom SL gewählt, das Titel-Level misst den Rang innerhalb des Settings.
 - Heimlichkeit (Kapitel 4.1): PvE gegen Goons als Probe gegen die Gruppen-Wachsamkeit, PvP gegen Spieler, Elite und Bosse als Heimlichkeits-Clash. Neue Moves Meuchelstoß und Schattenschritt, Beispiel 5.

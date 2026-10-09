@@ -1,5 +1,5 @@
 {
-  "rules_version": "3.5",
+  "rules_version": "3.6",
   "effekte": [
     {
       "id": "zone",
@@ -111,6 +111,18 @@
       "name": "Tödliches Gift (sterbend nach Verzögerung)",
       "ep": 3,
       "gift": true
+    },
+    {
+      "id": "nachladen",
+      "name": "Nachladen im Clash ohne Tag",
+      "ep": 1,
+      "text": "Waffe wird als Teil des Angriffs nachgeladen, der Tag Nachladen entfällt (2.5)"
+    },
+    {
+      "id": "flaeche",
+      "name": "Fläche (alle Ziele in einer Zone)",
+      "ep": 3,
+      "text": "Raum, Straße, Hof; größere Flächen wachsen mit den EP (3.14)"
     },
     {
       "id": "freiKlein",

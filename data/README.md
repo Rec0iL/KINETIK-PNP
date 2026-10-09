@@ -1,6 +1,6 @@
 # Regeldaten
 
-Maschinenlesbare Fassung der Regeln (Stand: Regelwerk v3.5) als gemeinsame Quelle für alle Tools. Jede Datei trägt ein Feld `rules_version`. Die Web-App liest die Dateien zur Build-Zeit, das Skript `scripts/check-data.mjs` prüft sie (`npm run check-data` in `tools/kinetik-vtt`).
+Maschinenlesbare Fassung der Regeln (Stand: Regelwerk v3.6) als gemeinsame Quelle für alle Tools. Jede Datei trägt ein Feld `rules_version`. Die Web-App liest die Dateien zur Build-Zeit, das Skript `scripts/check-data.mjs` prüft sie (`npm run check-data` in `tools/kinetik-vtt`).
 
 | Datei | Inhalt |
 |---|---|

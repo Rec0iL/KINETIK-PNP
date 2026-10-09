@@ -1,5 +1,5 @@
 {
-  "rules_version": "3.5",
+  "rules_version": "3.6",
   "klein": [
     "Am Boden",
     "Geblendet",
@@ -16,7 +16,9 @@
     "Verschmutzt",
     "Misstrauisch",
     "Verdacht",
-    "Exponiert"
+    "Exponiert",
+    "Nachladen",
+    "Niedergehalten"
   ],
   "gross": [
     "Betäubt",

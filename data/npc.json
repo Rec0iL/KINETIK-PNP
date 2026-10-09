@@ -1,5 +1,5 @@
 {
-  "rules_version": "3.5",
+  "rules_version": "3.6",
   "hinweis": "Level, Bonus und Ausgeschaltet-bei stammen aus 3.7 und 3.11, Schutz und WK aus der Tabelle in 3.7 (Richtwerte, frei änderbar).",
   "leiter": [
     {

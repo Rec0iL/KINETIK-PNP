@@ -1,6 +1,6 @@
 # **KINETIK: Cinematic Action Roleplaying**
 
-*Ein Tabletop-Regelwerk für grenzenlose, filmische Action. Version 3.5.*
+*Ein Tabletop-Regelwerk für grenzenlose, filmische Action. Version 3.6.*
 
 ---
 
@@ -137,6 +137,10 @@ Energie und Willenskraft steigen nie über ihr Maximum.
 | Schrotflinte | schwer (2 EP) | zweites Ziel, kleiner Tag *Am Boden* |
 | Scharfschützengewehr (.50) | schwer (2 EP) | **Durchschlag 2** statt 1, kleiner Tag *Benommen* (Druckwelle) |
 | Katana | schwer (2 EP) | Zone wählen, +1 Schutz-Schaden |
+| Splittergranate | schwer (2 EP), Wegwurf | bis zu 3 Ziele (3.14) |
+| Blendgranate | Explosiv (3 EP), Wegwurf | bis zu 3 Ziele, kleiner Tag *Geblendet* |
+| LMG (Dauerfeuer) | schwer (2 EP) | zweites Ziel, kleiner Tag *Niedergehalten* |
+| Raketenwerfer | Explosiv (3 EP), ein Schuss | Fläche (3.14) |
 
 * **Mit Moves kombinieren:** Profil und Durchschlag der Waffe gelten zusätzlich zu einem Move. Doppelte Effekte zählen nur einmal, und Durchschlag entfällt, wenn der Move den Schutz ohnehin ignoriert oder zerstört.
 * **Eigene Waffen:** Der SL baut weitere Profile nach demselben Muster.
@@ -146,6 +150,15 @@ Energie und Willenskraft steigen nie über ihr Maximum.
 **Deckung:** Deckung ist eine Schutzart gegen Schüsse: **Holztisch 1, Autotür 2, Betonsäule 3**. Sie nutzt sich ab wie Schutz (Holz splittert, Glas zerspringt), wirkt nicht im Nahkampf und endet, sobald man sie verlässt. Deckung und Rüstung addieren sich nicht, es zählt der höhere Wert. Moves wie der Querschläger ignorieren Deckung.
 
 **Verschleiß und Komplikationen:** Der SL entscheidet, wie lange Waffen halten. Er bringt Komplikationen typischerweise als kleinen Tag über den Schlagabtausch-Nachteil ein: *Ladehemmung*, *Magazin leer*, *Klinge steckt im Knochen fest*, *Lauf weggedrückt*, *Verschmutzt* (Durchschlag entfällt, bis die Waffe gereinigt ist). Große Komplikationen (Waffe bricht, Klinge wird stumpf und verliert ihr Profil) kommen als Preis eines legendären Moves, als "Erfolg mit Preis" oder schleichend über eine Story. Kleine Waffen-Tags lassen sich mit der Kinetik-Regel umdrehen: Das herausgezogene Magazin wird in der Luft gefangen und direkt zurück in den Magwell gedroppt.
+
+**Nachladen.** Für alle Feuerwaffen gilt dasselbe: Ein Magazin zu wechseln, eine Trommel zu füllen oder Schrotpatronen nachzustopfen dauert gleich lang, egal ob Pistole, M4 oder Schrotflinte. Wer **im Clash** nachlädt, bekommt den kleinen Tag *Nachladen* (Gegner +1 im nächsten Clash). In ruhigen Momenten (Deckung ohne Angreifer, Pause) ist es gratis. **Schwere Waffen** (LMG mit Gurt, Raketenwerfer, Flammenwerfer) brauchen eine **ganze Aktion** und ebenfalls den Tag. Der Tag lässt sich wie jeder kleine Tag mit der Kinetik-Regel (3.3) umdrehen, ein Move wie *Wick Flick* (5.2) macht ihn ganz überflüssig.
+
+**Munitionstracking (optional):** Wer es genauer mag, zählt Munition mit einem **W6** am Tisch (auch online) mit.
+
+* **Magazin:** Eine Waffe hält **6 Angriffe**, schwere Waffen **3**, ein Raketenwerfer **1**. Jeder Angriff mit der Waffe (auch Verteidigungsschüsse) zählt den W6 um 1 herunter. Bei 0 ist das Magazin leer, und der nächste Angriff verlangt vorher das Nachladen (siehe oben).
+* **Vorrat (noch eine Stufe, je nach Setting):** Jeder Charakter trägt **3 Magazine pro Waffe** (schwere Waffen 2). Nachschub gibt es per Story, Plünderung oder Rast. Ohne Vorrat spielt der Tisch nur mit dem Magazin.
+* **Moves und Momentum:** Manche Moves laden als Teil ihres Effekts nach (*Wick Flick*, *Trommel-Salto*, 5.2). Damit fällt der Tag weg, und bei Momentum-Moves lässt sich das Nachladen sogar zur Showeinlage ausbauen.
+* **Ohne Tracking** bleiben die Komplikationen von oben (*Ladehemmung*, *Magazin leer*) beim SL.
 
 **Härtegrad (optional):** Für besonders tödliche Runden: Ein Waffentreffer gegen ein Ziel **ohne passenden Schutz** verursacht schon bei Δ = T - 1 (dem obersten Schlagabtausch-Wert) eine Verletzung.
 
@@ -363,6 +376,19 @@ Für erfahrene Gruppen, die den narrativen Flow nicht durch verpatzte Würfe st�
 
 Erst wenn das numerische Ergebnis feststeht (Dominanz, Schlagabtausch, Konter), beschreibt der Spieler (oder bei einem Konter der Verteidiger) im Detail, wie genau die Szene abläuft, und wählt in diesem Moment auch seinen Move. Das verhindert, dass man eine extrem coole Aktion beschreibt, nur um dann eine 2 zu würfeln und es ungeschickt zurücknehmen zu müssen.
 
+### **3.14 Flächenangriffe (AoE)**
+
+Granaten, Explosionen, Energiewellen und Rundum-Schläge treffen mehrere Ziele auf einmal. Zweites Ziel (1 EP) und bis zu 3 Ziele (2 EP) gibt es im Katalog schon (5.1). Darüber liegt die **Fläche**.
+
+* **Fläche (3 EP):** Alle Ziele in einer **Zone** (Raum, Straße, Hof). Das reicht schon für Level 1, denn 3 EP sind der Move-Deckel dort. Größere Flächen wachsen mit den EP: etwa **5 EP** ein Gebäude oder Block, ab **7 EP** eine ganze Landschaft (die *Gigantische Elementar-Sphäre* aus Beispiel 4).
+* **Granaten und Wurfgeräte sind Waffen, keine Moves:** Der Wurf ist ein normaler Angriff mit dem Profil der Waffe (2.5). Ein Move kommt dazu, wenn der Wurf etwas Besonderes kann (Trickwurf, Rückprall).
+* **Ablauf:** Der Angreifer würfelt **einmal**. Jedes Ziel würfelt seine Reaktion einzeln.
+* **Kein Konter:** Der Angreifer ist nicht im Nahkampf. Ein **Konter** des Ziels bedeutet nur *Entkommen*, das Ziel bleibt unverletzt, schlägt aber nicht zurück. Ein **perfekter Konter** gibt es nur bei Nahkampf-Flächen (Schockwelle, Wirbelschlag).
+* **Goons:** Ein Treffer (Schlagabtausch oder besser) schaltet **bis zu 5 Goons** in der Fläche aus, bei "bis zu 3 Ziele" bis zu 3. Eine Goon-Gruppe handelt als ein Charakter (3.7).
+* **Deckung** wirkt nur zur **Hälfte** (abgerundet), denn Splitter und Druckwelle kommen um Ecken. Rüstung wirkt normal.
+* **Verbündete in der Fläche:** Der Angreifer legt vorher fest, wen er verschont. Wer es nicht tut, riskiert den Preis *Kollateralschaden* (5.4).
+* **Setting:** Dasselbe Raster trägt Granate und Chi-Welle. Die Beschreibung ändert sich, nicht das EP-Gerüst.
+
 ---
 
 ## **4. Proben gegen die Umgebung (Nicht-Kampf-Skills)**
@@ -441,7 +467,7 @@ Spieler erfinden Moves frei, und es gibt **keine Obergrenze** für die Anzahl. E
 |---|---|
 | **+1** | Zone wählen · kleiner Tag (Am Boden, Geblendet, Entwaffnet, Gelähmt) · zweites Ziel · +1 Schutz-Schaden · +2 WK- oder Energie-Schaden · Durchschlag 1 (Schutz -1 für diesen Clash) · Gift schwach (3.11) · ★ +1 auf den Wurf (max. +2) · ★ Energie oder WK +2 wiederherstellen (nur sich selbst) |
 | **+2** | Schutzart ignorieren oder Schutz zerstören (auf 0 bis Szenenende) · Verletzung auch ohne Dominanz · großer Tag (Betäubt, Fixiert, Gewürgt) · bis zu 3 Ziele · Gift stark oder Lähmgift (3.11) · ★ Energie oder WK +2 für Verbündete wiederherstellen (bis zu 3 Verbündete) |
-| **+3** | Tödliches Gift (3.11) · große Effekte außerhalb des Katalogs |
+| **+3** | Fläche (3.14) · Tödliches Gift (3.11) · große Effekte außerhalb des Katalogs |
 
 **Effekte außerhalb des Katalogs** schätzt der SL: klein = 1 EP, mittel = 2 EP, groß = 3 EP.
 
@@ -487,6 +513,8 @@ Die Kosten gelten für das jeweilige Mindestlevel (Meisterschaft 0 bzw. die Meis
 | **Blasrohr-Pfeil** (Assassine) | Präzision | 3 | 1 | 3 Energie | Ein Pfeil in Hals oder Gesicht. Trifft er einen Gegner ohne Schutz (oder bei Dominanz mit Verletzung), ist er *Vergiftet* (stark, mit Verzögerung bis 3 Runden). *Gift stark 2, Zone wählen 1.* |
 | **Dokushu-Berührung** (Gifthand) | Präzision | 3 | 1 | 3 Energie | Eine Berührung, die jede Rüstung umgeht: Das Gift (schwach) wirkt auch durch den Schutz. *Schutzart ignorieren 2, Gift schwach 1.* |
 | **Garrotte** (Attentäter) | Präzision | 3 | 1 | 3 Energie | Vorbedingung: unbemerkt. Entzieht 4 Energie und setzt den großen Tag *Gewürgt*, lautlos. Das Opfer kann nicht rufen. *Energie-Schaden 2, großer Tag 2, Vorbedingung -1.* |
+| **Wick Flick** (Gun-Fu) | Präzision | 2 | 1 | 2 Energie | Nachladen und Waffenwechsel im Clash, ohne den Tag *Nachladen*, als Teil des Angriffs. Der Schuss geht in eine gewählte Zone. *Nachladen 1, Zone wählen 1.* |
+| **Trommel-Salto** (Anime-Grenadier) | Fluss | 4 | 2 | 1 Momentum, 1 Energie | Lauf die Wand hoch, die Kugeln fallen aus der Brust, die Trommel fängt sie auf, im Rückwärtssalto geht der Schuss in bis zu 3 Feinde. Nachladen inklusive. *Bis zu 3 Ziele 2, Nachladen 1, Durchschlag 1.* |
 
 **Design-Hinweis: Ausnahmen von den Regeln.** Moves dürfen eine Grundregel gezielt brechen, solange sie dafür bezahlen. Der *Lock Reversal* ist ein Beispiel dafür: Große Tags lassen sich eigentlich nicht umdrehen (3.3), aber ein Aikidoka hat genau dafür gelernt. Der Ausgleich steckt im Raster: Der Effekt wird mit EP bewertet, die Vorbedingung (der Gegner muss den Hebel ansetzen) bringt einen Rabatt, und die Kosten sinken mit der Meisterschaft (Level 1: 3 Energie, Level 5: 1 Energie, Level 10: 0). Ähnlich lassen sich Ausnahmen für andere Fälle bauen, z.B. ein Move, der einen Würgegriff löst, oder einer, der Deckung ignoriert. Ob ein Move so eine Ausnahme bekommt, entscheidet der SL nach dem Check aus 5.1 (Gegenspiel, Preis, Angemessenheit). Es ist ein Vorschlag, keine feste Regel.
 
@@ -766,6 +794,11 @@ Ein Boss mit gleichem Bonus ist als Gruppenboss gedacht. Für ein Solo-Duell sol
 * **Neue Moves (5.2):** *Blasrohr-Pfeil*, *Dokushu-Berührung*, *Garrotte*. **Legendärer Move (5.4):** *Todesberührung* (Dokushu). **Beispiel 6 (6):** Gift und Töten. **Beispiel 7 (6):** Den Move nicht einsetzen (Variante von Beispiel 2).
 
 * **Klarstellungen (aus der digitalen Umsetzung):** Eigene Kampagnenstufe mit frei gewählten Budgets (2.4), Zählung der Attributspunkte (2.4), wirksamer Schutz bei Durchschlag und Ignorieren (3.2), Helden-Schwelle nur zwischen Spielercharakteren und NPCs sowie Lücke ohne Tags und Überzahl (3.4, 3.5), Deckelung des Unterlegenen bei Außer Reichweite (3.5), Richtwerte für Schutz und Willenskraft der NPC-Leiter (3.7), Schläger wie Elite (3.11), Reihenfolge der Abzüge und ★-Effekte in Momentum-Moves (5.1), 7 EP als Meister-Move (5.4).
+
+## **Änderungsprotokoll v3.5 → v3.6**
+
+* **Nachladen und Munition (2.5):** Alle Feuerwaffen laden gleich schnell nach, im Clash gibt das den kleinen Tag *Nachladen*, schwere Waffen brauchen eine Aktion. Optional: W6-Magazin (6/3/1) und Magazin-Vorrat. Neue Waffen: Splitter- und Blendgranate, LMG, Raketenwerfer.
+* **Flächenangriffe (3.14):** Fläche (3 EP, ab Level 1), Ablauf mit Einzelwurf je Ziel, Konter wird Entkommen, Goons bis 5, Deckung halb. Neue Moves *Wick Flick* und *Trommel-Salto* (5.2).
 
 **Zur Bestätigung (aus v3.1):**
 

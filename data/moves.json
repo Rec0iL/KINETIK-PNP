@@ -1,5 +1,5 @@
 {
-  "rules_version": "3.5",
+  "rules_version": "3.6",
   "quelle": "Kapitel 5.2 und 5.4 (Richtwerte)",
   "moves": [
     {
@@ -393,6 +393,49 @@
         "Narbe",
         "Selten"
       ]
+    },
+    {
+      "id": "wick-flick",
+      "name": "Wick Flick",
+      "titel": "Gun-Fu",
+      "attribut": [
+        "praezision"
+      ],
+      "ep": 2,
+      "minLevel": 1,
+      "text": "Nachladen und Waffenwechsel im Clash, ohne den Tag Nachladen, als Teil des Angriffs. Der Schuss geht in eine gewählte Zone.",
+      "effekte": [
+        {
+          "id": "nachladen"
+        },
+        {
+          "id": "zone"
+        }
+      ],
+      "abzuege": []
+    },
+    {
+      "id": "trommel-salto",
+      "name": "Trommel-Salto",
+      "titel": "Anime-Grenadier",
+      "attribut": [
+        "fluss"
+      ],
+      "ep": 4,
+      "minLevel": 2,
+      "text": "Die Wand hoch, die Kugeln fallen aus der Brust, die Trommel fängt sie auf, im Rückwärtssalto geht der Schuss in bis zu 3 Feinde. Nachladen inklusive.",
+      "effekte": [
+        {
+          "id": "ziele3"
+        },
+        {
+          "id": "nachladen"
+        },
+        {
+          "id": "durchschlag"
+        }
+      ],
+      "abzuege": []
     }
   ]
 }

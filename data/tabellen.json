@@ -1,5 +1,5 @@
 {
-  "rules_version": "3.5",
+  "rules_version": "3.6",
   "attribute": [
     { "key": "fluss", "name": "Fluss", "en": "Flow", "kurz": "FLU", "text": "Akrobatik, weiche Kampfkünste, Ausweichen, nahtlose Bewegungen." },
     { "key": "praezision", "name": "Präzision", "en": "Precision", "kurz": "PRÄ", "text": "Scharfschützen, gezielte Treffer auf Schwachstellen, feine Tätigkeiten." },

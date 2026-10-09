@@ -94,6 +94,7 @@
     {#if sit.kind === 'defend'}
       <label class="s">Angreifer (Überzahl)<Stepper bind:value={sit.attackers} min={1} max={10} label="Angreifer" disabled={!editable && sit.status !== 'released'} /></label>
     {/if}
+    {#if sit.area}<p class="dim"><span class="chip accent">{sit.area === 'flaeche' ? 'Fläche' : 'Mehrere Ziele'}</span> weitere Ziele würfeln einzeln (3.14)</p>{/if}
     <div class="row gift">
       <label class="s">Gift<select value={sit.gift?.level ?? ''} onchange={(e) => setGiftLevel(e.currentTarget.value)} disabled={sit.status === 'resolved' || sit.status === 'cancelled'} aria-label="Gift">
         <option value="">kein Gift</option>

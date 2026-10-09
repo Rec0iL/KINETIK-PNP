@@ -55,8 +55,8 @@ export type PatchOp =
   | { op: 'poison'; poison: Poison }
   /** Giftliste ersetzen (nach einem Rundenende oder einem Gegenmittel). */
   | { op: 'poisons'; list: Poison[] }
-  /** Sterbend durch Gift (3 Runden, bis stabilisiert). */
-  | { op: 'dying' };
+  /** Sterbend (3 Runden, bis stabilisiert): durch Gift oder durch einen Gnadenstoß (3.11). */
+  | { op: 'dying'; why?: 'gnadenstoss' };
 
 export interface HelloMsg {
   t: 'hello';

@@ -35,7 +35,7 @@ const attrKeys = new Set(tab.attribute.map((a) => a.key));
 for (const w of waffen.waffen) {
   for (const p of w.profil) if (!effekte.has(p)) err(`waffen: ${w.id} verweist auf unbekannten Effekt ${p}`);
   const sum = w.profil.reduce((s, p) => s + effekte.get(p).ep, 0);
-  const klasseEp = w.klasse === 'leicht' ? 1 : 2;
+  const klasseEp = w.klasse === 'leicht' ? 1 : w.klasse === 'explosiv' ? 3 : 2;
   if (w.ep !== klasseEp) err(`waffen: ${w.id} ep ${w.ep} passt nicht zur Klasse ${w.klasse}`);
   if (w.id !== 'sniper50' && sum !== w.ep) err(`waffen: ${w.id} Profil-EP ${sum} != ${w.ep}`);
 }

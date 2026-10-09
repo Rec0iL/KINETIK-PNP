@@ -805,6 +805,7 @@ function onPlan(playerId: string, d: Draft) {
   const sit = createSituation(c, uid(), playerId, {
     kind: d.kind, npcId: d.npcId, attr: d.attr, technique: String(d.technique ?? ''), moveName: String(d.moveName ?? ''),
     tagsUsed: Array.isArray(d.tagsUsed) ? d.tagsUsed.map(String) : [], gift,
+    area: d.area === 'flaeche' || d.area === 'ziele' ? d.area : undefined,
   });
   feed(`${p.name} plant: ${KIND_LABEL[sit.kind]}${npc ? ` gegen ${npc.name}` : ''}.`);
   pushToast(`${p.name} plant: ${KIND_LABEL[sit.kind]}${npc ? ` gegen ${npc.name}` : ''}`, 'info', 5000);

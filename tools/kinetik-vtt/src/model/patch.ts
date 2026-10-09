@@ -76,7 +76,7 @@ export function describePatch(ops: PatchOp[]): string {
         case 'untag': return `Tag weg: ${op.name}`;
         case 'poison': return `Vergiftet (${GIFT[op.poison.level].label})`;
         case 'poisons': return 'Gift aktualisiert';
-        case 'dying': return 'Sterbend durch Gift';
+        case 'dying': return op.why === 'gnadenstoss' ? 'Gnadenstoß: sterbend' : 'Sterbend durch Gift';
       }
     })
     .join(', ');

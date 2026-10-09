@@ -34,6 +34,10 @@
     <button class="btn sm" onclick={() => go({ op: 'heal', zone })} title="Letzte Verletzung dieser Zone heilen">Heilen</button>
   </div>
   <div class="row">
+    <span class="lbl">Töten</span>
+    <button class="btn sm danger" onclick={() => go({ op: 'dying', why: 'gnadenstoss' })} title="Gnadenstoß gegen einen Wehrlosen (3.11): ein Spielercharakter wird sterbend (3 Runden), nie sofort tot">Gnadenstoß</button>
+  </div>
+  <div class="row">
     <span class="lbl">Tag</span>
     <input bind:value={tagName} placeholder="z.B. Am Boden" list="tag-suggest" aria-label="Tag" />
     <select bind:value={tagSize} aria-label="Größe"><option value="klein">klein</option><option value="gross">groß</option></select>
