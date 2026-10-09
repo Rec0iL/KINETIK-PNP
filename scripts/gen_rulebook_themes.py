@@ -88,10 +88,14 @@ ACCENT = {  # Farben für das (nicht genutzte) PDF-Theme des Projekts
 
 
 # ---------- Robustheit für lange Läufe ----------
-# Nach rund 30 Stunden hatte ComfyUI über 20 GB RAM belegt und wurde vom Kernel beendet. Deshalb: Speicher regelmäßig freigeben,
-# ein totes ComfyUI neu starten (wie Pinokio: main.py --reserve-vram 3, nur lokal) und nur zeitweilige Fehler (agy, Netz) überstehen.
+# ComfyUI wächst über die Stunden auf 20 bis 27 GB und wurde einmal vom Kernel beendet. Deshalb: ein totes ComfyUI neu starten
+# (wie Pinokio: main.py --reserve-vram 3, nur lokal) und zeitweilige Fehler (agy, Netz) überstehen.
 COMFY_DIR = Path(os.environ.get("COMFY_DIR", "/mnt/nvme-data/pinokio/api/comfy.git/app"))
 FREE_EVERY = 12      # alle n erzeugten Bilder Modelle entladen und den Cache leeren
+
+
+def cfg_url():
+    return json.loads((MAIN / "project.json").read_text(encoding="utf-8"))["comfy"]["url"]
 
 
 def comfy_alive(url):
@@ -102,10 +106,8 @@ def comfy_alive(url):
         return False
 
 
-COMFY_MAX_ANON_GB = 16  # darüber startet das Skript ComfyUI zwischen zwei Bildern neu. Normal sind 9 bis 10 GB, beim Absturz waren es 27 GB.
-                        # Gemessen wird nur der anonyme Speicher: die Modelldateien (weitere ~10 GB) liegen im Dateicache und gibt der Kernel selbst frei.
-
-
+# ComfyUI wird nicht vorsorglich neu gestartet: Es läuft, bis es von selbst abstürzt (die Speichergrenze des systemd-Bereichs sorgt dafür, dass
+# dann nur ComfyUI stirbt), und wird erst dann neu gestartet.
 def comfy_pid():
     """PID des ComfyUI-Pythonprozesses (nicht systemd-run, nicht eine Shell, die zufällig denselben Text enthält)."""
     out = subprocess.run(["pgrep", "-f", "main.py --reserve-vram"], capture_output=True, text=True).stdout.split()
@@ -202,9 +204,6 @@ def harden_comfy():
         for attempt in range(4):
             if state["n"] and state["n"] % FREE_EVERY == 0:
                 free(self)
-            rss = comfy_rss_gb()
-            if rss > COMFY_MAX_ANON_GB:
-                restart_comfy(self.url, f"{rss:.1f} GB anonymer RAM")
             state["n"] += 1
             try:
                 return orig(self, wf, *a, **kw)
@@ -330,8 +329,14 @@ def main():
     ap.add_argument("--fillers", action="store_true",
                     help="Füllbilder für die Lücken im PDF-Satz des Themes planen und erzeugen (nach den Hauptbildern)")
     ap.add_argument("--pdf-out", help="Zieldatei bei --pdf mit genau einem Theme")
+    ap.add_argument("--ensure-comfy", action="store_true", help="nur sicherstellen, dass ComfyUI läuft (startet es bei Bedarf) und beenden")
     ap.add_argument("--force-plan", action="store_true", help="vorhandene Prompts neu schreiben lassen")
     args = ap.parse_args()
+
+    if args.ensure_comfy:
+        ok = ensure_comfy(cfg_url())
+        print("ComfyUI läuft" if ok else "ComfyUI ließ sich nicht starten", flush=True)
+        sys.exit(0 if ok else 1)
 
     if args.pdf:
         n = sync_pdf_fonts()
