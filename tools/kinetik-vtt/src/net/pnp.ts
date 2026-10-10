@@ -16,6 +16,8 @@ export const PNP_PROTOCOL = 1;
 export interface PnpImage { name: string; mime: string; b64: string }
 export interface PnpCharacter {
   id: string; role: string; name: string; preset?: string; sheet: Record<string, unknown>; notes?: string; portrait?: PnpImage;
+  /** Id der Karte, auf der der Charakter steht (mit der Karte zusammen gesendet): ihre Token mit `character` = diese Id sind seine Token. */
+  scene?: string;
   /** Nur bei Spielercharakteren (Meldung an PenNodePaper). */
   playerName?: string; online?: boolean;
 }
@@ -24,7 +26,8 @@ export type PnpPush =
   | { kind: 'scene'; payload: {
       id: string; name: string; image: PnpImage; width: number; height: number;
       grid: { type: 'square' | 'hex'; size: number; offsetX: number; offsetY: number; unitsPerCell: number; unit: string; hidden?: boolean };
-      tokens: { x: number; y: number; kind: 'pc' | 'npc' | 'enemy'; label?: string }[]; activate?: boolean } }
+      /** `character`: Id des Charakters (PnpCharacter.id), für den der Token steht; die Charaktere folgen direkt nach der Karte. */
+      tokens: { x: number; y: number; kind: 'pc' | 'npc' | 'enemy'; label?: string; character?: string }[]; activate?: boolean } }
   | { kind: 'character'; payload: PnpCharacter }
   | { kind: 'music_cue'; payload: { action: 'play' | 'stop'; trackId?: string; mood?: string } };
 export type PnpIn =
@@ -118,7 +121,7 @@ export function pnpProfile(version: string) {
     id: 'kinetik-vtt', name: 'KINETIK VTT', version, protocol: PNP_PROTOCOL,
     push: {
       handout: { text: true, image: true, toPlayer: true },
-      scene: { grids: ['square'], tokens: true },
+      scene: { grids: ['square'], tokens: true, characterTokens: true },
       character: {},
       music_cue: { tracks: true, mood: true },
     },
@@ -233,20 +236,37 @@ export function npcFromSheet(c: PnpCharacter, id: string, portrait: { img: strin
   return next;
 }
 
+/** Boss und Nemesis stehen in KINETIK als 2x2-Token auf der Karte (wie beim Aufstellen im GM-Menü), alle anderen als 1x1. */
+export const tokenSizeOfTier = (type: NpcType): number => (type === 'boss' || type === 'nemesis' ? 2 : 1);
+
+/** Token auf `size` Felder bringen und dabei seine linke obere Zelle behalten (die Mitte wandert mit). */
+function resizedToken(t: Token, size: number, grid: number): Token {
+  const d = ((size - t.size) * grid) / 2;
+  return { ...t, size, x: Math.round(t.x + d), y: Math.round(t.y + d) };
+}
+
 /** Karte (Bild + Raster + Startpositionen) -> Szene. Positionen kommen in Feldern an und werden zu Pixelmitten.
  *  Spieler legt der SL im Menü an: Startmarken (`pc`) kommen nur an, wenn jemand sie ausdrücklich schickt (Test). */
-export function sceneFromPush(p: Extract<PnpPush, { kind: 'scene' }>['payload'], stored: { hash: string; width: number; height: number }, uid: () => string): MapState {
+export function sceneFromPush(p: Extract<PnpPush, { kind: 'scene' }>['payload'], stored: { hash: string; width: number; height: number }, uid: () => string, npcs: Pick<Npc, 'id' | 'src' | 'token' | 'type'>[] = []): MapState {
   const k = p.width > 0 ? stored.width / p.width : 1; // das Bild kann beim Speichern verkleinert worden sein
   const s = newScene(p.id, p.name, stored.hash, stored.width, stored.height);
   s.grid = {
     ...s.grid, show: !p.grid.hidden, size: Math.max(8, p.grid.size * k), ox: p.grid.offsetX * k, oy: p.grid.offsetY * k,
     unit: p.grid.unit || 'ft', unitsPerCell: p.grid.unitsPerCell || 1,
   };
-  s.tokens = p.tokens.map((t, i): Token => ({
-    id: uid(), name: (t.label || { pc: `Spieler ${i + 1}`, npc: 'NPC', enemy: 'Gegner' }[t.kind]).slice(0, 40),
-    x: Math.round(((t.x + 0.5) * p.grid.size + p.grid.offsetX) * k), y: Math.round(((t.y + 0.5) * p.grid.size + p.grid.offsetY) * k),
-    size: 1, color: t.kind === 'pc' ? (TOKEN_COLORS[i % TOKEN_COLORS.length] ?? KIND_COLOR.pc) : KIND_COLOR[t.kind], kind: t.kind === 'pc' ? 'pc' : 'npc', hidden: false,
-  }));
+  s.tokens = p.tokens.map((t, i): Token => {
+    // Token eines Charakters: Herkunft merken (`src`), und wenn sein Kampf-Gegner schon da ist, gleich verknüpfen
+    const npc = t.character ? npcs.find((n) => n.src === `pnp:${t.character}`) : undefined;
+    const tok: Token = {
+      id: uid(), name: (t.label || { pc: `Spieler ${i + 1}`, npc: 'NPC', enemy: 'Gegner' }[t.kind]).slice(0, 40),
+      x: Math.round(((t.x + 0.5) * p.grid.size + p.grid.offsetX) * k), y: Math.round(((t.y + 0.5) * p.grid.size + p.grid.offsetY) * k),
+      size: 1, color: t.kind === 'pc' ? (TOKEN_COLORS[i % TOKEN_COLORS.length] ?? KIND_COLOR.pc) : KIND_COLOR[t.kind], kind: t.kind === 'pc' ? 'pc' : 'npc', hidden: false,
+      ...(t.character ? { src: `pnp:${t.character}` } : {}),
+      ...(npc ? { npcId: npc.id, ...(npc.token ? { img: npc.token } : {}) } : {}),
+    };
+    const size = npc ? tokenSizeOfTier(npc.type) : 1;
+    return size === 1 ? tok : resizedToken(tok, size, s.grid.size);
+  });
   return s;
 }
 
@@ -296,7 +316,7 @@ export async function handlePush(host: PnpHost, push: PnpPush): Promise<unknown>
       const p = push.payload;
       if (p.grid.type !== 'square') throw new Error('Hex-Raster werden noch nicht unterstützt');
       const stored = await host.storeImage(p.image, 4096);
-      const scene = sceneFromPush(p, stored, host.uid);
+      const scene = sceneFromPush(p, stored, host.uid, s.combat.npcs);
       const wasLive = s.activeScene === p.id;
       if (s.scenes.some((x) => x.id === p.id)) host.removeScene(p.id);
       host.addScene(scene);
@@ -331,31 +351,58 @@ async function pushCharacter(host: PnpHost, c: PnpCharacter): Promise<unknown> {
     const npc = npcFromSheet(c, existing?.id ?? host.uid(), portrait, existing);
     if (existing) Object.assign(existing, npc);
     else s.combat.npcs.push(npc);
-    // Porträt auch auf den vorhandenen Token dieses Gegners
-    if (portrait) {
-      for (const sc of s.scenes) {
-        const ops: MapOp[] = sc.tokens.filter((t) => t.npcId === npc.id).map((t) => ({ op: 'tok', token: { ...t, img: portrait.token } }));
-        if (ops.length) host.gmMapOps(sc.id, ops);
-      }
+    // Token dieses Gegners verknüpfen: die von PenNodePaper mit der Karte gesendeten (`src`) und die schon verknüpften; Porträt auf alle
+    let tied = 0;
+    for (const sc of s.scenes) {
+      const mine = sc.tokens.filter((t) => t.npcId === npc.id || t.src === `pnp:${c.id}`);
+      tied += mine.length;
+      // Goons: mehrere Token einer Gruppe heißen wie in der VTT sonst auch „Name 1“, „Name 2“ …
+      const numbered = npc.type === 'goon' && mine.length > 1;
+      const want = tokenSizeOfTier(npc.type);
+      const ops: MapOp[] = mine.map((t, i) => ({
+        op: 'tok',
+        // ein Boss steht so groß da wie einer, den man im Menü aufstellt (hat der SL die Größe schon geändert, bleibt sie)
+        token: { ...(t.size === 1 && want !== 1 ? resizedToken(t, want, sc.grid.size) : t), npcId: npc.id, src: `pnp:${c.id}`, ...(numbered && t.name === npc.name ? { name: `${npc.name} ${i + 1}`.slice(0, 40) } : {}), ...(portrait ? { img: portrait.token } : {}) },
+      }));
+      if (ops.length) host.gmMapOps(sc.id, ops);
     }
+    // eine Goon-Gruppe hat mindestens so viele Mitglieder, wie Token für sie auf der Karte stehen
+    if (npc.type === 'goon' && tied > npc.count) npc.count = Math.min(12, tied);
     host.commitCombat();
     host.notify(`PenNodePaper: Gegner „${npc.name}“ ${existing ? 'aktualisiert' : 'zum Kampf hinzugefügt'}`);
     return { npcId: npc.id, updated: !!existing };
   }
 
   if (c.role === 'npc') {
-    const scene = s.scenes.find((x) => x.id === s.activeScene) ?? s.scenes[0];
+    const src = `pnp:${c.id}`;
+    const size = (old?: number) => num(c.sheet.size, 1, 4, old ?? 1);
+    const note = str(c.sheet.note, 80) || undefined;
+    // Steht der NPC schon als Token auf einer Karte (mit ihr gesendet oder früher gesetzt), werden alle seine Token aktualisiert
+    // (Name und Platz bleiben die des SL); sonst setzen wir einen auf die genannte oder aktive Karte.
+    let updated = 0;
+    let sceneId = '';
+    for (const sc of s.scenes) {
+      const mine = sc.tokens.filter((t) => t.src === src);
+      if (!mine.length) continue;
+      host.gmMapOps(sc.id, mine.map((t): MapOp => ({ op: 'tok', token: { ...t, size: size(t.size), note, ...(portrait ? { img: portrait.token } : {}) } })));
+      updated += mine.length;
+      sceneId ||= sc.id;
+    }
+    if (updated) {
+      host.notify(`PenNodePaper: NPC „${c.name}“ aktualisiert`);
+      return { tokenId: s.scenes.find((x) => x.id === sceneId)?.tokens.find((t) => t.src === src)?.id, scene: sceneId, updated: true, tokens: updated };
+    }
+    const scene = s.scenes.find((x) => x.id === c.scene) ?? s.scenes.find((x) => x.id === s.activeScene) ?? s.scenes[0];
     if (!scene) throw new Error('Keine Karte vorhanden: lege zuerst eine Szene an, dann kann der NPC als Token gesetzt werden.');
-    const existing = scene.tokens.find((t) => t.src === `pnp:${c.id}`);
     const g = scene.grid.size;
     const token: Token = {
-      ...(existing ?? { id: host.uid(), x: scene.width / 2, y: scene.height / 2 - g * 2, color: KIND_COLOR.npc, kind: 'npc' as const, hidden: false }),
-      name: c.name.slice(0, 40), size: num(c.sheet.size, 1, 4, existing?.size ?? 1), note: str(c.sheet.note, 80) || undefined, src: `pnp:${c.id}`,
+      id: host.uid(), x: scene.width / 2, y: scene.height / 2 - g * 2, color: KIND_COLOR.npc, kind: 'npc', hidden: false,
+      name: c.name.slice(0, 40), size: size(), note, src,
       ...(portrait ? { img: portrait.token } : {}),
     };
     host.gmMapOps(scene.id, [{ op: 'tok', token }]);
-    host.notify(`PenNodePaper: NPC „${token.name}“ ${existing ? 'aktualisiert' : `auf Karte „${scene.name}“ gesetzt`}`);
-    return { tokenId: token.id, scene: scene.id, updated: !!existing };
+    host.notify(`PenNodePaper: NPC „${token.name}“ auf Karte „${scene.name}“ gesetzt`);
+    return { tokenId: token.id, scene: scene.id, updated: false };
   }
   if (c.role === 'pc') throw new Error('Spielercharaktere gehören den Spielern: sie werden in der VTT gepflegt und nur an PenNodePaper gemeldet.');
   throw new Error(`Unbekannte Rolle „${c.role}“ (bekannt: enemy, npc)`);

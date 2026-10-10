@@ -219,6 +219,108 @@ describe('Charaktere', () => {
   });
 });
 
+describe('Karte mit Charakteren (Token gehören zu ihrem Gegner)', () => {
+  type Tok = { x: number; y: number; kind: 'pc' | 'npc' | 'enemy'; label?: string; character?: string };
+  const sceneP = (tokens: Tok[], over: object = {}) => ({
+    kind: 'scene' as const,
+    payload: {
+      id: 'taverne', name: 'Taverne', image: img('taverne.png'), width: 1344, height: 864,
+      grid: { type: 'square' as const, size: 56, offsetX: 0, offsetY: 0, unitsPerCell: 6, unit: 'ft' }, tokens, ...over,
+    },
+  });
+  const enemy = (id: string, sheet: Record<string, unknown>) => ({ kind: 'character' as const, payload: { id, role: 'enemy', name: 'Hafen-Schläger', sheet, scene: 'taverne', portrait: img('b.png') } });
+
+  it('meldet, dass Token an Charaktere gebunden werden können', () => {
+    expect(pnpProfile('t').push.scene).toMatchObject({ tokens: true, characterTokens: true });
+  });
+
+  it('Karte zuerst, Gegner danach: die Token des Gegners werden mit seinem Kampf-NPC verknüpft (Goons: alle Token, eine Gruppe)', async () => {
+    const { host, session, log } = fakeHost();
+    await run(host, sceneP([
+      { x: 2, y: 2, kind: 'enemy', label: 'Hafen-Schläger', character: 'brute' },
+      { x: 3, y: 2, kind: 'enemy', label: 'Hafen-Schläger', character: 'brute' },
+      { x: 9, y: 4, kind: 'npc', label: 'Ein Fass' },
+    ]));
+    const sc = session.scenes[0];
+    expect(sc.tokens.map((t) => t.src)).toEqual(['pnp:brute', 'pnp:brute', undefined]); // Herkunft gemerkt, noch nicht verknüpft
+    expect(sc.tokens[0].npcId).toBeUndefined();
+
+    const r = await run(host, enemy('brute', { tier: 'goon', count: 1, level: 0 }));
+    expect(r).toMatchObject({ ok: true, data: { updated: false } });
+    const npc = session.combat.npcs[0];
+    expect(npc).toMatchObject({ src: 'pnp:brute', type: 'goon', count: 2 }); // zwei Token auf der Karte: die Gruppe hat mindestens zwei Mitglieder
+    expect(sc.tokens.filter((t) => t.npcId === npc.id)).toHaveLength(2);
+    expect(sc.tokens[0]).toMatchObject({ img: 'data:tok-b.png', npcId: npc.id });
+    expect(sc.tokens.slice(0, 2).map((t) => t.name)).toEqual(['Hafen-Schläger 1', 'Hafen-Schläger 2']); // wie die Goons der VTT sonst: durchnummeriert
+    expect(sc.tokens[2].npcId).toBeUndefined(); // der einfache Marker bleibt einer
+    expect(log).toContain('commit');
+  });
+
+  it('Gegner schon da, dann die Karte (oder die Karte erneut): Token werden gleich verknüpft', async () => {
+    const { host, session } = fakeHost();
+    await run(host, enemy('brute', { tier: 'schlaeger', level: 2, bonus: 2 }));
+    await run(host, sceneP([{ x: 2, y: 2, kind: 'enemy', character: 'brute', label: 'Hafen-Schläger' }]));
+    const npc = session.combat.npcs[0];
+    expect(session.scenes[0].tokens[0]).toMatchObject({ npcId: npc.id, img: 'data:tok-b.png' });
+    // die Karte erneut senden ersetzt Token, der Kampfstand des Gegners bleibt
+    npc.hits = 1;
+    await run(host, sceneP([{ x: 4, y: 4, kind: 'enemy', character: 'brute', label: 'Hafen-Schläger' }]));
+    expect(session.scenes).toHaveLength(1);
+    expect(session.scenes[0].tokens[0]).toMatchObject({ npcId: npc.id });
+    expect(session.combat.npcs).toHaveLength(1);
+  });
+
+  it('Boss und Nemesis stehen so groß (2x2) auf der Karte wie beim Aufstellen im Menü; Schläger und Goons bleiben 1x1', async () => {
+    const { host, session } = fakeHost();
+    await run(host, sceneP([
+      { x: 4, y: 4, kind: 'enemy', character: 'chef', label: 'Der Kapitän' },
+      { x: 8, y: 4, kind: 'enemy', character: 'brute', label: 'Hafen-Schläger' },
+    ]));
+    const sc = session.scenes[0];
+    const g = sc.grid.size;
+    const before = sc.tokens.map((t) => ({ x: t.x, y: t.y }));
+    await run(host, enemy('chef', { tier: 'boss', level: 8, bonus: 6 }));
+    await run(host, enemy('brute', { tier: 'schlaeger', level: 2, bonus: 2 }));
+    expect(sc.tokens[0]).toMatchObject({ size: 2, npcId: session.combat.npcs[0].id });
+    // die linke obere Zelle bleibt: die Mitte liegt auf der Rasterkreuzung (halbes Feld nach rechts unten)
+    expect(sc.tokens[0].x).toBeCloseTo(before[0].x + g / 2, 0);
+    expect(sc.tokens[0].y).toBeCloseTo(before[0].y + g / 2, 0);
+    expect(sc.tokens[1]).toMatchObject({ size: 1, x: before[1].x, y: before[1].y });
+    // eine vom SL geänderte Größe bleibt bei einer erneuten Sendung
+    sc.tokens[0].size = 3;
+    await run(host, enemy('chef', { tier: 'boss', level: 9, bonus: 6 }));
+    expect(sc.tokens[0].size).toBe(3);
+  });
+
+  it('Boss: Gegner schon da, dann die Karte: der Token kommt gleich in der Bossgröße an', async () => {
+    const { host, session } = fakeHost();
+    await run(host, enemy('chef', { tier: 'nemesis', level: 10, bonus: 8 }));
+    await run(host, sceneP([{ x: 4, y: 4, kind: 'enemy', character: 'chef', label: 'Der Kapitän' }]));
+    const t = session.scenes[0].tokens[0];
+    expect(t).toMatchObject({ size: 2, npcId: session.combat.npcs[0].id });
+    expect(t.x).toBe(Math.round((4 + 1) * session.scenes[0].grid.size)); // Rasterkreuzung, nicht Feldmitte
+  });
+
+  it('NPC: der mit der Karte gesendete Token wird aktualisiert, es entsteht kein zweiter', async () => {
+    const { host, session } = fakeHost();
+    await run(host, sceneP([{ x: 5, y: 3, kind: 'npc', label: 'Hinter dem Tresen', character: 'brenn' }]));
+    const r = await run(host, { kind: 'character', payload: { id: 'brenn', role: 'npc', name: 'Brenn', sheet: { note: 'Wirt', size: 2 }, scene: 'taverne', portrait: img('brenn.png') } });
+    expect(r).toMatchObject({ ok: true, data: { updated: true, scene: 'taverne' } });
+    const sc = session.scenes[0];
+    expect(sc.tokens).toHaveLength(1);
+    expect(sc.tokens[0]).toMatchObject({ name: 'Hinter dem Tresen', note: 'Wirt', size: 2, img: 'data:tok-brenn.png', src: 'pnp:brenn' }); // der Name des SL bleibt
+  });
+
+  it('NPC ohne Token auf der Karte wird auf die genannte Karte gesetzt, nicht auf die aktive', async () => {
+    const { host, session } = fakeHost();
+    await run(host, sceneP([], { id: 'taverne' }));
+    await run(host, sceneP([], { id: 'keller', name: 'Keller', activate: true }));
+    expect(session.activeScene).toBe('keller');
+    const r = await run(host, { kind: 'character', payload: { id: 'brenn', role: 'npc', name: 'Brenn', sheet: {}, scene: 'taverne' } });
+    expect(r).toMatchObject({ ok: true, data: { scene: 'taverne' } });
+  });
+});
+
 describe('Musik', () => {
   it('Titelliste enthält mitgelieferte und eigene Titel', async () => {
     const { host } = fakeHost({ tracks: [{ id: 'mine', title: 'Mein Kampfthema', hash: 'abc' }] });
