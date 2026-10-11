@@ -10,6 +10,8 @@ export const de = {
   'nav.gm': 'Spielleiter',
   'nav.join': 'Beitreten',
   'nav.credits': 'Credits',
+  'nav.impressum': 'Impressum',
+  'nav.privacy': 'Datenschutz',
   'theme.label': 'Look',
   'theme.noir': 'Neo-Noir',
   'theme.sincity': 'Film Noir',

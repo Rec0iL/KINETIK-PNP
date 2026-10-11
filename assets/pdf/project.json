@@ -59,5 +59,11 @@
     "cfg": 1.0,
     "sampler": "euler",
     "scheduler": "simple"
-  }
+  },
+  "colophon": [
+    "© 2026 Alexander Freidzon (Rec0iL). KINETIK, Regeltext und Bilder stehen unter Creative Commons BY-NC-SA 4.0: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de",
+    "Die Bilder wurden mit einem KI-Bildmodell (Krea 2) erzeugt.",
+    "Web-App und aktuelle Fassung: https://kinetik.redneck-design.de/ und https://rec0il.github.io/KINETIK-PNP/",
+    "Impressum und Datenschutz: https://kinetik.redneck-design.de/#/impressum"
+  ]
 }

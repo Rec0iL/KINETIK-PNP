@@ -6,7 +6,7 @@
 <p align="center"><b>Cinematic Action Roleplaying</b><br>Gun-Fu · Kampfkunst · Anime</p>
 
 <p align="center">
-  <a href="https://rec0il.github.io/KINETIK-PNP/"><b>Web-App öffnen</b></a> ·
+  <a href="https://kinetik.redneck-design.de/"><b>Web-App öffnen</b></a> ·
   <a href="export/KINETIK_Regelwerk_v3.6.pdf"><b>Regelwerk als PDF</b></a> ·
   <a href="regelwerk/KINETIK_Regelwerk.md">Regeltext</a> ·
   <a href="CHANGELOG.md">Changelog</a>
@@ -44,7 +44,7 @@ Alles Weitere steht im [Regelwerk](regelwerk/KINETIK_Regelwerk.md) (aktuell **v3
 
 ## Die Web-App
 
-**[rec0il.github.io/KINETIK-PNP](https://rec0il.github.io/KINETIK-PNP/)**: im Browser, auch offline nutzbar, auf Handy und Desktop.
+**[kinetik.redneck-design.de](https://kinetik.redneck-design.de/)** (Spiegel: [rec0il.github.io/KINETIK-PNP](https://rec0il.github.io/KINETIK-PNP/)): im Browser, auch offline nutzbar, auf Handy und Desktop.
 
 **Kompatibel mit [PenNodePaper](https://github.com/Rec0iL/PenNodePaper)**: Die Spielleitung kann die Runde mit der Vorbereitungs-App koppeln, siehe [PenNodePaper-Brücke](#pennodepaper-brücke-sl).
 
@@ -186,11 +186,15 @@ Nach Änderungen am Regelwerk: `python3 scripts/build_rulebook_web.py` (Regelwer
 
 ## Credits
 
-- **Regelwerk und Idee**: Rec0iL
+- **Regelwerk und Idee**: Alexander Freidzon (Rec0iL), © 2026
 - **Bilder** (Hero, Kartenmotive, PDF, Beispielkarte): erzeugt mit Krea 2 in ComfyUI
 - **Musik**: Kevin MacLeod ([incompetech.com](https://incompetech.com)), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), siehe [`CREDITS.md`](tools/kinetik-vtt/public/music/CREDITS.md)
 - **Schriften**: Barlow, Barlow Condensed, Bebas Neue, Oswald, Press Start 2P, Silkscreen, VT323, Big Shoulders, Special Elite, Tektur, Noto Serif SC, Bangers, Rye, Arvo, Shippori Mincho, Zen Kaku Gothic New, Courier Prime (Google Fonts, SIL OFL 1.1)
 - **Software**: Svelte, Vite, PeerJS, idb-keyval
+
+## Rechtliches
+
+© 2026 Alexander Freidzon (Rec0iL). Impressum und Datenschutzerklärung stehen in der [Web-App](https://kinetik.redneck-design.de/#/impressum). Die Betreiberangaben liegen nicht im Repository: Wer die App selbst veröffentlicht, trägt eigene Angaben ein (siehe [`tools/kinetik-vtt/README.md`](tools/kinetik-vtt/README.md)).
 
 ## Lizenz
 

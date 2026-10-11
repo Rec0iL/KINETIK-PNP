@@ -2,6 +2,7 @@
   import { tick, untrack } from 'svelte';
   import { rulebook, closeRulebook, rbUrl, rbImg, rbFill, rbHtml, plainText, type RbChapter } from './rulebook.svelte';
   import RulebookDownload from './RulebookDownload.svelte';
+  import { COPYRIGHT } from '../lib/legal';
 
   let scroller = $state<HTMLDivElement>();
   let tocEl = $state<HTMLElement>();
@@ -164,6 +165,11 @@
           {/each}
         </article>
       {/each}
+
+      <footer class="legal pad">
+        <p>{COPYRIGHT}. Regeltext und Bilder: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noreferrer">CC BY-NC-SA 4.0</a>.</p>
+        <p><a href="#/impressum" onclick={closeRulebook}>Impressum</a> · <a href="#/datenschutz" onclick={closeRulebook}>Datenschutz</a></p>
+      </footer>
     {/if}
   </div>
 
@@ -194,6 +200,8 @@
   .bodywrap { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
   .body { flex: 1; overflow-y: auto; overscroll-behavior: contain; }
   .pad { padding: 1rem 1.2rem; }
+  .legal { border-top: 1px solid var(--line); color: var(--ink-dim); font-size: 0.85rem; display: grid; gap: 0.3rem; }
+  .legal p { margin: 0; }
   .err { color: var(--danger); }
 
   /* Bilder werden nie beschnitten: natürliches Seitenverhältnis, Hochformate nur in der Höhe begrenzt. */

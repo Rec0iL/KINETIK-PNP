@@ -322,6 +322,11 @@ def build_html(project, doc, fillers=None):
         out.append("</section>")
         parts.append("\n".join(out))
 
+    # Copyright and licence lines at the end of the document (project.json: "colophon", a list of plain-text lines; URLs become links)
+    if cfg.get("colophon"):
+        link = lambda t: re.sub(r"https?://[^\s<]+", lambda m: f'<a href="{m.group(0)}">{m.group(0)}</a>', t)
+        parts.append('<section class="colophon">' + "".join(f"<p>{link(_esc(line))}</p>" for line in cfg["colophon"]) + "</section>")
+
     fonts_css = (PKG / "fonts" / "fonts.css").read_text(encoding="utf-8").replace(
         "url('fonts/", f"url('{(PKG / 'fonts').as_uri()}/")
     extra_fonts = PKG / "fonts" / "fonts-themes.css"

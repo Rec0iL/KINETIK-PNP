@@ -113,6 +113,8 @@ VIEWS = [
     ("Beitreten", "#/beitreten", None),
     ("Spielleiter", "#/sl", None),
     ("Credits", "#/credits", None),
+    ("Impressum", "#/impressum", None),
+    ("Datenschutz", "#/datenschutz", None),
 ]
 SHEET_TABS = ["Übersicht", "Körper", "Moves", "Ausrüstung", "Tags & Nachteile", "Notizen", "Erschaffung"]
 

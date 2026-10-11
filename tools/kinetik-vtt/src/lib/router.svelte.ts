@@ -1,6 +1,6 @@
 // Minimaler Hash-Router (funktioniert auf github.io ohne Server-Konfiguration).
 export interface Route {
-  name: 'home' | 'create' | 'wizard' | 'join' | 'round' | 'characters' | 'character' | 'builder' | 'dice' | 'gm' | 'credits' | 'notfound';
+  name: 'home' | 'create' | 'wizard' | 'join' | 'round' | 'characters' | 'character' | 'builder' | 'dice' | 'gm' | 'credits' | 'impressum' | 'datenschutz' | 'notfound';
   params: Record<string, string>;
 }
 
@@ -19,6 +19,8 @@ function parse(hash: string): Route {
     case 'beitreten': return { name: 'join', params: { code: parts[1] ?? '' } };
     case 'runde': return { name: 'round', params: {} };
     case 'credits': return { name: 'credits', params: {} };
+    case 'impressum': return { name: 'impressum', params: {} };
+    case 'datenschutz': return { name: 'datenschutz', params: {} };
     default: return { name: 'notfound', params: {} };
   }
 }

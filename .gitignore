@@ -7,6 +7,9 @@ __pycache__/
 
 # Umgebung und Editoren
 .env
+
+# Betreiberangaben für Impressum und Datenschutzerklärung (privat, siehe tools/kinetik-vtt/legal.example.json)
+legal.local.json
 .vscode/
 .idea/
 

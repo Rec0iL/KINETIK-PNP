@@ -1,5 +1,7 @@
 # Lizenz für Inhalte
 
+Copyright © 2026 Alexander Freidzon (Rec0iL)
+
 Der **Regeltext** und die **Regeldaten** von KINETIK sowie die **Bilder und Grafiken** dieses Repositories stehen unter der Lizenz
 
 **Creative Commons Namensnennung - Nicht kommerziell - Weitergabe unter gleichen Bedingungen 4.0 International (CC BY-NC-SA 4.0)**
@@ -9,7 +11,7 @@ Der **Regeltext** und die **Regeldaten** von KINETIK sowie die **Bilder und Graf
 
 Du darfst die Inhalte teilen und bearbeiten, wenn du
 
-- **Namensnennung** gibst (KINETIK, Rec0iL, Link auf dieses Repository) und Änderungen kenntlich machst,
+- **Namensnennung** gibst (KINETIK, Alexander Freidzon (Rec0iL), Link auf dieses Repository) und Änderungen kenntlich machst,
 - sie **nicht kommerziell** nutzt und
 - deine Bearbeitungen **unter denselben Bedingungen** weitergibst.
 

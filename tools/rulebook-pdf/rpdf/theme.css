@@ -158,5 +158,11 @@ table.rules-table td img{ display:block; max-width:100%; height:auto; margin:0 a
                    text-transform:uppercase; color:var(--cyan); margin:6mm 0 2mm 0; break-after:avoid; }
 .appendix-body{ text-align:left; }
 
+/* ---------- colophon (project.json: colophon) ---------- */
+.colophon{ margin-top:8mm; padding-top:3mm; border-top:1px solid var(--rule); font-size:8pt; line-height:1.4;
+           color:var(--ink); text-align:left; break-inside:avoid; }
+.colophon p{ margin:0 0 1.2mm 0; }
+.colophon a{ color:inherit; text-decoration:underline; overflow-wrap:anywhere; }
+
 /* ---------- theme extras (project.json: theme.extra_css) ---------- */
 ${extra_css}

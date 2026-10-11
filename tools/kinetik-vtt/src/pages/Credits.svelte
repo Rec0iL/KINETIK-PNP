@@ -1,5 +1,6 @@
 <script lang="ts">
   import { catalog } from '../music/catalog.svelte';
+  import Copyright from '../ui/Copyright.svelte';
 </script>
 
 <section class="stack wrap">
@@ -38,6 +39,9 @@
     <h2>Software</h2>
     <p class="dim">Svelte, Vite, PeerJS (WebRTC), idb-keyval. Alle unter MIT-ähnlichen Lizenzen. Das Regelwerk KINETIK und diese App gehören zum selben Projekt.</p>
   </section>
+
+  <p class="dim"><a href="#/impressum">Impressum</a> · <a href="#/datenschutz">Datenschutz</a></p>
+  <Copyright />
 </section>
 
 <style>

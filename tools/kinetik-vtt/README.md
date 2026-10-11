@@ -22,6 +22,10 @@ Stack: Vite, Svelte 5, TypeScript. Deutsche Oberfläche (alle Texte in `src/i18n
 
 Die App nutzt relative Pfade und Hash-Routing, funktioniert also unter jedem Unterpfad.
 
+## Impressum und Datenschutz
+
+Die Betreiberangaben stehen nicht im Repository. Der Build bettet sie aus der ungetrackten Datei `legal.local.json` (Vorlage: `legal.example.json`) oder der Umgebungsvariable `KINETIK_LEGAL_JSON` ein. Für GitHub Pages: Repository-Secret `KINETIK_LEGAL_JSON` mit dem JSON-Inhalt anlegen, der Workflow reicht es an den Build weiter. Das gilt für jeden Build, auch für den Server, der das Repository selbst zieht und deployt (kinetik.redneck-design.de): Dort muss `legal.local.json` neben `package.json` liegen (ein `git pull` lässt sie unberührt, `git clean -x` löscht sie) oder die Variable beim Build gesetzt sein. Optional enthält die JSON ein Feld `hosting` (Freitext zum Webserver) für die Datenschutzerklärung. Fehlt beides, baut die App trotzdem, die Seite Impressum zeigt dann nur einen Hinweis. E-Mail und Telefon liegen nur Base64-kodiert im Bundle und werden erst nach einem Klick angezeigt (Scraper-Schutz). Das Copyright steht in `src/lib/legal.ts`.
+
 ## Regelwerk in der App
 
 Der Button „Regelwerk“ im Kopf öffnet das Regelwerk als Seitenleiste (für Spieler und SL, überall in der App): gleiche Texte und Bilder wie das PDF, aber als HTML im App-Look, mit Inhaltsverzeichnis, Suche und Sprungmarken (der Charakter-Assistent springt zum passenden Kapitel). Kein PDF-Viewer des Browsers beteiligt, das PDF gibt es nur als Download. Gebaut wird es aus `regelwerk/KINETIK_Regelwerk.md` und `assets/pdf/images`:

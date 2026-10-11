@@ -302,6 +302,8 @@ def apply_pdf_style(cfg, theme):
     cfg["theme"].update(st["fonts"])
     cfg["theme"]["extra_css"] = st["extra_css"]
     cfg["layout"]["font_size_pt"] = st["font_size_pt"]
+    # Copyright und Impressum-Hinweis stehen im Hauptprojekt (assets/pdf/project.json) und gelten für alle Looks
+    cfg["colophon"] = json.loads((MAIN / "project.json").read_text(encoding="utf-8")).get("colophon", [])
     return cfg
 
 

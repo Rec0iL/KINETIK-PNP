@@ -39,6 +39,10 @@ jobs:
       - run: npm run check
       - run: npm test
       - run: npm run build
+        env:
+          # Betreiberangaben für Impressum und Datenschutz (JSON, siehe tools/kinetik-vtt/legal.example.json).
+          # Einrichten: Settings > Secrets and variables > Actions > New repository secret "KINETIK_LEGAL_JSON".
+          KINETIK_LEGAL_JSON: ${{ secrets.KINETIK_LEGAL_JSON }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: tools/kinetik-vtt/dist

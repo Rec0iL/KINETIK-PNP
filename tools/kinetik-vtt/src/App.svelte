@@ -20,6 +20,8 @@
   import PnpBridge from './net/PnpBridge.svelte';
   import MusicBar from './music/MusicBar.svelte';
   import Credits from './pages/Credits.svelte';
+  import Impressum from './pages/Impressum.svelte';
+  import Datenschutz from './pages/Datenschutz.svelte';
   import CreateStart from './pages/CreateStart.svelte';
   import Wizard from './pages/Wizard.svelte';
   import Rulebook from './rulebook/Rulebook.svelte';
@@ -32,6 +34,7 @@
   import { loadAssetIndex } from './net/assets.svelte';
   import { RULES_VERSION } from './rules';
   import { settings } from './lib/settings.svelte';
+  import { COPYRIGHT } from './lib/legal';
 
   let headerEl = $state<HTMLElement>();
   // Höhe des App-Kopfs als CSS-Variable, damit mitscrollende Leisten (Charakterbogen) genau darunter einrasten.
@@ -108,7 +111,7 @@
   {:else if router.route.name === 'gm'}
     <Gm />
   {:else}
-    {#if router.route.name === 'credits'}<Credits />{:else}<Placeholder title="404" />{/if}
+    {#if router.route.name === 'credits'}<Credits />{:else if router.route.name === 'impressum'}<Impressum />{:else if router.route.name === 'datenschutz'}<Datenschutz />{:else}<Placeholder title="404" />{/if}
   {/if}
 </main>
 
@@ -121,8 +124,12 @@
 <Toasts />
 
 <footer class="foot">
-  <span>KINETIK · Regelwerk v{RULES_VERSION}</span>
-  <a href="#/credits">{t('nav.credits')}</a>
+  <span>KINETIK · Regelwerk v{RULES_VERSION} · {COPYRIGHT}</span>
+  <span class="links">
+    <a href="#/credits">{t('nav.credits')}</a>
+    <a href="#/impressum">{t('nav.impressum')}</a>
+    <a href="#/datenschutz">{t('nav.privacy')}</a>
+  </span>
 </footer>
 
 <style>
@@ -158,7 +165,8 @@
   main { padding: 1.4rem max(16px, 3vw) 3rem; max-width: 1280px; margin: 0 auto; }
   /* SL-Dashboard: die volle Breite nutzen (Widescreen und Ultrawide), die Karte braucht den Platz. */
   main.wide { max-width: none; padding-inline: max(16px, 1.2vw); padding-top: 1rem; padding-bottom: 1.5rem; }
-  .foot { display: flex; justify-content: space-between; padding: 1rem max(16px, 3vw); color: var(--ink-dim); font: 600 0.75rem var(--font-head); letter-spacing: 0.14em; text-transform: uppercase; border-top: 1px solid var(--line); }
+  .foot { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; justify-content: space-between; padding: 1rem max(16px, 3vw); color: var(--ink-dim); font: 600 0.75rem var(--font-head); letter-spacing: 0.14em; text-transform: uppercase; border-top: 1px solid var(--line); }
+  .foot .links { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; }
   @media (max-width: 640px) {
     .word { display: none; }
     .top { gap: 0.5rem; }
