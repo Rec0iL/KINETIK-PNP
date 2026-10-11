@@ -23,7 +23,9 @@
           E-Mail: <Reveal value={p.emailB64} kind="mail" />
         </p>
       {/each}
-      {#if operator.partner}<p class="dim">Das Projekt wird gemeinsam betrieben. Den Webserver unter {SITE_URL_HOST} betreibt {operator.partner.name}. Bei Fragen zum Datenschutz kannst du dich an eine der beiden Adressen wenden.</p>{/if}
+      {#if operator.partner}
+        <p class="dim"><b>Aufgabenverteilung:</b> Den Webserver unter {SITE_URL_HOST} betreiben {operator.partner.name} und {operator.name} gemeinsam: {operator.partner.name} hat ihn gemietet und ist Vertragspartner des Hosters, beide administrieren ihn und teilen sich die Kosten. Für die App und ihre Inhalte ist {operator.name} zuständig. Anfragen zu deinen Daten kannst du an eine der beiden Adressen richten, wir leiten sie untereinander weiter. Deine Rechte kannst du gegenüber beiden geltend machen.</p>
+      {/if}
     {:else}
       <p class="dim">In diesem Build sind keine Betreiberangaben hinterlegt, siehe <a href="#/impressum">Impressum</a>.</p>
     {/if}
