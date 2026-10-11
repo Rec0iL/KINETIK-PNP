@@ -33,7 +33,7 @@
     <h2>Aufruf der Seite (Hosting)</h2>
     <p class="dim">Die App ist unter zwei Adressen mit demselben Inhalt erreichbar. Beim Aufruf verarbeitet der jeweilige Webserver technisch notwendige Daten wie deine IP-Adresse, Datum und Uhrzeit, die angeforderte Datei und Browserangaben, um die Seite auszuliefern und missbräuchliche Zugriffe abzuwehren. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (Bereitstellung und Sicherheit der Seite).</p>
     <ul class="list">
-      <li><b>{SITE_URL_HOST}</b>: eigener Webserver. Die Inhalte werden dort automatisch aus dem GitHub-Repository der App übernommen und ausgeliefert.{#if operator?.hosting} {operator.hosting}{/if}</li>
+      <li><b>{SITE_URL_HOST}</b>: eigener Webserver bei der Contabo GmbH (München) als Auftragsverarbeiter, Standort in der EU. Die Server-Logfiles werden nach 7 Tagen gelöscht. Die Inhalte werden dort aus dem GitHub-Repository der App übernommen und ausgeliefert.{#if operator?.hosting} {operator.hosting}{/if}</li>
       <li><b>rec0il.github.io</b>: GitHub Pages (GitHub Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA). Auf die Protokolle von GitHub haben wir keinen Zugriff. GitHub nimmt nach eigenen Angaben am EU-US Data Privacy Framework teil; Näheres in der <a href="https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noreferrer">Datenschutzerklärung von GitHub</a>.</li>
     </ul>
     <p class="dim">Schriften, Bilder, Musik und alle Programmdateien liegen auf demselben Server, über den du die App aufrufst. Es werden keine Schriften, Skripte oder Bilder von anderen Anbietern nachgeladen.</p>
