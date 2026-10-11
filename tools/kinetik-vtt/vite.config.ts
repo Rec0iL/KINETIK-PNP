@@ -2,15 +2,20 @@ import { defineConfig } from 'vitest/config';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { fileURLToPath } from 'node:url';
 import { existsSync, readFileSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { join } from 'node:path';
 
 const dataDir = fileURLToPath(new URL('../../data', import.meta.url));
 
-// Betreiberangaben für Impressum und Datenschutzerklärung: nicht im Repository. Quelle ist die Umgebungsvariable
-// KINETIK_LEGAL_JSON (GitHub-Secret im Pages-Workflow) oder die ungetrackte Datei legal.local.json (Vorlage: legal.example.json).
-// Fehlt beides, bleibt der Build lauffähig, die Seite Impressum zeigt dann nur einen Hinweis.
+// Betreiberangaben für Impressum und Datenschutzerklärung: nicht im Repository. Quellen in dieser Reihenfolge:
+// Umgebungsvariable KINETIK_LEGAL_JSON (GitHub-Secret im Pages-Workflow), die ungetrackte Datei legal.local.json
+// (Vorlage: legal.example.json) und ~/.config/kinetik/legal.json (fester Ort für Rechner, die frisch aus GitHub bauen).
+// Fehlt alles, bleibt der Build lauffähig, die Seite Impressum zeigt dann nur einen Hinweis.
 function loadLegal(): Record<string, unknown> | null {
   const file = fileURLToPath(new URL('./legal.local.json', import.meta.url));
-  const raw = process.env.KINETIK_LEGAL_JSON?.trim() || (existsSync(file) ? readFileSync(file, 'utf8') : '');
+  const shared = join(process.env.XDG_CONFIG_HOME || join(homedir(), '.config'), 'kinetik', 'legal.json');
+  const read = (f: string) => (existsSync(f) ? readFileSync(f, 'utf8') : '');
+  const raw = process.env.KINETIK_LEGAL_JSON?.trim() || read(file).trim() || read(shared).trim();
   if (!raw) {
     if (process.env.CI) console.warn('[legal] Keine Betreiberangaben (KINETIK_LEGAL_JSON fehlt): Impressum bleibt leer.');
     return null;
