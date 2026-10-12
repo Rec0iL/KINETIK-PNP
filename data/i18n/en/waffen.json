@@ -1,1 +1,23 @@
-{}
+{
+  "waffen": [
+    { "id": "pistole", "name": "Pistol", "profilText": "Choose Zone" },
+    { "id": "messer", "name": "Knife", "profilText": "+2 Energy damage (pain, blood loss)" },
+    { "id": "schlagstock", "name": "Baton / tonfa", "profilText": "minor tag Dazed", "tag": "Dazed" },
+    { "id": "akimbo", "name": "Akimbo pistols", "profilText": "second target, Choose Zone" },
+    { "id": "sturmgewehr", "name": "Assault rifle", "profilText": "second target, +1 Protection damage" },
+    { "id": "schrotflinte", "name": "Shotgun", "profilText": "second target, minor tag Prone", "tag": "Prone" },
+    { "id": "sniper50", "name": "Sniper rifle (.50)", "profilText": "Penetration 2 instead of 1, minor tag Dazed (shockwave)", "tag": "Dazed" },
+    { "id": "katana", "name": "Katana", "profilText": "Choose Zone, +1 Protection damage" },
+    { "id": "splittergranate", "name": "Fragmentation grenade", "profilText": "up to 3 targets (thrown, single use)" },
+    { "id": "blendgranate", "name": "Flashbang", "profilText": "up to 3 targets, minor tag Blinded (thrown, single use)", "tag": "Blinded" },
+    { "id": "lmg", "name": "LMG (sustained fire)", "profilText": "second target, minor tag Pinned Down", "tag": "Pinned Down" },
+    { "id": "raketenwerfer", "name": "Rocket launcher", "profilText": "Area (single shot)" }
+  ],
+  "waffenlos": {
+    "name": "Hands and feet (Deadly Hands)",
+    "profilText": "no profile, only Penetration 1"
+  },
+  "munition": {
+    "nachladenTag": "Reloading"
+  }
+}

@@ -1,5 +1,6 @@
 // Proben gegen die Umgebung (Kapitel 4).
 import { rules } from './data';
+import { t } from '../i18n';
 
 export type ProbeResult = 'erfolg' | 'preis' | 'fehlschlag';
 
@@ -22,9 +23,9 @@ export interface ProbeOutcome {
 }
 
 export const PROBE_LABEL: Record<ProbeResult, string> = {
-  erfolg: 'Erfolg',
-  preis: 'Erfolg mit Preis',
-  fehlschlag: 'Fehlschlag',
+  erfolg: t('rules.probe.erfolg'),
+  preis: t('rules.probe.preis'),
+  fehlschlag: t('rules.probe.fehlschlag'),
 };
 
 export function isAutoSuccess(bonus: number, mw: number, mod = 0): boolean {
@@ -40,5 +41,5 @@ export function resolveProbe(p: ProbeInput): ProbeOutcome {
 
 export function mwName(mw: number): string {
   const hit = rules.tabellen.mw.find((m) => m.mw === mw);
-  return hit ? hit.name : `MW ${mw}`;
+  return hit ? hit.name : t('rules.probe.dc', { mw });
 }

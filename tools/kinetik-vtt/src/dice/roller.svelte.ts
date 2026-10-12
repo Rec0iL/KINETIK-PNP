@@ -3,6 +3,7 @@ import {
   cryptoRng, rollDice, parseFormula, resolveProbe, resolveClash, type ProbeResult, type ClashResult,
 } from '../rules';
 import { uid } from '../model/character';
+import { t } from '../i18n';
 
 export type RollKind = 'attr' | 'probe' | 'clash' | 'free' | 'stealth' | 'move';
 
@@ -102,7 +103,7 @@ export function roll2d6(o: BaseRollOptions & { mw?: number }): RollRecord {
   const mod = o.mod ?? 0;
   const rec: RollRecord = {
     id: uid(), ts: Date.now(), who: o.who, characterId: o.characterId, kind: o.kind ?? (o.mw ? 'probe' : 'attr'),
-    label: o.label, formula: `2W6 ${sign(o.bonus)}${mod ? ` ${sign(mod)}` : ''}`,
+    label: o.label, formula: `${t('dice.roller.twoD6')} ${sign(o.bonus)}${mod ? ` ${sign(mod)}` : ''}`,
     dice, bonus: o.bonus, mod, total: sum + o.bonus + mod, secret: o.secret, sit: o.sit, hero: o.hero,
   };
   if (o.mw) {
@@ -120,7 +121,7 @@ export function rollManual(o: BaseRollOptions & { sum: number; mw?: number }): R
   const mod = o.mod ?? 0;
   const rec: RollRecord = {
     id: uid(), ts: Date.now(), who: o.who, characterId: o.characterId, kind: o.kind ?? (o.mw ? 'probe' : 'attr'),
-    label: o.label, formula: `2W6 (Tisch) ${sign(o.bonus)}${mod ? ` ${sign(mod)}` : ''}`,
+    label: o.label, formula: `${t('dice.roller.twoD6Table')} ${sign(o.bonus)}${mod ? ` ${sign(mod)}` : ''}`,
     dice: [], bonus: o.bonus, mod, total: o.sum + o.bonus + mod, secret: o.secret, sit: o.sit, hero: o.hero,
   };
   if (o.mw) {

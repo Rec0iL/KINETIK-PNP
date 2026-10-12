@@ -13,6 +13,7 @@
   import { settings } from '../lib/settings.svelte';
   import Stepper from '../ui/Stepper.svelte';
   import RollSummary from '../ui/RollSummary.svelte';
+  import { t, fmtNumber } from '../i18n';
 
   let { char, isGm = false, canSecret = false, who: whoProp = '', party = [], entryActions }: {
     char?: Character; isGm?: boolean; canSecret?: boolean; who?: string; party?: PlayerInfo[]; entryActions?: Snippet<[RollRecord]>;
@@ -22,7 +23,7 @@
   type Mode = 'probe' | 'clash' | 'free';
   let mode = $state<Mode>('probe');
 
-  const who = $derived(whoProp || settings.displayName || char?.name || (isGm ? 'Spielleiter' : 'Spieler'));
+  const who = $derived(whoProp || settings.displayName || char?.name || (isGm ? t('sheet.roll.gm') : t('sheet.roll.player')));
   const attrs = rules.tabellen.attribute;
   const sheet = $derived(char ? computeSheet(char) : undefined);
 
@@ -40,8 +41,8 @@
   );
   const optionBonus = (id: string) => {
     if (!char) return 0;
-    const t = char.titles.find((x) => x.id === id);
-    return actionBonus(char.attributes, attr, t ? [t] : []);
+    const ti = char.titles.find((x) => x.id === id);
+    return actionBonus(char.attributes, attr, ti ? [ti] : []);
   };
   const fmt = (n: number) => (n > 0 ? `+${n}` : String(n));
 
@@ -61,7 +62,7 @@
 
   // --- Clash ---
   let role = $state<'attacker' | 'defender'>('attacker');
-  let oppName = $state('Gegner');
+  let oppName = $state(t('sheet.roll.opponent'));
   let oppBonus = $state(2);
   let oppMod = $state(0);
   let oppPlayer = $state(false);
@@ -114,7 +115,7 @@
   }
   function payHero() {
     if (!char) return;
-    if (char.resources.momentum < 3) { alert('Die Heldenhafte Gegenwehr kostet 3 Momentum.'); return; }
+    if (char.resources.momentum < 3) { alert(t('sheet.roll.heroCost')); return; }
     char.resources.momentum -= 3;
     hero = true;
   }
@@ -140,53 +141,53 @@
 
 <div class="stack">
   <section class="panel">
-    <div class="tabs" role="tablist" aria-label="Wurfart">
-      <button role="tab" aria-selected={mode === 'probe'} onclick={() => (mode = 'probe')}>Probe</button>
-      <button role="tab" aria-selected={mode === 'clash'} onclick={() => (mode = 'clash')}>Clash-Rechner</button>
-      <button role="tab" aria-selected={mode === 'free'} onclick={() => (mode = 'free')}>Freie Würfel</button>
+    <div class="tabs" role="tablist" aria-label={t('sheet.roll.modeAria')}>
+      <button role="tab" aria-selected={mode === 'probe'} onclick={() => (mode = 'probe')}>{t('sheet.roll.check')}</button>
+      <button role="tab" aria-selected={mode === 'clash'} onclick={() => (mode = 'clash')}>{t('sheet.roll.clashCalc')}</button>
+      <button role="tab" aria-selected={mode === 'free'} onclick={() => (mode = 'free')}>{t('sheet.roll.free')}</button>
     </div>
 
     {#if canSecret}
-      <label class="check secret"><input type="checkbox" bind:checked={secret} /> Geheim: nur der SL sieht diese Würfe</label>
+      <label class="check secret"><input type="checkbox" bind:checked={secret} /> {t('sheet.roll.secret')}</label>
     {/if}
 
     {#if mode !== 'free'}
       <div class="row sel">
-        <label class="field">Attribut
+        <label class="field">{t('sheet.common.attribute')}
           <select bind:value={attr}>{#each attrs as a}<option value={a.key}>{a.name}{char ? ` (${fmt(char.attributes[a.key as AttrKey])})` : ''}</option>{/each}</select>
         </label>
         {#if char}
-          <label class="field">Titel (nur wenn er die Aktion abdeckt)
+          <label class="field">{t('sheet.roll.titleCovers')}
             <select bind:value={titleId}>
-              <option value="none">Kein Titel ({fmt(optionBonus('none'))})</option>
-              {#each char.titles as t}<option value={t.id}>{t.name} ({fmt(optionBonus(t.id))})</option>{/each}
+              <option value="none">{t('sheet.roll.noTitle', { b: fmt(optionBonus('none')) })}</option>
+              {#each char.titles as ti}<option value={ti.id}>{ti.name} ({fmt(optionBonus(ti.id))})</option>{/each}
             </select>
           </label>
         {:else}
           <label class="field">Bonus<Stepper bind:value={manualBonus} min={-5} max={20} label="Bonus" /></label>
         {/if}
-        <label class="field">Modifikator<Stepper bind:value={mod} min={-9} max={9} label="Modifikator" /></label>
-        <div class="bonus"><span class="lbl">Gesamtbonus</span><b>{fmt(bonus + mod)}</b></div>
+        <label class="field">{t('sheet.roll.modifier')}<Stepper bind:value={mod} min={-9} max={9} label={t('sheet.roll.modifier')} /></label>
+        <div class="bonus"><span class="lbl">{t('sheet.roll.totalBonus')}</span><b>{fmt(bonus + mod)}</b></div>
       </div>
     {/if}
 
     {#if mode === 'probe'}
       <div class="row sel">
-        <label class="field">Schwierigkeit (MW)
+        <label class="field">{t('sheet.roll.difficulty')}
           <select bind:value={mw}>
-            <option value={0}>Kein MW (nur würfeln)</option>
-            {#each rules.tabellen.mw as m}<option value={m.mw}>{m.name} (MW {m.mw})</option>{/each}
-            {#each rules.tabellen.wachsamkeit.filter((w) => w.mw === 7 || w.mw === 9 || w.mw === 11) as w}<option disabled>Wachsamkeit: {w.name} = MW {w.mw}</option>{/each}
+            <option value={0}>{t('sheet.roll.noDc')}</option>
+            {#each rules.tabellen.mw as m}<option value={m.mw}>{t('sheet.roll.dcOption', { name: m.name, mw: m.mw })}</option>{/each}
+            {#each rules.tabellen.wachsamkeit.filter((w) => w.mw === 7 || w.mw === 9 || w.mw === 11) as w}<option disabled>{t('sheet.roll.alertOption', { name: w.name, mw: w.mw })}</option>{/each}
           </select>
         </label>
-        <label class="check"><input type="checkbox" bind:checked={tableDice} /> Echte Würfel (Summe eintragen)</label>
-        {#if tableDice}<label class="field">Augensumme<Stepper bind:value={sum} min={2} max={12} label="Augensumme" /></label>{/if}
-        <button class="btn primary roll" onclick={doRoll}>{tableDice ? 'Eintragen' : 'Würfeln'}</button>
+        <label class="check"><input type="checkbox" bind:checked={tableDice} /> {t('sheet.roll.tableDice')}</label>
+        {#if tableDice}<label class="field">{t('sheet.roll.diceSum')}<Stepper bind:value={sum} min={2} max={12} label={t('sheet.roll.diceSum')} /></label>{/if}
+        <button class="btn primary roll" onclick={doRoll}>{tableDice ? t('sheet.roll.enter') : t('sheet.common.roll')}</button>
       </div>
       {#if chance}
         <p class="dim chance">
-          MW {mw}: Erfolg <b>{Math.round(chance.success * 100)} %</b>, Erfolg mit Preis <b>{Math.round(chance.price * 100)} %</b>
-          {#if mw <= bonus + mod + 2}· <span class="chip accent">automatischer Erfolg (MW ≤ Bonus + 2)</span>{/if}
+          {t('sheet.roll.chanceDc', { mw })} <b>{t('sheet.roll.pct', { n: fmtNumber(Math.round(chance.success * 100)) })}</b>{t('sheet.roll.chanceCost')} <b>{t('sheet.roll.pct', { n: fmtNumber(Math.round(chance.price * 100)) })}</b>
+          {#if mw <= bonus + mod + 2}· <span class="chip accent">{t('sheet.roll.autoSuccess')}</span>{/if}
         </p>
       {/if}
     {/if}
@@ -194,40 +195,40 @@
     {#if mode === 'clash'}
       <div class="clash">
         <div class="side">
-          <h3>Meine Seite</h3>
+          <h3>{t('sheet.roll.mySide')}</h3>
           <div class="row">
-            <label class="check"><input type="radio" bind:group={role} value="attacker" /> Ich greife an</label>
-            <label class="check"><input type="radio" bind:group={role} value="defender" /> Ich verteidige</label>
+            <label class="check"><input type="radio" bind:group={role} value="attacker" /> {t('sheet.roll.iAttack')}</label>
+            <label class="check"><input type="radio" bind:group={role} value="defender" /> {t('sheet.roll.iDefend')}</label>
           </div>
-          <small class="dim">{who}: 2W6 {fmt(bonus + mod)}</small>
+          <small class="dim">{t('sheet.roll.whoRoll', { who, b: fmt(bonus + mod) })}</small>
         </div>
         <div class="side">
-          <h3>Gegner</h3>
+          <h3>{t('sheet.roll.opponent')}</h3>
           <div class="row">
             {#if party.length}
-              <label class="field">Spieler übernehmen
+              <label class="field">{t('sheet.roll.takePlayer')}
                 <select onchange={(e) => { const p = party.find((x) => x.id === e.currentTarget.value); if (p?.vitals) { oppName = p.characterName || p.name; oppBonus = p.vitals.bonus[attr]; oppPlayer = true; } }}>
                   <option value="">—</option>
                   {#each party.filter((p) => p.vitals) as p}<option value={p.id}>{p.characterName || p.name} ({p.vitals!.bonus[attr] > 0 ? '+' : ''}{p.vitals!.bonus[attr]})</option>{/each}
                 </select>
               </label>
             {/if}
-            <label class="field">Name<input bind:value={oppName} /></label>
-            <label class="field">Bonus<Stepper bind:value={oppBonus} min={-3} max={20} label="Gegner-Bonus" /></label>
-            <label class="field">Mod.<Stepper bind:value={oppMod} min={-9} max={9} label="Gegner-Modifikator" /></label>
+            <label class="field">{t('sheet.common.name')}<input bind:value={oppName} /></label>
+            <label class="field">Bonus<Stepper bind:value={oppBonus} min={-3} max={20} label={t('sheet.roll.oppBonus')} /></label>
+            <label class="field">{t('sheet.roll.modShort')}<Stepper bind:value={oppMod} min={-9} max={9} label={t('sheet.roll.oppMod')} /></label>
           </div>
           <div class="row">
-            <label class="check"><input type="checkbox" bind:checked={oppPlayer} /> ist Spielercharakter (keine Helden-Schwelle)</label>
-            <label class="check"><input type="checkbox" bind:checked={oppManual} /> Wurf eintragen</label>
-            {#if oppManual}<Stepper bind:value={oppSum} min={2} max={12} label="Gegner-Augensumme" />{/if}
+            <label class="check"><input type="checkbox" bind:checked={oppPlayer} /> {t('sheet.roll.isPc')}</label>
+            <label class="check"><input type="checkbox" bind:checked={oppManual} /> {t('sheet.roll.enterRoll')}</label>
+            {#if oppManual}<Stepper bind:value={oppSum} min={2} max={12} label={t('sheet.roll.oppSum')} />{/if}
           </div>
         </div>
       </div>
       <div class="row">
-        <label class="check"><input type="checkbox" bind:checked={hero} /> Heldenhafte Gegenwehr (3 Momentum)</label>
-        {#if char && !hero}<button class="btn sm" onclick={payHero}>3 Momentum zahlen</button>{/if}
+        <label class="check"><input type="checkbox" bind:checked={hero} /> {t('sheet.roll.hero')}</label>
+        {#if char && !hero}<button class="btn sm" onclick={payHero}>{t('sheet.roll.payHero')}</button>{/if}
         <span class="spacer"></span>
-        <button class="btn primary roll" onclick={doClash}>Clash würfeln</button>
+        <button class="btn primary roll" onclick={doClash}>{t('sheet.roll.rollClash')}</button>
       </div>
 
       {#if clash}
@@ -240,30 +241,30 @@
           <div class="row"><RollSummary r={clash.me} /></div>
           <div class="row"><RollSummary r={clash.opp} /></div>
           <div class="chips">
-            <span class="chip">Angreifer {r.attackerTotal} · Verteidiger {r.defenderTotal}</span>
+            <span class="chip">{t('sheet.roll.totals', { a: r.attackerTotal, d: r.defenderTotal })}</span>
             <span class="chip">T(A) {r.tA} · T(V) {r.tV}</span>
-            {#if r.heldenSchwelle}<span class="chip accent">Helden-Schwelle</span>{/if}
-            {#if r.limited}<span class="chip danger">Außer Reichweite: Ergebnis gedeckelt (war {OUTCOME_LABEL[r.rawOutcome]})</span>{/if}
-            {#if r.noRoll}<span class="chip danger">Lücke {r.gap}: es wird nicht gewürfelt, der Überlegene erzählt den Ausgang</span>{/if}
-            {#if r.marker}<span class="chip amber">Kinetik-Marker: {r.marker === clash.role ? 'zu mir' : 'zum Gegner'}</span>{/if}
+            {#if r.heldenSchwelle}<span class="chip accent">{t('sheet.roll.heroThreshold')}</span>{/if}
+            {#if r.limited}<span class="chip danger">{t('sheet.roll.outOfReach', { o: OUTCOME_LABEL[r.rawOutcome] })}</span>{/if}
+            {#if r.noRoll}<span class="chip danger">{t('sheet.roll.noRoll', { gap: r.gap })}</span>{/if}
+            {#if r.marker}<span class="chip amber">{t('sheet.roll.marker', { to: r.marker === clash.role ? t('sheet.roll.toMe') : t('sheet.roll.toOpp') })}</span>{/if}
           </div>
           {#if r.rewards}
             <p class="reward">
-              {r.rewards.side === clash.role ? 'Du erhältst' : 'Gegner erhält'}: +{r.rewards.momentum} Momentum{#if r.rewards.energie}, +{r.rewards.energie} Energie{/if}{#if r.rewards.wk}, +{r.rewards.wk} Willenskraft{/if}
-              <small class="dim">(Energie/WK nur gegen Gegner ab Level 1, höchstens einmal pro Runde)</small>
-              {#if meRewards && char}<button class="btn sm amber" onclick={applyRewards}>Anwenden</button>{/if}
+              {r.rewards.side === clash.role ? t('sheet.roll.youGain') : t('sheet.roll.oppGains')}: {t('sheet.roll.rewardMomentum', { n: r.rewards.momentum })}{#if r.rewards.energie}{t('sheet.roll.rewardEnergy', { n: r.rewards.energie })}{/if}{#if r.rewards.wk}{t('sheet.roll.rewardWp', { n: r.rewards.wk })}{/if}
+              <small class="dim">{t('sheet.roll.rewardNote')}</small>
+              {#if meRewards && char}<button class="btn sm amber" onclick={applyRewards}>{t('sheet.roll.apply')}</button>{/if}
             </p>
           {/if}
           {#if hit}
             <div class="hit">
-              <h3>Trefferwirkung ({hit.attackerHits ? 'Angreifer trifft' : 'Verteidiger trifft'})</h3>
+              <h3>{t('sheet.roll.hitEffect', { who: hit.attackerHits ? t('sheet.roll.attackerHits') : t('sheet.roll.defenderHits') })}</h3>
               <div class="row">
-                <label class="field">Schutz des Ziels<Stepper bind:value={schutz} min={0} max={9} label="Schutz des Ziels" /></label>
-                <label class="field">Durchschlag<Stepper bind:value={durchschlag} min={0} max={5} label="Durchschlag" /></label>
-                <label class="check"><input type="checkbox" bind:checked={ignoriert} /> Schutz ignoriert/zerstört</label>
+                <label class="field">{t('sheet.roll.targetProt')}<Stepper bind:value={schutz} min={0} max={9} label={t('sheet.roll.targetProt')} /></label>
+                <label class="field">{t('sheet.common.penetration')}<Stepper bind:value={durchschlag} min={0} max={5} label={t('sheet.common.penetration')} /></label>
+                <label class="check"><input type="checkbox" bind:checked={ignoriert} /> {t('sheet.roll.ignored')}</label>
               </div>
-              <p class="verdict"><b>{hit.res.text}</b> <small class="dim">(effektiver Schutz {hit.res.effektiverSchutz})</small></p>
-              {#if r.outcome === 'schlagabtausch'}<small class="dim">Schlagabtausch: Der Angreifer wählt, ob beide Seiten einen Treffer erleiden oder er einen kleinen Nachteil-Tag erhält. Moves wirken schon ab hier.</small>{/if}
+              <p class="verdict"><b>{hit.res.text}</b> <small class="dim">{t('sheet.roll.effProt', { n: hit.res.effektiverSchutz })}</small></p>
+              {#if r.outcome === 'schlagabtausch'}<small class="dim">{t('sheet.roll.exchangeNote')}</small>{/if}
             </div>
           {/if}
         </div>
@@ -272,9 +273,9 @@
 
     {#if mode === 'free'}
       <div class="row sel">
-        <label class="field grow">Formel<input bind:value={formula} placeholder="z.B. 3d8+2" onkeydown={(e) => e.key === 'Enter' && doFree()} aria-label="Würfelformel" /></label>
-        <label class="field grow">Bezeichnung (optional)<input bind:value={freeLabel} placeholder="z.B. Schaden Schrotflinte" /></label>
-        <button class="btn primary roll" onclick={() => doFree()}>Würfeln</button>
+        <label class="field grow">{t('sheet.roll.formula')}<input bind:value={formula} placeholder={t('sheet.roll.formulaPlaceholder')} onkeydown={(e) => e.key === 'Enter' && doFree()} aria-label={t('sheet.roll.formulaAria')} /></label>
+        <label class="field grow">{t('sheet.roll.freeLabel')}<input bind:value={freeLabel} placeholder={t('sheet.roll.freeLabelPlaceholder')} /></label>
+        <button class="btn primary roll" onclick={() => doFree()}>{t('sheet.common.roll')}</button>
       </div>
       <div class="row quick">{#each quick as q}<button class="btn sm" onclick={() => doFree(q)}>{q}</button>{/each}</div>
       {#if freeError}<p class="warn">{freeError}</p>{/if}
@@ -288,12 +289,12 @@
   </section>
 
   <section class="panel">
-    <div class="row"><h2>Würfellog</h2><span class="spacer"></span><button class="btn sm danger" onclick={() => confirm('Log leeren?') && clearLog()} disabled={!rollLog.entries.length}>Leeren</button></div>
+    <div class="row"><h2>{t('sheet.roll.log')}</h2><span class="spacer"></span><button class="btn sm danger" onclick={() => confirm(t('sheet.roll.confirmClear')) && clearLog()} disabled={!rollLog.entries.length}>{t('sheet.roll.clear')}</button></div>
     <div class="log">
       {#each filteredLog as r (r.id)}
         <div class="entry"><RollSummary {r} animate={false} size={34} />{@render entryActions?.(r)}</div>
       {:else}
-        <p class="dim">Noch nichts gewürfelt.</p>
+        <p class="dim">{t('sheet.roll.nothingYet')}</p>
       {/each}
     </div>
   </section>

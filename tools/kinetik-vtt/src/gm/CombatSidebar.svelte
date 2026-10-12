@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { rules, ATTR_KEYS, describePoison, type AttrKey, type NpcType } from '../rules';
+  import { rules, ATTR_KEYS, describePoison, GIFT, tagLabel, type AttrKey, type NpcType } from '../rules';
+  import { t } from '../i18n';
   import { gm, partyFor, answerMove, advanceRound, gmAttack, gmPlan } from '../net/gm.svelte';
   import { startCombat, endCombat, otherSide, npcStatus, roughState, ROUGH_LABEL, type Side } from './combat';
   import { isOpen, KIND_LABEL, type SitKind } from './situation';
@@ -10,7 +11,7 @@
   let { situationsOnly = false }: { situationsOnly?: boolean } = $props();
   const combat = $derived(gm.session!.combat);
   const party = $derived(partyFor(null).filter((p) => p.vitals));
-  const sideName = (s: Side) => (s === 'players' ? 'Spieler' : 'Gegner');
+  const sideName = (s: Side) => (s === 'players' ? t('gm.common.sidePlayers') : t('gm.common.sideEnemies'));
   const open = $derived(combat.situations.filter((s) => isOpen(s)));
   const closed = $derived(combat.situations.filter((s) => !isOpen(s) && s.round === combat.round).slice(-4).reverse());
   const nameOf = (id: string) => party.find((p) => p.id === id)?.characterName || party.find((p) => p.id === id)?.name || id;
@@ -27,7 +28,7 @@
 
   function start() { startCombat(combat, { ambush: ambush || undefined }); }
   function end() {
-    if (!confirm('Kampf beenden? Momentum der Spieler verfällt auf 0.')) return;
+    if (!confirm(t('gm.common.confirmEnd'))) return;
     for (const p of gm.session!.players) if (p.character) patchPlayer(p.id, [{ op: 'set', key: 'momentum', value: 0 }]);
     endCombat(combat);
   }
@@ -41,39 +42,39 @@
     formOpen = false;
   }
   const types = rules.npc.leiter;
-  const typeName = (t: NpcType) => types.find((x) => x.key === t)?.name ?? t;
+  const typeName = (ty: NpcType) => types.find((x) => x.key === ty)?.name ?? ty;
 </script>
 
 <aside class="side">
   {#if !situationsOnly || !combat.active}
   <section class="panel">
     <div class="row">
-      <h2>Kampf</h2>
-      {#if combat.active}<span class="chip accent">Runde {combat.round}</span>{:else}<span class="chip">kein Kampf</span>{/if}
+      <h2>{t('gm.common.combat')}</h2>
+      {#if combat.active}<span class="chip accent">{t('gm.common.round', { n: combat.round })}</span>{:else}<span class="chip">{t('gm.common.noCombat')}</span>{/if}
     </div>
     {#if !combat.active}
       <div class="row">
-        <select bind:value={ambush} aria-label="Hinterhalt"><option value="">Normaler Beginn</option><option value="players">Spieler überraschen</option><option value="enemies">Hinterhalt der Gegner</option></select>
-        <button class="btn sm primary" onclick={start}>Kampf starten</button>
+        <select bind:value={ambush} aria-label={t('gm.common.ambush')}><option value="">{t('gm.sidebar.startNormal')}</option><option value="players">{t('gm.sidebar.startPlayers')}</option><option value="enemies">{t('gm.sidebar.startEnemies')}</option></select>
+        <button class="btn sm primary" onclick={start}>{t('gm.common.startCombat')}</button>
       </div>
     {:else}
       <div class="row">
-        <span class="lbl">Marker</span>
+        <span class="lbl">{t('gm.sidebar.marker')}</span>
         <div class="seg">
-          <button class:on={combat.marker === 'players'} onclick={() => (combat.marker = 'players')}>Spieler</button>
-          <button class:on={combat.marker === 'enemies'} onclick={() => (combat.marker = 'enemies')}>Gegner</button>
+          <button class:on={combat.marker === 'players'} onclick={() => (combat.marker = 'players')}>{t('gm.common.sidePlayers')}</button>
+          <button class:on={combat.marker === 'enemies'} onclick={() => (combat.marker = 'enemies')}>{t('gm.common.sideEnemies')}</button>
         </div>
       </div>
       <div class="row">
-        <span class="lbl">Am Zug</span><b class="turn" class:en={combat.side === 'enemies'}>{sideName(combat.side)}</b>
+        <span class="lbl">{t('gm.common.onTurn')}</span><b class="turn" class:en={combat.side === 'enemies'}>{sideName(combat.side)}</b>
         <span class="spacer"></span>
-        <button class="btn sm" onclick={() => (combat.side = otherSide(combat.side))}>Seite fertig</button>
+        <button class="btn sm" onclick={() => (combat.side = otherSide(combat.side))}>{t('gm.sidebar.sideDone')}</button>
       </div>
       <div class="row">
-        <button class="btn sm primary" onclick={advanceRound} title="Gift wirkt am Rundenende, dann beginnt die nächste Runde">Nächste Runde</button>
-        <label class="check"><input type="checkbox" bind:checked={combat.autoRelease} /> Pläne automatisch freigeben</label>
+        <button class="btn sm primary" onclick={advanceRound} title={t('gm.common.nextRoundTitle')}>{t('gm.common.nextRound')}</button>
+        <label class="check"><input type="checkbox" bind:checked={combat.autoRelease} /> {t('gm.sidebar.autoRelease')}</label>
         <span class="spacer"></span>
-        <button class="btn sm danger" onclick={end}>Beenden</button>
+        <button class="btn sm danger" onclick={end}>{t('gm.sidebar.end')}</button>
       </div>
     {/if}
   </section>
@@ -82,73 +83,73 @@
   {#if combat.active}
     {#if combat.moveRequests.length}
       <section class="panel">
-        <h2>Bewegung</h2>
+        <h2>{t('gm.sidebar.movement')}</h2>
         {#each combat.moveRequests as r (r.id)}
           <div class="row mv">
-            <span><b>{r.name}</b> will sich bewegen</span><span class="spacer"></span>
-            <button class="btn sm primary" onclick={() => answerMove(r.id, true)}>Ok</button>
-            <button class="btn sm ghost danger" onclick={() => answerMove(r.id, false)}>Nein</button>
+            <span><b>{r.name}</b> {t('gm.sidebar.wantsToMove')}</span><span class="spacer"></span>
+            <button class="btn sm primary" onclick={() => answerMove(r.id, true)}>{t('gm.sidebar.ok')}</button>
+            <button class="btn sm ghost danger" onclick={() => answerMove(r.id, false)}>{t('gm.sidebar.no')}</button>
           </div>
         {/each}
-        <small class="dim">Das Geisterbild liegt auf der Karte.</small>
+        <small class="dim">{t('gm.sidebar.ghostHint')}</small>
       </section>
     {/if}
 
     <section class="panel">
-      <div class="row"><h2>Situationen</h2><span class="spacer"></span><button class="btn sm" onclick={() => (formOpen = !formOpen)}>{formOpen ? 'Schließen' : '+ Aktion für Spieler'}</button></div>
+      <div class="row"><h2>{t('gm.sidebar.situations')}</h2><span class="spacer"></span><button class="btn sm" onclick={() => (formOpen = !formOpen)}>{formOpen ? t('gm.sidebar.close') : t('gm.sidebar.actionForPlayer')}</button></div>
       {#if formOpen}
         <div class="form">
-          <select bind:value={formPlayer} aria-label="Spieler">{#each party as p}<option value={p.id}>{p.characterName || p.name}</option>{/each}</select>
-          <select bind:value={formKind} aria-label="Art"><option value="attack">Angriff</option><option value="breath">Durchatmen</option><option value="gather">Sammeln</option></select>
-          {#if formKind === 'attack'}<select bind:value={formTarget} aria-label="Ziel">{#each combat.npcs.filter((n) => !npcStatus(n).out) as n}<option value={n.id}>{n.name}</option>{/each}</select>
-            <select bind:value={formAttr} aria-label="Attribut">{#each ATTR_KEYS as a}<option value={a}>{rules.tabellen.attribute.find((x) => x.key === a)?.name}</option>{/each}</select>{/if}
-          <input bind:value={formText} placeholder="Technik" aria-label="Technik" />
-          <button class="btn sm primary" onclick={createForPlayer}>Anlegen</button>
+          <select bind:value={formPlayer} aria-label={t('gm.common.player')}>{#each party as p}<option value={p.id}>{p.characterName || p.name}</option>{/each}</select>
+          <select bind:value={formKind} aria-label={t('gm.sidebar.kind')}><option value="attack">{KIND_LABEL.attack}</option><option value="breath">{KIND_LABEL.breath}</option><option value="gather">{KIND_LABEL.gather}</option></select>
+          {#if formKind === 'attack'}<select bind:value={formTarget} aria-label={t('gm.sidebar.target')}>{#each combat.npcs.filter((n) => !npcStatus(n).out) as n}<option value={n.id}>{n.name}</option>{/each}</select>
+            <select bind:value={formAttr} aria-label={t('gm.sidebar.attribute')}>{#each ATTR_KEYS as a}<option value={a}>{rules.tabellen.attribute.find((x) => x.key === a)?.name}</option>{/each}</select>{/if}
+          <input bind:value={formText} placeholder={t('gm.sidebar.technique')} aria-label={t('gm.sidebar.technique')} />
+          <button class="btn sm primary" onclick={createForPlayer}>{t('gm.sidebar.create')}</button>
         </div>
       {/if}
       <div class="sits">
-        {#each open as s (s.id)}<SitCard sit={s} />{:else}<p class="dim">Keine offenen Situationen. Spieler planen ihre Aktion auf ihrem Gerät, Gegner greifst du unten an.</p>{/each}
+        {#each open as s (s.id)}<SitCard sit={s} />{:else}<p class="dim">{t('gm.sidebar.noSituations')}</p>{/each}
         {#each closed as s (s.id)}<SitCard sit={s} />{/each}
       </div>
     </section>
 
     {#if !situationsOnly}
     <section class="panel">
-      <h2>Spieler</h2>
+      <h2>{t('gm.sidebar.players')}</h2>
       {#each party as p (p.id)}
         {@const v = p.vitals!}
         <div class="pl" class:done={combat.done[p.id]}>
           <label class="check"><input type="checkbox" checked={!!combat.done[p.id]} onchange={(e) => (combat.done[p.id] = e.currentTarget.checked)} /> <b>{p.characterName || p.name}</b></label>
-          <span class="chip">E {v.energie}/{v.energieMax}</span><span class="chip">WK {v.wk}</span><span class="chip">M {v.momentum}</span>
-          {#if combat.bedraengnis[p.id]}<span class="chip amber">Bedr. {combat.bedraengnis[p.id]}</span>{/if}
-          {#if combat.bulletTime[p.id] === combat.round}<span class="chip accent">Bullet Time genutzt</span>{/if}
-          {#if combat.exposed[p.id]}<span class="chip danger" title="Der nächste Clash gegen den Spieler bekommt +1 (3.10)">+1 gegen</span>{/if}
-          {#each v.poisons as pz}<span class="chip danger" title="Gift">Gift {pz.level}{pz.delay ? ` (${pz.delay})` : ''}</span>{/each}
+          <span class="chip">{t('gm.sidebar.energyChip', { cur: v.energie, max: v.energieMax })}</span><span class="chip">{t('gm.sidebar.wpChip', { n: v.wk })}</span><span class="chip">{t('gm.sidebar.momentumChip', { n: v.momentum })}</span>
+          {#if combat.bedraengnis[p.id]}<span class="chip amber">{t('gm.common.pressureShort', { n: combat.bedraengnis[p.id] })}</span>{/if}
+          {#if combat.bulletTime[p.id] === combat.round}<span class="chip accent">{t('gm.sidebar.bulletUsed')}</span>{/if}
+          {#if combat.exposed[p.id]}<span class="chip danger" title={t('gm.sidebar.exposedTitle')}>{t('gm.sidebar.exposed')}</span>{/if}
+          {#each v.poisons as pz}<span class="chip danger" title={t('gm.common.poison')}>{t('gm.common.poisonChip', { level: GIFT[pz.level].label })}{pz.delay ? ` (${pz.delay})` : ''}</span>{/each}
         </div>
-      {:else}<p class="dim">Keine Spielerbögen sichtbar.</p>{/each}
+      {:else}<p class="dim">{t('gm.common.noSheets')}</p>{/each}
     </section>
     {/if}
 
     <section class="panel">
-      <h2>Gegner</h2>
+      <h2>{t('gm.sidebar.enemies')}</h2>
       {#each combat.npcs as n (n.id)}
         {@const st = npcStatus(n)}
         <div class="en" class:out={st.out}>
           <div class="row">
             <b>{n.name}{n.type === 'goon' ? ` (${n.count})` : ''}</b><span class="chip">{typeName(n.type)}</span>
             <span class="chip" class:danger={st.out}>{ROUGH_LABEL[roughState(n)]}</span>
-            {#each n.tags as t}<span class="chip amber">{t}</span>{/each}
-            {#each n.poisons ?? [] as pz (pz.id)}<span class="chip danger" title={describePoison(pz)}>Gift {pz.level}{pz.delay ? ` (${pz.delay})` : ''}</span>{/each}
-            {#if combat.done[n.id]}<span class="chip">gehandelt</span>{/if}
+            {#each n.tags as tg}<span class="chip amber">{tagLabel(tg)}</span>{/each}
+            {#each n.poisons ?? [] as pz (pz.id)}<span class="chip danger" title={describePoison(pz)}>{t('gm.common.poisonChip', { level: GIFT[pz.level].label })}{pz.delay ? ` (${pz.delay})` : ''}</span>{/each}
+            {#if combat.done[n.id]}<span class="chip">{t('gm.common.acted')}</span>{/if}
           </div>
           {#if !st.out && party.length}
             <div class="row atk">
-              <select aria-label="Ziel des Angriffs" value={attackFrom[n.id] ?? party[0].id} onchange={(e) => (attackFrom[n.id] = e.currentTarget.value)}>{#each party as p}<option value={p.id}>{p.characterName || p.name}</option>{/each}</select>
-              <button class="btn sm danger" onclick={() => gmAttack(attackFrom[n.id] ?? party[0].id, n.id)}>greift an</button>
+              <select aria-label={t('gm.sidebar.attackTarget')} value={attackFrom[n.id] ?? party[0].id} onchange={(e) => (attackFrom[n.id] = e.currentTarget.value)}>{#each party as p}<option value={p.id}>{p.characterName || p.name}</option>{/each}</select>
+              <button class="btn sm danger" onclick={() => gmAttack(attackFrom[n.id] ?? party[0].id, n.id)}>{t('gm.sidebar.attacks')}</button>
             </div>
           {/if}
         </div>
-      {:else}<p class="dim">Noch keine Gegner. Füge sie auf der Karte hinzu.</p>{/each}
+      {:else}<p class="dim">{t('gm.sidebar.noEnemies')}</p>{/each}
     </section>
   {/if}
 </aside>

@@ -3,6 +3,7 @@
   import { rulebook, closeRulebook, rbUrl, rbImg, rbFill, rbHtml, plainText, type RbChapter } from './rulebook.svelte';
   import RulebookDownload from './RulebookDownload.svelte';
   import { COPYRIGHT } from '../lib/legal';
+  import { t, tn } from '../i18n';
 
   let scroller = $state<HTMLDivElement>();
   let tocEl = $state<HTMLElement>();
@@ -99,42 +100,42 @@
 <svelte:window onkeydown={onKey} />
 
 {#if rulebook.open}
-  <button class="scrim" onclick={closeRulebook} aria-label="Regelwerk schließen" tabindex="-1"></button>
+  <button class="scrim" onclick={closeRulebook} aria-label={t('rulebook.close')} tabindex="-1"></button>
 {/if}
 
-<aside class="rb" class:open={rulebook.open} class:wide={rulebook.wide} aria-label="Regelwerk" aria-hidden={!rulebook.open}>
+<aside class="rb" class:open={rulebook.open} class:wide={rulebook.wide} aria-label={t('rulebook.panel')} aria-hidden={!rulebook.open}>
   <header>
     <div class="titlebar">
       <RulebookDownload variant="drawer" />
       <span class="spacer"></span>
-      <button class="btn sm icon ghost" onclick={() => (navOpen = !navOpen)} aria-expanded={navOpen} aria-label="Inhaltsverzeichnis" title="Inhaltsverzeichnis">☰</button>
-      <button class="btn sm icon ghost" onclick={() => (rulebook.wide = !rulebook.wide)} aria-label={rulebook.wide ? 'Schmaler' : 'Breiter'} title={rulebook.wide ? 'Schmaler' : 'Breiter'}>{rulebook.wide ? '⇥' : '⇤'}</button>
-      <button class="btn sm icon ghost" onclick={closeRulebook} aria-label="Schließen">✕</button>
+      <button class="btn sm icon ghost" onclick={() => (navOpen = !navOpen)} aria-expanded={navOpen} aria-label={t('rulebook.toc')} title={t('rulebook.toc')}>☰</button>
+      <button class="btn sm icon ghost" onclick={() => (rulebook.wide = !rulebook.wide)} aria-label={rulebook.wide ? t('rulebook.narrower') : t('rulebook.wider')} title={rulebook.wide ? t('rulebook.narrower') : t('rulebook.wider')}>{rulebook.wide ? '⇥' : '⇤'}</button>
+      <button class="btn sm icon ghost" onclick={closeRulebook} aria-label={t('rulebook.closeShort')}>✕</button>
     </div>
-    <input type="search" bind:value={query} placeholder="Suchen … (z.B. Dominanz, Schutz, MW)" aria-label="Im Regelwerk suchen" />
+    <input type="search" bind:value={query} placeholder={t('rulebook.search.placeholder')} aria-label={t('rulebook.search.aria')} />
   </header>
 
   <div class="bodywrap">
   <div class="body" bind:this={scroller} onscroll={onScroll}>
-    {#if rulebook.loading && !data}<p class="dim pad">Lädt …</p>{/if}
+    {#if rulebook.loading && !data}<p class="dim pad">{t('rulebook.loading')}</p>{/if}
     {#if rulebook.error}<p class="err pad">{rulebook.error}</p>{/if}
 
     {#if q.length >= 2}
       <div class="pad results">
-        <h3>{hits.length} Treffer</h3>
+        <h3>{tn('rulebook.hits', hits.length)}</h3>
         {#each hits as h (h.id)}
           <button class="hit" onclick={() => goTo(h.id)}><b>{h.title}</b>{#if h.snippet}<small class="dim">{h.snippet}</small>{/if}</button>
         {:else}
-          <p class="dim">Nichts gefunden.</p>
+          <p class="dim">{t('rulebook.nothing')}</p>
         {/each}
       </div>
     {:else if data}
 
       {#if showCover}
         <div class="cover">
-          <img class="coverimg" src={rbImg(data.cover)} alt="Cover" />
+          <img class="coverimg" src={rbImg(data.cover)} alt={t('rulebook.cover.alt')} />
           <div class="covertxt">
-            <span class="kicker">Cinematic Action Roleplaying</span>
+            <span class="kicker">{t('rulebook.kicker')}</span>
             <h1>KINETIK</h1>
             <div class="rbcontent">{@html rbHtml(data.intro)}</div>
           </div>
@@ -146,7 +147,7 @@
           <div class="banner">
             {#if c.image}<img class="bannerimg" src={rbImg(c.image)} alt="" loading="lazy" />{/if}
             <div class="bannertxt">
-              {#if c.number}<span class="no">Kapitel {c.number}</span>{:else if c.appendix}<span class="no">Anhang</span>{/if}
+              {#if c.number}<span class="no">{t('rulebook.chapter', { n: c.number })}</span>{:else if c.appendix}<span class="no">{t('rulebook.appendix')}</span>{/if}
               <h2>{c.title}</h2>
               {#if c.subtitle}<span class="sub">{c.subtitle}</span>{/if}
             </div>
@@ -167,14 +168,14 @@
       {/each}
 
       <footer class="legal pad">
-        <p>{COPYRIGHT}. Regeltext und Bilder: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noreferrer">CC BY-NC-SA 4.0</a>.</p>
-        <p><a href="#/impressum" onclick={closeRulebook}>Impressum</a> · <a href="#/datenschutz" onclick={closeRulebook}>Datenschutz</a></p>
+        <p>{t('rulebook.footer.license', { copyright: COPYRIGHT })} <a href={t('rulebook.footer.licenseUrl')} target="_blank" rel="noreferrer">CC BY-NC-SA 4.0</a>.</p>
+        <p><a href="#/impressum" onclick={closeRulebook}>{t('nav.impressum')}</a> · <a href="#/datenschutz" onclick={closeRulebook}>{t('nav.privacy')}</a></p>
       </footer>
     {/if}
   </div>
 
   {#if navOpen && data && q.length < 2}
-    <nav class="toc" bind:this={tocEl} aria-label="Inhalt">
+    <nav class="toc" bind:this={tocEl} aria-label={t('rulebook.toc.aria')} style:--here={`'${t('rulebook.toc.here')}'`}>
       {#each data.chapters as c (c.id)}
         <button class="ch" class:cur={currentId === c.id} onclick={() => goTo(c.id)} aria-current={currentId === c.id ? 'location' : undefined}>{chapterLabel(c)}</button>
         {#each c.sections as s (s.id)}<button class="sc" class:cur={currentId === s.id} onclick={() => goTo(s.id)} aria-current={currentId === s.id ? 'location' : undefined}>{s.title}</button>{/each}
@@ -229,7 +230,7 @@
   .toc .ch { font: 600 0.95rem var(--font-head); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.6rem; color: var(--accent-2); }
   .toc .sc { padding-left: 1.4em; color: var(--ink-dim); font-size: 0.92rem; }
   .toc .cur { border-left-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
-  .toc .sc.cur::after, .toc .ch.cur::after { content: ' ◂ hier'; font-size: 0.72em; letter-spacing: 0.08em; opacity: 0.8; }
+  .toc .sc.cur::after, .toc .ch.cur::after { content: ' ' var(--here, '◂');  font-size: 0.72em; letter-spacing: 0.08em; opacity: 0.8; }
 
   .results .hit { display: grid; gap: 2px; width: 100%; text-align: left; padding: 0.55rem 0.6rem; margin-bottom: 4px; background: var(--raised); border: 1px solid var(--line); border-left: 3px solid var(--accent); color: var(--ink); cursor: pointer; font: inherit; }
   .results .hit:hover { border-color: var(--accent); }

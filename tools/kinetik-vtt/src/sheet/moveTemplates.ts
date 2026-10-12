@@ -1,5 +1,6 @@
 import { rules, type AttrKey } from '../rules';
 import { uid, type Move } from '../model/character';
+import { t } from '../i18n';
 
 export function moveFromTemplate(templateId: string, opts: { titleId?: string; level?: number } = {}): Move | undefined {
   const t = rules.moves.moves.find((m) => m.id === templateId);
@@ -19,5 +20,5 @@ export function moveFromTemplate(templateId: string, opts: { titleId?: string; l
 }
 
 export function blankMove(opts: { titleId?: string; level?: number } = {}): Move {
-  return { id: uid(), name: 'Neuer Move', attr: 'fluss', text: '', effects: [], deductions: [], titleId: opts.titleId, learnedAtLevel: opts.level };
+  return { id: uid(), name: t('sheet.moves.defaultName'), attr: 'fluss', text: '', effects: [], deductions: [], titleId: opts.titleId, learnedAtLevel: opts.level };
 }

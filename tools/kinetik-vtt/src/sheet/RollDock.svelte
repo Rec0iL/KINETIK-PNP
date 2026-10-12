@@ -2,6 +2,7 @@
   import type { Character } from '../model/character';
   import { rollLog } from '../dice/roller.svelte';
   import RollPanel from './RollPanel.svelte';
+  import { t } from '../i18n';
 
   let { char }: { char: Character } = $props();
 
@@ -53,18 +54,18 @@
 
 <div class="dock" class:open bind:this={box} {style}>
   {#if open}
-    <div class="head" onpointerdown={down} onpointermove={move} onpointerup={up} onpointercancel={up} role="toolbar" tabindex="-1" aria-label="Würfel-Fenster, am Kopf verschiebbar">
+    <div class="head" onpointerdown={down} onpointermove={move} onpointerup={up} onpointercancel={up} role="toolbar" tabindex="-1" aria-label={t('sheet.dock.aria')}>
       <span class="grip" aria-hidden="true">⠿</span>
-      <b>Würfeln</b>
+      <b>{t('sheet.common.roll')}</b>
       <span class="spacer"></span>
-      {#if x !== null}<button class="btn sm icon ghost" onclick={reset} title="Zurück an die Ecke" aria-label="Position zurücksetzen">⌖</button>{/if}
-      <button class="btn sm icon ghost" onclick={() => (open = false)} aria-label="Würfel-Fenster einklappen" title="Einklappen">▾</button>
+      {#if x !== null}<button class="btn sm icon ghost" onclick={reset} title={t('sheet.dock.resetTitle')} aria-label={t('sheet.dock.resetAria')}>⌖</button>{/if}
+      <button class="btn sm icon ghost" onclick={() => (open = false)} aria-label={t('sheet.dock.collapseAria')} title={t('sheet.dock.collapse')}>▾</button>
     </div>
     <div class="body"><RollPanel {char} /></div>
   {:else}
-    <button class="pill" onclick={() => (open = true)} aria-expanded="false" title="Würfel öffnen">
+    <button class="pill" onclick={() => (open = true)} aria-expanded="false" title={t('sheet.dock.open')}>
       <span class="die" aria-hidden="true">⚄</span>
-      <span class="lbl">Würfeln</span>
+      <span class="lbl">{t('sheet.common.roll')}</span>
       {#if last}<span class="tot">{last.total}</span>{/if}
     </button>
   {/if}

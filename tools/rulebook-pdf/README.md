@@ -151,6 +151,16 @@ projekt/
 
 Bildplatz-Schlüssel entstehen aus den Überschriften (`ch-…` für Kapitel, `sec-…` für Abschnitte, `fill-…` für Füllbilder). Wird eine Überschrift umbenannt, bekommt sie einen neuen Platz und braucht ein neues Bild; der alte Eintrag bleibt in `images.json` stehen.
 
+### Übersetzungen (gleiche Bilder, andere Sprache)
+
+Eine Übersetzung ist ein eigenes Projekt, das die Bilder des Originals mitbenutzt:
+
+- `key_source`: Pfad zur Markdown-Datei des Originals. Kapitel- und Abschnittsschlüssel (und damit Bildnamen, Anker und `fill-…`) kommen von dort, positionsweise. Beide Dateien müssen dieselbe Kapitel- und Abschnittsstruktur haben, sonst bricht das Werkzeug mit einem Fehler ab (`scripts/check_translation.py` prüft das früh).
+- `images_from`: Projektordner des Originals. Fehlt im eigenen `images/` ein Bild (Cover, Hintergrund, Kapitel, Abschnitte), gilt das des Originals. Füllbilder werden nie geliehen: Sie sind auf die Lücken des jeweiligen Satzes zugeschnitten und liegen im eigenen `images/`.
+- `language`, `chapter_label`, `kicker`, `tagline`, `colophon`, `output` übersetzen die festen Texte des Einbands.
+
+Beispiel: `assets/pdf-en/project.json` (Hauptprojekt) und `assets/pdf-themes-en/<theme>/` (Looks, angelegt von `python3 scripts/gen_rulebook_themes.py --lang en`). Ablauf nach einer Textänderung: `build` (Lücken neu messen), `gen_rulebook_themes.py --lang en --fillers` (nur fehlende oder nicht mehr passende Füllbilder erzeugen), `--pdf`.
+
 ## Layout-Regeln
 
 - Kurze Abschnitte (unter ca. 700 Zeichen, ohne Tabellen) bekommen ihr Bild als kleineres Bild rechts neben dem Text statt als Banner über der vollen Breite.

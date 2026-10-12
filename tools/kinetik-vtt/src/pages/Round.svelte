@@ -14,6 +14,8 @@
   import Dialog from '../ui/Dialog.svelte';
   import { assetUrl, requestAsset, assets } from '../net/assets.svelte';
   import type { Handout } from '../net/protocol';
+  import { tagLabel } from '../rules';
+  import { t, fmtNumber } from '../i18n';
 
   const mine = $derived(getCharacter(player.characterId));
   const vis = $derived(player.state?.visibility ?? 'party');
@@ -53,8 +55,8 @@
   const ghosts = $derived<Ghost[]>(
     player.pendingMove
       ? (() => {
-          const t = player.map?.tokens.find((k) => k.id === player.pendingMove!.tokenId);
-          return t ? [{ id: 'mine', from: { x: t.x, y: t.y }, to: { x: player.pendingMove!.x, y: player.pendingMove!.y }, color: t.color, label: 'Warte auf den SL', size: t.size }] : [];
+          const tok = player.map?.tokens.find((k) => k.id === player.pendingMove!.tokenId);
+          return tok ? [{ id: 'mine', from: { x: tok.x, y: tok.y }, to: { x: player.pendingMove!.x, y: player.pendingMove!.y }, color: tok.color, label: t('pages.round.waitGm'), size: tok.size }] : [];
         })()
       : [],
   );
@@ -87,42 +89,42 @@
     viewPlayer(id);
     viewOpen = true;
   }
-  const visText = { party: 'Gruppenleiste (nur Werte)', private: 'Privat (nur der SL sieht Bögen)', open: 'Offen (alle Bögen lesbar)' };
+  const visText = { party: t('pages.round.visParty'), private: t('pages.round.visPrivate'), open: t('pages.round.visOpen') };
 </script>
 
 {#if player.status === 'idle'}
-  <p class="dim">Nicht verbunden.</p>
+  <p class="dim">{t('pages.round.notConnected')}</p>
 {:else}
   <section class="head">
     <div>
-      <span class="kicker">Runde {formatCode(player.code)}</span>
-      <h1>{player.gmName || 'Runde'}</h1>
+      <span class="kicker">{t('pages.round.kicker', { code: formatCode(player.code) })}</span>
+      <h1>{player.gmName || t('pages.round.titleFallback')}</h1>
     </div>
     <div class="row">
-      {#if mine}<a class="btn primary" href={`#/charakter/${mine.id}`}>Meinen Bogen öffnen</a>{/if}
-      <button class="btn" onclick={() => confirm('Runde verlassen?') && (leaveRound(), navigate('/beitreten'))}>Verlassen</button>
+      {#if mine}<a class="btn primary" href={`#/charakter/${mine.id}`}>{t('pages.round.openSheet')}</a>{/if}
+      <button class="btn" onclick={() => confirm(t('pages.round.confirmLeave')) && (leaveRound(), navigate('/beitreten'))}>{t('pages.common.leave')}</button>
     </div>
   </section>
 
   {#if player.status !== 'connected'}
-    <p class="panel flat banner">{player.status === 'pending' ? 'Warte auf die Bestätigung des SL …' : `Verbindung wird wiederhergestellt … ${player.error}`}</p>
+    <p class="panel flat banner">{player.status === 'pending' ? t('pages.common.waitGm') : t('pages.round.reconnecting', { error: player.error })}</p>
   {/if}
 
   {#if combat?.active}
     <section class="panel combat">
       <div class="row">
-        <h2>Kampf · Runde {combat.round}</h2><span class="spacer"></span>
-        <span class="chip" class:accent={combat.side === 'players'} class:danger={combat.side === 'enemies'}>Am Zug: {combat.side === 'players' ? 'Spieler' : 'Gegner'}</span>
-        <span class="chip amber" title="Die Seite mit dem Marker beginnt die nächste Runde">Kinetik-Marker: {combat.marker === 'players' ? 'bei uns' : 'bei den Gegnern'}</span>
+        <h2>{t('pages.round.combatTitle', { round: combat.round })}</h2><span class="spacer"></span>
+        <span class="chip" class:accent={combat.side === 'players'} class:danger={combat.side === 'enemies'}>{t('pages.round.turn', { side: combat.side === 'players' ? t('pages.round.sidePlayers') : t('pages.round.sideEnemies') })}</span>
+        <span class="chip amber" title={t('pages.round.markerTitle')}>{t('pages.round.marker', { where: combat.marker === 'players' ? t('pages.round.markerUs') : t('pages.round.markerEnemies') })}</span>
       </div>
       <div class="row who">
         {#each player.party as p}
-          <span class="chip" class:accent={!combat.done.includes(p.id)} title={combat.bedraengnis[p.id] ? `Bedrängnis ${combat.bedraengnis[p.id]}` : ''}>{p.characterName || p.name}{combat.done.includes(p.id) ? ' ✓' : ''}{combat.bedraengnis[p.id] ? ` · Bedr. ${combat.bedraengnis[p.id]}` : ''}</span>
+          <span class="chip" class:accent={!combat.done.includes(p.id)} title={combat.bedraengnis[p.id] ? t('pages.round.pressure', { n: combat.bedraengnis[p.id] }) : ''}>{p.characterName || p.name}{combat.done.includes(p.id) ? ' ✓' : ''}{combat.bedraengnis[p.id] ? ` · ${t('pages.round.pressureShort', { n: combat.bedraengnis[p.id] })}` : ''}</span>
         {/each}
       </div>
       {#if combat.enemies.length}
         <div class="row who">
-          {#each combat.enemies as e}<span class="chip" class:danger={!e.out} title={e.tags.map((t) => t.name).join(', ')}>{#if e.img}<img class="av" src={e.img} alt="" />{/if}{e.name} · {ROUGH_LABEL[e.state]}{e.tags.length ? ` · ${e.tags.map((t) => t.name).join(', ')}` : ''}</span>{/each}
+          {#each combat.enemies as e}<span class="chip" class:danger={!e.out} title={e.tags.map((tg) => tagLabel(tg.name)).join(', ')}>{#if e.img}<img class="av" src={e.img} alt="" />{/if}{e.name} · {ROUGH_LABEL[e.state]}{e.tags.length ? ` · ${e.tags.map((tg) => tagLabel(tg.name)).join(', ')}` : ''}</span>{/each}
         </div>
       {/if}
     </section>
@@ -133,12 +135,12 @@
   {#if player.map}
     <section class="panel mapsec">
       <div class="row">
-        <h2>Karte: {player.map.name}</h2><span class="spacer"></span>
-        <button class="btn sm" class:primary={mapTool === 'move'} onclick={() => (mapTool = 'move')} title="Eigenen Token ziehen, Karte verschieben (Doppelklick = Ping)">Bewegen</button>
-        <button class="btn sm" class:primary={mapTool === 'ping'} onclick={() => (mapTool = 'ping')}>Ping</button>
-        <button class="btn sm" class:primary={mapTool === 'measure'} onclick={() => (mapTool = 'measure')}>Messen</button>
-        <button class="btn sm" onclick={() => mapView?.fit()}>Einpassen</button>
-        <button class="btn sm ghost" onclick={() => (mapHidden = !mapHidden)}>{mapHidden ? 'Zeigen' : 'Ausblenden'}</button>
+        <h2>{t('pages.round.mapTitle', { name: player.map.name })}</h2><span class="spacer"></span>
+        <button class="btn sm" class:primary={mapTool === 'move'} onclick={() => (mapTool = 'move')} title={t('pages.round.moveTitle')}>{t('pages.round.move')}</button>
+        <button class="btn sm" class:primary={mapTool === 'ping'} onclick={() => (mapTool = 'ping')}>{t('pages.round.ping')}</button>
+        <button class="btn sm" class:primary={mapTool === 'measure'} onclick={() => (mapTool = 'measure')}>{t('pages.round.measure')}</button>
+        <button class="btn sm" onclick={() => mapView?.fit()}>{t('pages.round.fit')}</button>
+        <button class="btn sm ghost" onclick={() => (mapHidden = !mapHidden)}>{mapHidden ? t('pages.round.show') : t('pages.round.hide')}</button>
       </div>
       {#if !mapHidden}
         <div class="stage"><MapView bind:this={mapView} map={player.map} role="player" myPlayerId={player.playerId} tool={mapTool} pingColor={myColor} {ghosts} requestMoves={!!combat?.active} highlight={targetTokens} bind:selected={selTok} onops={mapOps} /></div>
@@ -149,19 +151,19 @@
   <div class="layout">
     <div class="stack">
       <section class="panel">
-        <div class="row"><h2>Gruppe</h2><span class="spacer"></span><span class="chip">{visText[vis]}</span></div>
+        <div class="row"><h2>{t('pages.round.party')}</h2><span class="spacer"></span><span class="chip">{visText[vis]}</span></div>
         <div class="party">
           {#each player.party as p (p.id)}
             <PartyCard {p} me={p.id === player.playerId} onopen={vis === 'open' && p.id !== player.playerId ? () => openView(p.id) : undefined} />
           {:else}
-            <p class="dim">Noch niemand sichtbar.</p>
+            <p class="dim">{t('pages.round.partyEmpty')}</p>
           {/each}
         </div>
       </section>
 
       {#if player.handouts.length}
         <section class="panel">
-          <h2>Handouts</h2>
+          <h2>{t('pages.round.handouts')}</h2>
           <ul class="hl">
             {#each player.handouts as h (h.id)}
               <li><button class="btn sm" onclick={() => openHandout(h)}>{h.kind === 'image' ? '🖼' : '📄'} {h.title}</button></li>
@@ -171,18 +173,18 @@
       {/if}
 
       {#if player.state?.notes}
-        <section class="panel"><h2>Notizen des SL</h2><div class="notes">{player.state.notes}</div></section>
+        <section class="panel"><h2>{t('pages.round.gmNotes')}</h2><div class="notes">{player.state.notes}</div></section>
       {/if}
 
       <section class="panel">
-        <h2>Mein Charakter in dieser Runde</h2>
-        <label class="field">Bogen
+        <h2>{t('pages.round.myChar')}</h2>
+        <label class="field">{t('pages.common.sheet')}
           <select value={player.characterId} onchange={(e) => setActiveCharacter(e.currentTarget.value)}>
             {#each library.characters as c}<option value={c.id}>{c.name}</option>{/each}
-            <option value="">Ohne Bogen</option>
+            <option value="">{t('pages.round.noSheet')}</option>
           </select>
         </label>
-        <small class="dim">Dein Bogen wird bei jeder Änderung an den SL übertragen. Änderungen des SL (z.B. Schaden) erscheinen bei dir mit einer Meldung.</small>
+        <small class="dim">{t('pages.round.syncNote')}</small>
       </section>
     </div>
 
@@ -192,21 +194,21 @@
   </div>
 {/if}
 
-<Dialog bind:open={handoutOpen} title={shownHandout?.title ?? 'Handout'} wide>
+<Dialog bind:open={handoutOpen} title={shownHandout?.title ?? t('pages.round.handout')} wide>
   {#if shownHandout?.kind === 'image'}
     {#if handoutUrl}<img class="ho" src={handoutUrl} alt={shownHandout.title} />
     {:else if handoutErr}<p class="err">{handoutErr}</p>
-    {:else}<p class="dim">Wird übertragen … {shownHandout.hash && assets.progress[shownHandout.hash] ? Math.round((assets.progress[shownHandout.hash].loaded / Math.max(1, assets.progress[shownHandout.hash].total)) * 100) + ' %' : ''}</p>{/if}
+    {:else}<p class="dim">{t('pages.round.transferring')} {shownHandout.hash && assets.progress[shownHandout.hash] ? fmtNumber(Math.round((assets.progress[shownHandout.hash].loaded / Math.max(1, assets.progress[shownHandout.hash].total)) * 100) / 100, { style: 'percent' }) : ''}</p>{/if}
   {:else}
     <div class="notes">{shownHandout?.text}</div>
   {/if}
 </Dialog>
 
-<Dialog bind:open={viewOpen} title={player.view?.character?.name ?? 'Bogen'} wide>
+<Dialog bind:open={viewOpen} title={player.view?.character?.name ?? t('pages.common.sheet')} wide>
   {#if player.view?.character}
     <SheetViewer char={player.view.character} />
   {:else}
-    <p class="dim">Wird geladen … Der SL hat den Bogen eventuell nicht freigegeben.</p>
+    <p class="dim">{t('pages.round.loadingSheet')}</p>
   {/if}
 </Dialog>
 

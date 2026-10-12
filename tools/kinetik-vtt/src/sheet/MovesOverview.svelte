@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { rules, costLabel, TIER_LABEL } from '../rules';
+  import { rules, costLabel, TIER_LABEL, priceLabel } from '../rules';
   import type { Character } from '../model/character';
   import { viewMove, moveRollBonus } from '../model/sheet';
   import { settings } from '../lib/settings.svelte';
   import { affordability, rollMove } from './moveUse.svelte';
   import MovePayBar from './MovePayBar.svelte';
+  import { t } from '../i18n';
 
   let { char, ontab }: { char: Character; ontab?: (tab: string) => void } = $props();
 
@@ -16,8 +17,8 @@
 <section class="panel">
   <div class="row head">
     <h2>Moves</h2><span class="chip">{char.moves.length}</span><span class="spacer"></span>
-    <label class="auto" title="Regel 3.12: Bezahlt wird sonst erst nach dem Wurf, wenn der Move wirkt."><input type="checkbox" bind:checked={settings.autoPayMoves} /> Kosten sofort abziehen</label>
-    {#if ontab}<button class="btn sm" onclick={() => ontab('moves')}>Moves verwalten</button>{/if}
+    <label class="auto" title={t('sheet.common.autoPayTitle')}><input type="checkbox" bind:checked={settings.autoPayMoves} /> {t('sheet.moves.autoPayShort')}</label>
+    {#if ontab}<button class="btn sm" onclick={() => ontab('moves')}>{t('sheet.moves.manage')}</button>{/if}
   </div>
   {#each char.moves as m (m.id)}
     {@const v = viewMove(char, m)}
@@ -28,21 +29,21 @@
         {#if v.titleName}<span class="chip">{v.titleName}</span>{/if}
         <span class="chip accent">{attrName(m.attr)}</span>
         <span class="chip amber">{v.evaluation.ep} EP</span>
-        {#if v.cost.mastered}<span class="chip accent">gemeistert</span>{/if}
-        {#if v.cost.levelTooLow}<span class="chip danger" title="Titel-Level unter dem Mindestlevel">Level {v.evaluation.minLevel} nötig</span>{/if}
+        {#if v.cost.mastered}<span class="chip accent">{t('sheet.common.mastered')}</span>{/if}
+        {#if v.cost.levelTooLow}<span class="chip danger" title={t('sheet.common.levelBelowMin')}>{t('sheet.common.levelNeeded', { n: v.evaluation.minLevel })}</span>{/if}
         <span class="spacer"></span>
         <span class="cost">{costLabel(v.cost)}</span>
-        <button class="btn sm primary" onclick={(e) => { e.preventDefault(); rollMove(char, m); }} disabled={!a.ok} title={a.ok ? `2W6 ${fmt(moveRollBonus(char, m))}` : a.reason}>Würfeln {fmt(moveRollBonus(char, m))}</button>
+        <button class="btn sm primary" onclick={(e) => { e.preventDefault(); rollMove(char, m); }} disabled={!a.ok} title={a.ok ? t('sheet.common.roll2d6', { b: fmt(moveRollBonus(char, m)) }) : a.reason}>{t('sheet.common.rollBonus', { b: fmt(moveRollBonus(char, m)) })}</button>
       </summary>
       <div class="detail">
         <small class="dim">{TIER_LABEL[v.evaluation.tier]}</small>
         {#if m.text}<p>{m.text}</p>{/if}
-        {#if m.prices?.length}<p class="dim">Preise: {m.prices.join(', ')}</p>{/if}
+        {#if m.prices?.length}<p class="dim">{t('sheet.moves.prices', { list: m.prices.map(priceLabel).join(', ') })}</p>{/if}
       </div>
     </details>
     <MovePayBar {char} move={m} />
   {:else}
-    <p class="dim">Noch keine Moves. Lege sie im Reiter „Moves“ an oder nimm Beispiele aus dem Regelwerk.</p>
+    <p class="dim">{t('sheet.moves.noneOverview')}</p>
   {/each}
 </section>
 

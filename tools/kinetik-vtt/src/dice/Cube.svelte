@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { t } from '../i18n';
   // W6 als 3D-Würfel (CSS). Das Ergebnis steht fest, die Animation landet darauf.
   let { value, size = 72, delay = 0, animate = true }: { value: number; size?: number; delay?: number; animate?: boolean } = $props();
 
@@ -54,7 +55,7 @@
   });
 </script>
 
-<div class="scene" style:--s="{size}px" aria-label={`W6: ${value}`} role="img">
+<div class="scene" style:--s="{size}px" aria-label={t('dice.cube.aria', { value })} role="img">
   <div class="fly" bind:this={fly}>
     <div class="tilt">
       <div class="cube" bind:this={cube}>

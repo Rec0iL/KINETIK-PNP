@@ -8,6 +8,7 @@
   import { downloadJson, exportMoves, parseMoveImport, ImportError } from '../model/io';
   import MoveEditor from '../sheet/MoveEditor.svelte';
   import Dialog from '../ui/Dialog.svelte';
+  import { t, tn } from '../i18n';
 
   let selectedId = $state<string | null>(null);
   let level = $state(1);
@@ -38,19 +39,19 @@
     select(m.id);
   }
   function fromTemplate(id: string) {
-    const t = rules.moves.moves.find((x) => x.id === id);
-    const m = moveFromTemplate(id, { level: t?.minLevel ?? 1 });
+    const tpl = rules.moves.moves.find((x) => x.id === id);
+    const m = moveFromTemplate(id, { level: tpl?.minLevel ?? 1 });
     if (m) add(m);
   }
   function duplicate() {
     if (idx < 0) return;
     const copy: Move = JSON.parse(JSON.stringify($state.snapshot(moveLibrary.moves[idx])));
     copy.id = uid();
-    copy.name += ' (Kopie)';
+    copy.name += t('pages.builder.copySuffix');
     add(copy);
   }
   function remove() {
-    if (idx < 0 || !confirm('Move aus der Bibliothek löschen?')) return;
+    if (idx < 0 || !confirm(t('pages.builder.confirmDelete'))) return;
     moveLibrary.moves.splice(idx, 1);
     selectedId = null;
   }
@@ -62,11 +63,11 @@
       try {
         for (const m of parseMoveImport(await f.text())) { moveLibrary.moves.unshift(m); n++; }
       } catch (err) {
-        errors.push(`${f.name}: ${err instanceof ImportError ? err.message : 'Lesefehler'}`);
+        errors.push(`${f.name}: ${err instanceof ImportError ? err.message : t('pages.common.readError')}`);
       }
     }
     input.value = '';
-    message = [n ? `${n} Move(s) importiert.` : '', ...errors].filter(Boolean).join(' ');
+    message = [n ? tn('pages.builder.imported', n) : '', ...errors].filter(Boolean).join(' ');
   }
   function openSend() {
     sendChar = library.characters[0]?.id ?? '';
@@ -83,7 +84,7 @@
     c.updated = Date.now();
     saveCharacter(c);
     sendOpen = false;
-    message = `„${copy.name}“ zu ${c.name} hinzugefügt.`;
+    message = t('pages.builder.added', { move: copy.name, char: c.name });
   }
   const short = (m: Move) => {
     const ev = evaluateMove(m);
@@ -93,13 +94,13 @@
 
 <section class="head">
   <div>
-    <span class="kicker">Regeln 5.1 bis 5.4</span>
-    <h1>Move-Builder</h1>
+    <span class="kicker">{t('pages.builder.kicker')}</span>
+    <h1>{t('pages.builder.title')}</h1>
   </div>
   <div class="row">
-    <button class="btn primary" onclick={() => add(blankMove({ level: 1 }))}>+ Neuer Move</button>
-    <button class="btn" onclick={() => fileInput?.click()}>Importieren</button>
-    <button class="btn" onclick={() => downloadJson(exportMoves($state.snapshot(moveLibrary.moves)), 'kinetik-moves.json')} disabled={!moveLibrary.moves.length}>Alle exportieren</button>
+    <button class="btn primary" onclick={() => add(blankMove({ level: 1 }))}>{t('pages.builder.newMove')}</button>
+    <button class="btn" onclick={() => fileInput?.click()}>{t('pages.builder.import')}</button>
+    <button class="btn" onclick={() => downloadJson(exportMoves($state.snapshot(moveLibrary.moves)), 'kinetik-moves.json')} disabled={!moveLibrary.moves.length}>{t('pages.common.exportAll')}</button>
     <input bind:this={fileInput} type="file" accept="application/json,.json" multiple class="sr-only" onchange={onFiles} />
   </div>
 </section>
@@ -108,20 +109,20 @@
 <div class="layout">
   <aside class="stack">
     <section class="panel">
-      <h2>Meine Moves <span class="chip">{moveLibrary.moves.length}</span></h2>
+      <h2>{t('pages.builder.myMoves')} <span class="chip">{moveLibrary.moves.length}</span></h2>
       <ul class="list">
         {#each moveLibrary.moves as m (m.id)}
           <li><button class:on={m.id === selectedId} onclick={() => select(m.id)}><b>{m.name}</b><small class="dim">{short(m)}</small></button></li>
         {:else}
-          <li class="dim">Noch nichts gespeichert. Starte mit „Neuer Move“ oder einer Vorlage.</li>
+          <li class="dim">{t('pages.builder.empty')}</li>
         {/each}
       </ul>
     </section>
     <section class="panel">
-      <h2>Vorlagen (5.2)</h2>
+      <h2>{t('pages.builder.templates')}</h2>
       <ul class="list">
-        {#each rules.moves.moves as t}
-          <li><button onclick={() => fromTemplate(t.id)} title={t.text}><b>{t.name}</b><small class="dim">{t.ep} EP · {t.titel}</small></button></li>
+        {#each rules.moves.moves as tpl}
+          <li><button onclick={() => fromTemplate(tpl.id)} title={tpl.text}><b>{tpl.name}</b><small class="dim">{tpl.ep} EP · {tpl.titel}</small></button></li>
         {/each}
       </ul>
     </section>
@@ -132,37 +133,37 @@
       <section class="panel">
         <MoveEditor bind:move={moveLibrary.moves[idx]} bind:level levelEditable />
         <div class="row foot">
-          <button class="btn sm" onclick={duplicate}>Duplizieren</button>
-          <button class="btn sm" onclick={() => downloadJson({ kinetik: 'move', schemaVersion: 1, rulesVersion: rules.tabellen.rules_version, move: $state.snapshot(moveLibrary.moves[idx]) }, `kinetik-move-${moveLibrary.moves[idx].name.toLowerCase().replace(/\W+/g, '-')}.json`)}>Export JSON</button>
-          <button class="btn sm amber" onclick={openSend} disabled={!library.characters.length}>Zu Charakter hinzufügen</button>
+          <button class="btn sm" onclick={duplicate}>{t('pages.common.duplicate')}</button>
+          <button class="btn sm" onclick={() => downloadJson({ kinetik: 'move', schemaVersion: 1, rulesVersion: rules.tabellen.rules_version, move: $state.snapshot(moveLibrary.moves[idx]) }, `kinetik-move-${moveLibrary.moves[idx].name.toLowerCase().replace(/\W+/g, '-')}.json`)}>{t('pages.common.exportJson')}</button>
+          <button class="btn sm amber" onclick={openSend} disabled={!library.characters.length}>{t('pages.builder.addToChar')}</button>
           <span class="spacer"></span>
-          <button class="btn sm danger" onclick={remove}>Löschen</button>
+          <button class="btn sm danger" onclick={remove}>{t('pages.common.delete')}</button>
         </div>
       </section>
     {:else}
       <section class="panel stack">
-        <h2>So funktioniert es</h2>
+        <h2>{t('pages.builder.howTitle')}</h2>
         <ol class="dim">
-          <li><b>Domäne:</b> Titel, Attribut und Technik müssen zusammenpassen.</li>
-          <li><b>Effekte:</b> Ein normaler Angriff kostet 0 EP, alles darüber wird mit Effekten aus dem Katalog bezahlt. Effekte außerhalb des Katalogs schätzt der SL (klein 1, mittel 2, groß 3 EP).</li>
-          <li><b>Abzüge:</b> Vorbedingung, Risiko, Setup-Runde oder einmal pro Szene, je −1 EP, höchstens −2.</li>
-          <li><b>Kosten:</b> Bis 3 EP in Energie (EP − Meisterschaft, mindestens 1 ab 3 EP), ab 4 EP in Momentum plus 1 Energie.</li>
+          <li><b>{t('pages.builder.howDomainLabel')}</b> {t('pages.builder.howDomain')}</li>
+          <li><b>{t('pages.builder.howEffectsLabel')}</b> {t('pages.builder.howEffects')}</li>
+          <li><b>{t('pages.builder.howDeductionsLabel')}</b> {t('pages.builder.howDeductions')}</li>
+          <li><b>{t('pages.builder.howCostLabel')}</b> {t('pages.builder.howCost')}</li>
         </ol>
-        <p class="dim">Der Builder rechnet live, lässt aber jede Zahl überschreiben. Hausregeln und SL-Entscheidungen haben immer Vorrang.</p>
+        <p class="dim">{t('pages.builder.howNote')}</p>
       </section>
     {/if}
   </div>
 </div>
 
-<Dialog bind:open={sendOpen} title="Zu Charakter hinzufügen">
+<Dialog bind:open={sendOpen} title={t('pages.builder.addToChar')}>
   <div class="stack">
-    <label class="field">Charakter
+    <label class="field">{t('pages.builder.character')}
       <select bind:value={sendChar}>{#each library.characters as c}<option value={c.id}>{c.name}</option>{/each}</select>
     </label>
-    <label class="field">Titel
-      <select bind:value={sendTitle}><option value="">— keiner —</option>{#each sendTitles as t}<option value={t.id}>{t.name} (L{t.level})</option>{/each}</select>
+    <label class="field">{t('pages.builder.titleField')}
+      <select bind:value={sendTitle}><option value="">{t('pages.builder.noTitle')}</option>{#each sendTitles as ti}<option value={ti.id}>{ti.name} (L{ti.level})</option>{/each}</select>
     </label>
-    <div class="row"><button class="btn primary" onclick={doSend}>Hinzufügen</button><button class="btn" onclick={() => (sendOpen = false)}>Abbrechen</button></div>
+    <div class="row"><button class="btn primary" onclick={doSend}>{t('pages.builder.add')}</button><button class="btn" onclick={() => (sendOpen = false)}>{t('pages.common.cancel')}</button></div>
   </div>
 </Dialog>
 

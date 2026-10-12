@@ -1,11 +1,15 @@
 // Regelwerk als HTML (gebaut von scripts/build_rulebook_web.py). Lädt erst, wenn es gebraucht wird.
 import { theme, THEMES, THEME_INFO, type ThemeKey } from '../lib/theme.svelte';
+import { getLocale } from '../i18n/locale';
+import { t } from '../i18n';
 export interface RbSection { id: string; title: string; html: string; image: string | null; fill: string | null }
 export interface RbChapter {
   id: string; number: number | null; title: string; subtitle: string; appendix: boolean;
   image: string | null; fill: string | null; html: string; sections: RbSection[];
 }
 export interface RbData {
+  /** Sprache des Texts (rulebook.json = de, rulebook.<sprache>.json). */
+  lang?: string;
   version: string; title: string; intro: string; cover: string | null; pdf: string | null; chapters: RbChapter[];
   /** Bildsätze je Theme: Schlüssel der Bilder, die es unter img/<theme>/ gibt. */
   themed?: Record<string, string[]>;
@@ -33,10 +37,13 @@ export function loadRulebook(): Promise<void> {
   if (rulebook.data) return Promise.resolve();
   if (promise) return promise;
   rulebook.loading = true;
-  promise = fetch(new URL('rulebook/rulebook.json', document.baseURI))
-    .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+  const get = (file: string) => fetch(new URL(`rulebook/${file}`, document.baseURI)).then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() as Promise<RbData>; });
+  // Text in der Sprache der App (rulebook.en.json), fehlt er, gilt die deutsche Fassung
+  const lang = getLocale();
+  const first = lang === 'de' ? get('rulebook.json') : get(`rulebook.${lang}.json`).catch(() => get('rulebook.json'));
+  promise = first
     .then((d: RbData) => { rulebook.data = absolutize(d); })
-    .catch((e) => { rulebook.error = `Regelwerk nicht ladbar (${(e as Error).message}).`; promise = null; })
+    .catch((e) => { rulebook.error = t('rulebook.error', { msg: (e as Error).message }); promise = null; })
     .finally(() => { rulebook.loading = false; });
   return promise;
 }
@@ -112,5 +119,8 @@ export function rbHtml(html: string): string {
   if (!html.includes('koerper-silhouette')) return html;
   const art = THEME_INFO[theme.current].art;
   if (!(rulebook.data?.themed?.[art] ?? []).includes('koerper-silhouette')) return html;
-  return html.replace(rbUrl('img/koerper-silhouette.svg'), rbUrl(`img/${art}/koerper-silhouette.svg`));
+  // Die Grafik hat je Sprache eigene Beschriftung: koerper-silhouette.svg (de), koerper-silhouette.en.svg (en)
+  const lang = getLocale();
+  const file = lang === 'de' ? 'koerper-silhouette.svg' : `koerper-silhouette.${lang}.svg`;
+  return html.replace(rbUrl(`img/${file}`), rbUrl(`img/${art}/${file}`));
 }

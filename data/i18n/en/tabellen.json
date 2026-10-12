@@ -1,1 +1,54 @@
-{}
+{
+  "attribute": [
+    { "key": "fluss", "name": "Flow", "kurz": "FLO", "text": "Acrobatics, soft martial arts, evasion, seamless movement." },
+    { "key": "praezision", "name": "Precision", "kurz": "PRE", "text": "Marksmanship, aimed hits on weak points, fine work." },
+    { "key": "gewalt", "name": "Force", "kurz": "FOR", "text": "Brute destruction, physical strength, unstoppable attacks." },
+    { "key": "instinkt", "name": "Instinct", "kurz": "INS", "text": "Reflexes, sensing danger, acting on gut feeling." },
+    { "key": "fokus", "name": "Focus", "kurz": "FOC", "text": "Tactics, analytical thinking, deduction, logical reasoning." }
+  ],
+  "kampagnenstufen": [
+    { "key": "strasse", "name": "Street" },
+    { "key": "kino", "name": "Cinema" },
+    { "key": "legende", "name": "Legend" }
+  ],
+  "mw": [
+    { "mw": 7, "name": "Standard" },
+    { "mw": 9, "name": "Demanding" },
+    { "mw": 11, "name": "Hard" },
+    { "mw": 13, "name": "Heroic" },
+    { "mw": 15, "name": "Legendary" }
+  ],
+  "wachsamkeit": [
+    { "mw": 7, "name": "Oblivious", "text": "Break, argument, TV" },
+    { "mw": 9, "name": "Alert", "text": "Patrol, routine" },
+    { "mw": 11, "name": "On High Alert", "text": "Intruder suspected" }
+  ],
+  "zonen": [
+    { "key": "kopf", "name": "Head", "kurz": "Head" },
+    { "key": "torso", "name": "Torso", "kurz": "Torso" },
+    { "key": "armL", "name": "Left Arm", "kurz": "L-Arm" },
+    { "key": "armR", "name": "Right Arm", "kurz": "R-Arm" },
+    { "key": "beinL", "name": "Left Leg", "kurz": "L-Leg" },
+    { "key": "beinR", "name": "Right Leg", "kurz": "R-Leg" }
+  ],
+  "deckung": [
+    { "name": "Wooden table" },
+    { "name": "Car door" },
+    { "name": "Concrete pillar" }
+  ],
+  "legendaerePreise": [
+    { "name": "Winded", "text": "Energy drops to 0." },
+    { "name": "Afterglow", "text": "-3 Willpower." },
+    { "name": "Burnt Out", "text": "No more Momentum gain for the rest of the scene." },
+    { "name": "Scar", "text": "Permanent tag or lasting injury (e.g. wrist, eyesight)." },
+    { "name": "Recoil", "text": "The user suffers an injury themselves." },
+    { "name": "Overextension", "text": "Mastery drops by 2 until the next rest." },
+    { "name": "Rare", "text": "Only once per story arc." },
+    { "name": "Lockout", "text": "The move is only available again after training/downtime." },
+    { "name": "Charging Up", "text": "The user is exposed for one round (opponents get +2 against them) before the move goes off." },
+    { "name": "Revelation", "text": "All opponents know the move and prepare for it." },
+    { "name": "Collateral Damage", "text": "The surroundings, civilians or allies are put in danger." },
+    { "name": "Loss", "text": "A weapon or piece of gear breaks." },
+    { "name": "Debt/Reputation", "text": "Story complication: pursuers, debts, reputation." }
+  ]
+}

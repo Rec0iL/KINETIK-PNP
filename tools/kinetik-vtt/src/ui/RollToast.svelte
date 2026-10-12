@@ -3,6 +3,7 @@
   import RollSummary from './RollSummary.svelte';
   import { router } from '../lib/router.svelte';
   import { settings } from '../lib/settings.svelte';
+  import { t } from '../i18n';
 
   let shownId = $state('');
   let visible = $state(false);
@@ -27,7 +28,7 @@
 {#if visible && latest && router.route.name !== 'dice' && router.route.name !== 'character' && !settings.dice3d}
   {#key latest.id}
     <div class="toast panel" role="status">
-      <button class="x btn sm icon ghost" onclick={() => (visible = false)} aria-label="Schließen">✕</button>
+      <button class="x btn sm icon ghost" onclick={() => (visible = false)} aria-label={t('ui.common.close')}>✕</button>
       <RollSummary r={latest} size={44} />
     </div>
   {/key}

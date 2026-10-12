@@ -13,6 +13,7 @@
   import TagsMini from './TagsMini.svelte';
   import Poisons from './Poisons.svelte';
   import MovesOverview from './MovesOverview.svelte';
+  import { t, tn } from '../i18n';
 
   let { char, ontab }: { char: Character; ontab?: (tab: string) => void } = $props();
 
@@ -28,7 +29,7 @@
   async function onPortrait(e: Event) {
     const file = (e.currentTarget as HTMLInputElement).files?.[0];
     if (!file) return;
-    try { char.portrait = await imageToDataUrl(file); } catch { alert('Das Bild konnte nicht gelesen werden.'); }
+    try { char.portrait = await imageToDataUrl(file); } catch { alert(t('sheet.overview.imageError')); }
   }
 
   const gain = (key: 'energie' | 'wk', n: number) => {
@@ -40,10 +41,10 @@
   };
 
   function addTempTag(name: string) {
-    if (!char.tags.some((t) => t.name === name && !t.permanent)) char.tags.push({ id: uid(), name, size: 'klein', note: 'bis zur nächsten Aktion' });
+    if (!char.tags.some((tg) => tg.name === name && !tg.permanent)) char.tags.push({ id: uid(), name, size: 'klein', note: t('sheet.overview.untilNextAction') });
   }
-  const breathe = () => { gain('energie', 2); addTempTag('Verwundbar (Durchatmen)'); };
-  const focusUp = () => { gain('wk', 2); addTempTag('Verwundbar (Sammeln)'); };
+  const breathe = () => { gain('energie', 2); addTempTag(t('sheet.overview.vulnBreath')); };
+  const focusUp = () => { gain('wk', 2); addTempTag(t('sheet.overview.vulnCompose')); };
   const dominance = () => { addMomentum(1); gain('energie', 1); };
   const perfectCounter = () => { addMomentum(1); gain('wk', 1); };
   const combatEnd = () => { char.resources.momentum = 0; };
@@ -51,7 +52,7 @@
     char.resources.energie = sheet.energieMax.value;
     char.resources.wk = sheet.wkMax.value;
     char.resources.schutz.current = char.resources.schutz.max;
-    char.tags = char.tags.filter((t) => t.permanent);
+    char.tags = char.tags.filter((tg) => tg.permanent);
     char.resources.momentum = 0;
     // Nicht-tödliches Gift endet spätestens mit der Rast (3.11).
     char.poisons = (char.poisons ?? []).filter((p) => p.level === 'toedlich');
@@ -61,8 +62,8 @@
     char.titles.push(newTitle({ startedAtLevel: 1 }));
   }
   function removeTitle(id: string) {
-    if (!confirm('Titel entfernen? Moves, die ihn nutzen, behalten ihren Namen, verlieren aber die Zuordnung.')) return;
-    char.titles = char.titles.filter((t) => t.id !== id);
+    if (!confirm(t('sheet.overview.confirmRemoveTitle'))) return;
+    char.titles = char.titles.filter((ti) => ti.id !== id);
     for (const m of char.moves) if (m.titleId === id) m.titleId = undefined;
   }
 
@@ -74,25 +75,25 @@
 <div class="stack">
   <!-- Identität -->
   <section class="panel ident">
-    <label class="portrait" title="Bild wählen">
-      {#if char.portrait}<img src={char.portrait} alt="Porträt" />{:else}<img class="ph" src={portraitPlaceholder()} alt="" /><span class="hintlbl">Bild wählen</span>{/if}
+    <label class="portrait" title={t('sheet.overview.pickImage')}>
+      {#if char.portrait}<img src={char.portrait} alt={t('sheet.overview.portrait')} />{:else}<img class="ph" src={portraitPlaceholder()} alt="" /><span class="hintlbl">{t('sheet.overview.pickImage')}</span>{/if}
       <input type="file" accept="image/*" onchange={onPortrait} class="sr-only" />
       {#if char.portrait}
-        <button type="button" class="btn sm icon x" onclick={(e) => { e.preventDefault(); char.portrait = undefined; }} aria-label="Bild entfernen">✕</button>
+        <button type="button" class="btn sm icon x" onclick={(e) => { e.preventDefault(); char.portrait = undefined; }} aria-label={t('sheet.overview.removeImage')}>✕</button>
       {/if}
     </label>
     <div class="fields">
-      <label class="field">Name<input bind:value={char.name} /></label>
-      <label class="field">Alias / Spitzname<input bind:value={char.alias} placeholder="z.B. Ghost" /></label>
-      <label class="field">Spieler<input bind:value={char.player} /></label>
-      <label class="field wide">Konzept<textarea rows="2" bind:value={char.concept} placeholder="Ein Satz zur Figur"></textarea></label>
-      <label class="field wide">Setting / Power-Scale<input bind:value={char.setting} placeholder="z.B. John-Wick-Welt: Level 10 = Wick" /></label>
+      <label class="field">{t('sheet.common.name')}<input bind:value={char.name} /></label>
+      <label class="field">{t('sheet.overview.alias')}<input bind:value={char.alias} placeholder={t('sheet.overview.aliasPlaceholder')} /></label>
+      <label class="field">{t('sheet.overview.player')}<input bind:value={char.player} /></label>
+      <label class="field wide">{t('sheet.overview.concept')}<textarea rows="2" bind:value={char.concept} placeholder={t('sheet.overview.conceptPlaceholder')}></textarea></label>
+      <label class="field wide">{t('sheet.overview.setting')}<input bind:value={char.setting} placeholder={t('sheet.overview.settingPlaceholder')} /></label>
     </div>
   </section>
 
   <!-- Attribute -->
   <section class="panel">
-    <h2>Attribute</h2>
+    <h2>{t('sheet.overview.attributes')}</h2>
     <div class="attrs">
       {#each attrDefs as a}
         {@const v = char.attributes[a.key as AttrKey]}
@@ -103,60 +104,60 @@
           <div class="big">{fmt(v)}</div>
           <Stepper bind:value={char.attributes[a.key as AttrKey]} min={-5} max={9} label={a.name} warn={v > mx || v < rules.tabellen.attribut.min} />
           <small class="dim" title={a.text}>
-            {#each attributeAffects(a.key as AttrKey) as r}<span class="chip">{r === 'energie' ? 'Energie' : 'WK'}</span>{/each}
-            <span class="bonus">Probe {fmt(sheet.basicBonus[a.key as AttrKey])}</span>
+            {#each attributeAffects(a.key as AttrKey) as r}<span class="chip">{r === 'energie' ? t('sheet.common.energy') : t('sheet.common.wp')}</span>{/each}
+            <span class="bonus">{t('sheet.overview.check', { b: fmt(sheet.basicBonus[a.key as AttrKey]) })}</span>
           </small>
         </div>
       {/each}
     </div>
-    <p class="hint dim">Bereich −1 bis +3, +4 für ein Leitattribut auf Level 10. Werte außerhalb sind erlaubt und werden markiert. „Probe“ ist Attribut + Meisterschaft des besten Titels.</p>
+    <p class="hint dim">{t('sheet.overview.attrHint')}</p>
   </section>
 
   <!-- Ressourcen und Tags -->
   <div class="resrow">
   <section class="panel">
-    <h2>Ressourcen</h2>
+    <h2>{t('sheet.overview.resources')}</h2>
     <div class="states">
-      {#if sheet.states.ohnmaechtig}<span class="chip danger" title="Energie unter 0: ohnmächtig bis zum Szenenende. Je volle 3 Punkte unter 0 ist 1 Verletzung (Kopf bei Würgen und Ersticken, Torso bei Gift).">Ohnmächtig · Überlauf {sheet.overflow} Verletzung(en) fällig</span>
-      {:else if sheet.states.ausgepumpt}<span class="chip danger">Ausgepumpt</span>{/if}
-      {#if sheet.states.gebrochen}<span class="chip danger">Gebrochen</span>{/if}
-      {#if sheet.states.sterbend}<span class="chip danger">Sterbend</span>{/if}
-      {#if (char.poisons ?? []).length}<span class="chip danger" title="Gift wirkt am Rundenende (3.11)">Vergiftet</span>{/if}
-      {#each sheet.states.unbrauchbar as z}<span class="chip amber">{rules.tabellen.zonen.find((x) => x.key === z)?.kurz} unbrauchbar</span>{/each}
+      {#if sheet.states.ohnmaechtig}<span class="chip danger" title={t('sheet.overview.unconsciousTitle')}>{tn('sheet.overview.unconscious', sheet.overflow)}</span>
+      {:else if sheet.states.ausgepumpt}<span class="chip danger">{t('sheet.overview.winded')}</span>{/if}
+      {#if sheet.states.gebrochen}<span class="chip danger">{t('sheet.overview.broken')}</span>{/if}
+      {#if sheet.states.sterbend}<span class="chip danger">{t('sheet.overview.dying')}</span>{/if}
+      {#if (char.poisons ?? []).length}<span class="chip danger" title={t('sheet.overview.poisonedTitle')}>{t('sheet.overview.poisoned')}</span>{/if}
+      {#each sheet.states.unbrauchbar as z}<span class="chip amber">{t('sheet.overview.zoneUseless', { zone: rules.tabellen.zonen.find((x) => x.key === z)?.kurz ?? z })}</span>{/each}
     </div>
     <div class="res">
-      <Meter label="Energie" bind:value={char.resources.energie} max={sheet.energieMax.value} min={-12} quick={[-3, -2, -1, 1, 2, 3]}>
-        {#snippet maxSlot()}<OverrideValue derived={sheet.energieMax} label="Energie-Maximum" formula="6 + Fluss + Gewalt" onset={(v) => (v === undefined ? delete char.overrides.energieMax : (char.overrides.energieMax = v))} />{/snippet}
+      <Meter label={t('sheet.common.energy')} bind:value={char.resources.energie} max={sheet.energieMax.value} min={-12} quick={[-3, -2, -1, 1, 2, 3]}>
+        {#snippet maxSlot()}<OverrideValue derived={sheet.energieMax} label={t('sheet.overview.energyMax')} formula={t('sheet.overview.energyFormula')} onset={(v) => (v === undefined ? delete char.overrides.energieMax : (char.overrides.energieMax = v))} />{/snippet}
       </Meter>
-      <Meter label="Willenskraft" tone="amber" bind:value={char.resources.wk} max={sheet.wkMax.value} quick={[-3, -2, -1, 1, 2, 3]}>
-        {#snippet maxSlot()}<OverrideValue derived={sheet.wkMax} label="WK-Maximum" formula="6 + Instinkt + Fokus" onset={(v) => (v === undefined ? delete char.overrides.wkMax : (char.overrides.wkMax = v))} />{/snippet}
+      <Meter label={t('sheet.common.willpower')} tone="amber" bind:value={char.resources.wk} max={sheet.wkMax.value} quick={[-3, -2, -1, 1, 2, 3]}>
+        {#snippet maxSlot()}<OverrideValue derived={sheet.wkMax} label={t('sheet.overview.wpMax')} formula={t('sheet.overview.wpFormula')} onset={(v) => (v === undefined ? delete char.overrides.wkMax : (char.overrides.wkMax = v))} />{/snippet}
       </Meter>
       <div class="mom">
         <Pips label="Momentum" bind:value={char.resources.momentum} cap={sheet.momentumCap.value} />
-        <small class="dim">Deckel
-          <OverrideValue derived={sheet.momentumCap} label="Momentum-Deckel" formula="3, +1 ab Level 5, +1 ab Level 10 (höchster Titel)" onset={(v) => (v === undefined ? delete char.overrides.momentumCap : (char.overrides.momentumCap = v))} />
+        <small class="dim">{t('sheet.overview.cap')}
+          <OverrideValue derived={sheet.momentumCap} label={t('sheet.overview.momentumCap')} formula={t('sheet.overview.capFormula')} onset={(v) => (v === undefined ? delete char.overrides.momentumCap : (char.overrides.momentumCap = v))} />
         </small>
       </div>
       <div class="schutz">
-        <span class="lbl">Schutz</span>
+        <span class="lbl">{t('sheet.overview.protection')}</span>
         <div class="shieldrow">
           <ShieldGauge bind:current={char.resources.schutz.current} bind:max={char.resources.schutz.max} />
-          <label class="field">Art / Kontext<textarea rows="3" bind:value={char.resources.schutz.type} placeholder="z.B. Kevlar, gegen Kugeln und Schnitte"></textarea></label>
+          <label class="field">{t('sheet.overview.protType')}<textarea rows="3" bind:value={char.resources.schutz.type} placeholder={t('sheet.overview.protPlaceholder')}></textarea></label>
         </div>
       </div>
       <div class="passiv">
-        <span class="lbl">Passive Wahrnehmung</span>
-        <span class="big"><OverrideValue derived={sheet.passiv} label="Passive Wahrnehmung" formula="5 + Instinkt-Bonus" onset={(v) => (v === undefined ? delete char.overrides.passiv : (char.overrides.passiv = v))} /></span>
+        <span class="lbl">{t('sheet.overview.passive')}</span>
+        <span class="big"><OverrideValue derived={sheet.passiv} label={t('sheet.overview.passive')} formula={t('sheet.overview.passiveFormula')} onset={(v) => (v === undefined ? delete char.overrides.passiv : (char.overrides.passiv = v))} /></span>
       </div>
     </div>
     <div class="row actions">
-      <button class="btn sm" onclick={breathe} title="+2 Energie, nächster Clash gegen dich +1">Durchatmen</button>
-      <button class="btn sm" onclick={focusUp} title="+2 Willenskraft, nächster Clash gegen dich +1">Sammeln</button>
-      <button class="btn sm" onclick={dominance} title="+1 Momentum, +1 Energie (nur gegen Gegner ab Level 1, 1× pro Runde)">Dominanz</button>
-      <button class="btn sm" onclick={perfectCounter} title="+1 Momentum, +1 Willenskraft">Perfekter Konter</button>
-      <button class="btn sm" onclick={combatEnd} title="Momentum verfällt auf 0">Kampfende</button>
-      {#if sheet.states.ohnmaechtig}<button class="btn sm" onclick={() => (char.resources.energie = 1)} title="Wecken: Energie auf 1, Verletzungen bleiben">Wecken</button>{/if}
-      <button class="btn sm amber" onclick={shortRest} title="Energie und WK voll, Schutz voll, Momentum 0, Szenen-Tags weg">Kurze Rast</button>
+      <button class="btn sm" onclick={breathe} title={t('sheet.overview.breatheTitle')}>{t('sheet.overview.breathe')}</button>
+      <button class="btn sm" onclick={focusUp} title={t('sheet.overview.composeTitle')}>{t('sheet.overview.compose')}</button>
+      <button class="btn sm" onclick={dominance} title={t('sheet.overview.dominanceTitle')}>{t('sheet.overview.dominance')}</button>
+      <button class="btn sm" onclick={perfectCounter} title={t('sheet.overview.perfectCounterTitle')}>{t('sheet.overview.perfectCounter')}</button>
+      <button class="btn sm" onclick={combatEnd} title={t('sheet.overview.combatEndTitle')}>{t('sheet.overview.combatEnd')}</button>
+      {#if sheet.states.ohnmaechtig}<button class="btn sm" onclick={() => (char.resources.energie = 1)} title={t('sheet.overview.reviveTitle')}>{t('sheet.overview.revive')}</button>{/if}
+      <button class="btn sm amber" onclick={shortRest} title={t('sheet.overview.shortRestTitle')}>{t('sheet.overview.shortRest')}</button>
     </div>
   </section>
   <TagsMini {char} {ontab} />
@@ -165,41 +166,41 @@
 
   <!-- Titel -->
   <section class="panel">
-    <div class="row"><h2>Titel</h2><span class="spacer"></span><button class="btn sm primary" onclick={addTitle}>+ Titel</button></div>
-    {#if !char.titles.length}<p class="dim">Noch kein Titel. Ein Titel (Level, Domäne, zwei Leitattribute) bringt die Meisterschaft auf Würfe in seiner Domäne.</p>{/if}
+    <div class="row"><h2>{t('sheet.common.title')}</h2><span class="spacer"></span><button class="btn sm primary" onclick={addTitle}>{t('sheet.overview.addTitle')}</button></div>
+    {#if !char.titles.length}<p class="dim">{t('sheet.overview.noTitle')}</p>{/if}
     <div class="titles">
-      {#each char.titles as t (t.id)}
-        {@const m = t.masteryOverride ?? meisterschaft(t.level)}
+      {#each char.titles as ti (ti.id)}
+        {@const m = ti.masteryOverride ?? meisterschaft(ti.level)}
         <div class="title">
           <div class="row">
-            <label class="field grow">Name<input bind:value={t.name} /></label>
-            <label class="field">Level<Stepper bind:value={t.level} min={0} max={10} label="Level" /></label>
-            <div class="mastery" title="Meisterschaft = Level ÷ 2, abgerundet">
-              <span class="lbl">Meisterschaft</span>
+            <label class="field grow">{t('sheet.common.name')}<input bind:value={ti.name} /></label>
+            <label class="field">Level<Stepper bind:value={ti.level} min={0} max={10} label="Level" /></label>
+            <div class="mastery" title={t('sheet.overview.masteryTitle')}>
+              <span class="lbl">{t('sheet.overview.mastery')}</span>
               <span class="big">{m}</span>
-              <label class="check small"><input type="checkbox" checked={t.masteryOverride !== undefined} onchange={(e) => (t.masteryOverride = e.currentTarget.checked ? m : undefined)} /> manuell</label>
-              {#if t.masteryOverride !== undefined}<Stepper bind:value={t.masteryOverride} min={0} max={9} label="Meisterschaft" />{/if}
+              <label class="check small"><input type="checkbox" checked={ti.masteryOverride !== undefined} onchange={(e) => (ti.masteryOverride = e.currentTarget.checked ? m : undefined)} /> {t('sheet.overview.manual')}</label>
+              {#if ti.masteryOverride !== undefined}<Stepper bind:value={ti.masteryOverride} min={0} max={9} label={t('sheet.overview.mastery')} />{/if}
             </div>
-            <button class="btn sm icon danger" onclick={() => removeTitle(t.id)} aria-label="Titel entfernen">🗑</button>
+            <button class="btn sm icon danger" onclick={() => removeTitle(ti.id)} aria-label={t('sheet.overview.removeTitle')}>🗑</button>
           </div>
           <div class="row">
-            <label class="field grow">Domäne (3 bis 5 Bereiche)<TagInput bind:values={t.domains} label="Domäne" /></label>
+            <label class="field grow">{t('sheet.overview.domain')}<TagInput bind:values={ti.domains} label={t('sheet.overview.domainAria')} /></label>
           </div>
           <div class="row">
-            <label class="field">Leitattribut 1
-              <select bind:value={t.leadAttrs[0]}>{#each attrDefs as a}<option value={a.key}>{a.name}</option>{/each}</select>
+            <label class="field">{t('sheet.overview.lead1')}
+              <select bind:value={ti.leadAttrs[0]}>{#each attrDefs as a}<option value={a.key}>{a.name}</option>{/each}</select>
             </label>
-            <label class="field">Leitattribut 2
-              <select bind:value={t.leadAttrs[1]}>{#each attrDefs as a}<option value={a.key}>{a.name}</option>{/each}</select>
+            <label class="field">{t('sheet.overview.lead2')}
+              <select bind:value={ti.leadAttrs[1]}>{#each attrDefs as a}<option value={a.key}>{a.name}</option>{/each}</select>
             </label>
-            <label class="field">Gestartet auf Level<Stepper value={t.startedAtLevel ?? t.level} min={0} max={10} onchange={(v) => (t.startedAtLevel = v)} label="Gestartet auf Level" /></label>
+            <label class="field">{t('sheet.overview.startedAt')}<Stepper value={ti.startedAtLevel ?? ti.level} min={0} max={10} onchange={(v) => (ti.startedAtLevel = v)} label={t('sheet.overview.startedAt')} /></label>
             <span class="growth dim">
               {#each rules.tabellen.wachstumLevels as g}
-                <span class="chip" class:accent={t.level >= g} title={`Level ${g}: +1 auf ein Leitattribut`}>L{g}</span>
+                <span class="chip" class:accent={ti.level >= g} title={t('sheet.overview.growthTitle', { n: g })}>L{g}</span>
               {/each}
-              {#if t.level >= 5}<span class="chip accent" title="Momentum-Deckel +1">Mom +1</span>{/if}
-              {#if t.level >= 8}<span class="chip amber" title="Meister-Moves bis 7 EP">Meister</span>{/if}
-              {#if t.level >= 10}<span class="chip amber" title="Legendäre Moves, keine Mindestkosten">Legende</span>{/if}
+              {#if ti.level >= 5}<span class="chip accent" title={t('sheet.overview.momTitle')}>Mom +1</span>{/if}
+              {#if ti.level >= 8}<span class="chip amber" title={t('sheet.overview.masterTitle')}>{t('sheet.overview.master')}</span>{/if}
+              {#if ti.level >= 10}<span class="chip amber" title={t('sheet.overview.legendTitle')}>{t('sheet.overview.legend')}</span>{/if}
             </span>
           </div>
         </div>
@@ -207,10 +208,10 @@
     </div>
 
     {#if char.titles.length}
-      <h3 class="mt">Bonus je Titel und Attribut</h3>
+      <h3 class="mt">{t('sheet.overview.bonusTable')}</h3>
       <div class="tablewrap">
         <table>
-          <thead><tr><th>Titel</th>{#each ATTR_KEYS as k}<th>{shortName(k)}</th>{/each}</tr></thead>
+          <thead><tr><th>{t('sheet.common.title')}</th>{#each ATTR_KEYS as k}<th>{shortName(k)}</th>{/each}</tr></thead>
           <tbody>
             {#each sheet.titleRows as r}
               <tr>
@@ -218,11 +219,11 @@
                 {#each ATTR_KEYS as k}<td class:lead={r.title.leadAttrs.includes(k)}>{fmt(r.row[k])}</td>{/each}
               </tr>
             {/each}
-            <tr class="base"><td>Ohne Titel</td>{#each ATTR_KEYS as k}<td>{fmt(char.attributes[k])}</td>{/each}</tr>
+            <tr class="base"><td>{t('sheet.overview.noTitleRow')}</td>{#each ATTR_KEYS as k}<td>{fmt(char.attributes[k])}</td>{/each}</tr>
           </tbody>
         </table>
       </div>
-      <p class="hint dim">Hervorgehoben: Leitattribut (volle Meisterschaft). Sonst halbe Meisterschaft, abgerundet. Es zählt nur der beste passende Titel.</p>
+      <p class="hint dim">{t('sheet.overview.tableHint')}</p>
     {/if}
   </section>
 

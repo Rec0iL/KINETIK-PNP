@@ -1,1 +1,146 @@
-{}
+{
+  "quelle": "Chapters 5.2 and 5.4 (guidelines)",
+  "moves": [
+    {
+      "id": "mozambique",
+      "name": "Mozambique Drill",
+      "titel": "Gun-Fu",
+      "text": "Destroys ballistic Protection; on Dominance, also a head injury.",
+      "effekte": [{ "id": "schutzZerstoeren" }, { "id": "zone", "label": "Head zone" }]
+    },
+    {
+      "id": "judo-wurf",
+      "name": "Judo Throw",
+      "titel": "Martial Arts",
+      "text": "Ignores the protection type (e.g. a vest) and throws the opponent Prone.",
+      "effekte": [{ "id": "schutzIgnorieren" }, { "id": "tagKlein", "label": "Prone" }]
+    },
+    {
+      "id": "rear-naked-choke",
+      "name": "Rear Naked Choke",
+      "titel": "BJJ",
+      "text": "Prerequisite: dominant position on the ground. Drains 3 Energy and inflicts the major tag Choked. If Energy drops below 0, the opponent is unconscious.",
+      "effekte": [{ "id": "schaden2", "label": "Energy damage" }, { "id": "tagGross", "label": "Choked" }]
+    },
+    {
+      "id": "lingshu-nervenstoss",
+      "name": "Lingshu Nerve Strike",
+      "titel": "Chi Master",
+      "text": "Robs 3 Energy (breathlessness/paralysis) and inflicts the tag Paralyzed.",
+      "effekte": [{ "id": "schaden2", "label": "Energy damage" }, { "id": "tagKlein", "label": "Paralyzed" }]
+    },
+    {
+      "id": "drunken-parry",
+      "name": "Drunken Parry",
+      "titel": "Wushu",
+      "text": "In an Exchange, turns the setback you suffer into a free counterattack that cannot be defended against.",
+      "effekte": [{ "id": "freiMittel", "label": "Turn setback into counterattack" }]
+    },
+    {
+      "id": "schatten-doppelgaenger",
+      "name": "Shadow Double",
+      "titel": "Anime",
+      "text": "The next hit you would take (even on a Counter) strikes the clone and fizzles out. Declared before the Clash.",
+      "effekte": [{ "id": "freiGross", "label": "Clone absorbs the hit" }]
+    },
+    {
+      "id": "parkour-dropkick",
+      "name": "Parkour Dropkick",
+      "titel": "Urban Brawler",
+      "text": "Prerequisite: height. Smashes shield/Protection and hits a second target.",
+      "effekte": [{ "id": "schutzZerstoeren" }, { "id": "ziel2" }]
+    },
+    {
+      "id": "qi-fluss",
+      "name": "Qi Flow",
+      "titel": "Lingshu Healer",
+      "text": "An ally gains +2 Energy (action, no Clash).",
+      "effekte": [{ "id": "heilenAlle", "label": "One ally" }]
+    },
+    {
+      "id": "querschlaeger",
+      "name": "Ricochet",
+      "titel": "Gunslinger",
+      "text": "Ignores physical Cover (walls, shields) completely and hits a chosen zone.",
+      "effekte": [{ "id": "freiGross", "label": "Ignores Cover" }, { "id": "zone" }]
+    },
+    {
+      "id": "iaijutsu",
+      "name": "Iaijutsu Quickdraw",
+      "titel": "Samurai",
+      "text": "Interrupt: an immediate counter action before the actual Clash begins. Declared before the Clash.",
+      "effekte": [{ "id": "freiGross", "label": "Interrupt" }, { "id": "tagKlein" }]
+    },
+    {
+      "id": "flashbang-breach",
+      "name": "Flashbang Breach",
+      "titel": "Tactics",
+      "text": "Willpower damage to up to 3 enemies. Allies get +2 in the first Clash against the blinded enemies.",
+      "effekte": [{ "id": "schaden2", "label": "WP damage" }, { "id": "ziele3" }, { "id": "freiMittel", "label": "Team bonus +2" }]
+    },
+    {
+      "id": "meuchelstoss",
+      "name": "Assassin's Strike",
+      "titel": "Assassin",
+      "text": "Prerequisite: the opponent has not noticed you (Stealth Clash won, or a Goon struck from hiding). Injury even without Dominance, zone freely chosen.",
+      "effekte": [{ "id": "verletzungOhneDominanz" }, { "id": "zone" }]
+    },
+    {
+      "id": "schattenschritt",
+      "name": "Shadow Step",
+      "titel": "Ninja",
+      "text": "In a Stealth Clash, a Spotted result becomes Suspicion: you have vanished again into a cloud of smoke or around a corner.",
+      "effekte": [{ "id": "freiMittel", "label": "Spotted becomes Suspicion" }]
+    },
+    {
+      "id": "lock-reversal",
+      "name": "Lock Reversal",
+      "titel": "Aikido",
+      "text": "Prerequisite: the opponent puts a joint lock or hold on you. Instantly removes the major tag (Joint Locked) and grants you a free counter action.",
+      "effekte": [{ "id": "freiMittel", "label": "Remove major tag" }, { "id": "freiMittel", "label": "Counterattack" }]
+    },
+    {
+      "id": "blasrohr-pfeil",
+      "name": "Blowgun Dart",
+      "titel": "Assassin",
+      "text": "A dart to the neck or face. If it hits an opponent without Protection (or on Dominance with an injury), they are Poisoned (strong, with a Delay of up to 3 rounds).",
+      "effekte": [{ "id": "giftStark" }, { "id": "zone" }]
+    },
+    {
+      "id": "dokushu-beruehrung",
+      "name": "Dokushu Touch",
+      "titel": "Poison Hand",
+      "text": "A touch that slips past any armor: the poison (weak) works even through Protection.",
+      "effekte": [{ "id": "schutzIgnorieren" }, { "id": "giftSchwach" }]
+    },
+    {
+      "id": "garrotte",
+      "name": "Garrote",
+      "titel": "Assassin",
+      "text": "Prerequisite: unnoticed. Drains 4 Energy and inflicts the major tag Choked, silently. The victim cannot cry out.",
+      "effekte": [{ "id": "schaden2", "label": "Energy damage" }, { "id": "schaden2", "label": "Energy damage" }, { "id": "tagGross", "label": "Choked" }]
+    },
+    {
+      "id": "todesberuehrung",
+      "name": "Touch of Death",
+      "titel": "Dokushu Master",
+      "text": "The touch finds every gap. On Dominance, the fight ends against all opponents at level 10 or lower. A stronger Boss loses Protection, 2 injuries and 3 WP, and the poison works anyway (antidote DC 13).",
+      "effekte": [{ "id": "schutzIgnorieren" }, { "id": "giftToedlich" }, { "id": "freiGross", "label": "Finale" }],
+      "preise": ["Scar", "Rare"]
+    },
+    {
+      "id": "wick-flick",
+      "name": "Wick Flick",
+      "titel": "Gun-Fu",
+      "text": "Reloading and weapon swap mid-Clash, without the Reloading tag, as part of the attack. The shot goes into a chosen zone.",
+      "effekte": [{ "id": "nachladen" }, { "id": "zone" }]
+    },
+    {
+      "id": "trommel-salto",
+      "name": "Drum Flip",
+      "titel": "Anime Grenadier",
+      "text": "Run up the wall, the bullets spill out of your cleavage, the drum catches them, and in a backflip the shot goes into up to 3 enemies. Reloading included.",
+      "effekte": [{ "id": "ziele3" }, { "id": "nachladen" }, { "id": "durchschlag" }]
+    }
+  ]
+}

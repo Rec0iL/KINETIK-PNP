@@ -1,5 +1,5 @@
 // Prüft die Regeldaten in data/: gültiges JSON, Pflichtfelder, Verweise, EP-Summen der Beispiel-Moves.
-import { readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -59,9 +59,80 @@ for (const m of moves.moves) {
 
 for (const n of npc.leiter) if (n.bonusMin > n.bonusMax) err(`npc: ${n.key} Bonus-Bereich ungültig`);
 
+// Übersetzungen in data/i18n/<sprache>/: dieselbe Form wie die deutsche Grundlage, nur Texte, vollständig.
+// Kennungen (ID_FIELDS) dürfen zur Zuordnung wiederholt werden und müssen dann gleich sein. Felder in NON_TEXT sind Kennungen,
+// Aufzählungswerte oder Verweise (Effekt-Ids, Attribut-Schlüssel), die der Code vergleicht: Sie werden nicht übersetzt.
+// Maßgeblich ist das nächste Objektfeld auf dem Pfad, Listen von Kennungen (profil, abzuege in moves) fallen also mit darunter,
+// Listen von Objekten (abzuege im EP-Katalog) nicht.
+const ID_FIELDS = new Set(['id', 'key', 'mw', 'rules_version']);
+const NON_TEXT = new Set([...ID_FIELDS, 'en', 'folge', 'klasse', 'attribut', 'attribute', 'profil', 'schliesstAus', 'abzuege']);
+const BASE = { 'tabellen.json': tab, 'ep-katalog.json': ep, 'waffen.json': waffen, 'moves.json': moves, 'npc.json': npc, 'tags.json': tags };
+const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
+// Kennung oder Verweis nur, wenn der Wert ein einfacher Wert oder eine Liste einfacher Werte ist (tabellen.mw und
+// tabellen.attribute sind Listen von Objekten mit Texten).
+const isPlain = (v) => !Array.isArray(v) ? v === null || typeof v !== 'object' : v.every((x) => x === null || typeof x !== 'object');
+const kind = (v) => (Array.isArray(v) ? 'Liste' : isObj(v) ? 'Objekt' : typeof v);
+
+/** Prüft eine Übersetzung gegen die Grundlage: gleiche Form, nur Texte, Kennungen unverändert. */
+function checkOverlay(where, base, over, path) {
+  if (Array.isArray(base)) {
+    if (!Array.isArray(over)) return err(`${where}: ${path} muss eine Liste sein (ist ${kind(over)})`);
+    if (over.length !== base.length) err(`${where}: ${path} hat ${over.length} Einträge, die Grundlage ${base.length}`);
+    over.forEach((o, i) => { if (i < base.length) checkOverlay(where, base[i], o, `${path}[${i}]`); });
+    return;
+  }
+  if (isObj(base)) {
+    if (!isObj(over)) return err(`${where}: ${path} muss ein Objekt sein (ist ${kind(over)})`);
+    for (const [k, v] of Object.entries(over)) {
+      const p = path ? `${path}.${k}` : k;
+      if (!(k in base)) { err(`${where}: ${p} gibt es in der Grundlage nicht`); continue; }
+      if (ID_FIELDS.has(k) && isPlain(base[k])) {
+        if (JSON.stringify(v) !== JSON.stringify(base[k])) err(`${where}: ${p} ist ${JSON.stringify(v)}, in der Grundlage ${JSON.stringify(base[k])}`);
+        continue;
+      }
+      if (NON_TEXT.has(k) && isPlain(base[k])) { err(`${where}: ${p} ist kein Text und wird nicht übersetzt`); continue; }
+      checkOverlay(where, base[k], v, p);
+    }
+    return;
+  }
+  if (typeof base !== 'string') return err(`${where}: ${path} ist in der Grundlage ${kind(base)}, nur Texte werden übersetzt`);
+  if (typeof over !== 'string') return err(`${where}: ${path} muss Text sein (ist ${kind(over)})`);
+  if (!over.trim()) err(`${where}: ${path} ist leer`);
+}
+
+/** Vollständigkeit: jeder Text der Grundlage (außer NON_TEXT) braucht eine Übersetzung. */
+function checkComplete(where, base, over, path, field) {
+  if (field && NON_TEXT.has(field) && isPlain(base)) return;
+  if (Array.isArray(base)) {
+    base.forEach((b, i) => checkComplete(where, b, Array.isArray(over) ? over[i] : undefined, `${path}[${i}]`, field));
+  } else if (isObj(base)) {
+    for (const [k, v] of Object.entries(base)) checkComplete(where, v, isObj(over) ? over[k] : undefined, path ? `${path}.${k}` : k, k);
+  } else if (typeof base === 'string' && base.trim() && over === undefined) {
+    err(`${where}: Übersetzung fehlt für ${path} („${base}“)`);
+  }
+}
+
+const i18nDir = join(dir, 'i18n');
+const locales = existsSync(i18nDir) ? readdirSync(i18nDir, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name).sort() : [];
+for (const lang of locales) {
+  const known = new Set(Object.keys(BASE));
+  for (const f of readdirSync(join(i18nDir, lang))) {
+    if (f.endsWith('.json') && !known.has(f)) err(`i18n/${lang}/${f}: keine passende Datei in data/`);
+  }
+  for (const [f, base] of Object.entries(BASE)) {
+    const where = `i18n/${lang}/${f}`;
+    const file = join(i18nDir, lang, f);
+    if (!existsSync(file)) { err(`${where}: Datei fehlt`); continue; }
+    let over;
+    try { over = JSON.parse(readFileSync(file, 'utf8')); } catch (e) { err(`${where}: kein gültiges JSON (${e.message})`); continue; }
+    checkOverlay(where, base, over, '');
+    checkComplete(where, base, over, '', '');
+  }
+}
+
 if (errors.length) {
   console.error(`check-data: ${errors.length} Fehler`);
   for (const e of errors) console.error('  - ' + e);
   process.exit(1);
 }
-console.log(`check-data: OK (${moves.moves.length} Moves, ${waffen.waffen.length} Waffen, ${ep.effekte.length} Effekte)`);
+console.log(`check-data: OK (${moves.moves.length} Moves, ${waffen.waffen.length} Waffen, ${ep.effekte.length} Effekte, Sprachen: de${locales.map((l) => ', ' + l).join('')})`);

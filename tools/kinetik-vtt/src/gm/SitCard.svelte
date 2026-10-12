@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { rules, OUTCOME_LABEL, GIFT, GIFT_LEVELS, MAX_GIFT_DELAY, type GiftLevel, type ZoneKey } from '../rules';
+  import { rules, OUTCOME_LABEL, GIFT, GIFT_LEVELS, MAX_GIFT_DELAY, tagLabel, type GiftLevel, type ZoneKey } from '../rules';
+  import { t, tn, fmtNumber } from '../i18n';
   import {
     gm, activeScene, releaseSit, cancelSit, rollNpcFor, rollPlayerFor, grantBullet, refreshProposal, applySit, sitEditable, partyFor,
   } from '../net/gm.svelte';
@@ -13,7 +14,7 @@
   const combat = $derived(gm.session!.combat);
   const npc = $derived(sit.npcId ? combat.npcs.find((n) => n.id === sit.npcId) ?? null : null);
   const player = $derived(gm.session!.players.find((p) => p.id === sit.playerId));
-  const pcName = $derived(player?.character?.name || player?.name || 'Spieler');
+  const pcName = $derived(player?.character?.name || player?.name || t('gm.common.player'));
   const party = $derived(partyFor(null));
   const editable = $derived(sitEditable(sit));
   const attackOnNpc = $derived(sit.kind === 'attack');
@@ -35,13 +36,17 @@
       .sort((a, b) => (pc ? Math.hypot(a.x - pc.x, a.y - pc.y) - Math.hypot(b.x - pc.x, b.y - pc.y) : 0))[0];
     if (!pc || !near) return '';
     const m = measure(scene.grid, [pc.x, pc.y], [near.x, near.y]);
-    return `Abstand ${m.cells.toFixed(1).replace('.0', '')} Felder (${m.units.toFixed(1).replace('.0', '')} ${scene.grid.unit})`;
+    const one = (v: number) => fmtNumber(v, { maximumFractionDigits: 1 });
+    return tn('gm.sitcard.distance', m.cells, { n: one(m.cells), units: one(m.units), unit: scene.grid.unit });
   });
 
   const fmt = (v: number) => (v > 0 ? `+${v}` : String(v));
+  const rolled = (r: { dice: number; bonus: number; mod: number }) =>
+    t('gm.sitcard.rolled', { total: r.dice + r.bonus + r.mod, dice: r.dice, bonus: fmt(r.bonus), mod: r.mod ? `, ${fmt(r.mod)}` : '' });
   const zones = rules.tabellen.zonen;
   const statusLabel: Record<Situation['status'], string> = {
-    planned: 'geplant', released: 'freigegeben', rolled: 'bereit zur Abwicklung', resolved: 'abgewickelt', cancelled: 'verworfen',
+    planned: t('gm.sitcard.status.planned'), released: t('gm.sitcard.status.released'), rolled: t('gm.sitcard.status.rolled'),
+    resolved: t('gm.sitcard.status.resolved'), cancelled: t('gm.sitcard.status.cancelled'),
   };
 
   function toggleTag(name: string) {
@@ -69,50 +74,50 @@
 
 <article class="sit" class:done={sit.status === 'resolved' || sit.status === 'cancelled'} class:def={sit.kind === 'defend'}>
   <header>
-    <b>{sit.kind === 'defend' ? `${npc?.name ?? 'Gegner'} → ${pcName}` : sit.kind === 'attack' ? `${pcName} → ${npc?.name ?? '?'}` : pcName}</b>
+    <b>{sit.kind === 'defend' ? `${npc?.name ?? t('gm.common.enemy')} → ${pcName}` : sit.kind === 'attack' ? `${pcName} → ${npc?.name ?? '?'}` : pcName}</b>
     <span class="chip" class:accent={sit.kind === 'attack'} class:danger={sit.kind === 'defend'}>{KIND_LABEL[sit.kind]}</span>
     <span class="chip amber">{statusLabel[sit.status]}</span>
-    {#if sit.bullet}<span class="chip accent" title={sit.bullet.option ? BT_LABEL[sit.bullet.option] : 'Spieler wählt noch'}>Bullet Time{sit.bullet.option ? `: ${sit.bullet.option === 'zone' ? 'Zone' : sit.bullet.option === 'ep' ? '+1 EP' : '+1 Mom.'}` : ' …'}</span>{/if}
+    {#if sit.bullet}<span class="chip accent" title={sit.bullet.option ? BT_LABEL[sit.bullet.option] : t('gm.sitcard.btPending')}>Bullet Time{sit.bullet.option ? `: ${sit.bullet.option === 'zone' ? t('gm.sitcard.btZone') : sit.bullet.option === 'ep' ? t('gm.sitcard.btEp') : t('gm.sitcard.btMomentum')}` : ' …'}</span>{/if}
   </header>
 
-  {#if sit.technique}<p class="tech">„{sit.technique}“ <span class="dim">({rules.tabellen.attribute.find((a) => a.key === sit.attr)?.name ?? sit.attr}{sit.moveName ? ` · Move ${sit.moveName}` : ''})</span></p>{/if}
+  {#if sit.technique}<p class="tech">{t('gm.sitcard.technique', { text: sit.technique })} <span class="dim">({rules.tabellen.attribute.find((a) => a.key === sit.attr)?.name ?? sit.attr}{sit.moveName ? t('gm.sitcard.withMove', { name: sit.moveName }) : ''})</span></p>{/if}
   {#if distance}<small class="dim">{distance}</small>{/if}
 
   {#if sit.kind === 'attack' || sit.kind === 'defend'}
     {#if tagPool.length}
       <div class="tags">
-        <span class="lbl">Tags {sit.kind === 'attack' ? 'des Gegners' : 'des Spielers'}</span>
-        {#each tagPool as t (t.name)}
-          <button class="chip tg" class:on={sit.tagsUsed.includes(t.name)} class:big={t.size === 'gross'} onclick={() => toggleTag(t.name)} disabled={!editable} title={t.size === 'gross' ? 'groß +2' : 'klein +1'}>{t.name} {t.size === 'gross' ? '+2' : '+1'}</button>
+        <span class="lbl">{sit.kind === 'attack' ? t('gm.sitcard.tagsOfEnemy') : t('gm.sitcard.tagsOfPlayer')}</span>
+        {#each tagPool as tg (tg.name)}
+          <button class="chip tg" class:on={sit.tagsUsed.includes(tg.name)} class:big={tg.size === 'gross'} onclick={() => toggleTag(tg.name)} disabled={!editable} title={tg.size === 'gross' ? t('gm.sitcard.tagMajor') : t('gm.sitcard.tagMinor')}>{tagLabel(tg.name)} {tg.size === 'gross' ? '+2' : '+1'}</button>
         {/each}
       </div>
     {/if}
     <div class="row mods">
-      <label class="s">Erleichtern / Erschweren<Stepper bind:value={sit.mod} min={-9} max={9} label="Modifikator" disabled={!editable} /></label>
-      <input class="reason" bind:value={sit.modReason} placeholder="Grund (z.B. Deckung, Dunkelheit)" aria-label="Grund" disabled={!editable} />
+      <label class="s">{t('gm.sitcard.easeHinder')}<Stepper bind:value={sit.mod} min={-9} max={9} label={t('gm.common.modifier')} disabled={!editable} /></label>
+      <input class="reason" bind:value={sit.modReason} placeholder={t('gm.sitcard.reasonPlaceholder')} aria-label={t('gm.sitcard.reason')} disabled={!editable} />
     </div>
     {#if sit.kind === 'defend'}
-      <label class="s">Angreifer (Überzahl)<Stepper bind:value={sit.attackers} min={1} max={10} label="Angreifer" disabled={!editable && sit.status !== 'released'} /></label>
+      <label class="s">{t('gm.sitcard.attackers')}<Stepper bind:value={sit.attackers} min={1} max={10} label={t('gm.sitcard.attackersShort')} disabled={!editable && sit.status !== 'released'} /></label>
     {/if}
-    {#if sit.area}<p class="dim"><span class="chip accent">{sit.area === 'flaeche' ? 'Fläche' : 'Mehrere Ziele'}</span> weitere Ziele würfeln einzeln (3.14)</p>{/if}
+    {#if sit.area}<p class="dim"><span class="chip accent">{sit.area === 'flaeche' ? t('gm.sitcard.area') : t('gm.sitcard.multi')}</span> {t('gm.sitcard.areaHint')}</p>{/if}
     <div class="row gift">
-      <label class="s">Gift<select value={sit.gift?.level ?? ''} onchange={(e) => setGiftLevel(e.currentTarget.value)} disabled={sit.status === 'resolved' || sit.status === 'cancelled'} aria-label="Gift">
-        <option value="">kein Gift</option>
-        {#each GIFT_LEVELS as l}<option value={l}>{GIFT[l].label} (MW {GIFT[l].mw})</option>{/each}
+      <label class="s">{t('gm.common.poison')}<select value={sit.gift?.level ?? ''} onchange={(e) => setGiftLevel(e.currentTarget.value)} disabled={sit.status === 'resolved' || sit.status === 'cancelled'} aria-label={t('gm.common.poison')}>
+        <option value="">{t('gm.sitcard.noPoison')}</option>
+        {#each GIFT_LEVELS as l}<option value={l}>{t('gm.sitcard.poisonOption', { label: GIFT[l].label, mw: GIFT[l].mw })}</option>{/each}
       </select></label>
       {#if sit.gift}
-        <label class="s">Verzögerung<Stepper bind:value={sit.gift.delay} min={0} max={MAX_GIFT_DELAY} label="Verzögerung in Runden" /></label>
-        <label class="check"><input type="checkbox" bind:checked={sit.gift.ignoresSchutz} /> Schutz ignoriert</label>
+        <label class="s">{t('gm.common.delay')}<Stepper bind:value={sit.gift.delay} min={0} max={MAX_GIFT_DELAY} label={t('gm.common.delayRounds')} /></label>
+        <label class="check"><input type="checkbox" bind:checked={sit.gift.ignoresSchutz} /> {t('gm.sitcard.ignoresProtection')}</label>
       {/if}
     </div>
     <div class="rolls">
-      <span class:ok={!!sit.pRoll}>{pcName}: {sit.pRoll ? `${sit.pRoll.dice + sit.pRoll.bonus + sit.pRoll.mod} (2W6 ${sit.pRoll.dice}, ${fmt(sit.pRoll.bonus)}${sit.pRoll.mod ? `, ${fmt(sit.pRoll.mod)}` : ''})` : `wartet · Bonus ${fmt(pcBonus)}, Mod. ${fmt(pMod)}`}</span>
-      <span class:ok={!!sit.nRoll}>{npc?.name ?? 'Gegner'}: {sit.nRoll ? `${sit.nRoll.dice + sit.nRoll.bonus + sit.nRoll.mod} (2W6 ${sit.nRoll.dice}, ${fmt(sit.nRoll.bonus)}${sit.nRoll.mod ? `, ${fmt(sit.nRoll.mod)}` : ''})` : `wartet · Bonus ${fmt(npc?.bonus ?? 0)}, Mod. ${fmt(nMod)}`}</span>
+      <span class:ok={!!sit.pRoll}>{pcName}: {sit.pRoll ? rolled(sit.pRoll) : t('gm.sitcard.waiting', { bonus: fmt(pcBonus), mod: fmt(pMod) })}</span>
+      <span class:ok={!!sit.nRoll}>{npc?.name ?? t('gm.common.enemy')}: {sit.nRoll ? rolled(sit.nRoll) : t('gm.sitcard.waiting', { bonus: fmt(npc?.bonus ?? 0), mod: fmt(nMod) })}</span>
     </div>
   {/if}
 
   {#if sit.result}
-    <p class="res"><b>{OUTCOME_LABEL[sit.result.outcome]}</b> <span class="dim">Δ {sit.result.delta > 0 ? '+' : ''}{sit.result.delta}{sit.result.heldenSchwelle ? ' · Helden-Schwelle' : ''}{sit.result.limited ? ' · Außer Reichweite' : ''}{sit.hero ? ' · Heldenhafte Gegenwehr' : ''}</span></p>
+    <p class="res"><b>{OUTCOME_LABEL[sit.result.outcome]}</b> <span class="dim">Δ {sit.result.delta > 0 ? '+' : ''}{sit.result.delta}{sit.result.heldenSchwelle ? t('gm.sitcard.heroThreshold') : ''}{sit.result.limited ? t('gm.sitcard.outOfReach') : ''}{sit.hero ? t('gm.sitcard.heroic') : ''}</span></p>
   {/if}
 
   {#if sit.proposal && sit.status === 'rolled'}
@@ -121,12 +126,12 @@
         <li class:off={!it.on}>
           <label class="check"><input type="checkbox" checked={it.on} onchange={(e) => toggleItem(it, e.currentTarget.checked)} /> {it.label}</label>
           {#if hasZone(it.effect)}
-            <select bind:value={it.effect.zone} aria-label="Zone">{#each zones as z}<option value={z.key as ZoneKey}>{z.kurz}</option>{/each}</select>
+            <select bind:value={it.effect.zone} aria-label={t('gm.common.zone')}>{#each zones as z}<option value={z.key as ZoneKey}>{z.kurz}</option>{/each}</select>
           {/if}
           {#if it.effect.k === 'goonOut'}
             <div class="toks">
-              {#each groupTokens(it.effect.npcId) as t (t.id)}
-                <button class="chip tg" class:on={it.effect.tokenIds.includes(t.id)} onclick={() => toggleToken(it.effect as Extract<Effect, { k: 'goonOut' }>, t.id)}>{t.name}</button>
+              {#each groupTokens(it.effect.npcId) as tok (tok.id)}
+                <button class="chip tg" class:on={it.effect.tokenIds.includes(tok.id)} onclick={() => toggleToken(it.effect as Extract<Effect, { k: 'goonOut' }>, tok.id)}>{tok.name}</button>
               {/each}
             </div>
           {/if}
@@ -137,24 +142,24 @@
 
   <footer class="row">
     {#if sit.status === 'planned'}
-      <button class="btn sm primary" onclick={() => releaseSit(sit.id)}>Freigeben</button>
+      <button class="btn sm primary" onclick={() => releaseSit(sit.id)}>{t('gm.sitcard.release')}</button>
     {/if}
     {#if (sit.kind === 'attack' || sit.kind === 'defend') && (sit.status === 'released' || sit.status === 'planned') && npc && !sit.nRoll}
-      <button class="btn sm amber" onclick={() => rollNpcFor(sit.id)}>{npc.name} würfeln {fmt((npc?.bonus ?? 0) + nMod)}</button>
+      <button class="btn sm amber" onclick={() => rollNpcFor(sit.id)}>{t('gm.sitcard.rollNpc', { name: npc.name, mod: fmt((npc?.bonus ?? 0) + nMod) })}</button>
     {/if}
     {#if sit.status === 'released' && !sit.pRoll && (sit.kind === 'attack' || sit.kind === 'defend') && absent}
-      <button class="btn sm" onclick={() => rollPlayerFor(sit.id)}>Für {pcName} würfeln</button>
+      <button class="btn sm" onclick={() => rollPlayerFor(sit.id)}>{t('gm.sitcard.rollFor', { name: pcName })}</button>
     {/if}
     {#if (sit.kind === 'attack' || sit.kind === 'defend') && !sit.bullet && ['planned', 'released', 'rolled'].includes(sit.status)}
-      <button class="btn sm" onclick={() => grantBullet(sit.id)} disabled={!canGrantBulletTime(combat, sit.playerId)} title="Höchstens einmal pro Spieler und Runde (3.9)">Bullet Time</button>
+      <button class="btn sm" onclick={() => grantBullet(sit.id)} disabled={!canGrantBulletTime(combat, sit.playerId)} title={t('gm.sitcard.bulletTitle')}>Bullet Time</button>
     {/if}
     {#if sit.status === 'rolled'}
-      <button class="btn sm primary" onclick={() => applySit(sit.id)}>Anwenden</button>
-      {#if sit.result}<button class="btn sm ghost" onclick={() => refreshProposal(sit.id)} title="Vorschlag neu berechnen (setzt die Häkchen zurück)">Neu berechnen</button>{/if}
+      <button class="btn sm primary" onclick={() => applySit(sit.id)}>{t('gm.sitcard.apply')}</button>
+      {#if sit.result}<button class="btn sm ghost" onclick={() => refreshProposal(sit.id)} title={t('gm.sitcard.recalcTitle')}>{t('gm.sitcard.recalc')}</button>{/if}
     {/if}
     {#if sit.status !== 'resolved' && sit.status !== 'cancelled'}
       <span class="spacer"></span>
-      <button class="btn sm ghost danger" onclick={() => cancelSit(sit.id)}>Verwerfen</button>
+      <button class="btn sm ghost danger" onclick={() => cancelSit(sit.id)}>{t('gm.sitcard.discard')}</button>
     {/if}
   </footer>
 </article>

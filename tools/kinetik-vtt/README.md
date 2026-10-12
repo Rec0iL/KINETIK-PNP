@@ -4,7 +4,7 @@ Web-App für KINETIK: Charakterbogen, Multiplayer über WebRTC (PeerJS), SL-Dash
 
 Kompatibel mit [PenNodePaper](https://github.com/Rec0iL/PenNodePaper), der Vorbereitungs-App für die Spielleitung (siehe M10 unten).
 
-Stack: Vite, Svelte 5, TypeScript. Deutsche Oberfläche (alle Texte in `src/i18n/de.ts`). Zehn Looks: Neo-Noir, Film Noir (Sin-City-Stil), Manga (hell, Marker-Gelb), Wushu (Tusche auf Reispapier, hell), Ukiyo-e (Holzschnitt, Indigo), Western (Leder und Messing), Akte (Dossier, hell), 8-Bit (Pixelrahmen, Pixelschrift), Terminal (CRT) und Cyberdeck (Hybrid).
+Stack: Vite, Svelte 5, TypeScript. Oberfläche auf Deutsch und Englisch (Texte in `src/i18n/de/*.ts` und `src/i18n/en/*.ts`, siehe [Sprachen](#sprachen)). Zehn Looks: Neo-Noir, Film Noir (Sin-City-Stil), Manga (hell, Marker-Gelb), Wushu (Tusche auf Reispapier, hell), Ukiyo-e (Holzschnitt, Indigo), Western (Leder und Messing), Akte (Dossier, hell), 8-Bit (Pixelrahmen, Pixelschrift), Terminal (CRT) und Cyberdeck (Hybrid).
 
 ## Kurzanleitung
 
@@ -13,6 +13,18 @@ Stack: Vite, Svelte 5, TypeScript. Deutsche Oberfläche (alle Texte in `src/i18n
 **Spielleiter:** „Spielleiter“, „Runde starten“. Der Raumcode (z.B. `K7X-2QF`) oder der Link geht an die Spieler. Der SL-Tab ist der Server und muss offen bleiben (nach einem Neuladen setzt er die Runde selbst fort). Tabs: Spieler (Bögen, Schnell-Aktionen, Sichtbarkeit), Kampf (Runden, Kinetik-Marker, Bedrängnis, Gegner, Kampfsituationen), Karte (Bild hochladen, Tokens, Gegner aufstellen, Nebel, Raster, Kampf-Seitenleiste), Handouts, Musik, Würfel (auch geheim, Clash-Antwort auf Spielerwürfe), Notizen, Einstellungen (Sichtbarkeit, lokale Spieler ohne Gerät, Sitzung sichern).
 
 **Verbindung:** Die Spieldaten laufen direkt zwischen den Browsern (WebRTC). Ein öffentlicher PeerJS-Server vermittelt nur den Verbindungsaufbau. Bei strenger Firewall hilft ein eigener TURN-Server (Einstellung „Erweitert“ beim Beitreten und Starten). Ein eigener PeerJS-Server (`npx peerjs --port 9000`) ist dort ebenfalls einstellbar.
+
+## Sprachen
+
+Die App gibt es auf Deutsch und Englisch. Die Sprache wird beim Start bestimmt: `?lang=de|en` in der Adresse (wird gemerkt), die gespeicherte Wahl, sonst die Browsersprache (Deutsch bleibt Deutsch, alles andere wird Englisch). Im Kopf lässt sie sich umschalten; die Seite lädt dafür neu (eine gehostete Runde setzt sich danach fort). Freigegebene Links (`#/beitreten/<code>`) sind sprachunabhängig.
+
+- **Texte:** `src/i18n/de/<bereich>.ts` (Quelle) und `src/i18n/en/<bereich>.ts`, gleiche Schlüssel (der Typ erzwingt das, `tests/i18n.test.ts` prüft Platzhalter). Konventionen in `src/i18n/README.md`.
+- **Regeldaten:** `data/i18n/en/*.json` überlagert nur die Texte der deutschen Dateien in `data/` (`scripts/check-data.mjs` prüft Vollständigkeit). Ids und Zahlen kommen immer aus dem Original.
+- **Tags und Preise** werden als Text gespeichert und über die Kennung verglichen (`src/rules/tagid.ts`), damit ein deutscher Charakter in einer englischen Runde richtig erkannt wird.
+- **Regelwerk:** `rulebook.json` (de) und `rulebook.en.json` aus `python3 scripts/build_rulebook_web.py`; Bilder sind für beide Sprachen dieselben, Füllbilder und PDFs je Sprache.
+- **Rechtstexte** (Impressum, Datenschutz) bleiben Deutsch und tragen in der englischen Oberfläche einen Hinweis.
+- Mitteilungen der SL an alle (Toasts, Würfel-Labels, Änderungsnotizen) kommen in der Sprache der SL.
+- Eine weitere Sprache: Dateien in `src/i18n/<sprache>/` und `data/i18n/<sprache>/` anlegen, in `src/i18n/index.ts`, `locale.ts` und `src/rules/data.ts` eintragen, Regelwerk übersetzen (`regelwerk/KINETIK_Regelwerk.<sprache>.md`, `assets/pdf-<sprache>`).
 
 ## Veröffentlichen auf GitHub Pages
 
@@ -28,7 +40,7 @@ Die Betreiberangaben stehen nicht im Repository. Der Build bettet sie ein, in di
 
 ## Regelwerk in der App
 
-Der Button „Regelwerk“ im Kopf öffnet das Regelwerk als Seitenleiste (für Spieler und SL, überall in der App): gleiche Texte und Bilder wie das PDF, aber als HTML im App-Look, mit Inhaltsverzeichnis, Suche und Sprungmarken (der Charakter-Assistent springt zum passenden Kapitel). Kein PDF-Viewer des Browsers beteiligt, das PDF gibt es nur als Download. Gebaut wird es aus `regelwerk/KINETIK_Regelwerk.md` und `assets/pdf/images`:
+Der Button „Regelwerk“ im Kopf öffnet das Regelwerk als Seitenleiste (für Spieler und SL, überall in der App): gleiche Texte und Bilder wie das PDF, aber als HTML im App-Look, mit Inhaltsverzeichnis, Suche und Sprungmarken (der Charakter-Assistent springt zum passenden Kapitel). Kein PDF-Viewer des Browsers beteiligt, das PDF gibt es nur als Download. Gebaut wird es aus `regelwerk/KINETIK_Regelwerk.md` (und `.en.md`) und `assets/pdf/images`:
 
 ```bash
 python3 scripts/build_rulebook_web.py   # schreibt tools/kinetik-vtt/public/rulebook/

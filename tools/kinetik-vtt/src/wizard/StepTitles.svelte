@@ -5,6 +5,7 @@
   import { TITLE_TEMPLATES, DOMAIN_SUGGESTIONS } from './templates';
   import Stepper from '../ui/Stepper.svelte';
   import TagInput from '../ui/TagInput.svelte';
+  import { t } from '../i18n';
 
   let { char }: { char: Character } = $props();
   const report = $derived(creationReport(char));
@@ -12,65 +13,65 @@
   const startMax = $derived(report.stufe.startLevelMax);
 
   function addTemplate(i: number) {
-    const t = TITLE_TEMPLATES[i];
-    char.titles.push(newTitle({ name: t.name, level: 1, startedAtLevel: 1, domains: [...t.domains], leadAttrs: [...t.lead] as [AttrKey, AttrKey] }));
+    const tpl = TITLE_TEMPLATES[i];
+    char.titles.push(newTitle({ name: tpl.name, level: 1, startedAtLevel: 1, domains: [...tpl.domains], leadAttrs: [...tpl.lead] as [AttrKey, AttrKey] }));
   }
-  const addBlank = () => char.titles.push(newTitle({ startedAtLevel: 1, level: 1, name: 'Neuer Titel' }));
+  const addBlank = () => char.titles.push(newTitle({ startedAtLevel: 1, level: 1 }));
   function remove(id: string) {
-    char.titles = char.titles.filter((t) => t.id !== id);
+    char.titles = char.titles.filter((ti) => ti.id !== id);
     for (const m of char.moves) if (m.titleId === id) m.titleId = undefined;
   }
-  function toggleDomain(t: (typeof char.titles)[number], d: string) {
-    t.domains = t.domains.includes(d) ? t.domains.filter((x) => x !== d) : [...t.domains, d];
+  function toggleDomain(ti: (typeof char.titles)[number], d: string) {
+    ti.domains = ti.domains.includes(d) ? ti.domains.filter((x) => x !== d) : [...ti.domains, d];
   }
   const remaining = $derived(report.titleBudget - report.titleLevels);
 </script>
 
 <div class="stack">
-  <p class="dim intro">Titel sind das Training und die Erfahrung deiner Figur (z.B. <em>Ex-Hitman</em>, <em>SWAT-Operator</em>). Jeder Titel hat ein <b>Level</b> (daraus folgt die Meisterschaft M = Level ÷ 2, abgerundet), eine <b>Domäne</b> aus 3 bis 5 Bereichen und <b>zwei Leitattribute</b>. Nur der Titel, der eine Aktion abdeckt, gibt dafür Bonus.</p>
+  <p class="dim intro">{t('wizard.titles.intro1')}<em>Ex-Hitman</em>, <em>SWAT-Operator</em>{t('wizard.titles.intro2')}<b>{t('wizard.titles.introLevel')}</b>{t('wizard.titles.intro3')}<b>{t('wizard.titles.introDomain')}</b>{t('wizard.titles.intro4')}<b>{t('wizard.titles.introLead')}</b>{t('wizard.titles.intro5')}</p>
 
   <div class="budget" class:over={remaining < 0}>
-    <span>Titel-Level verteilt</span><b>{report.titleLevels} / {report.titleBudget}</b>
-    <small class="dim">{remaining >= 0 ? `${remaining} übrig` : `${-remaining} zu viel`} · höchstens Level {startMax} je Titel</small>
+    <span>{t('wizard.titles.budget')}</span><b>{report.titleLevels} / {report.titleBudget}</b>
+    <small class="dim">{remaining >= 0 ? t('wizard.common.left', { n: remaining }) : t('wizard.common.tooMany', { n: -remaining })} · {t('wizard.titles.maxLevel', { max: startMax })}</small>
   </div>
 
   <div>
-    <h3>Vorlagen</h3>
+    <h3>{t('wizard.titles.templates')}</h3>
     <div class="tpl">
-      {#each TITLE_TEMPLATES as t, i}<button class="chip" onclick={() => addTemplate(i)} title={`${t.text}: ${t.domains.join(', ')}`}>+ {t.name}</button>{/each}
-      <button class="chip amber" onclick={addBlank}>+ Eigener Titel</button>
+      {#each TITLE_TEMPLATES as tpl, i}<button class="chip" onclick={() => addTemplate(i)} title={`${tpl.text}: ${tpl.domains.join(', ')}`}>+ {tpl.name}</button>{/each}
+      <button class="chip amber" onclick={addBlank}>+ {t('wizard.titles.custom')}</button>
     </div>
-    <small class="dim">Vorlagen sind nur Ausgangspunkte. Name, Domäne und Leitattribute sind frei änderbar.</small>
+    <small class="dim">{t('wizard.titles.templatesNote')}</small>
   </div>
 
-  {#each char.titles as t (t.id)}
-    {@const m = meisterschaft(t.level)}
-    {@const domWarn = t.domains.length < 3 || t.domains.length > 5}
+  {#each char.titles as ti (ti.id)}
+    {@const m = meisterschaft(ti.level)}
+    {@const domWarn = ti.domains.length < 3 || ti.domains.length > 5}
     <section class="panel flat title">
       <div class="row">
-        <label class="field grow">Titel<input bind:value={t.name} /></label>
-        <label class="field">Level<Stepper value={t.level} min={1} max={10} warn={t.level > startMax} label="Level" onchange={(v) => { t.level = v; t.startedAtLevel = v; }} /></label>
-        <div class="m"><span class="lbl">Meisterschaft</span><b>{m}</b></div>
-        <button class="btn sm icon danger" onclick={() => remove(t.id)} aria-label="Titel entfernen">🗑</button>
+        <label class="field grow">{t('wizard.titles.title')}<input bind:value={ti.name} /></label>
+        <label class="field">{t('wizard.titles.level')}<Stepper value={ti.level} min={1} max={10} warn={ti.level > startMax} label={t('wizard.titles.level')} onchange={(v) => { ti.level = v; ti.startedAtLevel = v; }} /></label>
+        <div class="m"><span class="lbl">{t('wizard.titles.mastery')}</span><b>{m}</b></div>
+        <button class="btn sm icon danger" onclick={() => remove(ti.id)} aria-label={t('wizard.titles.remove')}>🗑</button>
       </div>
-      {#if t.level >= 4}<p class="note">Level {t.level} bringt Attributswachstum mit: +1 auf ein Leitattribut zusätzlich zum Budget (siehe Attribute).</p>{/if}
-      <label class="field">Domäne ({t.domains.length}, empfohlen 3 bis 5)<TagInput bind:values={t.domains} label="Domäne" /></label>
-      {#if domWarn}<p class="warn">Ein Titel hat 3 bis 5 Domänen.</p>{/if}
+      {#if ti.level >= 4}<p class="note">{t('wizard.titles.growth', { level: ti.level })}</p>{/if}
+      <label class="field">{t('wizard.titles.domainLabel', { n: ti.domains.length })}<TagInput bind:values={ti.domains} label={t('wizard.titles.domain')} /></label>
+      {#if domWarn}<p class="warn">{t('wizard.titles.domainWarn')}</p>{/if}
       <div class="sug">
-        {#each DOMAIN_SUGGESTIONS.filter((d) => !t.domains.includes(d)).slice(0, 14) as d}<button class="chip" onclick={() => toggleDomain(t, d)}>+ {d}</button>{/each}
+        {#each DOMAIN_SUGGESTIONS.filter((d) => !ti.domains.includes(d)).slice(0, 14) as d}<button class="chip" onclick={() => toggleDomain(ti, d)}>+ {d}</button>{/each}
       </div>
       <div class="row">
-        <label class="field">Leitattribut 1
-          <select bind:value={t.leadAttrs[0]}>{#each attrs as a}<option value={a.key}>{a.name}</option>{/each}</select>
+        <label class="field">{t('wizard.titles.lead1')}
+          <select bind:value={ti.leadAttrs[0]}>{#each attrs as a}<option value={a.key}>{a.name}</option>{/each}</select>
         </label>
-        <label class="field">Leitattribut 2
-          <select bind:value={t.leadAttrs[1]}>{#each attrs as a}<option value={a.key}>{a.name}</option>{/each}</select>
+        <label class="field">{t('wizard.titles.lead2')}
+          <select bind:value={ti.leadAttrs[1]}>{#each attrs as a}<option value={a.key}>{a.name}</option>{/each}</select>
         </label>
-        {#if t.leadAttrs[0] === t.leadAttrs[1]}<span class="warn">Zwei verschiedene Leitattribute wählen.</span>{/if}
+        {#if ti.leadAttrs[0] === ti.leadAttrs[1]}<span class="warn">{t('wizard.titles.sameLead')}</span>{/if}
       </div>
     </section>
   {:else}
-    <p class="dim">Noch kein Titel. Wähle eine Vorlage oder lege einen eigenen an.</p>
+    <p class="dim">{t('wizard.titles.empty')}</p>
   {/each}
 </div>
 

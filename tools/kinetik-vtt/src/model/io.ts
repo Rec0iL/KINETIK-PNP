@@ -1,6 +1,7 @@
 // JSON-Import/Export mit Validierung und Migration.
 import { ATTR_KEYS, ZONE_KEYS, RULES_VERSION, GIFT_LEVELS, MAX_GIFT_DELAY, type Poison } from '../rules';
 import { SCHEMA_VERSION, newCharacter, uid, type Character, type Move } from './character';
+import { t } from '../i18n';
 
 export interface CharacterFile {
   kinetik: 'character';
@@ -37,18 +38,20 @@ const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object
 const num = (v: unknown, d: number) => (typeof v === 'number' && Number.isFinite(v) ? v : d);
 const str = (v: unknown, d = '') => (typeof v === 'string' ? v : d);
 const arr = <T>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
+/** Vorgabename eines Titels ohne Namen (im map unten ist `t` der Titel). */
+const TITLE_FALLBACK = () => t('model.io.title');
 
 /**
  * Macht aus beliebigem JSON einen gültigen Charakter. Unbekannte Felder bleiben erhalten,
  * fehlende werden mit Standardwerten gefüllt, so überleben auch Teil-Exporte und ältere Versionen.
  */
 export function sanitizeCharacter(raw: unknown, opts: { newId?: boolean } = {}): Character {
-  if (!isObj(raw)) throw new ImportError('Der Inhalt ist kein Charakter.');
+  if (!isObj(raw)) throw new ImportError(t('model.io.notCharacter'));
   const base = newCharacter();
   const c: Character = { ...base, ...(raw as Partial<Character>) };
   c.schemaVersion = SCHEMA_VERSION;
   c.id = opts.newId || !str(raw.id) ? uid() : str(raw.id);
-  c.name = str(raw.name, 'Unbenannt');
+  c.name = str(raw.name, t('model.io.unnamed'));
   c.stufe = (['strasse', 'kino', 'legende', 'custom'] as const).includes(raw.stufe as never) ? (raw.stufe as Character['stufe']) : 'kino';
   const cs = isObj(raw.customStufe) ? raw.customStufe : {};
   c.customStufe = {
@@ -74,7 +77,7 @@ export function sanitizeCharacter(raw: unknown, opts: { newId?: boolean } = {}):
   c.titles = arr<Character['titles'][number]>(raw.titles).map((t) => ({
     ...t,
     id: str(t.id) || uid(),
-    name: str(t.name, 'Titel'),
+    name: str(t.name, TITLE_FALLBACK()),
     level: Math.max(0, Math.min(10, Math.round(num(t.level, 1)))),
     domains: arr<string>(t.domains).map(String),
     leadAttrs: ([t.leadAttrs?.[0], t.leadAttrs?.[1]].map((a, i) => (ATTR_KEYS.includes(a as never) ? a : ATTR_KEYS[i])) as [Character['titles'][number]['leadAttrs'][0], Character['titles'][number]['leadAttrs'][1]]),
@@ -103,7 +106,7 @@ export function parseImport(text: string, opts: { newIds?: boolean } = {}): Char
   try {
     json = JSON.parse(text);
   } catch {
-    throw new ImportError('Die Datei ist kein gültiges JSON.');
+    throw new ImportError(t('model.io.invalidJson'));
   }
   if (isObj(json) && json.kinetik === 'library' && Array.isArray(json.characters)) {
     return json.characters.map((c) => sanitizeCharacter(c, { newId: opts.newIds }));
@@ -114,11 +117,11 @@ export function parseImport(text: string, opts: { newIds?: boolean } = {}): Char
   if (isObj(json) && ('attributes' in json || 'titles' in json || 'name' in json)) {
     return [sanitizeCharacter(json, { newId: opts.newIds })];
   }
-  throw new ImportError('Das ist keine KINETIK-Datei.');
+  throw new ImportError(t('model.io.notKinetik'));
 }
 
 export function fileNameFor(c: Pick<Character, 'name'>): string {
-  const slug = c.name.normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-').toLowerCase() || 'charakter';
+  const slug = c.name.normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-').toLowerCase() || t('model.io.fileSlug');
   return `kinetik-${slug}.json`;
 }
 
@@ -151,7 +154,7 @@ export function exportMoves(moves: Move[]): MovesFile {
 }
 
 export function sanitizeMove(raw: unknown, opts: { newId?: boolean } = {}): Move {
-  if (!isObj(raw)) throw new ImportError('Der Inhalt ist kein Move.');
+  if (!isObj(raw)) throw new ImportError(t('model.io.notMove'));
   const effects = arr<{ id?: unknown; label?: unknown; ep?: unknown; stern?: unknown }>(raw.effects)
     .filter((e) => isObj(e) && typeof e.id === 'string')
     .map((e) => ({
@@ -164,7 +167,7 @@ export function sanitizeMove(raw: unknown, opts: { newId?: boolean } = {}): Move
   const m: Move = {
     ...(raw as Partial<Move>),
     id: opts.newId || !str(raw.id) ? uid() : str(raw.id),
-    name: str(raw.name, 'Move'),
+    name: str(raw.name, t('model.io.move')),
     attr,
     text: str(raw.text),
     effects,
@@ -175,9 +178,9 @@ export function sanitizeMove(raw: unknown, opts: { newId?: boolean } = {}): Move
 
 export function parseMoveImport(text: string): Move[] {
   let json: unknown;
-  try { json = JSON.parse(text); } catch { throw new ImportError('Die Datei ist kein gültiges JSON.'); }
+  try { json = JSON.parse(text); } catch { throw new ImportError(t('model.io.invalidJson')); }
   if (isObj(json) && json.kinetik === 'moves' && Array.isArray(json.moves)) return json.moves.map((m) => sanitizeMove(m, { newId: true }));
   if (isObj(json) && json.kinetik === 'move' && json.move) return [sanitizeMove(json.move, { newId: true })];
   if (isObj(json) && 'effects' in json) return [sanitizeMove(json, { newId: true })];
-  throw new ImportError('Das ist keine KINETIK-Move-Datei.');
+  throw new ImportError(t('model.io.notMoveFile'));
 }

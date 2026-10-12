@@ -2,6 +2,7 @@
   import { settings } from '../lib/settings.svelte';
   import { testIce } from '../net/icetest';
   import type { IceReport, Verdict } from '../net/ice';
+  import { t } from '../i18n';
 
   let testing = $state(false);
   let result = $state<{ report: IceReport; verdict: Verdict } | null>(null);
@@ -11,52 +12,52 @@
     testing = true;
     result = null;
     failure = '';
-    try { result = await testIce(); } catch (e) { failure = (e as Error).message || 'Der Test konnte nicht laufen (WebRTC nicht verfügbar?).'; }
+    try { result = await testIce(); } catch (e) { failure = (e as Error).message || t('ui.netSettings.testFailed'); }
     testing = false;
   }
   const mark = (ok: boolean) => (ok ? '✓' : '✗');
 </script>
 
 <details>
-  <summary>Erweitert: Verbindung und Server</summary>
+  <summary>{t('ui.netSettings.summary')}</summary>
   <div class="stack adv">
     <section class="box">
-      <h3>Verbindungstest</h3>
-      <p class="dim">Klappt der Beitritt nicht (z.B. über Mobilfunk), zeigt der Test, welche Wege dein Netz zulässt und was fehlt.</p>
-      <div class="row"><button class="btn sm primary" onclick={run} disabled={testing}>{testing ? 'Teste … (bis 8 s)' : 'Verbindung testen'}</button></div>
+      <h3>{t('ui.netSettings.testTitle')}</h3>
+      <p class="dim">{t('ui.netSettings.testIntro')}</p>
+      <div class="row"><button class="btn sm primary" onclick={run} disabled={testing}>{testing ? t('ui.netSettings.testing') : t('ui.netSettings.test')}</button></div>
       {#if failure}<p class="bad">{failure}</p>{/if}
       {#if result}
         <ul class="res">
-          <li class:okc={result.report.host}><b>{mark(result.report.host)}</b> Direkt im lokalen Netz</li>
-          <li class:okc={result.report.srflx}><b>{mark(result.report.srflx)}</b> Über das Internet (STUN)</li>
-          <li class:okc={result.report.relay}><b>{mark(result.report.relay)}</b> Relay-Server (TURN){result.report.relayTcp ? ', auch über TCP' : ''}</li>
+          <li class:okc={result.report.host}><b>{mark(result.report.host)}</b> {t('ui.netSettings.host')}</li>
+          <li class:okc={result.report.srflx}><b>{mark(result.report.srflx)}</b> {t('ui.netSettings.srflx')}</li>
+          <li class:okc={result.report.relay}><b>{mark(result.report.relay)}</b> {t('ui.netSettings.relay')}{result.report.relayTcp ? t('ui.netSettings.relayTcp') : ''}</li>
         </ul>
         <p class="verdict" class:bad={!result.verdict.ok}><b>{result.verdict.title}.</b> {result.verdict.text}</p>
-        {#if result.report.errors.length}<details><summary>Fehlermeldungen der Server</summary><pre>{result.report.errors.join('\n')}</pre></details>{/if}
+        {#if result.report.errors.length}<details><summary>{t('ui.netSettings.serverErrors')}</summary><pre>{result.report.errors.join('\n')}</pre></details>{/if}
       {/if}
     </section>
 
     <section class="box">
-      <h3>Relay-Server (TURN)</h3>
-      <p class="dim">Hinter Mobilfunk oder strengem NAT geht nichts direkt. Dann leitet ein TURN-Server den Verkehr weiter. Der eingebaute öffentliche Server ist ein Notnagel. Zuverlässig ist ein eigener (z.B. Konto bei einem TURN-Anbieter oder selbst gehostetes coturn). Am besten mit einer <code>turns:</code>-URL auf Port 443, die auch strenge Firewalls durchlässt. Nur der Spieler mit dem Problem muss das eintragen.</p>
-      <label class="field"><span>TURN-URL(s)</span><textarea rows="2" bind:value={settings.turnUrl} placeholder={'turn:turn.example.org:3478\nturns:turn.example.org:443'}></textarea></label>
+      <h3>{t('ui.netSettings.turnTitle')}</h3>
+      <p class="dim">{t('ui.netSettings.turnIntroPre')} <code>turns:</code>{t('ui.netSettings.turnIntroPost')}</p>
+      <label class="field"><span>{t('ui.netSettings.turnUrls')}</span><textarea rows="2" bind:value={settings.turnUrl} placeholder={'turn:turn.example.org:3478\nturns:turn.example.org:443'}></textarea></label>
       <div class="row">
-        <label class="field"><span>Benutzer</span><input bind:value={settings.turnUser} autocomplete="off" /></label>
-        <label class="field"><span>Passwort</span><input type="password" bind:value={settings.turnPass} autocomplete="off" /></label>
+        <label class="field"><span>{t('ui.netSettings.turnUser')}</span><input bind:value={settings.turnUser} autocomplete="off" /></label>
+        <label class="field"><span>{t('ui.netSettings.turnPass')}</span><input type="password" bind:value={settings.turnPass} autocomplete="off" /></label>
       </div>
-      <label class="check"><input type="checkbox" bind:checked={settings.relayOnly} /> Nur über Relay verbinden (hilft, wenn der Aufbau über Mobilfunk hängt)</label>
+      <label class="check"><input type="checkbox" bind:checked={settings.relayOnly} /> {t('ui.netSettings.relayOnly')}</label>
     </section>
 
     <section class="box">
-      <h3>Vermittlungsserver</h3>
-      <p class="dim">Standard ist der öffentliche PeerJS-Server. Er vermittelt nur den Verbindungsaufbau, die Spieldaten laufen direkt zwischen den Browsern.</p>
+      <h3>{t('ui.netSettings.peerTitle')}</h3>
+      <p class="dim">{t('ui.netSettings.peerIntro')}</p>
       <div class="row">
-        <label class="field"><span>Host</span><input bind:value={settings.peerHost} placeholder="leer = peerjs.com" /></label>
-        <label class="field"><span>Port</span><input type="number" bind:value={settings.peerPort} /></label>
-        <label class="field"><span>Pfad</span><input bind:value={settings.peerPath} /></label>
+        <label class="field"><span>{t('ui.netSettings.peerHost')}</span><input bind:value={settings.peerHost} placeholder={t('ui.netSettings.peerHostPlaceholder')} /></label>
+        <label class="field"><span>{t('ui.netSettings.peerPort')}</span><input type="number" bind:value={settings.peerPort} /></label>
+        <label class="field"><span>{t('ui.netSettings.peerPath')}</span><input bind:value={settings.peerPath} /></label>
         <label class="check"><input type="checkbox" bind:checked={settings.peerSecure} /> TLS</label>
       </div>
-      <label class="field"><span>ICE-Server als JSON (Experte, ersetzt die Felder oben)</span><textarea rows="3" bind:value={settings.iceJson} placeholder={'[{"urls":"turn:example.org:3478","username":"u","credential":"p"}]'}></textarea></label>
+      <label class="field"><span>{t('ui.netSettings.iceJson')}</span><textarea rows="3" bind:value={settings.iceJson} placeholder={'[{"urls":"turn:example.org:3478","username":"u","credential":"p"}]'}></textarea></label>
     </section>
   </div>
 </details>

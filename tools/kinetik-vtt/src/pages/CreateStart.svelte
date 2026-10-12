@@ -5,6 +5,7 @@
   import { navigate } from '../lib/router.svelte';
   import { openRulebook } from '../rulebook/rulebook.svelte';
   import Stepper from '../ui/Stepper.svelte';
+  import { t } from '../i18n';
 
   let step = $state<1 | 2>(1);
   let stufe = $state<Stufe>('kino');
@@ -13,9 +14,9 @@
   const options = $derived([
     ...rules.tabellen.kampagnenstufen.map((s) => ({
       key: s.key as Stufe, name: s.name, standard: 'standard' in s, attr: s.attributBudget, titel: s.titelBudget, max: s.startLevelMax,
-      text: ({ strasse: 'Bodenständig: Straßenkämpfer, Cops, Söldner.', kino: 'Der Standard: filmische Helden mit Talent und Training.', legende: 'Veteranen und Mythen, die schon ganze Armeen aufgemischt haben.' } as Record<string, string>)[s.key] ?? '',
+      text: ({ strasse: t('pages.createStart.textStrasse'), kino: t('pages.createStart.textKino'), legende: t('pages.createStart.textLegende') } as Record<string, string>)[s.key] ?? '',
     })),
-    { key: 'custom' as Stufe, name: 'Eigene', standard: false, attr: custom.attributBudget, titel: custom.titelBudget, max: custom.startLevelMax, text: 'Der Tisch legt Budgets und Start-Level selbst fest.' },
+    { key: 'custom' as Stufe, name: t('pages.createStart.custom'), standard: false, attr: custom.attributBudget, titel: custom.titelBudget, max: custom.startLevelMax, text: t('pages.createStart.customText') },
   ]);
 
   function create(mode: 'wizard' | 'manual') {
@@ -25,20 +26,20 @@
 </script>
 
 <section class="wrap">
-  <span class="kicker">Neuer Charakter · Schritt {step} von 2</span>
-  <h1>{step === 1 ? 'Kampagnenstartstufe' : 'Wie erschaffen?'}</h1>
+  <span class="kicker">{t('pages.createStart.kicker', { step })}</span>
+  <h1>{step === 1 ? t('pages.createStart.title1') : t('pages.createStart.title2')}</h1>
 
   {#if step === 1}
-    <p class="dim lead">Wie stark sind die Figuren am Anfang? Das bestimmt, wie viele Attributspunkte und Titel-Level du bei der Erschaffung verteilen darfst. Die Stufe legt der Tisch fest, sie gilt nur für den Start. Danach wächst die Figur über Titel-Level.</p>
+    <p class="dim lead">{t('pages.createStart.lead1')}</p>
     <div class="opts">
       {#each options as o (o.key)}
         <button class="opt panel" class:on={stufe === o.key} onclick={() => (stufe = o.key)} aria-pressed={stufe === o.key}>
-          <h2>{o.name}{#if o.standard}<span class="chip accent">Standard</span>{/if}</h2>
+          <h2>{o.name}{#if o.standard}<span class="chip accent">{t('pages.createStart.standard')}</span>{/if}</h2>
           <p class="dim">{o.text}</p>
           <dl>
-            <div><dt>Attribute</dt><dd>{o.attr}</dd></div>
-            <div><dt>Titel-Level</dt><dd>{o.titel}</dd></div>
-            <div><dt>Max. je Titel</dt><dd>{o.max}</dd></div>
+            <div><dt>{t('pages.common.attributes')}</dt><dd>{o.attr}</dd></div>
+            <div><dt>{t('pages.common.titleLevels')}</dt><dd>{o.titel}</dd></div>
+            <div><dt>{t('pages.createStart.maxPerTitle')}</dt><dd>{o.max}</dd></div>
           </dl>
         </button>
       {/each}
@@ -46,38 +47,38 @@
 
     {#if stufe === 'custom'}
       <section class="panel custom">
-        <h3>Eigene Budgets</h3>
+        <h3>{t('pages.createStart.customBudgets')}</h3>
         <div class="row">
-          <label class="field">Attribut-Budget<Stepper bind:value={custom.attributBudget} min={0} max={20} label="Attribut-Budget" /></label>
-          <label class="field">Titel-Level-Budget<Stepper bind:value={custom.titelBudget} min={0} max={40} label="Titel-Level-Budget" /></label>
-          <label class="field">Max. Start-Level je Titel<Stepper bind:value={custom.startLevelMax} min={1} max={10} label="Max. Start-Level" /></label>
+          <label class="field">{t('pages.createStart.attrBudget')}<Stepper bind:value={custom.attributBudget} min={0} max={20} label={t('pages.createStart.attrBudget')} /></label>
+          <label class="field">{t('pages.createStart.titleBudget')}<Stepper bind:value={custom.titelBudget} min={0} max={40} label={t('pages.createStart.titleBudget')} /></label>
+          <label class="field">{t('pages.createStart.maxStartPerTitle')}<Stepper bind:value={custom.startLevelMax} min={1} max={10} label={t('pages.common.maxStartLevel')} /></label>
         </div>
-        <small class="dim">Du kannst die Stufe und die Budgets später im Bogen unter „Charaktererschaffung“ ändern.</small>
+        <small class="dim">{t('pages.createStart.customNote')}</small>
       </section>
     {/if}
 
     <div class="row">
-      <a class="btn ghost" href="#/charaktere">Abbrechen</a>
-      <button class="btn sm" onclick={() => openRulebook('sec-2-4-charaktererschaffung')}>Regeln 2.4 lesen</button>
+      <a class="btn ghost" href="#/charaktere">{t('pages.common.cancel')}</a>
+      <button class="btn sm" onclick={() => openRulebook('sec-2-4-charaktererschaffung')}>{t('pages.createStart.readRules')}</button>
       <span class="spacer"></span>
-      <button class="btn primary" onclick={() => (step = 2)}>Weiter</button>
+      <button class="btn primary" onclick={() => (step = 2)}>{t('pages.common.next')}</button>
     </div>
   {:else}
-    <p class="dim lead">Der Assistent führt dich Schritt für Schritt durch Konzept, Titel, Attribute, Moves und Ausrüstung und achtet auf die Budgets. Manuell bekommst du gleich den leeren Bogen.</p>
+    <p class="dim lead">{t('pages.createStart.lead2')}</p>
     <div class="opts two">
       <button class="opt panel big" onclick={() => create('wizard')}>
-        <h2>Assistent <span class="chip accent">empfohlen</span></h2>
-        <p class="dim">Strukturiert in sechs Schritten, mit Erklärungen, Beispielen aus dem Regelwerk und Live-Budget. Du kannst jederzeit zum Bogen wechseln.</p>
-        <ol class="dim"><li>Konzept</li><li>Titel</li><li>Attribute</li><li>Moves</li><li>Ausrüstung</li><li>Abschluss</li></ol>
+        <h2>{t('pages.createStart.wizard')} <span class="chip accent">{t('pages.createStart.recommended')}</span></h2>
+        <p class="dim">{t('pages.createStart.wizardText')}</p>
+        <ol class="dim"><li>{t('pages.createStart.stepConcept')}</li><li>{t('pages.createStart.stepTitles')}</li><li>{t('pages.createStart.stepAttributes')}</li><li>{t('pages.createStart.stepMoves')}</li><li>{t('pages.createStart.stepGear')}</li><li>{t('pages.createStart.stepFinish')}</li></ol>
       </button>
       <button class="opt panel big" onclick={() => create('manual')}>
-        <h2>Manuell</h2>
-        <p class="dim">Der leere Charakterbogen, alles frei ausfüllbar. Für Erfahrene und für Figuren, die du schon im Kopf hast. Budget-Hinweise erscheinen unten im Bogen.</p>
+        <h2>{t('pages.createStart.manual')}</h2>
+        <p class="dim">{t('pages.createStart.manualText')}</p>
       </button>
     </div>
     <div class="row">
-      <button class="btn ghost" onclick={() => (step = 1)}>← Zurück</button>
-      <span class="chip">Stufe: {options.find((o) => o.key === stufe)?.name}</span>
+      <button class="btn ghost" onclick={() => (step = 1)}>{t('pages.common.back')}</button>
+      <span class="chip">{t('pages.createStart.tier', { name: options.find((o) => o.key === stufe)?.name ?? '' })}</span>
     </div>
   {/if}
 </section>

@@ -2,6 +2,7 @@
 import { get, set, keys, del } from 'idb-keyval';
 import type { DataConnection } from './peer';
 import type { ServerMsg } from './protocol';
+import { t } from '../i18n';
 
 export interface AssetMeta { hash: string; name: string; mime: string; size: number }
 interface Stored { meta: AssetMeta; bytes: ArrayBuffer }
@@ -76,7 +77,7 @@ export function requestAsset(hash: string): Promise<AssetMeta> {
     const timer = setTimeout(() => {
       const l = waiters.get(hash) ?? [];
       waiters.set(hash, l.filter((w) => w.timer !== timer));
-      reject(new Error('Zeitüberschreitung bei der Übertragung.'));
+      reject(new Error(t('net.assets.timeout')));
     }, 120000);
     list.push({ resolve, reject, timer });
     waiters.set(hash, list);
@@ -118,8 +119,8 @@ export async function handleAssetMessage(m: ServerMsg): Promise<boolean> {
         const hash = await hashBytes(out.buffer);
         delete assets.progress[m.hash];
         if (hash !== m.hash) {
-          assets.failed[m.hash] = 'Prüfsumme stimmt nicht.';
-          settle(m.hash, new Error('Prüfsumme stimmt nicht.'));
+          assets.failed[m.hash] = t('net.assets.checksum');
+          settle(m.hash, new Error(t('net.assets.checksum')));
         } else {
           await putAsset(out.buffer, a.meta.name, a.meta.mime);
           settle(m.hash);
@@ -130,8 +131,8 @@ export async function handleAssetMessage(m: ServerMsg): Promise<boolean> {
     case 'asset-missing':
       assembling.delete(m.hash);
       delete assets.progress[m.hash];
-      assets.failed[m.hash] = 'Der SL hat diese Datei nicht mehr.';
-      settle(m.hash, new Error('Der SL hat diese Datei nicht mehr.'));
+      assets.failed[m.hash] = t('net.assets.missing');
+      settle(m.hash, new Error(t('net.assets.missing')));
       return true;
     default:
       return false;
@@ -172,6 +173,6 @@ export async function prepareImage(file: File, maxSide = 4096): Promise<{ bytes:
   canvas.height = h;
   canvas.getContext('2d')!.drawImage(bmp, 0, 0, w, h);
   bmp.close?.();
-  const blob: Blob = await new Promise((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error('Bild konnte nicht verkleinert werden.'))), 'image/webp', 0.88));
+  const blob: Blob = await new Promise((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error(t('net.assets.shrinkFailed')))), 'image/webp', 0.88));
   return { bytes: await blob.arrayBuffer(), mime: 'image/webp', width: w, height: h };
 }

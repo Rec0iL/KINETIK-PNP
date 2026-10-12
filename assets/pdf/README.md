@@ -14,4 +14,6 @@ python3 tools/rulebook-pdf/rulebook_pdf.py build assets/pdf
 
 Neue Abschnitte bekommen erst mit `plan` und `images` ein Bild (oder in der Oberfläche: `rulebook_pdf.py gui`). Bei einer neuen Version auch `output` in `project.json` anpassen.
 
+**Englisch:** `assets/pdf-en/` (und `assets/pdf-themes-en/<theme>/`) setzt die englische Übersetzung mit denselben Bildern: `key_source` übernimmt die Bildschlüssel aus der deutschen Datei, `images_from` leiht Cover, Kapitel- und Abschnittsbilder aus diesem Projekt. Nur die Füllbilder (`fill-…`) liegen je Sprache, weil die Lücken vom Satz abhängen. Ausgabe `export/KINETIK_Rulebook_v3.6.pdf`.
+
 Grafiken, die zum Regeltext selbst gehören (z.B. die Körpersilhouette in 2.3), liegen in `assets/grafiken/` und sind direkt im Markdown eingebunden. Sie erscheinen damit auch auf GitHub und in jedem anderen Markdown-Export.

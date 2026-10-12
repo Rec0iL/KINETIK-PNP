@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { t } from '../i18n';
   let { value, sides = 6, size = 52, animate = true, delay = 0 }: { value: number; sides?: number; size?: number; animate?: boolean; delay?: number } = $props();
 
   // Augen-Positionen eines W6 auf einem 3x3-Raster
@@ -7,11 +8,11 @@
   };
 </script>
 
-<span class="die" class:animate style:--s="{size}px" style:--d="{delay}ms" class:d6={sides === 6} title={`W${sides}: ${value}`}>
+<span class="die" class:animate style:--s="{size}px" style:--d="{delay}ms" class:d6={sides === 6} title={t('dice.face.title', { sides, value })}>
   {#if sides === 6 && PIPS[value]}
     <span class="grid">{#each Array(9) as _, i}<i class:on={PIPS[value].includes(i)}></i>{/each}</span>
   {:else}
-    <span class="num">{value}</span><span class="sd">W{sides}</span>
+    <span class="num">{value}</span><span class="sd">{t('dice.face.sides', { sides })}</span>
   {/if}
 </span>
 

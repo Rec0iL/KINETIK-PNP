@@ -1,1 +1,15 @@
-{}
+{
+  "hinweis": "Level, bonus and Taken Out at come from 3.7 and 3.11, Protection and WP from the table in 3.7 (guidelines, freely adjustable).",
+  "leiter": [
+    { "key": "goon", "name": "Goon", "ausgeschaltet": "1 hit" },
+    { "key": "schlaeger", "name": "Thug", "ausgeschaltet": "WP 0 or 2 injuries" },
+    { "key": "elite", "name": "Elite", "ausgeschaltet": "WP 0 (flees, surrenders) or 2 injuries" },
+    { "key": "boss", "name": "Boss", "ausgeschaltet": "3 injuries total, 2 to the head or 3 to the torso. At WP 0, Broken with a Last Gasp." },
+    { "key": "nemesis", "name": "Nemesis", "ausgeschaltet": "as Boss" }
+  ],
+  "bedraengnis": {
+    "erster": "-1 matching Protection, otherwise -1 WP (counter 1)",
+    "zweiter": "Injury (counter 0)",
+    "reset": "Any win by the player resets the counter to 0."
+  }
+}

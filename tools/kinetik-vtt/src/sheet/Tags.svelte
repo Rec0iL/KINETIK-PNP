@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { rules } from '../rules';
+  import { rules, tagLabel } from '../rules';
+  import { t } from '../i18n';
   import { uid, type Character } from '../model/character';
   import { computeSheet } from '../model/sheet';
   import Poisons from './Poisons.svelte';
@@ -16,52 +17,52 @@
   }
   function addCustom() { add(custom, size); custom = ''; }
   function flip(id: string) {
-    const i = char.tags.findIndex((t) => t.id === id);
+    const i = char.tags.findIndex((tg) => tg.id === id);
     if (i < 0) return;
-    if (char.tags[i].size === 'gross') { alert('Große Tags lassen sich nicht umdrehen. Sie brauchen einen passenden Move.'); return; }
-    if (confirm('Kinetik-Regel: Tag durch eine kreative Beschreibung umdrehen? Er verschwindet, der Gegner erhält einen passenden kleinen Tag.')) char.tags.splice(i, 1);
+    if (char.tags[i].size === 'gross') { alert(t('sheet.tags.flipMajor')); return; }
+    if (confirm(t('sheet.tags.flipConfirm'))) char.tags.splice(i, 1);
   }
-  const t = rules.tags;
+  const tagLists = rules.tags;
 </script>
 
 <div class="stack">
   <Poisons {char} />
   <section class="panel">
-    <div class="row"><h2>Tags gegen mich</h2><span class="spacer"></span>
-      <span class="chip" class:danger={sheet.tagBonus >= 3} class:accent={sheet.tagBonus < 3}>Gegner-Bonus +{sheet.tagBonus} (max. +{rules.tabellen.tags.stapelMax})</span>
+    <div class="row"><h2>{t('sheet.tags.againstMe')}</h2><span class="spacer"></span>
+      <span class="chip" class:danger={sheet.tagBonus >= 3} class:accent={sheet.tagBonus < 3}>{t('sheet.tags.oppBonus', { n: sheet.tagBonus, max: rules.tabellen.tags.stapelMax })}</span>
     </div>
-    <p class="dim hint">Kleiner Tag: Gegner +1, großer Tag: +2 oder Aktion verwehrt. Tags enden mit einer passenden Aktion oder mit der Szene. Heimspiel: Deckt ein Titel die Lage ab, gibt ein kleiner Tag dem Gegner kein +1.</p>
+    <p class="dim hint">{t('sheet.tags.hint')}</p>
     <div class="row add">
-      <input bind:value={custom} placeholder="Eigener Tag (z.B. Am Boden)" onkeydown={(e) => e.key === 'Enter' && addCustom()} aria-label="Tag-Name" />
-      <select bind:value={size} aria-label="Größe"><option value="klein">klein (+1)</option><option value="gross">groß (+2)</option></select>
-      <button class="btn sm primary" onclick={addCustom}>+ Tag</button>
+      <input bind:value={custom} placeholder={t('sheet.tags.customPlaceholder')} onkeydown={(e) => e.key === 'Enter' && addCustom()} aria-label={t('sheet.common.tagName')} />
+      <select bind:value={size} aria-label={t('sheet.common.size')}><option value="klein">{t('sheet.tags.minorOpt')}</option><option value="gross">{t('sheet.tags.majorOpt')}</option></select>
+      <button class="btn sm primary" onclick={addCustom}>{t('sheet.tags.addTag')}</button>
     </div>
     <div class="quick">
-      {#each t.klein as n}<button class="chip" onclick={() => add(n, 'klein')}>+ {n}</button>{/each}
-      {#each t.gross as n}<button class="chip amber" onclick={() => add(n, 'gross')}>+ {n}</button>{/each}
+      {#each tagLists.klein as n}<button class="chip" onclick={() => add(n, 'klein')}>+ {n}</button>{/each}
+      {#each tagLists.gross as n}<button class="chip amber" onclick={() => add(n, 'gross')}>+ {n}</button>{/each}
     </div>
     <div class="list">
       {#each char.tags as tg, i (tg.id)}
         <div class="tag" class:big={tg.size === 'gross'}>
-          <span class="chip" class:amber={tg.size === 'gross'}>{tg.size === 'gross' ? 'groß +2' : 'klein +1'}</span>
-          <input class="nm" bind:value={tg.name} aria-label="Name" />
-          <input class="nt" bind:value={tg.note} placeholder="Notiz" aria-label="Notiz" />
-          <label class="check" title="Bleibt bei kurzer Rast bestehen"><input type="checkbox" bind:checked={tg.permanent} /> dauerhaft</label>
-          <button class="btn sm" onclick={() => flip(tg.id)} title="Kinetik-Regel: eigenen kleinen Tag umdrehen">Umdrehen</button>
-          <button class="btn sm icon danger" onclick={() => char.tags.splice(i, 1)} aria-label="Entfernen">✕</button>
+          <span class="chip" class:amber={tg.size === 'gross'}>{tg.size === 'gross' ? t('sheet.tags.majorChip') : t('sheet.tags.minorChip')}</span>
+          <input class="nm" value={tagLabel(tg.name)} oninput={(e) => (tg.name = e.currentTarget.value)} aria-label={t('sheet.common.name')} />
+          <input class="nt" bind:value={tg.note} placeholder={t('sheet.common.note')} aria-label={t('sheet.common.note')} />
+          <label class="check" title={t('sheet.tags.permanentTitle')}><input type="checkbox" bind:checked={tg.permanent} /> {t('sheet.tags.permanent')}</label>
+          <button class="btn sm" onclick={() => flip(tg.id)} title={t('sheet.tags.flipTitle')}>{t('sheet.tags.flip')}</button>
+          <button class="btn sm icon danger" onclick={() => char.tags.splice(i, 1)} aria-label={t('sheet.common.remove')}>✕</button>
         </div>
       {:else}
-        <p class="dim">Keine Tags aktiv.</p>
+        <p class="dim">{t('sheet.common.noTagsActive')}</p>
       {/each}
     </div>
   </section>
 
   <section class="panel">
-    <div class="row"><h2>Nachteile</h2><span class="spacer"></span><button class="btn sm" onclick={() => char.disadvantages.push({ id: uid(), text: '' })}>+ Nachteil</button></div>
+    <div class="row"><h2>{t('sheet.tags.disadvantages')}</h2><span class="spacer"></span><button class="btn sm" onclick={() => char.disadvantages.push({ id: uid(), text: '' })}>{t('sheet.tags.addDisadv')}</button></div>
     {#each char.disadvantages as d, i (d.id)}
-      <div class="row inj"><input bind:value={d.text} placeholder="z.B. Schuldet der Triade einen Gefallen" /><button class="btn sm icon danger" onclick={() => char.disadvantages.splice(i, 1)} aria-label="Entfernen">✕</button></div>
+      <div class="row inj"><input bind:value={d.text} placeholder={t('sheet.tags.disadvPlaceholder')} /><button class="btn sm icon danger" onclick={() => char.disadvantages.splice(i, 1)} aria-label={t('sheet.common.remove')}>✕</button></div>
     {:else}
-      <p class="dim">Keine Nachteile eingetragen.</p>
+      <p class="dim">{t('sheet.tags.noDisadv')}</p>
     {/each}
   </section>
 </div>

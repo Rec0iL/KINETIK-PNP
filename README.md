@@ -12,6 +12,12 @@
   <a href="CHANGELOG.md">Changelog</a>
 </p>
 
+<p align="center">
+  🇬🇧 <b>English:</b> <a href="README.en.md">README</a> ·
+  <a href="export/KINETIK_Rulebook_v3.6.pdf">Rulebook (PDF)</a> ·
+  <a href="regelwerk/KINETIK_Regelwerk.en.md">Rules text</a>
+</p>
+
 Ein Pen-&-Paper-Regelwerk für grenzenlose, filmische Action. Schnelle, tödliche Kämpfe über ein **2W6-Clash-System**, in dem Angreifer und Verteidiger gegeneinander würfeln, und ein **Titel-System**, in dem Erfahrung mehr zählt als rohes Talent. Dazu eine Web-App, mit der ihr am Tisch oder online spielt: Charakterbogen, Karte, Musik, Würfel und ein Dashboard für die Spielleitung. Läuft im Browser, ohne Konto und ohne Server.
 
 ## Das Spiel in einer Minute
@@ -119,7 +125,7 @@ Der Knopf „Regelwerk“ öffnet das gesamte Regelwerk als Seitenleiste: gleich
 - **Musik** vom SL, für alle synchron, mit Überblendung (neun mitgelieferte Titel).
 - **Kampf-Werkzeuge**: Seiten-Initiative, Bedrängnis, Gegner mit Schutz, Willenskraft und Verletzungen, Handouts.
 - **Kampf auf der Karte**: Der SL stellt Gegner auf der Karte auf, Spieler fragen Bewegung an und planen ihre Aktion mit Ziel, Technik und Tags. Der SL gibt frei, vergibt Bullet Time und wickelt das Ergebnis mit einem Klick ab. Gift tickt am Rundenende.
-- **Zehn Looks** (Neo-Noir, Film Noir, Manga, Wushu, Ukiyo-e, Western, Akte, 8-Bit, Terminal, Cyberdeck) mit eigener Form, Schrift, Effekten und eigenen Bildern, deutsche Oberfläche, Offline-Cache.
+- **Zehn Looks** (Neo-Noir, Film Noir, Manga, Wushu, Ukiyo-e, Western, Akte, 8-Bit, Terminal, Cyberdeck) mit eigener Form, Schrift, Effekten und eigenen Bildern, Oberfläche auf Deutsch und Englisch (Sprache nach Browser, umschaltbar im Kopf oder per `?lang=en`), Offline-Cache.
 
 ### So geht es los
 
@@ -146,8 +152,11 @@ Das Regelwerk gibt es als gesetztes Buch mit Cover, Kapitel-Bannern und einem Bi
 KINETIK_PNP/
 ├── regelwerk/
 │   ├── KINETIK_Regelwerk.md   Aktuelle Fassung (Quelle für PDF und App)
+│   ├── KINETIK_Regelwerk.en.md  Englische Übersetzung (Zeile für Zeile wie das Original)
+│   ├── GLOSSARY.en.md         Verbindliche englische Begriffe für Regelwerk, App und Daten
 │   └── archiv/                Frühere Fassungen
 ├── data/                      Maschinenlesbare Regeldaten, gemeinsame Quelle für alle Tools
+│   └── i18n/en/               Englische Texte dazu (Ids und Zahlen bleiben im Original)
 ├── tools/
 │   ├── kinetik-vtt/           Web-App (Svelte, TypeScript, WebRTC)
 │   └── rulebook-pdf/          PDF-Export mit KI-Bildern
@@ -169,7 +178,7 @@ npm run check-data   # Regeldaten in data/ prüfen
 npm run build
 ```
 
-Nach Änderungen am Regelwerk: `python3 scripts/build_rulebook_web.py` (Regelwerk für die App neu bauen) und das PDF neu setzen. Ein Push auf `main` baut und veröffentlicht die App automatisch.
+Nach Änderungen am Regelwerk: `python3 scripts/check_translation.py` (Übersetzung hat dieselbe Struktur?), `python3 scripts/build_rulebook_web.py` (Regelwerk für die App neu bauen, beide Sprachen) und die PDFs neu setzen (`python3 tools/rulebook-pdf/rulebook_pdf.py build assets/pdf` und `assets/pdf-en`, Looks mit `python3 scripts/gen_rulebook_themes.py --pdf [--lang en]`). Ein Push auf `main` baut und veröffentlicht die App automatisch.
 
 ## Roadmap
 
@@ -182,6 +191,7 @@ Nach Änderungen am Regelwerk: `python3 scripts/build_rulebook_web.py` (Regelwer
 - [x] Gift-Mechanik in der Web-App (3.11): Energieverlust am Rundenende, Verzögerung, Stufen, Gegenmittel-Probe, Überlauf-Zähler
 - [x] Karte und Kampf verknüpft: Gegner als Token, Bewegung per Anfrage, geplante Aktionen als Kampfsituationen mit Freigabe, Bullet Time, Tags, Ein-Klick-Abwicklung
 - [x] PenNodePaper-Brücke: Handouts, Karten, Gegner, NPCs und Musik aus der Vorbereitungs-App in die Runde, Spielergruppe zurück
+- [x] Englisch: Regelwerk, App, Regeldaten, PDFs (alle Looks) und Web-Regelwerk
 - [ ] Schnellreferenz
 
 ## Credits
@@ -200,7 +210,7 @@ Nach Änderungen am Regelwerk: `python3 scripts/build_rulebook_web.py` (Regelwer
 
 | Was | Lizenz |
 |---|---|
-| Regeltext, Regeldaten (`regelwerk/`, `data/`), Bilder und Grafiken (`assets/`, `export/`, `tools/kinetik-vtt/public/art`, `public/rulebook`, `docs/screenshots`) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de): teilen und bearbeiten ist erwünscht, mit Namensnennung, nicht kommerziell, unter gleichen Bedingungen |
+| Regeltext und Übersetzungen, Regeldaten (`regelwerk/`, `data/`), Bilder und Grafiken (`assets/`, `export/`, `tools/kinetik-vtt/public/art`, `public/rulebook`, `docs/screenshots`) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de): teilen und bearbeiten ist erwünscht, mit Namensnennung, nicht kommerziell, unter gleichen Bedingungen |
 | Quellcode (`tools/`, `scripts/`, `.github/`) | [MIT](LICENSE) |
 | Mitgelieferte Musik | CC BY 4.0, Kevin MacLeod (siehe oben) |
 

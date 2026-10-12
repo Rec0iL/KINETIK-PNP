@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { t } from '../i18n';
   let {
     value = $bindable(0),
     min = -99,
@@ -20,14 +21,14 @@
 </script>
 
 <div class="stepper" class:warn role="group" aria-label={label || undefined}>
-  <button type="button" class="btn sm icon" onclick={() => set(value - step)} disabled={disabled || value <= min} aria-label="Verringern">−</button>
+  <button type="button" class="btn sm icon" onclick={() => set(value - step)} disabled={disabled || value <= min} aria-label={t('ui.stepper.decrease')}>−</button>
   <input
-    type="number" {min} {max} {step} aria-label={label || 'Wert'}
+    type="number" {min} {max} {step} aria-label={label || t('ui.stepper.value')}
     value={value}
     {disabled}
     onchange={(e) => set(Number(e.currentTarget.value))}
   />
-  <button type="button" class="btn sm icon" onclick={() => set(value + step)} disabled={disabled || value >= max} aria-label="Erhöhen">+</button>
+  <button type="button" class="btn sm icon" onclick={() => set(value + step)} disabled={disabled || value >= max} aria-label={t('ui.stepper.increase')}>+</button>
 </div>
 
 <style>

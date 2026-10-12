@@ -139,7 +139,7 @@ export function newCharacter(partial: Partial<Character> = {}): Character {
     moves: [],
     weapons: [],
     inventory: [],
-    notes: [{ id: uid(), title: 'Notizen', text: '' }],
+    notes: [{ id: uid(), title: t('model.character.notes'), text: '' }],
     customFields: [],
     overrides: {},
     created: now,
@@ -149,5 +149,5 @@ export function newCharacter(partial: Partial<Character> = {}): Character {
 }
 
 export function newTitle(partial: Partial<Title> = {}): Title {
-  return { id: uid(), name: 'Neuer Titel', level: 1, domains: [], leadAttrs: ['fluss', 'praezision'], ...partial };
+  return { id: uid(), name: t('model.character.newTitle'), level: 1, domains: [], leadAttrs: ['fluss', 'praezision'], ...partial };
 }

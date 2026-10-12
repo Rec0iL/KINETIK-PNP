@@ -1,6 +1,7 @@
 // Move-Bewertung und Kosten (Kapitel 5).
 import { rules } from './data';
 import { meisterschaft, epCap } from './derive';
+import { t } from '../i18n';
 
 export interface MoveEffect {
   id: string;
@@ -81,10 +82,10 @@ export function tierForEp(ep: number): MoveTier {
 }
 
 export const TIER_LABEL: Record<MoveTier, string> = {
-  energie: 'Energie-Move',
-  momentum: 'Momentum-Move',
-  meister: 'Meister-Move',
-  legendaer: 'Legendärer Move',
+  energie: t('rules.moves.tier.energie'),
+  momentum: t('rules.moves.tier.momentum'),
+  meister: t('rules.moves.tier.meister'),
+  legendaer: t('rules.moves.tier.legendaer'),
 };
 
 /** Momentum-Kosten nach EP (ab 4 EP). */
@@ -103,12 +104,12 @@ export function moveConflicts(spec: MoveSpec): string[] {
     const def = effectIndex.get(id) as { schliesstAus?: string[]; name: string } | undefined;
     for (const other of def?.schliesstAus ?? []) {
       if (ids.has(other) && id < other) {
-        out.push(`${def!.name} ist nicht kombinierbar mit ${effectIndex.get(other)?.name}.`);
+        out.push(t('rules.moves.conflict', { a: def!.name, b: String(effectIndex.get(other)?.name) }));
       }
     }
   }
   const wurfMax = (effectIndex.get('wurfPlus') as { max?: number } | undefined)?.max ?? 2;
-  if (spec.effects.filter((e) => e.id === 'wurfPlus').length > wurfMax) out.push('Der Wurfbonus ist auf +2 begrenzt.');
+  if (spec.effects.filter((e) => e.id === 'wurfPlus').length > wurfMax) out.push(t('rules.moves.rollBonusCap'));
   return out;
 }
 
@@ -162,9 +163,9 @@ export function moveCost(spec: MoveSpec, titleLevel: number): MoveCost {
     if (spec.starPayment === 'momentum') momentum += Math.ceil(starAfter / k.sternMomentumProEp);
     else energie += starAfter;
   }
-  if (mastered) notes.push('Gemeistert: kostet kein Momentum mehr.');
-  if (ev.tier === 'legendaer') notes.push(`Legendär: nur mit Titel auf Level ${k.legendaerLevel}, braucht Dominanz und einen Preis.`);
-  if (ep > epCap(m)) notes.push(`Über dem EP-Deckel (${epCap(m)}) dieses Levels.`);
+  if (mastered) notes.push(t('rules.moves.noteMastered'));
+  if (ev.tier === 'legendaer') notes.push(t('rules.moves.noteLegendary', { level: k.legendaerLevel }));
+  if (ep > epCap(m)) notes.push(t('rules.moves.noteOverCap', { cap: epCap(m) }));
 
   return {
     energie, momentum, mastered, tier: ev.tier,
@@ -174,7 +175,7 @@ export function moveCost(spec: MoveSpec, titleLevel: number): MoveCost {
 
 export function costLabel(c: Pick<MoveCost, 'energie' | 'momentum'>): string {
   const parts: string[] = [];
-  if (c.momentum) parts.push(`${c.momentum} Momentum`);
-  if (c.energie || !c.momentum) parts.push(`${c.energie} Energie`);
+  if (c.momentum) parts.push(t('rules.moves.costMomentum', { n: c.momentum }));
+  if (c.energie || !c.momentum) parts.push(t('rules.moves.costEnergie', { n: c.energie }));
   return parts.join(' + ');
 }

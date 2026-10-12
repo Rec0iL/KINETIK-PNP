@@ -1,5 +1,6 @@
 // Clash (3.1), Helden-Schwelle (3.4), Außer Reichweite (3.5), Trefferkaskade (3.2), Heimlichkeits-Clash (4.1).
 import { rules } from './data';
+import { t } from '../i18n';
 
 export type ClashOutcome = 'dominanz' | 'schlagabtausch' | 'konter' | 'perfekterKonter';
 export type StealthOutcome = 'unbemerkt' | 'verdacht' | 'entdeckt' | 'durchschaut';
@@ -49,17 +50,17 @@ export interface ClashResult {
 }
 
 export const OUTCOME_LABEL: Record<ClashOutcome, string> = {
-  dominanz: 'Dominanz',
-  schlagabtausch: 'Schlagabtausch',
-  konter: 'Konter',
-  perfekterKonter: 'Perfekter Konter',
+  dominanz: t('rules.clash.outcome.dominanz'),
+  schlagabtausch: t('rules.clash.outcome.schlagabtausch'),
+  konter: t('rules.clash.outcome.konter'),
+  perfekterKonter: t('rules.clash.outcome.perfekterKonter'),
 };
 
 export const STEALTH_LABEL: Record<StealthOutcome, string> = {
-  unbemerkt: 'Unbemerkt',
-  verdacht: 'Verdacht',
-  entdeckt: 'Entdeckt',
-  durchschaut: 'Durchschaut',
+  unbemerkt: t('rules.clash.stealth.unbemerkt'),
+  verdacht: t('rules.clash.stealth.verdacht'),
+  entdeckt: t('rules.clash.stealth.entdeckt'),
+  durchschaut: t('rules.clash.stealth.durchschaut'),
 };
 
 const total = (s: ClashSide) => s.dice + s.bonus + (s.mod ?? 0);
@@ -135,10 +136,10 @@ export function resolveStealthClash(sneaker: ClashSide, guard: ClashSide, helden
   };
   const stealth = map[r.outcome];
   const text: Record<StealthOutcome, string> = {
-    unbemerkt: '2 Start-Momentum und der Kinetik-Marker für den Schleicher.',
-    verdacht: '1 Start-Momentum, der Wächter erhält den kleinen Tag Misstrauisch.',
-    entdeckt: 'Der Wächter handelt zuerst, kein Hinterhalt.',
-    durchschaut: 'Wächter: 1 Start-Momentum und Marker. Schleicher: kleiner Tag Exponiert.',
+    unbemerkt: t('rules.clash.stealthText.unbemerkt'),
+    verdacht: t('rules.clash.stealthText.verdacht'),
+    entdeckt: t('rules.clash.stealthText.entdeckt'),
+    durchschaut: t('rules.clash.stealthText.durchschaut'),
   };
   return { ...r, stealth, text: text[stealth] };
 }
@@ -172,12 +173,12 @@ export function resolveHit(h: HitInput): HitResult {
   const eff = h.schutzIgnoriert ? 0 : Math.max(0, h.schutz - (h.durchschlag ?? 0));
   const dominant = h.outcome === 'dominanz' || h.outcome === 'perfekterKonter';
   if (dominant) {
-    if (h.delta >= h.t + eff) return { kind: 'verletzung', effektiverSchutz: eff, text: 'Verletzung (Schock: -1 WK).' };
-    return { kind: 'abgefangen', effektiverSchutz: eff, text: 'Abgefangen: -1 Schutz und -1 WK.' };
+    if (h.delta >= h.t + eff) return { kind: 'verletzung', effektiverSchutz: eff, text: t('rules.clash.hit.injury') };
+    return { kind: 'abgefangen', effektiverSchutz: eff, text: t('rules.clash.hit.absorbed') };
   }
   if (h.haertegrad && h.schutz === 0 && h.delta >= h.t - 1) {
-    return { kind: 'verletzung', effektiverSchutz: 0, text: 'Härtegrad: Verletzung (Schock: -1 WK).' };
+    return { kind: 'verletzung', effektiverSchutz: 0, text: t('rules.clash.hit.brutality') };
   }
-  if (eff > 0) return { kind: 'schutz', effektiverSchutz: eff, text: '-1 Schutz.' };
-  return { kind: 'wk', effektiverSchutz: eff, text: '-1 Willenskraft.' };
+  if (eff > 0) return { kind: 'schutz', effektiverSchutz: eff, text: t('rules.clash.hit.protection') };
+  return { kind: 'wk', effektiverSchutz: eff, text: t('rules.clash.hit.willpower') };
 }

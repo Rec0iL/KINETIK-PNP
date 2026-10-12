@@ -1,6 +1,7 @@
 // Musik-Wiedergabe: folgt einem MusicState (vom SL), gleicht Position über die Uhr ab, blendet beim Titelwechsel über.
 import { assetUrl, requestAsset } from '../net/assets.svelte';
 import { expectedPosition, trackKey, type MusicState, type TrackRef } from './clock';
+import { t } from '../i18n';
 
 const LS = 'kinetik.music';
 
@@ -71,7 +72,7 @@ function waitMetadata(): Promise<void> {
   if (a.readyState >= 1) return Promise.resolve();
   return new Promise((resolve, reject) => {
     const ok = () => { cleanup(); resolve(); };
-    const bad = () => { cleanup(); reject(new Error('Audiodatei konnte nicht geladen werden.')); };
+    const bad = () => { cleanup(); reject(new Error(t('music.engine.loadFailed'))); };
     const cleanup = () => { a.removeEventListener('loadedmetadata', ok); a.removeEventListener('error', bad); };
     a.addEventListener('loadedmetadata', ok);
     a.addEventListener('error', bad);
@@ -123,7 +124,7 @@ export async function applyMusic(st: MusicState | null, clockOffset: () => numbe
       if (st.track.file) url = new URL(st.track.file, document.baseURI).href;
       else if (st.track.hash) { await requestAsset(st.track.hash); url = await assetUrl(st.track.hash); }
       if (my !== token) return;
-      if (!url) throw new Error('Titel nicht verfügbar.');
+      if (!url) throw new Error(t('music.engine.unavailable'));
       a.src = url;
       loadedKey = key;
       await waitMetadata();

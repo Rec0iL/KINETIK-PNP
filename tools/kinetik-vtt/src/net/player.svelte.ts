@@ -6,6 +6,7 @@ import { commitRoll, onRoll, type RollRecord } from '../dice/roller.svelte';
 import { getCharacter, saveCharacter } from '../store/characters.svelte';
 import { settings } from '../lib/settings.svelte';
 import { pushToast } from '../ui/toasts.svelte';
+import { t } from '../i18n';
 import { openPeer, explainPeerError, diagnoseJoin, type DataConnection, type Peer } from './peer';
 import { handleAssetMessage, setAssetRequester } from './assets.svelte';
 import { addPing } from '../map/pings.svelte';
@@ -79,7 +80,7 @@ export const isInRound = () => player.status === 'connected' || player.status ==
 export function connectToRound(opts: { code: string; name: string; password: string; characterId: string }) {
   if (player.status !== 'idle' && player.status !== 'denied' && player.status !== 'error') return;
   player.code = normalizeCode(opts.code);
-  player.name = opts.name.trim() || 'Spieler';
+  player.name = opts.name.trim() || t('net.player.defaultName');
   player.characterId = opts.characterId;
   password = opts.password;
   manualClose = false;
@@ -123,7 +124,7 @@ async function attempt() {
     const why = await diagnoseJoin(c);
     if (conn === c) conn = null;
     c.close();
-    failed(`Zeitüberschreitung. ${why}`);
+    failed(t('net.player.timeout', { why }));
   }, 20000);
   c.on('open', () => {
     opened = true;
@@ -135,7 +136,7 @@ async function attempt() {
     clearTimeout(guard);
     if (conn !== c) return;
     if (manualClose || player.status === 'denied') return;
-    failed('Verbindung zur Runde verloren.');
+    failed(t('net.player.lost'));
   });
   c.on('error', () => { /* close folgt */ });
   peer.on('error', (err) => {
@@ -193,7 +194,7 @@ function onMessage(m: ServerMsg) {
       unsubRoll?.();
       unsubRoll = onRoll((r) => sendMsg({ t: 'roll', roll: $state.snapshot(r) as RollRecord }));
       pushSheetNow();
-      pushToast(m.resume ? `Wieder verbunden mit ${m.gmName}.` : `Du bist in ${m.gmName}s Runde.`, 'good');
+      pushToast(t(m.resume ? 'net.player.reconnected' : 'net.player.joined', { gm: m.gmName }), 'good');
       break;
     }
     case 'party':
@@ -217,7 +218,7 @@ function onMessage(m: ServerMsg) {
         saveCharacter(c);
         pushSheetNow();
       }
-      pushToast(`SL: ${m.note ?? 'Änderung am Bogen'}`, 'warn', 7000);
+      pushToast(t('net.player.patch', { note: m.note ?? t('net.player.patchDefault') }), 'warn', 7000);
       break;
     }
     case 'toast':
@@ -233,7 +234,7 @@ function onMessage(m: ServerMsg) {
     case 'handout':
       if (!player.handouts.some((h) => h.id === m.handout.id)) player.handouts.unshift(m.handout);
       saveHandouts();
-      pushToast(`Neues Handout: ${m.handout.title}`, 'good', 8000);
+      pushToast(t('net.player.handout', { title: m.handout.title }), 'good', 8000);
       break;
     case 'pong': {
       const rtt = performance.now() - m.ts;

@@ -1,12 +1,13 @@
 <script lang="ts">
   import { toasts, dismissToast } from './toasts.svelte';
+  import { t as tr } from '../i18n';
 </script>
 
 <div class="toasts" aria-live="polite">
   {#each toasts.list as t (t.id)}
     <div class="t {t.kind}" role="status">
       <span>{t.text}</span>
-      <button onclick={() => dismissToast(t.id)} aria-label="Schließen">✕</button>
+      <button onclick={() => dismissToast(t.id)} aria-label={tr('ui.common.close')}>✕</button>
     </div>
   {/each}
 </div>
