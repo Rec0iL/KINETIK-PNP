@@ -39,12 +39,22 @@ describe('Regelwerk-Version', () => {
     expect(read('assets/pdf/README.md')).toContain(`KINETIK_Regelwerk_v${version}.pdf`);
   });
   it('PDF-Projekte: Ausgabedatei und Cover-Text (Neo-Noir und alle Themes)', () => {
-    const projects = ['assets/pdf', ...readdirSync(`${root}/assets/pdf-themes`).filter((d) => existsSync(`${root}/assets/pdf-themes/${d}/project.json`)).map((d) => `assets/pdf-themes/${d}`)];
+    const themes = (dir: string) => readdirSync(`${root}/${dir}`).filter((d) => existsSync(`${root}/${dir}/${d}/project.json`)).map((d) => `${dir}/${d}`);
+    const projects = ['assets/pdf', ...themes('assets/pdf-themes')];
     expect(projects.length).toBeGreaterThanOrEqual(10);
+    // Übersetzungen (assets/pdf-<sprache>, assets/pdf-themes-<sprache>): gleiche Prüfung, sofern vorhanden
+    for (const lang of readdirSync(`${root}/assets`).filter((d) => /^pdf-[a-z]{2}$/.test(d)).map((d) => d.slice(4))) {
+      projects.push(`assets/pdf-${lang}`);
+      if (existsSync(`${root}/assets/pdf-themes-${lang}`)) projects.push(...themes(`assets/pdf-themes-${lang}`));
+    }
     for (const p of projects) {
       const c = JSON.parse(read(`${p}/project.json`));
       expect(c.tagline, p).toContain(`Version ${version}`);
-      if (p === 'assets/pdf') expect(c.output, p).toContain(`v${version}.pdf`);
+      if (/^assets\/pdf(-[a-z]{2})?$/.test(p)) expect(c.output, p).toContain(`v${version}.pdf`);
+      if (/^assets\/pdf-[a-z]{2}$/.test(p)) {
+        expect(c.key_source, p).toContain('KINETIK_Regelwerk.md');
+        expect(c.images_from, p).toBe('../pdf');
+      }
     }
   });
 });

@@ -12,6 +12,8 @@ from string import Template
 
 import markdown
 
+from .project import FILLER_PREFIX
+
 PKG = Path(__file__).parent
 NARROW_TABLE_MAX_COLS = 3
 NARROW_TABLE_MAX_ROWS = 8         # longer tables span both columns and may break across pages
@@ -392,7 +394,7 @@ def detect_fillers(project, doc=None, log=print):
         if block not in titles:
             continue
         e = project.entry(f"fill-{block}")
-        e.update(kind="filler", active=True, title=f"Füllbild: {titles[block]}", after=block,
+        e.update(kind="filler", active=True, title=f"{FILLER_PREFIX}{titles[block]}", after=block,
                  chapter=chapter_of[block], h_mm=round(gap_mm - FILLER_SPACING_MM, 1),
                  w_mm=round(width_mm, 1))
     # forget fillers for gaps that no longer exist, unless an image was already made

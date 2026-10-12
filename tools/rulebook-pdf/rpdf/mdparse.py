@@ -154,7 +154,35 @@ def _split(lines, level):
     return pre, parts
 
 
-def parse(md, chapter_level=None, appendix_patterns=()):
+def parse(md, chapter_level=None, appendix_patterns=(), key_source=None):
+    """Parse the Markdown into chapters and sections.
+
+    key_source: Markdown text of the same book in another language. Chapter and section keys (image file names,
+    anchors) are then taken from it by position instead of from this text's headings, so a translation keeps the
+    images and ids of the original. Both texts must have the same chapter/section structure."""
+    doc = _parse(md, chapter_level, appendix_patterns)
+    if key_source:
+        apply_key_source(doc, _parse(key_source, chapter_level, appendix_patterns))
+    return doc
+
+
+def apply_key_source(doc, key_doc):
+    """Copy the keys of `key_doc` onto `doc` position by position. Raises ValueError if the structure differs."""
+    if len(doc.chapters) != len(key_doc.chapters):
+        raise ValueError(f"key_source: {len(doc.chapters)} Kapitel, die Schlüsselquelle hat {len(key_doc.chapters)}")
+    for i, (c, k) in enumerate(zip(doc.chapters, key_doc.chapters), start=1):
+        if len(c.sections) != len(k.sections):
+            raise ValueError(f"key_source: Kapitel {i} ({c.title}) hat {len(c.sections)} Abschnitte, "
+                             f"die Schlüsselquelle {len(k.sections)} ({k.title})")
+        if c.appendix != k.appendix:
+            raise ValueError(f"key_source: Kapitel {i} ({c.title}) ist als Anhang anders eingestuft als in der Schlüsselquelle")
+        c.key = k.key
+        for s, ks in zip(c.sections, k.sections):
+            s.key = ks.key
+    return doc
+
+
+def _parse(md, chapter_level=None, appendix_patterns=()):
     md = normalize_markdown(md)
     lines = md.splitlines()
     heads = list(_headings(lines))

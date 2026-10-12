@@ -1,0 +1,82 @@
+{
+  "source": "../../../regelwerk/KINETIK_Regelwerk.en.md",
+  "output": "../../../export/KINETIK_Rulebook_v3.6_wushu.pdf",
+  "title": "KINETIK",
+  "subtitle": "Cinematic Action Roleplaying",
+  "kicker": "GUN-FU · MARTIAL ARTS · ANIME",
+  "tagline": "A tabletop rulebook for boundless, cinematic action · Version 3.6",
+  "running_title": "KINETIK",
+  "chapter_label": "Chapter",
+  "language": "en",
+  "chapter_level": 0,
+  "appendix_patterns": [
+    "^Anhang",
+    "^Appendix",
+    "^Änderungsprotokoll",
+    "^Changelog"
+  ],
+  "theme": {
+    "bg": "#e8dec6",
+    "ink": "#261f17",
+    "accent": "#b9301d",
+    "accent2": "#8a6416",
+    "ink_strong": "#0e0a06",
+    "em": "#261f17",
+    "rule": "rgba(38,31,23,0.22)",
+    "card": "rgba(249,243,228,0.92)",
+    "stripe": "rgba(70,45,10,.05)",
+    "scrim": "232,222,198",
+    "font_display": "'Noto Serif SC'",
+    "font_head": "'Noto Serif SC'",
+    "font_label": "'Noto Serif SC'",
+    "font_body": "'Noto Serif SC'",
+    "extra_css": "\n.cover-title{ font-size:90pt !important; font-weight:900; text-shadow:none; letter-spacing:.03em; }\n.cover-kicker, .chapter-num{ letter-spacing:.3em; }\n.opener h2, .appendix h2{ font-weight:900; font-size:36pt; text-transform:none; }\n.chapter-sub, .cover-sub{ text-transform:none; letter-spacing:.06em; font-weight:700; }\n.sub-head h3, .cols h3, .cols h4, .cols h5, .cols h6, .appendix-body h3{ text-transform:none; font-weight:700; letter-spacing:.02em; }\n.sub-head h3{ font-size:13.5pt; border-bottom:1px solid var(--ink); }\n.sub-head h3::before{ content:'\\25C6\\00A0'; color:var(--cyan); font-size:.7em; }\n.sub-figure img, .side-figure img, .filler img{ border:1px solid var(--ink); padding:3px; background:#f6eedb; }\nstrong{ font-weight:700; }\ntable.rules-table th{ text-transform:none; letter-spacing:.02em; background:rgba(185,48,29,.1); }\ntable.rules-table{ border-top:2px solid var(--ink); }\n"
+  },
+  "layout": {
+    "section_images": true,
+    "page_texture": true,
+    "justify": true,
+    "font_size_pt": 9.0,
+    "fill_gaps": true,
+    "filler_min_mm": 55
+  },
+  "qc": {
+    "enabled": true,
+    "auto_fix": true,
+    "rounds": 3,
+    "radical": true,
+    "lenient": true
+  },
+  "content_type": "rulebook",
+  "style_preset": "",
+  "style_wish": "",
+  "style": "traditional Chinese ink wash painting in a wuxia martial arts film style, expressive black brush strokes, soft grey ink washes, misty mountains, aged rice paper texture on a warm off-white background, a few vermilion red accents and one small red seal stamp, elegant negative space, painterly",
+  "negative": "worst quality, low quality, blurry, jpeg artifacts, bad anatomy, watermark, text, letters, signature, logo, deformed, extra limbs, lowres, photograph, 3d render, neon, cyberpunk, anime, text, letters, chinese characters, calligraphy, watermark",
+  "world": "Modern-day cinematic action roleplaying: gun-fu, martial arts and over-the-top fights, ex-assassins, SWAT operators, street brawlers and legendary masters. Reimagined as a wuxia martial arts epic: misty mountain temples, bamboo forests, stone bridges, wandering swordsmen and masters in flowing robes, lanterns, ink-painting scenery. Keep the fights and training scenes, swap guns for blades, staves and fists.",
+  "agy": {
+    "model": "gemini-3.8-flash-medium"
+  },
+  "comfy": {
+    "url": "http://127.0.0.1:8188",
+    "models_dir": "",
+    "workflow": "anima",
+    "unet": "krea2TurboOfficialComfy_krea2TurboMxfp8.safetensors",
+    "clip": "qwen3vl_4b_fp8_scaled.safetensors",
+    "clip_type": "krea2",
+    "vae": "qwen_image_vae.safetensors",
+    "checkpoint": "",
+    "custom_workflow": "",
+    "steps": 8,
+    "cfg": 1.0,
+    "sampler": "euler",
+    "scheduler": "simple"
+  },
+  "colophon": [
+    "© 2026 Alexander Freidzon (Rec0iL). KINETIK, rules text and images are licensed under Creative Commons BY-NC-SA 4.0: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en",
+    "The images were generated with an AI image model (Krea 2).",
+    "Web app and current version: https://kinetik.redneck-design.de/ and https://rec0il.github.io/KINETIK-PNP/",
+    "Imprint and privacy policy (German): https://kinetik.redneck-design.de/#/impressum"
+  ],
+  "key_source": "../../../regelwerk/KINETIK_Regelwerk.md",
+  "images_from": "../../pdf-themes/wushu"
+}

@@ -52,6 +52,22 @@ from rpdf import project as proj  # noqa: E402
 
 MAIN = ROOT / "assets" / "pdf"
 OUT = ROOT / "assets" / "pdf-themes"
+OUT_DE = OUT          # Bildsätze der deutschen Fassung: die Übersetzungen leihen sich daraus alles außer den Füllbildern
+
+# Weitere Sprachen: eigenes Hauptprojekt (assets/pdf-<lang>) und eigene Theme-Projekte (assets/pdf-themes-<lang>/<theme>).
+# Sie lesen die Bilder der deutschen Fassung (images_from) und haben nur die Füllbilder selbst, weil die zum Satz der
+# jeweiligen Sprache passen müssen. Die Bildschlüssel kommen aus der deutschen Datei (key_source).
+LANG = "de"
+MD = {"de": "KINETIK_Regelwerk.md", "en": "KINETIK_Regelwerk.en.md"}
+PDF_NAME = {"de": "KINETIK_Regelwerk", "en": "KINETIK_Rulebook"}
+LANG_KEYS = ("kicker", "tagline", "chapter_label", "language", "appendix_patterns", "subtitle", "title", "running_title")
+
+
+def set_lang(lang):
+    global LANG, MAIN, OUT
+    LANG = lang
+    MAIN = ROOT / "assets" / ("pdf" if lang == "de" else f"pdf-{lang}")
+    OUT = ROOT / "assets" / ("pdf-themes" if lang == "de" else f"pdf-themes-{lang}")
 
 # Reihenfolge: zuerst die auffälligsten Looks
 ORDER = ["sincity", "wushu", "pixel", "manga", "ukiyo", "western", "akte", "terminal", "hybrid"]
@@ -102,8 +118,8 @@ def rb_version():
 
 
 def pdf_path(theme):
-    """export/KINETIK_Regelwerk_v<version>_<theme>.pdf: die Version steht im Dateinamen."""
-    return ROOT / "export" / f"KINETIK_Regelwerk_v{rb_version()}_{theme}.pdf"
+    """export/KINETIK_Regelwerk_v<version>_<theme>.pdf (englisch: KINETIK_Rulebook_...): die Version steht im Dateinamen."""
+    return ROOT / "export" / f"{PDF_NAME[LANG]}_v{rb_version()}_{theme}.pdf"
 
 
 def cfg_url():
@@ -227,9 +243,43 @@ def harden_comfy():
     comfy.Comfy.generate = generate
 
 
+def make_translated_project(theme):
+    """Theme-Projekt einer Übersetzung: Stil, Welt und Farben von der deutschen Fassung, Text und Beschriftungen aus dem
+    Hauptprojekt der Sprache. Cover, Kapitel- und Abschnittsbilder kommen per images_from aus dem deutschen Theme,
+    die Füllbilder (und das Manifest dazu) werden als Startwert kopiert und danach gegen den neuen Satz gemessen."""
+    root = OUT / theme
+    de_root = OUT_DE / theme
+    if not (de_root / "project.json").exists():
+        keep = LANG
+        set_lang("de")
+        make_project(theme)
+        set_lang(keep)
+    cfg = json.loads((de_root / "project.json").read_text(encoding="utf-8"))
+    lang_cfg = json.loads((MAIN / "project.json").read_text(encoding="utf-8"))
+    for k in LANG_KEYS:
+        if k in lang_cfg:
+            cfg[k] = lang_cfg[k]
+    cfg["colophon"] = lang_cfg.get("colophon", [])
+    cfg["source"] = f"../../../regelwerk/{MD[LANG]}"
+    cfg["key_source"] = f"../../../regelwerk/{MD['de']}"
+    cfg["images_from"] = f"../../{OUT_DE.name}/{theme}"
+    cfg["output"] = f"../../../export/{PDF_NAME[LANG]}_v{rb_version()}_{theme}.pdf"
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "project.json").write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    shutil.copy(de_root / "images.json", root / "images.json")
+    (root / "images").mkdir(exist_ok=True)
+    for f in (de_root / "images").glob("fill-*.jpg"):
+        if not (root / "images" / f.name).exists():
+            shutil.copy(f, root / "images" / f.name)
+    return proj.Project(root)
+
+
 def make_project(theme):
     root = OUT / theme
     new = not (root / "project.json").exists()
+    if LANG != "de":
+        # Übersetzung: Manifest und Bilder stammen von der deutschen Fassung, es gibt weder neue Prompts für Cover noch einen Hintergrund
+        return make_translated_project(theme) if new else proj.Project(root)
     p = proj.Project(root)
     if new:
         main = json.loads((MAIN / "project.json").read_text(encoding="utf-8"))
@@ -314,24 +364,34 @@ def build_pdf(theme, out):
     src = proj.Project(OUT / theme)
     cfg = apply_pdf_style(copy.deepcopy(src.config), theme)
     # Körpersilhouette (2.3) in den Farben des Looks, wie im VTT, statt der festen grünen Terminal-Grafik
-    sil = ROOT / "assets" / "grafiken" / f"koerper-silhouette-{theme}.svg"
-    sil.write_text(themed_silhouette.make(theme, themed_silhouette.term_tokens()), encoding="utf-8")
-    cfg["image_overrides"] = {"koerper-silhouette.svg": str(sil)}
-    # Füllbilder nur, wenn es welche gibt (Phase --fillers): sie sitzen genau in den Lücken dieses Layouts
-    cfg["layout"]["fill_gaps"] = any(f.name.startswith("fill-") for f in src.images_dir.glob("*.jpg"))
+    suffix = ".en" if LANG == "en" else ""
+    sil = ROOT / "assets" / "grafiken" / f"koerper-silhouette-{theme}{suffix}.svg"
+    sil.write_text(themed_silhouette.make(theme, themed_silhouette.term_tokens(), LANG), encoding="utf-8")
+    cfg["image_overrides"] = {f"koerper-silhouette{suffix}.svg": str(sil)}
+    # Bilder: erst die geliehenen (images_from), dann die eigenen. Füllbilder nur, wenn es welche gibt (Phase --fillers):
+    # sie sitzen genau in den Lücken dieses Layouts
+    files = {}
+    borrowed = src.images_from_dir
+    if borrowed is not None and borrowed.is_dir():
+        files.update({f.name: f for f in borrowed.glob("*.jpg") if not f.name.startswith("fill-")})
+    files.update({f.name: f for f in src.images_dir.glob("*.jpg")})
+    cfg["layout"]["fill_gaps"] = any(n.startswith("fill-") for n in files)
     cfg["source"] = str((src.root / cfg["source"]).resolve())
+    if cfg.get("key_source"):
+        cfg["key_source"] = str((src.root / cfg["key_source"]).resolve())
+    cfg.pop("images_from", None)
     cfg["output"] = str(Path(out).resolve())
     tmp = Path(tempfile.mkdtemp(prefix=f"kpdf-{theme}-"))
     (tmp / "images").mkdir()
-    for f in src.images_dir.glob("*.jpg"):
-        (tmp / "images" / f.name).symlink_to(f)
+    for name, f in files.items():
+        (tmp / "images" / name).symlink_to(f)
     pdf_backgrounds.make(theme, tmp / "images" / "background.jpg") if not (tmp / "images" / "background.jpg").exists() else None
     (tmp / "project.json").write_text(json.dumps(cfg, indent=2, ensure_ascii=False), encoding="utf-8")
     shutil.copy(src.root / "images.json", tmp / "images.json")
     p = proj.Project(tmp)
     ctx = pipeline.Context(log=lambda m: print("   ", m, flush=True))
     path, pages = pipeline.build(p, ctx)
-    have = len([f for f in src.images_dir.glob("*.jpg") if f.stem != "background"])
+    have = len([n for n in files if n != "background.jpg"])
     print(f"{theme}: {path.name}, {pages} Seiten, {have} Bilder", flush=True)
     shutil.rmtree(tmp, ignore_errors=True)
     return path
@@ -339,6 +399,8 @@ def build_pdf(theme, out):
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--lang", choices=sorted(MD), default="de",
+                    help="Sprache der Fassung (en: assets/pdf-themes-en, PDFs export/KINETIK_Rulebook_v<Version>_<theme>.pdf)")
     ap.add_argument("--theme", action="append", choices=ORDER)
     ap.add_argument("--keys", nargs="*", help="nur diese Bildplätze (z.B. cover ch-1-grundphilosophie)")
     ap.add_argument("--plan-only", action="store_true")
@@ -350,6 +412,7 @@ def main():
     ap.add_argument("--ensure-comfy", action="store_true", help="nur sicherstellen, dass ComfyUI läuft (startet es bei Bedarf) und beenden")
     ap.add_argument("--force-plan", action="store_true", help="vorhandene Prompts neu schreiben lassen")
     args = ap.parse_args()
+    set_lang(args.lang)
 
     if args.ensure_comfy:
         ok = ensure_comfy(cfg_url())
