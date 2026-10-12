@@ -48,4 +48,6 @@
 <style>
   .wrap { max-width: 760px; }
   .list { padding-left: 1.1em; display: grid; gap: 0.6rem; }
+  .list li, .list small { overflow-wrap: anywhere; word-break: break-word; min-width: 0; }
+  .list { min-width: 0; padding-right: 0.2em; }
 </style>

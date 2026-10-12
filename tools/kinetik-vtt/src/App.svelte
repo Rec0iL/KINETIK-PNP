@@ -95,7 +95,7 @@
     <span class="sr-only">{t('app.language')}</span>
     <select value={getLocale()} onchange={onLang} aria-label={t('app.language')} title={t('app.language')}>
       {#each LOCALES as l}
-        <option value={l}>{LOCALE_LABEL[l]}</option>
+        <option value={l} title={LOCALE_LABEL[l]}>{l.toUpperCase()}</option>
       {/each}
     </select>
   </label>
@@ -176,6 +176,7 @@
   @media (max-width: 760px) { .rbl { display: none; } }
   .dicebtn { font-size: 1.1rem; color: var(--ink-dim); }
   .dicebtn.on { color: var(--accent); border-color: var(--accent-line); }
+  .lang select { padding-inline: 0.45em; }
   .theme select { width: auto; min-height: 34px; padding: 0.3em 0.6em; font: 600 0.8rem var(--font-head); letter-spacing: 0.1em; text-transform: uppercase; }
   .pagetitle { margin-bottom: 1rem; }
   main { padding: 1.4rem max(16px, 3vw) 3rem; max-width: 1280px; margin: 0 auto; }
@@ -186,5 +187,12 @@
   @media (max-width: 640px) {
     .word { display: none; }
     .top { gap: 0.5rem; }
+  }
+  /* Sehr schmale Telefone (320 px): Kopf enger setzen, damit Regelwerk, Würfel, Look und Sprache nebeneinander passen */
+  @media (max-width: 470px) {
+    .top { gap: 0.3rem 0.4rem; padding-inline: 10px; flex-wrap: wrap; }
+    .brand { margin-right: auto; }
+    nav { order: 5; flex: 1 0 100%; }
+    .theme select { padding-inline: 0.35em; letter-spacing: 0.04em; }
   }
 </style>
