@@ -78,12 +78,12 @@ Source: `KINETIK_Regelwerk.md` (German, v3.6). Target: `KINETIK_Regelwerk.en.md`
 | Zone wählen | Choose Zone | effect name |
 | Kampagnenstufe: Straße / Kino / Legende / Eigene | campaign tier: Street / Cinema / Legend / Custom | "Cinema (Standard)" |
 | Attribut-Budget, Titel-Level-Budget | attribute budget, title-level budget | |
-| Naturtalent | Natural Talent | |
+| Naturtalent | Prodigy | |
 | Rast (kurze Rast) | rest (short rest) | |
 | Durchatmen | Catch Breath | action |
 | Sammeln | Compose | action, Willpower |
 | Zuspruch | Encouragement | |
-| Ausgepumpt (Energie 0, also Preis) | Spent | state and legendary price |
+| Ausgepumpt (Energie 0, also Preis) | Winded | state and legendary price |
 | Gebrochen (Willenskraft 0) | Broken | |
 | Ohnmacht, ohnmächtig | Unconsciousness, unconscious | |
 | Wecken | Revive | |
@@ -103,7 +103,7 @@ Source: `KINETIK_Regelwerk.md` (German, v3.6). Target: `KINETIK_Regelwerk.en.md`
 | Flächenangriffe (AoE) | Area Attacks (AoE) | |
 | Fläche | Area | 3 EP effect |
 | Proben gegen die Umgebung (Nicht-Kampf-Skills) | Checks Against the Environment (Non-Combat Skills) | |
-| Probe, Mindestwurf (MW) | check, Target Number (TN) | "against TN 9" |
+| Probe, Mindestwurf (MW) | check, Difficulty (DC) | "against DC 9" |
 | MW-Stufen Standard / Fordernd / Schwer / Heroisch / Legendär | Standard / Demanding / Hard / Heroic / Legendary | |
 | Erfolg mit Preis | Success at a Cost | |
 | Heimlichkeit und Infiltration | Stealth and Infiltration | |
@@ -182,7 +182,7 @@ Source: `KINETIK_Regelwerk.md` (German, v3.6). Target: `KINETIK_Regelwerk.en.md`
 
 | German | English |
 |---|---|
-| Ausgepumpt | Spent |
+| Ausgepumpt | Winded |
 | Nachglühen | Afterglow |
 | Leergebrannt | Burnt Out |
 | Narbe | Scar |

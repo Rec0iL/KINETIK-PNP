@@ -95,7 +95,7 @@ Every character has Titles (e.g. *Ex-Hitman*, *SWAT-Operator*). A Title consists
    * **Penetration:** Moves can lower, ignore or destroy Protection for this Clash.
    * **Weapons and Cover** lower or add to Protection, see 2.5.
 3. **Willpower (WP):** Combat morale. Maximum: **6 + Instinct + Focus** (rises with the attributes). Drops through shock (injuries), extreme pain, demoralization and intimidation. At 0 you're **Broken** (see 3.10).
-4. **Energy (Chi / Stamina):** The fuel. Maximum: **6 + Flow + Force** (rises with the attributes). Expensive moves cost Energy. It also drops through breathlessness, paralysis and exhaustion (e.g. chokeholds, nerve strikes). At 0 you're **Spent** (see 3.10).
+4. **Energy (Chi / Stamina):** The fuel. Maximum: **6 + Flow + Force** (rises with the attributes). Expensive moves cost Energy. It also drops through breathlessness, paralysis and exhaustion (e.g. chokeholds, nerve strikes). At 0 you're **Winded** (see 3.10).
 5. **Momentum:** See 3.8.
 
 Energy and Willpower never rise above their maximum.
@@ -110,13 +110,13 @@ Energy and Willpower never rise above their maximum.
 | Custom | free | free | free |
 
 * **Custom tier:** The table sets the attribute budget, title-level budget and maximum starting level per Title itself. The campaign tier only governs creation; after that, the character grows through their Title levels.
-* **Attributes:** All start at 0. The starting maximum is +2; a **Natural Talent** may have +3 in one attribute. An attribute at -1 refunds 1 point (for at most two attributes). Count the values above 0, minus these refunds.
+* **Attributes:** All start at 0. The starting maximum is +2; a **Prodigy** may have +3 in one attribute. An attribute at -1 refunds 1 point (for at most two attributes). Count the values above 0, minus these refunds.
 * **Titles:** Spread the level points across your Titles. For each Title, set its Domain (3 to 5 areas) and 2 lead attributes.
 * **Titles at level 4 or higher:** If a Title starts at level 4 or higher at creation (only possible in the *Legend* tier), it brings its attribute growth along right away. This +1 comes on top of the attribute budget and may raise the starting maximum from +2 to +3.
 * **Resources:** Energy = 6 + Flow + Force, Willpower = 6 + Instinct + Focus.
 * **Starting bonus:** A Cinema character usually has **+3** in their Domain (attribute +2, Mastery 1).
 
-*Example (Cinema, attribute budget 4, title-level budget 4):* Mara is a **Natural Talent** with a gun. She sets **Precision to +3** and **Instinct to +2**. That's 5 points, but she sets **Force to -1** and gets 1 point back, so she stays within the budget of 4. Flow and Focus stay at 0. Her Title is *Sniper (Level 3)* with the Domain firearms, camouflage, observation and the lead attributes Precision and Instinct, plus *Hunter (Level 1)* for the remaining points. Her bonus when shooting: Precision +3, Mastery 1, so **+4**. A character without a Natural Talent only reaches +3 at the start. The trade-off: Mara has Energy 5 (6 + Flow 0 + Force -1) and is an easy target in melee (Force -1).
+*Example (Cinema, attribute budget 4, title-level budget 4):* Mara is a **Prodigy** with a gun. She sets **Precision to +3** and **Instinct to +2**. That's 5 points, but she sets **Force to -1** and gets 1 point back, so she stays within the budget of 4. Flow and Focus stay at 0. Her Title is *Sniper (Level 3)* with the Domain firearms, camouflage, observation and the lead attributes Precision and Instinct, plus *Hunter (Level 1)* for the remaining points. Her bonus when shooting: Precision +3, Mastery 1, so **+4**. A character who isn't a Prodigy only reaches +3 at the start. The trade-off: Mara has Energy 5 (6 + Flow 0 + Force -1) and is an easy target in melee (Force -1).
 
 ### **2.5 Weapons & Cover**
 
@@ -305,17 +305,17 @@ Bullet Time is granted at most **once per player per round**. The GM awards it f
 * **Rest:** After the fight (short rest), Energy and Willpower refill.
 * **Ceiling:** Energy and Willpower never rise above their maximum.
 
-**Spent (Energy 0):** Your own costs never take Energy below 0. What you can't pay for, you can't do. At 0, Energy moves are locked until you recover through Catch Breath or similar.
+**Winded (Energy 0):** Your own costs never take Energy below 0. What you can't pay for, you can't do. At 0, Energy moves are locked until you recover through Catch Breath or similar.
 
 **Unconsciousness (Energy Overflow):** If an enemy action drains more Energy than you have (e.g. a chokehold, a nerve strike), **you drop below 0 and fall unconscious**. You're out of play until the end of the scene.
 
-**Revive:** An ally can bring an unconscious character back with an **action + check against TN 9**. The revived character then has 1 Energy.
+**Revive:** An ally can bring an unconscious character back with an **action + check against DC 9**. The revived character then has 1 Energy.
 
 **Broken (Willpower 0):** The fighting spirit is gone, and the character breaks.
 
 * **Last Gasp:** Before they collapse, the character may **once**, immediately (even out of turn), declare one last action: **roll +2**, and one move of up to **cap + 2 EP** is **free** (no Energy, no Momentum). Then comes the Collapse.
 * **Or** they forgo it and give up or flee.
-* **Collapse:** The character is out of action (frozen, panicking, giving up) until the end of the scene, or until an ally brings them back with an **action + check against TN 9** (they then have 1 Willpower).
+* **Collapse:** The character is out of action (frozen, panicking, giving up) until the end of the scene, or until an ally brings them back with an **action + check against DC 9** (they then have 1 Willpower).
 * **NPCs** flee, surrender or freeze. **Bosses** get a Last Gasp too.
 * **Willpower Overflow:** If an enemy action drives Willpower **below 0**, the character collapses immediately, with no Last Gasp.
 
@@ -329,7 +329,7 @@ Bullet Time is granted at most **once per player per round**. The GM awards it f
 | **Boss** | 3 injuries total, 2 injuries to the head or 3 to the torso. At WP 0, Broken with a Last Gasp. |
 | **Player character** | 2 injuries to the head or 3 to the torso (dying). At WP 0, Broken (3.10). |
 
-* **Dying:** The character dies after **3 rounds** unless someone stabilizes them. Stabilizing takes an **action + check against TN 9** (Focus, or a fitting Domain such as Medicine).
+* **Dying:** The character dies after **3 rounds** unless someone stabilizes them. Stabilizing takes an **action + check against DC 9** (Focus, or a fitting Domain such as Medicine).
 * **Healing:** Each downtime phase heals **1 injury**, or 2 with a successful Medicine check. Useless limbs and severe wounds can remain as a **Scar** (permanent tag).
 
 **Killing.** Killing the helpless isn't combat. It's a choice. A character counts as **helpless** if they're unconscious, tied up with no chance to react, or have surrendered.
@@ -354,9 +354,9 @@ Bullet Time is granted at most **once per player per round**. The GM awards it f
 | **Lethal** | 3 | After the Delay, the victim is **dying** (see above). An antidote has to succeed before then. |
 
 * **Delay:** When building the move, the poisoner decides whether the poison works instantly or only after **up to 3 rounds**. This costs nothing: the assassin wants to be long gone before it kicks in. Count in full rounds: with Delay 2, two round ends pass without effect, then the poison takes effect at the end of every following round (with Delay 0, already at the end of the round of the hit).
-* **Antidote:** An action plus a check against **TN 7** (weak), **9** (strong, paralytic) or **11** (lethal), with Focus or a fitting Domain such as Medicine. On a success, the effect ends. An ally can also do this for an unconscious character. Non-lethal poison ends with a rest at the latest.
+* **Antidote:** An action plus a check against **DC 7** (weak), **9** (strong, paralytic) or **11** (lethal), with Focus or a fitting Domain such as Medicine. On a success, the effect ends. An ally can also do this for an unconscious character. Non-lethal poison ends with a rest at the latest.
 * **Unconscious and poisoned:** Poison keeps working even when the victim is already unconscious. If that keeps driving Energy down, Overflow kicks in (see *Killing*, torso).
-* **Poison in play:** Poison in a drink or food is a Stealth Clash (4.1) against the Perception of Elites and Bosses, and a TN check against Goons. *Player characters:* Lethal poison against a player only ever comes with a **dying window and an antidote**. In PvP, the table should have agreed on it beforehand.
+* **Poison in play:** Poison in a drink or food is a Stealth Clash (4.1) against the Perception of Elites and Bosses, and a DC check against Goons. *Player characters:* Lethal poison against a player only ever comes with a **dying window and an antidote**. In PvP, the table should have agreed on it beforehand.
 * **Note for the GM:** Cinematic assassins almost always carry an **antidote on them**, because anyone who uses lethal poisons covers themselves. So always give the players a chance to get hold of it (from the assassin, in their hideout, from whoever hired them). A poison with no reachable antidote is a death trap with no game in it, not a ticking clock.
 * **Note for players:** Getting the antidote doesn't mean beating the opponent. You can steal it, extort it, trade for it or snatch it from the assassin in the chaos. Keep an eye on the clock, and you'll often win more than the fight ever could.
 
@@ -393,9 +393,9 @@ Grenades, explosions, energy waves and spinning strikes hit several targets at o
 
 ## **4. Checks Against the Environment (Non-Combat Skills)**
 
-When a character faces no active resistance (e.g. picking a lock, reading a trail, leaping across a chasm), they roll **2d6 + attribute + Mastery against a fixed Target Number (TN)**. Mastery only counts if a Title covers the action.
+When a character faces no active resistance (e.g. picking a lock, reading a trail, leaping across a chasm), they roll **2d6 + attribute + Mastery against a fixed Difficulty (DC)**. Mastery only counts if a Title covers the action.
 
-| TN | Difficulty |
+| DC | Difficulty |
 |---|---|
 | 7 | Standard |
 | 9 | Demanding |
@@ -403,14 +403,14 @@ When a character faces no active resistance (e.g. picking a lock, reading a trai
 | 13 | Heroic |
 | 15 | Legendary |
 
-* **Success:** Roll ≥ TN.
-* **Success at a Cost:** Roll 1-2 below the TN. The action succeeds, but with a drawback the GM sets (just like an Exchange).
-* **Automatic success:** If TN ≤ bonus + 2, there is no roll (2d6 never drops below 2).
+* **Success:** Roll ≥ DC.
+* **Success at a Cost:** Roll 1-2 below the DC. The action succeeds, but with a drawback the GM sets (just like an Exchange).
+* **Automatic success:** If DC ≤ bonus + 2, there is no roll (2d6 never drops below 2).
 * **Outside the Domain**, only the attribute counts.
 
 Chances of success (in parentheses, the additional share of "Success at a Cost"):
 
-| Bonus | TN 7 | TN 9 | TN 11 | TN 13 | TN 15 |
+| Bonus | DC 7 | DC 9 | DC 11 | DC 13 | DC 15 |
 |---|---|---|---|---|---|
 | +3 (start) | 92% | 72% (19) | 42% (31) | 17% (25) | 3% (14) |
 | +5 (Lv 4-5) | 100% | 92% (8) | 72% (19) | 42% (31) | 17% (25) |
@@ -421,9 +421,9 @@ Chances of success (in parentheses, the additional share of "Success at a Cost")
 
 Stealth is not an add-on; it is a path of its own through a scene. It uses **2d6 + attribute + Mastery**, usually **Flow** (moving quietly, hiding), **Instinct** (sensing danger, timing) or **Focus** (reading patrol routes, planning a distraction). Mastery counts if a Title covers the action, e.g. *Ex-Hitman* (Infiltration) or *Storm Ninja*.
 
-**Against Goons (PvE): Alertness instead of dice.** Goons have bonus +0, and a group acts as one character (3.7). So only the players roll, against a **TN set by the group's Alertness**:
+**Against Goons (PvE): Alertness instead of dice.** Goons have bonus +0, and a group acts as one character (3.7). So only the players roll, against a **DC set by the group's Alertness**:
 
-| Situation | TN |
+| Situation | DC |
 |---|---|
 | Oblivious or distracted (break, argument, TV) | 7 |
 | Alert (patrol, routine) | 9 |
@@ -431,10 +431,10 @@ Stealth is not an add-on; it is a path of its own through a scene. It uses **2d6
 
 * **One check per group and section** (a room, a corridor, a patrol round). The player says how they go about it (shadows, air vent, disguise).
 * **Success:** Nobody notices you. You reach your goal or the position for the first strike.
-* **Success at a Cost:** You get through, but the GM sets a price: a noise puts the group on edge (next TN +2), you leave a trace (minor tag *Suspicion*), or you lose time.
+* **Success at a Cost:** You get through, but the GM sets a price: a noise puts the group on edge (next DC +2), you leave a trace (minor tag *Suspicion*), or you lose time.
 * **Failure:** The Goons spot you. The fight begins, and the Kinetic Marker sits with the Goons.
 * **Groups of players:** Everyone rolls. The **worst** roll decides for the whole group. A player can help another instead and give them **+1**.
-* **Silent takedown:** While unnoticed, you take out **one Goon per action** without a Clash (check against TN 7 with Precision or Force). On a Success at a Cost the Goon drops, but not silently: the rest take notice. Elites and Bosses can't be taken out this way; they demand a Clash (see below).
+* **Silent takedown:** While unnoticed, you take out **one Goon per action** without a Clash (check against DC 7 with Precision or Force). On a Success at a Cost the Goon drops, but not silently: the rest take notice. Elites and Bosses can't be taken out this way; they demand a Clash (see below).
 
 **Against fellow players, Elites and Bosses (PvP): the Stealth Clash.** Anyone who rolls for themselves (player character, Elite, Boss) actively resists: both sides roll **2d6 + attribute + Mastery**, the sneak against the guard's **Perception** (usually Instinct, Focus for traps or patterns). Δ = sneak - guard, **T = 3** (the Hero Threshold, 3.4, and the Out of Reach rule, 3.5, apply as in combat).
 
@@ -445,7 +445,7 @@ Stealth is not an add-on; it is a path of its own through a scene. It uses **2d6
 | **-1 to -(T - 1)** | **Spotted:** The guard sees you and acts first. No ambush, no bonuses. |
 | **-T or less** | **Seen Through:** The guard reads your plan or sets an ambush for you. They gain **1 starting Momentum**, and the Kinetic Marker sits with them. You have the minor tag *Exposed*. |
 
-* **Watchful players:** A fellow player only rolls Perception if their character is really paying attention (they have taken the watch, secured the room, are listening). Otherwise their **passive value 5 + bonus** applies, and the sneak rolls against that fixed number like a TN. This keeps every roll a fellow player makes from killing every idea the sneak has, and it rewards vigilance.
+* **Watchful players:** A fellow player only rolls Perception if their character is really paying attention (they have taken the watch, secured the room, are listening). Otherwise their **passive value 5 + bonus** applies, and the sneak rolls against that fixed number like a DC. This keeps every roll a fellow player makes from killing every idea the sneak has, and it rewards vigilance.
 * **Environment as tags:** Darkness, Noise, a Crowd or Rain give the sneak a **minor tag** (+1); Blinding Light, Silence or Open Ground give one to the guard. A **major tag** (+2) comes from true extremes, e.g. a Blackout, Fog or an Explosive Distraction. Tags stack up to +3 (3.3).
 * **Using the ambush:** An attack from hiding carries on as an ordinary Clash with the starting Momentum. Moves with the prerequisite *unnoticed* (e.g. *Assassin's Strike*, 5.2) only work in this case.
 * **Victory without a fight:** Stealth can be the goal in itself (stealing a document, slipping past a guard). An *Unnoticed* or *Suspicion* result achieves the goal without a single blow being struck.
@@ -514,7 +514,7 @@ The costs apply at each move's minimum level (Mastery 0, or the Mastery of that 
 | **Dokushu Touch** (Poison Hand) | Precision | 3 | 1 | 3 Energy | A touch that slips past any armor: the poison (weak) works even through Protection. *Ignore protection type 2, weak poison 1.* |
 | **Garrote** (Assassin) | Precision | 3 | 1 | 3 Energy | Prerequisite: unnoticed. Drains 4 Energy and inflicts the major tag *Choked*, silently. The victim cannot cry out. *Energy damage 2, major tag 2, prerequisite -1.* |
 | **Wick Flick** (Gun-Fu) | Precision | 2 | 1 | 2 Energy | Reloading and weapon swap mid-Clash, without the *Reloading* tag, as part of the attack. The shot goes into a chosen zone. *Reloading 1, Choose Zone 1.* |
-| **Drum Flip** (Anime Grenadier) | Flow | 4 | 2 | 1 Momentum, 1 Energy | Run up the wall, the bullets fall from your chest, the drum catches them, and in a backflip the shot goes into up to 3 enemies. Reloading included. *Up to 3 targets 2, Reloading 1, Penetration 1.* |
+| **Drum Flip** (Anime Grenadier) | Flow | 4 | 2 | 1 Momentum, 1 Energy | Run up the wall, the bullets spill out of your cleavage, the drum catches them, and in a backflip the shot goes into up to 3 enemies. Reloading included. *Up to 3 targets 2, Reloading 1, Penetration 1.* |
 
 **Design Note: Exceptions to the rules.** Moves may deliberately break a core rule, as long as they pay for it. *Lock Reversal* is one example: major tags normally can't be turned around (3.3), but an aikidoka has trained for exactly that. The balance lives in the framework: the effect is rated in EP, the prerequisite (the opponent has to apply the lock) earns a discount, and the cost drops with Mastery (level 1: 3 Energy, level 5: 1 Energy, level 10: 0). Exceptions for other cases can be built the same way, e.g. a move that breaks a chokehold, or one that ignores Cover. Whether a move gets such an exception is the GM's call, using the check from 5.1 (counterplay, Price, fit). This is a suggestion, not a fixed rule.
 
@@ -545,7 +545,7 @@ What costs everything you've got at first becomes a standard attack over time. A
 
 | Price | Description |
 |---|---|
-| Spent | Energy drops to 0. |
+| Winded | Energy drops to 0. |
 | Afterglow | -3 Willpower. |
 | Burnt Out | No more Momentum gain for the rest of the scene. |
 | Scar | Permanent tag or lasting injury (e.g. wrist, eyesight). |
@@ -561,7 +561,7 @@ What costs everything you've got at first becomes a standard attack over time. A
 
 **Failure:** Legendary Moves always need Dominance. If it doesn't land, there is a backlash (the move fizzles), and the Price is still due.
 
-*Example:* **Touch of Death** (Dokushu Master, Precision, 8 EP): *Ignore protection type 2, lethal poison 3, Finale 3.* Cost: 3 Momentum, 1 Energy. The touch finds every gap. On Dominance, the fight ends against all opponents at level 10 or lower; they go down to the poison. A **stronger Boss** loses Protection, 2 injuries and 3 Willpower as usual, and the poison works anyway: after the Delay they are dying, and the antidote needs **TN 13**. Prices: *Scar* (the hand stays darkly stained) and *Rare*.
+*Example:* **Touch of Death** (Dokushu Master, Precision, 8 EP): *Ignore protection type 2, lethal poison 3, Finale 3.* Cost: 3 Momentum, 1 Energy. The touch finds every gap. On Dominance, the fight ends against all opponents at level 10 or lower; they go down to the poison. A **stronger Boss** loses Protection, 2 injuries and 3 Willpower as usual, and the poison works anyway: after the Delay they are dying, and the antidote needs **DC 13**. Prices: *Scar* (the hand stays darkly stained) and *Rare*.
 
 ---
 
@@ -635,7 +635,7 @@ This example shows how a character sheet grows organically through milestones.
 |---|---|---|---|
 | Level 1 | *Street Brawler* | 0 | *Dirty Trick* (2 EP): sand in the eyes or a kick to the shin. **2 Energy.** |
 | Level 5 | *Underground Champion* | 2 | *Dirty Trick* costs **0 Energy** (2 EP - 2). New: *Breakout Strike* (5 EP, **1 Momentum, 1 Energy**), which lets her turn the situation around even on a Counter. |
-| Level 10 | *Myth of the Underworld* | 5 | **Passive:** *Aura of Violence.* Against opponents who trail her by 8 or more bonus, no one rolls anymore (Goons surrender or flee). **Legendary Move:** *Symphony of Pain* (8 EP: ignore Protection 2, two injuries 3, Finale 3; **3 Momentum, 1 Energy**). Prices: *Spent* and *Rare*. |
+| Level 10 | *Myth of the Underworld* | 5 | **Passive:** *Aura of Violence.* Against opponents who trail her by 8 or more bonus, no one rolls anymore (Goons surrender or flee). **Legendary Move:** *Symphony of Pain* (8 EP: ignore Protection 2, two injuries 3, Finale 3; **3 Momentum, 1 Energy**). Prices: *Winded* and *Rare*. |
 
 * *Level 1:* Elena struggles to dominate armed Elite opponents in a Clash, since "Street Brawler" only covers rudimentary combat training (Mastery 0, lead attribute +2).
 * *Level 5:* She now has the narrative permission to disarm even professional killers and to deal with Goons effortlessly. With bonus +5, Goons (+0) trail her by 5 and are therefore Out of Reach (3.5).
@@ -657,7 +657,7 @@ This example shows how a character sheet grows organically through milestones.
 *Situation:* Jin sneaks into a warehouse. In the main room, four Goons sit over a card game; in the office behind it waits Chen, an Elite thug (Instinct +1, *Bodyguard Level 4* with lead attribute Instinct, bonus **+3**).
 
 * **Player (Jin):** "I use the noise of the ventilation, glide along the shelves and try to reach the office door unnoticed. (Flow +2, Ex-Killer with infiltration, Mastery 1 = +3)"
-* **GM:** "The four Goons are distracted, TN 7. The ventilation noise is a minor tag, but Jin barely needs it. At +3 the check isn't automatic, roll."
+* **GM:** "The four Goons are distracted, DC 7. The ventilation noise is a minor tag, but Jin barely needs it. At +3 the check isn't automatic, roll."
 * *Jin's roll:* 2d6 (4) + 3 = **7**. Success, no cost.
 * **Player (Jin):** "At the office door I listen, then I draw my gun and open the door without a sound. Chen mustn't notice me."
 * **GM:** "Chen is sitting at a table with the door in view, so he rolls his Perception. He's equal to you in bonus (+3 against your +3), so standard threshold 3."
@@ -683,7 +683,7 @@ Jin's next Clash with Chen starts with his starting Momentum. Chen has the minor
 
 * **Player (Jin):** "I hurl myself at him, Judo Throw (Flow)." He calls the technique, as always before the roll. His bonus as a BJJ Student is +2.
 * *Jin's roll:* 2d6 (8) + 2 = **10**. *GM's roll (Boss):* 2d6 (6) + 4 = **10**.
-* **GM:** "Difference 0, an Exchange. The Judo Throw would work, but it costs 3 Energy, which is everything you have left. You'd be **Spent** afterwards."
+* **GM:** "Difference 0, an Exchange. The Judo Throw would work, but it costs 3 Energy, which is everything you have left. You'd be **Winded** afterwards."
 * **Player (Jin):** "Then I leave the move out. I don't want to run myself down to 0. I just go at him with my throw."
 * **GM:** "You pay nothing, because you only pay when you use the move. Without the move it's a normal hit. The result is still an Exchange, so you choose: both sides take a normal hit, or you take a minor tag as a drawback."
 * **Player (Jin):** "Both sides."
@@ -692,7 +692,7 @@ Jin's next Clash with Chen starts with his starting Momentum. Chen has the minor
 * **GM:** "From the Boss's side, difference -2, a **Counter**. You slip aside and land a normal hit: his Protection drops from 2 to **1**. The Marker stays where it is."
 * **New round, Jin goes first.** Jin has no Energy move left at hand. He uses **Catch Breath** (+2 Energy, but the next Clash against him gets +1) and is back at **Energy 5**.
 
-*Side note:* With the move, the throw would have landed clean: Jin would have ignored the vest and put the Boss *Prone*, but would have been Spent afterwards until he recovers with Catch Breath. As it was, he **pushed through** his attack without the move, and the Boss rolled out of it and landed his liver hook on the way. That's the difference from a cleanly executed move: the Clash is played out to the end, both sides get hit, but the move's effect doesn't happen. Two rounds later Jin has Energy again, and the Boss is down to Protection 1.
+*Side note:* With the move, the throw would have landed clean: Jin would have ignored the vest and put the Boss *Prone*, but would have been Winded afterwards until he recovers with Catch Breath. As it was, he **pushed through** his attack without the move, and the Boss rolled out of it and landed his liver hook on the way. That's the difference from a cleanly executed move: the Clash is played out to the end, both sides get hit, but the move's effect doesn't happen. Two rounds later Jin has Energy again, and the Boss is down to Protection 1.
 
 ---
 
@@ -758,7 +758,7 @@ A Boss with equal bonus is meant as a group Boss. For a solo duel, he should sit
 * **Titles above level 4 at character creation** bring their attribute growth with them (W9).
 * **Kaito recalculated**, Penetration cannot be combined with ignore/destroy Protection (W10).
 * **Bullet Time** replaces the former Rule of Cool discount and the bonus Momentum.
-* **Revive** (action + TN 9), Choose Zone rule, starting Momentum does not stack, probabilities appendix made more precise, Title note in Example 2.
+* **Revive** (action + DC 9), Choose Zone rule, starting Momentum does not stack, probabilities appendix made more precise, Title note in Example 2.
 
 ## **Changelog v3.1 → v3.2**
 
@@ -782,14 +782,14 @@ A Boss with equal bonus is meant as a group Boss. For a solo duel, he should sit
 ## **Changelog v3.4 → v3.5**
 
 * **Power Scale by Setting (1):** The GM freely chooses how powerful the world is. The Title level measures rank within the setting (John Wick, Naruto, Jackie Chan each as level 10).
-* **Stealth and Infiltration (4.1):** Against Goons as a check against the group's Alertness (TN 7 / 9 / 11), against fellow players, Elites and Bosses as a Stealth Clash with ambush Momentum. Passive Perception, environment as tags, silent takedowns.
+* **Stealth and Infiltration (4.1):** Against Goons as a check against the group's Alertness (DC 7 / 9 / 11), against fellow players, Elites and Bosses as a Stealth Clash with ambush Momentum. Passive Perception, environment as tags, silent takedowns.
 * **New moves (5.2):** *Assassin's Strike* and *Shadow Step*.
 * **Example 5 (6):** Stealth against Goons and Elite.
 * **Tags (3.3):** *Home Turf* (a Title that covers the situation removes the drawback of minor tags) and *Voluntary* (putting yourself into a situation, prerequisite for moves).
 * **Move Lock Reversal (5.2)** as an example of targeted exceptions to core rules, with a Design Note.
 
 * **Killing and Overflow (3.11):** Coup de Grâce against the helpless (player characters become dying, never instantly dead). Anyone who keeps losing Energy while unconscious has negative Energy: every 3 points below 0 is one injury (head when strangled, torso from poison), and a dying character who loses more dies. Strangling takes about 3 rounds.
-* **Poison (3.11, 5.1):** Tiers Weak, Strong, Paralytic, Lethal as effects in the EP catalog. Only works at Protection 0, Delay up to 3 rounds (counted in full rounds until the first effect at the end of the round), antidote via a TN check.
+* **Poison (3.11, 5.1):** Tiers Weak, Strong, Paralytic, Lethal as effects in the EP catalog. Only works at Protection 0, Delay up to 3 rounds (counted in full rounds until the first effect at the end of the round), antidote via a DC check.
 * **Notes (3.11):** GM note (assassins carry an antidote) and player note (snatching the antidote doesn't mean beating the opponent), d6 to keep count of Overflow.
 * **New moves (5.2):** *Blowgun Dart*, *Dokushu Touch*, *Garrote*. **Legendary Move (5.4):** *Touch of Death* (Dokushu). **Example 6 (6):** Poison and Killing. **Example 7 (6):** Not Using the Move (Variant of Example 2).
 
