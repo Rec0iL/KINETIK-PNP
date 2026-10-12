@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { rules, ueberzahlBonus, newPoison, describePoison, antidoteMw, GIFT, GIFT_LEVELS, MAX_GIFT_DELAY, type GiftLevel, type NpcType, type ZoneKey } from '../rules';
+    import { rules, TAG, isTag, ueberzahlBonus, newPoison, describePoison, antidoteMw, GIFT, GIFT_LEVELS, MAX_GIFT_DELAY, type GiftLevel, type NpcType, type ZoneKey } from '../rules';
   import { gm, patchPlayer, partyFor, advanceRound, poisonRound, gmMapOps } from '../net/gm.svelte';
   import { imageToDataUrl, shrinkDataUrl } from '../lib/image';
   import { pushToast } from '../ui/toasts.svelte';
@@ -89,7 +89,7 @@
   function addGift(n: Npc) { n.poisons = [...(n.poisons ?? []), newPoison(uid(), giftLevel, giftDelay, 'SL')]; }
   function cure(n: Npc, id: string) {
     n.poisons = (n.poisons ?? []).filter((p) => p.id !== id);
-    if (!n.poisons.some((p) => p.level === 'laehm')) n.tags = n.tags.filter((t) => t !== 'Gelähmt');
+    if (!n.poisons.some((p) => p.level === 'laehm')) n.tags = n.tags.filter((t) => !isTag(t, TAG.paralyzed));
   }
   const fmt = (v: number) => (v > 0 ? `+${v}` : String(v));
   const defaultsOf = (t: NpcType) => types.find((x) => x.key === t)!;

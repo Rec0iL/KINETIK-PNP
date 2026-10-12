@@ -1,7 +1,7 @@
 <script lang="ts">
   import {
     rules, effectDef, effectEp, isStar, evaluateMove, moveCost, costLabel, meisterschaft, epCap, TIER_LABEL, minLevelForEp,
-    giftOfEffects, GIFT, MAX_GIFT_DELAY, type MoveEffect,
+    giftOfEffects, GIFT, MAX_GIFT_DELAY, canonicalPrice, type MoveEffect,
   } from '../rules';
   import type { Move } from '../model/character';
   import Stepper from '../ui/Stepper.svelte';
@@ -51,7 +51,7 @@
   }
   function togglePrice(name: string, on: boolean) {
     const cur = move.prices ?? [];
-    move.prices = on ? [...cur, name] : cur.filter((p) => p !== name);
+    move.prices = on ? [...cur, name] : cur.filter((p) => canonicalPrice(p) !== canonicalPrice(name));
   }
   const eName = (e: MoveEffect) => effectDef(e.id)?.name ?? e.id;
 </script>
@@ -176,7 +176,7 @@
         <h3 class="mt">Preise (1 bis 2)</h3>
         <div class="prices">
           {#each rules.tabellen.legendaerePreise as p}
-            <label class="check" title={p.text}><input type="checkbox" checked={move.prices?.includes(p.name)} onchange={(e) => togglePrice(p.name, e.currentTarget.checked)} /> {p.name}</label>
+            <label class="check" title={p.text}><input type="checkbox" checked={move.prices?.some((x) => canonicalPrice(x) === canonicalPrice(p.name))} onchange={(e) => togglePrice(p.name, e.currentTarget.checked)} /> {p.name}</label>
           {/each}
         </div>
         {#if !(move.prices?.length)}<p class="warn">Ein legendärer Move hat immer mindestens einen Preis.</p>{/if}

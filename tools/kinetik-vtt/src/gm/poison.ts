@@ -1,5 +1,5 @@
 // Gift am Rundenende (3.11) für Spielerbögen und NPCs. Rein, ohne DOM.
-import { GIFT, PARALYSIS_TAG, overflowInjuries, tickPoison, type Poison } from '../rules';
+import { GIFT, PARALYSIS_TAG, TAG, isTag, overflowInjuries, tickPoison, type Poison } from '../rules';
 import type { Character } from '../model/character';
 import type { PatchOp } from '../net/protocol';
 import type { Npc } from './combat';
@@ -38,7 +38,7 @@ export function tickCharacter(c: Character): PoisonRound {
     if (n) notes.push(`${c.name}: Überlauf, ${n} Verletzung(en) am Torso`);
     if (c.dying !== null) notes.push(`${c.name} ist sterbend und verliert weiter Energie: stirbt (3.11)`);
   }
-  if (lame && !c.tags.some((t) => t.name === PARALYSIS_TAG)) {
+  if (lame && !c.tags.some((t) => isTag(t.name, TAG.paralyzed))) {
     ops.push({ op: 'tag', name: PARALYSIS_TAG, size: 'gross', note: 'Lähmgift' });
     notes.push(`${c.name}: gelähmt (großer Tag)`);
   }
@@ -67,7 +67,7 @@ export function tickNpc(n: Npc): string[] {
   }
   n.poisons = next;
   if (loss > 0) { n.energie -= loss; notes.push(`${n.name}: −${loss} Energie durch Gift`); }
-  if (lame && !n.tags.includes(PARALYSIS_TAG)) { n.tags.push(PARALYSIS_TAG); notes.push(`${n.name}: gelähmt (großer Tag)`); }
+  if (lame && !n.tags.some((t) => isTag(t, TAG.paralyzed))) { n.tags.push(PARALYSIS_TAG); notes.push(`${n.name}: gelähmt (großer Tag)`); }
   if (dying) { n.dying = true; notes.push(`${n.name}: stirbt am tödlichen Gift`); }
   if (n.energie < 0) notes.push(`${n.name}: Energie unter 0, ohnmächtig`);
   return notes;

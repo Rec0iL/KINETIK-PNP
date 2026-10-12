@@ -1,5 +1,5 @@
-// Alle sichtbaren Texte. Für eine weitere Sprache: Datei kopieren, übersetzen, in index.ts eintragen.
-export const de = {
+// Texte der App-Hülle (Kopf, Navigation, Themes, Startseite). Weitere Bereiche stehen in den Nachbardateien.
+export const app = {
   'app.name': 'KINETIK',
   'app.tagline': 'Cinematic Action Roleplaying',
   'app.kicker': 'Gun-Fu · Kampfkunst · Anime',
@@ -44,5 +44,3 @@ export const de = {
   'common.back': 'Zurück',
   'common.soon': 'Dieser Bereich wird im nächsten Schritt gebaut.',
 } as const;
-
-export type Key = keyof typeof de;

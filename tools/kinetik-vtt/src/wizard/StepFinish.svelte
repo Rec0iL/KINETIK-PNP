@@ -1,6 +1,6 @@
 <script lang="ts">
   import { rules, ATTR_KEYS } from '../rules';
-  import type { Character } from '../model/character';
+  import { isDefaultName, type Character } from '../model/character';
   import { computeSheet, creationReport, viewMove } from '../model/sheet';
   import { costLabel } from '../rules';
 
@@ -11,7 +11,7 @@
   const defs = rules.tabellen.attribute;
 
   const checks = $derived([
-    { ok: !!char.name.trim() && char.name !== 'Neuer Charakter', text: 'Name vergeben' },
+    { ok: !!char.name.trim() && !isDefaultName(char.name), text: 'Name vergeben' },
     { ok: char.titles.length > 0, text: 'Mindestens ein Titel' },
     { ok: char.titles.every((t) => t.domains.length >= 3 && t.domains.length <= 5), text: 'Jeder Titel hat 3 bis 5 Domänen' },
     { ok: report.hints.length === 0, text: report.hints.length ? report.hints.join(' ') : 'Budgets und Startmaximum eingehalten' },

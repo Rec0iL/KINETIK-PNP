@@ -1,5 +1,6 @@
 // Kampfverwaltung des SL: Seiten-Initiative mit Kinetik-Marker (3.6), Bedrängnis (3.7), NPC-Leiter. Rein, ohne DOM.
 import { npcDefaults, isOut, rules, ZONE_KEYS, zoneStatus, type NpcType, type ZoneKey, type Poison } from '../rules';
+import { tagSize } from '../rules/tagid';
 import type { MoveRequest, Situation } from './situation';
 
 export type Side = 'players' | 'enemies';
@@ -215,9 +216,7 @@ export function publicCombat(c: CombatState): PublicCombat {
   };
 }
 
-/** Größe eines Tags aus dem Katalog, unbekannte (eigene) Tags zählen als klein. */
-export function tagSize(name: string): 'klein' | 'gross' {
-  return (rules.tags.gross as string[]).includes(name) ? 'gross' : 'klein';
-}
+/** Größe eines Tags aus dem Katalog (in jeder Sprache), unbekannte (eigene) Tags zählen als klein. */
+export { tagSize };
 
 export { ZONE_KEYS };

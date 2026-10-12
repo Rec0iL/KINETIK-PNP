@@ -1,5 +1,6 @@
 // Gift (3.11, 5.1): Stufen, Verzögerung, Wirkung am Rundenende, Gegenmittel. Rein, ohne DOM.
 import { rules } from './data';
+import { TAG, tagLabel } from './tagid';
 
 export type GiftLevel = 'schwach' | 'stark' | 'laehm' | 'toedlich';
 
@@ -27,7 +28,8 @@ export const GIFT: Record<GiftLevel, GiftDef> = {
 
 export const GIFT_LEVELS = Object.keys(GIFT) as GiftLevel[];
 export const MAX_GIFT_DELAY = 3;
-export const PARALYSIS_TAG = 'Gelähmt';
+/** Name des Tags *Gelähmt* in der Sprache der App (zum Setzen). Zum Prüfen immer isTag(name, TAG.paralyzed) nehmen. */
+export const PARALYSIS_TAG = tagLabel(TAG.paralyzed);
 
 export interface Poison {
   id: string;

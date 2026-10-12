@@ -7,3 +7,4 @@ export * from './moves';
 export * from './npc';
 export * from './gift';
 export * from './ammo';
+export * from './tagid';

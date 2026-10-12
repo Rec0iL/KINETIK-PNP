@@ -1,6 +1,11 @@
 // Datenmodell des Charakterbogens. Abgeleitete Werte werden nie gespeichert, nur Überschreibungen (`overrides`).
 import type { AttrKey, ZoneKey, Title, MoveSpec, Poison, AmmoState } from '../rules';
 import { ATTR_KEYS, ZONE_KEYS } from '../rules';
+import { t } from '../i18n';
+
+/** Vorgabenamen neuer Charaktere in allen Sprachen: Der Assistent zählt "noch nicht benannt" daran, nicht an einem Text. */
+export const DEFAULT_NAMES = ['Neuer Charakter', 'New Character'];
+export const isDefaultName = (name: string): boolean => DEFAULT_NAMES.includes(name.trim());
 
 export const SCHEMA_VERSION = 1;
 
@@ -113,7 +118,7 @@ export function newCharacter(partial: Partial<Character> = {}): Character {
   return {
     schemaVersion: SCHEMA_VERSION,
     id: uid(),
-    name: 'Neuer Charakter',
+    name: t('model.character.defaultName'),
     alias: '',
     player: '',
     concept: '',

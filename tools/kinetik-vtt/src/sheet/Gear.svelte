@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { rules, newAmmo, fireShot, reload } from '../rules';
+  import { rules, newAmmo, fireShot, reload, isReloadTag } from '../rules';
   import { uid, type Character, type Weapon } from '../model/character';
   import Stepper from '../ui/Stepper.svelte';
 
@@ -41,7 +41,7 @@
     if (!r.ok) { notice = `${w.name}: ${r.reason}`; return; }
     w.mag = r.ammo;
     notice = '';
-    if (r.tag && !char.tags.some((t) => t.name === r.tag)) char.tags.push({ id: uid(), name: r.tag, size: 'klein' });
+    if (r.tag && !char.tags.some((t) => isReloadTag(t.name))) char.tags.push({ id: uid(), name: r.tag, size: 'klein' });
     if (r.action) notice = `${w.name}: Nachladen kostet bei schweren Waffen eine ganze Aktion.`;
   }
   const addCustom = () => char.weapons.push({ id: uid(), name: 'Eigene Waffe', klasse: 'frei', ep: 1, profilText: '', durchschlag: 1 });

@@ -1,5 +1,6 @@
 // Munition und Nachladen (2.5, optional). Rein, ohne DOM.
 import { rules } from './data';
+import { TAG, isTag } from './tagid';
 
 export interface AmmoState {
   /** Größe des Magazins in Angriffen (der W6 am Tisch). */
@@ -12,7 +13,9 @@ export interface AmmoState {
   heavy: boolean;
 }
 
+/** Name des Tags *Nachladen* in der Sprache der App (zum Setzen). Zum Prüfen isReloadTag nehmen. */
 export const RELOAD_TAG = rules.waffen.munition.nachladenTag;
+export const isReloadTag = (name: string): boolean => isTag(name, TAG.reloading);
 
 interface AmmoTemplate { magazin?: number; schwerNachladen?: boolean; wegwurf?: boolean }
 

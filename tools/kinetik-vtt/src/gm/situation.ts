@@ -1,7 +1,7 @@
 // Kampfsituationen: ein geplanter Angriff oder eine Aktion eines Spielers, bzw. ein Angriff eines Gegners auf einen Spieler.
 // Rein, ohne DOM: Modifikatoren, Clash, Vorschlag der Folgen (3.1 bis 3.10) und deren Anwendung.
 import {
-  resolveClash, resolveHit, tagBonus, ueberzahlBonus, newPoison, GIFT,
+  resolveClash, resolveHit, tagBonus, ueberzahlBonus, newPoison, GIFT, TAG, tagLabel, sameTag,
   type AttrKey, type ClashResult, type GiftLevel, type HitKind, type Poison, type ZoneKey,
 } from '../rules';
 import type { PatchOp } from '../net/protocol';
@@ -97,7 +97,7 @@ export function usedTagBonus(used: string[], available: TagRef[]): number {
   let small = 0;
   let large = 0;
   for (const name of used) {
-    const t = available.find((x) => x.name === name);
+    const t = available.find((x) => sameTag(x.name, name));
     if (!t) continue;
     if (t.size === 'gross') large++;
     else small++;
@@ -281,8 +281,8 @@ export function proposeResolution(i: ProposeInput): ProposalItem[] {
     // Schlagabtausch (3.1): beide treffen, oder der Angreifer bekommt einen kleinen Nachteils-Tag.
     if (pcAttacks) hitOnPc('schlagabtausch', 0, res.tV, 'sa');
     else hitOnNpc('schlagabtausch', 0, res.tV, 'sa');
-    if (pcAttacks) add(`Alternativ: ${pcName} bekommt den kleinen Tag „Aus der Balance“ statt der Gegentreffer`, { k: 'tag', who: 'pc', id: pc, name: 'Aus der Balance' }, false, 'sa');
-    else add(`Alternativ: ${npcName} bekommt den kleinen Tag „Aus der Balance“ statt der Gegentreffer`, { k: 'tag', who: 'npc', id: npc.id, name: 'Aus der Balance' }, false, 'sa');
+    if (pcAttacks) add(`Alternativ: ${pcName} bekommt den kleinen Tag „Aus der Balance“ statt der Gegentreffer`, { k: 'tag', who: 'pc', id: pc, name: tagLabel(TAG.offBalance) }, false, 'sa');
+    else add(`Alternativ: ${npcName} bekommt den kleinen Tag „Aus der Balance“ statt der Gegentreffer`, { k: 'tag', who: 'npc', id: npc.id, name: tagLabel(TAG.offBalance) }, false, 'sa');
   }
 
   if (pcWins) add(`Bedrängnis von ${pcName} auf 0 (Sieg des Spielers)`, { k: 'bedr', playerId: pc, value: 0 });

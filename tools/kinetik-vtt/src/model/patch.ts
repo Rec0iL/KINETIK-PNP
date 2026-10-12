@@ -1,5 +1,5 @@
 // Wendet SL-Änderungen (PatchOp) auf einen Bogen an. Rein, auch für lokale Spieler des SL verwendet.
-import { rules, zoneStatus, ZONE_KEYS, GIFT } from '../rules';
+import { rules, zoneStatus, ZONE_KEYS, GIFT, sameTag } from '../rules';
 import { uid, type Character } from './character';
 import { computeSheet } from './sheet';
 import type { PatchOp } from '../net/protocol';
@@ -39,7 +39,7 @@ export function applyPatch(c: Character, ops: PatchOp[], opts: { autoShock?: boo
         c.tags.push({ id: uid(), name: op.name, size: op.size, note: op.note });
         break;
       case 'untag': {
-        const i = c.tags.findIndex((t) => t.name === op.name);
+        const i = c.tags.findIndex((t) => sameTag(t.name, op.name));
         if (i >= 0) c.tags.splice(i, 1);
         break;
       }
