@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 
 // Die Version steht an vielen Stellen. Quelle ist der Untertitel des Regelwerks ("Version 3.6."); alles andere muss damit übereinstimmen.
 const root = '../..';
@@ -16,6 +17,13 @@ describe('Regelwerk-Version', () => {
       const j = JSON.parse(read(`data/${f}`));
       if ('rules_version' in j) expect(j.rules_version, f).toBe(version);
     }
+  });
+  it('englische Übersetzung hat dieselbe Version und Struktur (scripts/check_translation.py)', () => {
+    const en = read('regelwerk/KINETIK_Regelwerk.en.md');
+    expect(/Version\s+(\d+(?:\.\d+)*)/.exec(en.slice(0, 600))?.[1]).toBe(version);
+    const r = spawnSync('python3', [`${root}/scripts/check_translation.py`], { encoding: 'utf8' });
+    expect(r.stdout + r.stderr, 'check_translation.py').toMatch(/^0 Fehler/m);
+    expect(r.status).toBe(0);
   });
   it('Änderungsprotokoll nennt sie an oberster Stelle', () => {
     expect(/^## v(\d+\.\d+)/m.exec(read('CHANGELOG.md'))?.[1]).toBe(version);
