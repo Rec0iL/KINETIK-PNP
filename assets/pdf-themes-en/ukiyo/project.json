@@ -1,0 +1,82 @@
+{
+  "source": "../../../regelwerk/KINETIK_Regelwerk.en.md",
+  "key_source": "../../../regelwerk/KINETIK_Regelwerk.md",
+  "images_from": "../../pdf-themes/ukiyo",
+  "output": "../../../export/KINETIK_Rulebook_v3.6_ukiyo.pdf",
+  "title": "KINETIK",
+  "subtitle": "Cinematic Action Roleplaying",
+  "kicker": "GUN-FU · MARTIAL ARTS · ANIME",
+  "tagline": "A tabletop rulebook for boundless, cinematic action · Version 3.6",
+  "running_title": "KINETIK",
+  "chapter_label": "Chapter",
+  "language": "en",
+  "chapter_level": 0,
+  "appendix_patterns": [
+    "^Anhang",
+    "^Appendix",
+    "^Änderungsprotokoll",
+    "^Changelog"
+  ],
+  "theme": {
+    "bg": "#0e2135",
+    "ink": "#f3e9d2",
+    "accent": "#ff7a5c",
+    "accent2": "#e8c26a",
+    "ink_strong": "#fffaec",
+    "em": "#f3e9d2",
+    "rule": "rgba(243,233,210,0.25)",
+    "card": "rgba(18,44,68,0.92)",
+    "stripe": "rgba(243,233,210,.045)",
+    "scrim": "14,33,53",
+    "font_display": "'Shippori Mincho'",
+    "font_head": "'Shippori Mincho'",
+    "font_label": "'Zen Kaku Gothic New'",
+    "font_body": "'Zen Kaku Gothic New'",
+    "extra_css": "\n.cover-title{ font-size:86pt !important; font-weight:800; text-shadow:4px 4px 0 #c8372d; letter-spacing:.03em; }\n.opener h2, .appendix h2{ font-weight:800; text-shadow:3px 3px 0 #c8372d; }\n.chapter-num{ color:var(--magenta); }\n.chapter-num::before{ content:'\\25C6\\00A0'; color:#c8372d; }\n.sub-head h3, .cols h3, .cols h4, .cols h5, .cols h6, .appendix-body h3{ text-transform:none; font-weight:700; letter-spacing:.03em; }\n.sub-head h3{ font-size:14pt; color:var(--magenta); border-bottom:1px solid var(--rule); }\n.sub-head h3::before{ content:'\\25C6\\00A0'; color:#c8372d; font-size:.6em; vertical-align:.15em; }\n.sub-figure img, .side-figure img, .filler img{ border:1px solid var(--magenta); padding:3px; background:#142f48; }\ntable.rules-table{ border-top:2px solid #c8372d; }\ntable.rules-table th{ background:rgba(232,194,106,.12); color:var(--magenta); text-transform:none; letter-spacing:.03em; }\n"
+  },
+  "layout": {
+    "section_images": true,
+    "page_texture": true,
+    "justify": true,
+    "font_size_pt": 9.4,
+    "fill_gaps": true,
+    "filler_min_mm": 55
+  },
+  "qc": {
+    "enabled": true,
+    "auto_fix": true,
+    "rounds": 3,
+    "radical": true,
+    "lenient": true
+  },
+  "content_type": "rulebook",
+  "style_preset": "",
+  "style_wish": "",
+  "style": "traditional Japanese ukiyo-e woodblock print, flat areas of color, bold black outlines, limited palette of deep indigo blue, cream paper, vermilion red and a little gold, stylized wave and cloud patterns, visible paper grain, elegant composition",
+  "negative": "worst quality, low quality, blurry, jpeg artifacts, bad anatomy, watermark, text, letters, signature, logo, deformed, extra limbs, lowres, photograph, 3d render, gradients, neon, anime, text, letters, calligraphy, chinese characters, watermark",
+  "world": "Modern-day cinematic action roleplaying: gun-fu, martial arts and over-the-top fights, ex-assassins, SWAT operators, street brawlers and legendary masters. Reimagined in Edo-period Japan: ronin and samurai, wandering monks, geisha, merchants, great waves, mountains, bridges, castles, rain and moonlit gardens. Keep the fights and training scenes.",
+  "agy": {
+    "model": "gemini-3.8-flash-medium"
+  },
+  "comfy": {
+    "url": "http://127.0.0.1:8188",
+    "models_dir": "",
+    "workflow": "anima",
+    "unet": "krea2TurboOfficialComfy_krea2TurboMxfp8.safetensors",
+    "clip": "qwen3vl_4b_fp8_scaled.safetensors",
+    "clip_type": "krea2",
+    "vae": "qwen_image_vae.safetensors",
+    "checkpoint": "",
+    "custom_workflow": "",
+    "steps": 8,
+    "cfg": 1.0,
+    "sampler": "euler",
+    "scheduler": "simple"
+  },
+  "colophon": [
+    "© 2026 Alexander Freidzon (Rec0iL). KINETIK, rules text and images are licensed under Creative Commons BY-NC-SA 4.0: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en",
+    "The images were generated with an AI image model (Krea 2).",
+    "Web app and current version: https://kinetik.redneck-design.de/ and https://rec0il.github.io/KINETIK-PNP/",
+    "Imprint and privacy policy (German): https://kinetik.redneck-design.de/#/impressum"
+  ]
+}

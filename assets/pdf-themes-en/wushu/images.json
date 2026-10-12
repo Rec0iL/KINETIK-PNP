@@ -21,7 +21,7 @@
     "prompt": "A lantern-lit ancient stone temple courtyard at dusk with swirling mist over flagstones. On the left, a brawny martial artist in dark tunics lunges forward with a focused straight punch. On the right, an agile wuxia martial artist in flowing robes balances mid-air, leaping between tall wooden plum blossom training poles.",
     "seed": 1486198019,
     "kind": "chapter",
-    "title": "Grundphilosophie",
+    "title": "Core Philosophy",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -32,7 +32,7 @@
     "prompt": "A solitary swordsman in travel-worn robes and a conical bamboo hat stands on a high cliff edge overlooking misty mountain valleys and distant pagoda shrines, gripping a sheathed sword at his waist as the wind whips his sash. Wide landscape perspective, cinematic heroic mood, distant peaks rising through fog.",
     "seed": 1062603827,
     "kind": "chapter",
-    "title": "Der Charakter",
+    "title": "The Character",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -43,7 +43,7 @@
     "prompt": "A blindfolded martial arts monk performs an extreme backward acrobatic dodge atop narrow wooden poles above a rushing river, body arched deeply beneath swinging iron pendulums. Heavy weights suspended from overhead ropes sweep past in mid-air, narrowly missing his contorted torso as pine branches frame the scene.",
     "seed": 952665007,
     "kind": "section",
-    "title": "2.1 Die Attribute (2W6-System)",
+    "title": "2.1 The Attributes (2d6 System)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -54,7 +54,7 @@
     "prompt": "An austere grandmaster in flowing dark robes watches two disciples spar fiercely across an ancient temple courtyard. One fighter wields twin curved daggers while the other deflects with a heavy iron staff, sweeping aside fallen red maple leaves. Wide low-angle view, reverent disciplined atmosphere, ornate pagoda in the background.",
     "seed": 1981950354,
     "kind": "section",
-    "title": "2.2 Das Titel-System (Level 1 bis 10)",
+    "title": "2.2 The Title System (Level 1 to 10)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -65,7 +65,7 @@
     "prompt": "A wounded wuxia warrior crouches behind a cracked mossy stone lantern in pouring rain. With one hand and teeth he pulls a linen bandage tight around his injured forearm, while his other hand plants a notched broadsword upright into the wet muddy ground. Raindrops splash around him.",
     "seed": 67308973,
     "kind": "section",
-    "title": "2.3 Ressourcen & Verletzungen",
+    "title": "2.3 Resources & Injuries",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -78,7 +78,7 @@
     "prompt": "A young female hunter inspects her gear inside an open mountain pavilion at dawn, carefully stringing a heavy recurve bow beside leather quivers and throwing knives arranged neatly on a weathered bench. Wide side-angle shot, quiet anticipation, soft morning mist filtering through tall bamboo stalks.",
     "seed": 1959140211,
     "kind": "section",
-    "title": "2.4 Charaktererschaffung",
+    "title": "2.4 Character Creation",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -89,7 +89,7 @@
     "prompt": "An assassin in dark robes crouches low, pressing flat against a thick stone bridge balustrade for cover, clutching a curved dagger. On the opposite side, an armored warrior swings a massive heavy polearm downward, smashing the carved stone parapet between them into exploding rock fragments and debris.",
     "seed": 1259176817,
     "kind": "section",
-    "title": "2.5 Waffen & Deckung",
+    "title": "2.5 Weapons & Cover",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -100,7 +100,7 @@
     "prompt": "A rugged swordsman in ragged traveler robes swings a heavy curved broad dao, clashing against a masked assassin in dark tight-fitting tunics wielding twin daggers. Violent mid-strike impact at the center of an ancient arched stone bridge spanning a misty gorge, wind whipping their garments, distinct contrasting fighters.",
     "seed": 1604027144,
     "kind": "chapter",
-    "title": "Der Kampf (Das Clash-System)",
+    "title": "Combat (The Clash System)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -113,7 +113,7 @@
     "prompt": "In an ancient temple courtyard with scattered red autumn leaves, an armored warrior lunges forward thrusting a single steel spear. A bald monk in robes firmly blocks and parries the spearhead with a single wooden bo staff in a tense weapon lock, dynamic combat stance.",
     "seed": 1428036617,
     "kind": "section",
-    "title": "3.1 Die Würfelmechanik (Der Clash)",
+    "title": "3.1 The Dice Mechanic (The Clash)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -124,7 +124,7 @@
     "prompt": "At a wooden outpost gate in pouring rain, an attacking martial artist delivers a crushing downward strike with a heavy two-handed broadsword. The blade shatters an armored defender's wooden shield into flying splinters, forcing the staggered defender down onto one knee in the mud.",
     "seed": 1362737355,
     "kind": "section",
-    "title": "3.2 Die Wirkung eines Treffers (Kaskade)",
+    "title": "3.2 The Effect of a Hit (Cascade)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -148,7 +148,7 @@
     "prompt": "On an arched stone bridge crossing a misty river, a calm warrior wearing a conical straw hat walks forward, resting a sheathed sword across his shoulders. Behind him, three outmatched bandits kneel submissively along the wet flagstones. Wide landscape view, effortless superiority, morning haze, weeping willow branches.",
     "seed": 351846489,
     "kind": "section",
-    "title": "3.4 Die Helden-Schwelle",
+    "title": "3.4 The Hero Threshold",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -159,7 +159,7 @@
     "prompt": "In a mountain temple courtyard with pine trees, an impassive elderly master in flowing robes stands upright, effortlessly catching the wrist of a lunging muscular brawler with one outstretched hand. The aggressive brawler is frozen mid-punch, completely overpowered by the calm master's effortless parry. Eye-level wide shot.",
     "seed": 5588191,
     "kind": "section",
-    "title": "3.5 Außer Reichweite (Klassenunterschied)",
+    "title": "3.5 Out of Reach (Class Gap)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -170,7 +170,7 @@
     "prompt": "Inside a misty teahouse, a hooded martial artist strikes a rival in the chest with an explosive palm strike while snatching a spinning bronze coin from mid-air. Defeated opponents crash backward through splintering wooden tables and benches, knocking over lanterns and tea sets amidst billowing steam.",
     "seed": 678374724,
     "kind": "section",
-    "title": "3.6 Der Rundenablauf: Seiten-Initiative mit Kinetik-Marker",
+    "title": "3.6 Round Structure: Side Initiative with the Kinetic Marker",
     "include_style": true,
     "qc": {
       "fits": false,
@@ -186,7 +186,7 @@
     "prompt": "In an open fortress courtyard, a dynamic martial artist in black robes unleashes a sweeping strike, knocking back three armored foot soldiers who fall tumbling across the stone flags. High above on the grand stone stairway, an imposing warlord in heavy armor stands motionless, looking down with folded arms.",
     "seed": 1495482031,
     "kind": "section",
-    "title": "3.7 Mehrere Gegner: Goons, Elite und Bosse",
+    "title": "3.7 Multiple Opponents: Goons, Elites and Bosses",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -219,7 +219,7 @@
     "prompt": "Inside a secluded mountain cavern beside a waterfall, an exhausted fighter sits against a carved Buddha statue, eyes closed in deep rhythmic breathing to calm his pulse and bind his bruised ribs while catching breath. Wide atmospheric landscape view, quiet recuperation, shadows lit by incense smoke.",
     "seed": 967442146,
     "kind": "section",
-    "title": "3.10 Regeneration, Ohnmacht und Gebrochen",
+    "title": "3.10 Regeneration, Unconsciousness and Broken",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -230,7 +230,7 @@
     "prompt": "On a foggy riverbank littered with snapped arrows, a traveling healer kneels over an unconscious warrior, swiftly binding a torso wound with linen wraps while scanning the misty reeds for pursuing enemies. Wide somber composition, urgent battlefield triage, tense life-or-death atmosphere.",
     "seed": 440210101,
     "kind": "section",
-    "title": "3.11 Ausgeschaltet, Sterben und Heilung",
+    "title": "3.11 Taken Out, Dying and Healing",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -241,7 +241,7 @@
     "prompt": "In an open clearing within a dense bamboo grove, a focused martial artist unleashes an explosive palm strike, channeling sheer kinetic force to snap a thick green stalk and blast splinters outward in a shockwave. Wide dynamic angle, decisive execution of a signature technique, crackling power.",
     "seed": 2111558694,
     "kind": "section",
-    "title": "3.12 Moves einsetzen und bezahlen",
+    "title": "3.12 Using and Paying for Moves",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -252,7 +252,7 @@
     "prompt": "Two martial artists dueling on a swaying wooden rope bridge across a deep mountain canyon. One swordsman sweeps low in an acrobatic leg kick beneath the opponent's raised blade, kicking out a wooden plank while turning a missed strike into dynamic improvisation. Dramatic low-angle perspective, flowing ribbons.",
     "seed": 1519021327,
     "kind": "section",
-    "title": "3.13 Optionale Experten-Regel: Erst würfeln, dann erzählen (\"Fortune in the Middle\")",
+    "title": "3.13 Optional Expert Rule: Roll First, Then Narrate (\"Fortune in the Middle\")",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -263,7 +263,7 @@
     "prompt": "A lithe traveler in wind-whipped robes leaps across a sheer mountain chasm between two jagged cliffs, reaching toward a mossy stone ledge. Far below, dense mist blankets a rushing canyon river. A dramatic low-angle wide shot captures the perilous mid-air crossing in the cool morning light.",
     "seed": 576653922,
     "kind": "chapter",
-    "title": "Proben gegen die Umgebung (Nicht-Kampf-Skills)",
+    "title": "Checks Against the Environment (Non-Combat Skills)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -274,7 +274,7 @@
     "prompt": "A masked infiltrator in dark fitted robes crouches motionless along the wooden rafters beneath the eaves of a fortified pavilion. Down below, two patrolling sentries with glowing paper lanterns pace across rain-slicked courtyard flagstones. A tense, high-angle wide perspective looking down into the moonlit shadows.",
     "seed": 1747551607,
     "kind": "section",
-    "title": "4.1 Heimlichkeit und Infiltration",
+    "title": "4.1 Stealth and Infiltration",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -296,7 +296,7 @@
     "prompt": "A focused warrior in sleeveless linen robes trains inside an open-air mountain pavilion, executing deliberate, surgical strikes against rows of wooden training dummies. Chips of wood fly from precise pressure-point impacts overlooking distant misty peaks. Eye-level wide shot, disciplined atmosphere with measured martial precision.",
     "seed": 887480069,
     "kind": "section",
-    "title": "5.1 Das Bewertungs-Framework (Effektpunkte)",
+    "title": "5.1 The Rating Framework (Effect Points)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -307,7 +307,7 @@
     "prompt": "On the weathered wooden planks of a high mountain rope bridge suspended above a misty chasm, an agile martial artist leaps in mid-air to drive a powerful dropkick into an armored guard's raised wooden shield, splintering it. Wide-angle shot capturing dramatic silhouettes, flying timber fragments, and swirling valley fog.",
     "seed": 824667639,
     "kind": "section",
-    "title": "5.2 Move-Beispiele (Richtwerte)",
+    "title": "5.2 Move Examples (Guidelines)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -318,7 +318,7 @@
     "prompt": "A blindfolded swordswoman in flowing robes walks serenely along a mossy forest path, calmly sheathing her straight blade with one hand. Several freshly severed bamboo stalks slide cleanly to the ground behind her without disturbing her stride. Wide landscape tracking shot, peaceful dawn mist and effortless martial grace.",
     "seed": 1410363840,
     "kind": "section",
-    "title": "5.3 Gemeisterte Moves",
+    "title": "5.3 Mastered Moves",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -329,7 +329,7 @@
     "prompt": "On the cracked stone terrace of a ruined summit monastery, an exhausted grandmaster kneels with head bowed, a dark stain marking one hand from forbidden power. Scattered elite warriors lie defeated across shattered flagstones beneath storm clouds. Wide high-angle shot, desolate windswept atmosphere showing the heavy cost of victory.",
     "seed": 29025632,
     "kind": "section",
-    "title": "5.4 Meister-Moves und Legendäre Moves",
+    "title": "5.4 Master Moves and Legendary Moves",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -340,7 +340,7 @@
     "prompt": "A wide twilight courtyard of a tiered stone monastery with hanging lanterns. Two martial artists in flowing robes duel with curved sabers, a monk sweeps a long wooden staff, and one unarmed fighter flips another in an acrobatic hip throw through the air, while elder masters watch from a wooden balcony.",
     "seed": 2060805569,
     "kind": "chapter",
-    "title": "Spielbeispiele am Tisch",
+    "title": "Play Examples at the Table",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -351,7 +351,7 @@
     "prompt": "Eye-level shot of a brooding rogue assassin resting inside a quiet wooden tea house at dusk. Wearing dark travelling robes and reinforced leather bracers, he meticulously sharpens twin concealed daggers beside a bamboo table strewn with rolled travel maps and a steaming porcelain cup, his face partially shadowed.",
     "seed": 1352898016,
     "kind": "section",
-    "title": "Beispiel-Charakterbogen",
+    "title": "Sample Character Sheet",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -362,7 +362,7 @@
     "prompt": "Low-angle view of a female martial artist in a conical straw hat performing a sweeping low strike with a wooden quarterstaff. Three masked thugs in dark robes are knocked off their feet, tumbling backwards into splashing courtyard puddles while their wooden clubs fly through the air beneath hanging lanterns.",
     "seed": 568629050,
     "kind": "section",
-    "title": "Beispiel 1: Kampf gegen Horden (Goons)",
+    "title": "Example 1: Fighting Hordes (Goons)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -373,7 +373,7 @@
     "prompt": "From a wide side angle across a misty bamboo clearing, a swift martial artist in plain robes drops into a low recovery stance with empty hands. A gargantuan warlord in impenetrable iron armor lies flat on his back against damp earth, stunned, while an abandoned curved blade rests on wet stones nearby.",
     "seed": 531651279,
     "kind": "section",
-    "title": "Beispiel 2: Rüstung und Verletzung (Boss-Kampf)",
+    "title": "Example 2: Armor and Injury (Boss Fight)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -384,7 +384,7 @@
     "prompt": "Inside a wooden pavilion, a crouching warrior delivers a powerful low front kick, sliding a heavy overturned wooden desk violently across the floorboards. The sliding table slams hard into an advancing swordsman's legs, knocking him backward off-balance. Sharp throwing daggers are embedded in the splintered wood tabletop.",
     "seed": 996500495,
     "kind": "section",
-    "title": "Beispiel 3: PvP (Spieler gegen Spieler)",
+    "title": "Example 3: PvP (Player vs. Player)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -395,7 +395,7 @@
     "prompt": "Expansive panoramic view over a stormy mountain ridge. A supreme martial grandmaster in flowing dark robes stands at the precipice, flanked by multiple spectral mirror-images of himself. With palms outstretched, he unleashes a swirling vortex of gale-force wind that shatters the surrounding boulders and drives back approaching armies.",
     "seed": 55120803,
     "kind": "section",
-    "title": "Beispiel 4: Charakterentwicklung und Titel-Leveling",
+    "title": "Example 4: Character Growth and Title Leveling",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -406,7 +406,7 @@
     "prompt": "High-angle view inside a dimly lit storehouse with stacked wooden crates and heavy timber pillars. In the foreground, four guards gamble with dice at a low table. In the shadowy background, a cloaked infiltrator silently stalks past pillars toward a single alert bodyguard seated beside a plain closed wooden door.",
     "seed": 1868569841,
     "kind": "section",
-    "title": "Beispiel 5: Heimlichkeit (Goons und Elite)",
+    "title": "Example 5: Stealth (Goons and Elite)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -417,7 +417,7 @@
     "prompt": "A masked assassin stands over an unconscious martial artist lying flat across wet wooden planks of a mist-shrouded river pier at dusk, raising a curved dagger high to strike. In the distance, a cloaked swordsman sprints along the wooden dock with a drawn blade to intercept the fatal blow.",
     "seed": 1084504700,
     "kind": "section",
-    "title": "Beispiel 6: Gift und Töten",
+    "title": "Example 6: Poison and Killing",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -428,7 +428,7 @@
     "prompt": "A wide view across a misty wooden dock beside a dark mountain lake. In the foreground, an agile martial artist rests on one knee, clutching his bruised ribs to catch his breath. Across splintered planks, a hulking armored warrior stumbles upright after a rough tumble, recovering his balance in a tense standoff.",
     "seed": 56810284,
     "kind": "section",
-    "title": "Beispiel 7: Den Move nicht einsetzen (Variante von Beispiel 2)",
+    "title": "Example 7: Not Using the Move (Variant of Example 2)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -440,10 +440,10 @@
     "seed": 1673854638,
     "kind": "filler",
     "active": true,
-    "title": "Füllbild: Grundphilosophie",
+    "title": "Füllbild: Core Philosophy",
     "after": "ch-1-grundphilosophie",
     "chapter": "ch-1-grundphilosophie",
-    "h_mm": 86.1,
+    "h_mm": 86.0,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -458,10 +458,10 @@
     "seed": 993740940,
     "kind": "filler",
     "active": true,
-    "title": "Füllbild: 2.1 Die Attribute (2W6-System)",
+    "title": "Füllbild: 2.1 The Attributes (2d6 System)",
     "after": "sec-2-1-die-attribute-2w6-system",
     "chapter": "ch-2-der-charakter",
-    "h_mm": 87.0,
+    "h_mm": 92.0,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -473,7 +473,7 @@
     "prompt": "An injured swordswoman rests under the tiled eave of a mountain shrine, grimacing in pain. Her sheathed sword leans untouched against a weathered stone lantern. With both hands, she tightly wraps linen bandages around a deep cut on her forearm amidst scattered bamboo stalks and drifting mist.",
     "seed": 639913330,
     "kind": "filler",
-    "active": true,
+    "active": false,
     "title": "Füllbild: 2.3 Ressourcen & Verletzungen",
     "after": "sec-2-3-ressourcen-verletzungen",
     "chapter": "ch-2-der-charakter",
@@ -489,7 +489,7 @@
     "prompt": "A masked martial arts assassin in dark robes crouches behind a massive stone courtyard pillar for cover. Iron throwing daggers embed into the stone pillar with shattering impacts and stone chips flying. The warrior firmly grips the hilt of a drawn curved saber, ready to strike back under hanging lanterns.",
     "seed": 760348552,
     "kind": "filler",
-    "active": true,
+    "active": false,
     "title": "Füllbild: 2.5 Waffen & Deckung",
     "after": "sec-2-5-waffen-deckung",
     "chapter": "ch-2-der-charakter",
@@ -509,7 +509,7 @@
     "title": "Füllbild: 3.3 Tags",
     "after": "sec-3-3-tags",
     "chapter": "ch-3-der-kampf-das-clash-system",
-    "h_mm": 64.4,
+    "h_mm": 69.0,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -521,7 +521,7 @@
     "prompt": "A solitary barefoot monk leaps high off a weathered wooden post during intense pole-training above a cascading waterfall. Mid-air, she extends a dynamic flying kick toward a swinging sandbag, water droplets freezing around her swift motion. Low-angle wide view captures her explosive drive against towering mist-covered cliffs.",
     "seed": 462047612,
     "kind": "filler",
-    "active": true,
+    "active": false,
     "title": "Füllbild: 3.8 Momentum",
     "after": "sec-3-8-momentum",
     "chapter": "ch-3-der-kampf-das-clash-system",
@@ -538,10 +538,10 @@
     "seed": 597889014,
     "kind": "filler",
     "active": true,
-    "title": "Füllbild: 4.1 Heimlichkeit und Infiltration",
+    "title": "Füllbild: 4.1 Stealth and Infiltration",
     "after": "sec-4-1-heimlichkeit-und-infiltration",
     "chapter": "ch-4-proben-gegen-die-umgebung-nicht-kampf-skills",
-    "h_mm": 158.7,
+    "h_mm": 164.9,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -551,13 +551,13 @@
   },
   "fill-sec-5-4-meister-moves-und-legendaere-moves": {
     "prompt": "A kneeling grandmaster in torn silk robes breathes heavily on a cracked stone courtyard beneath a pagoda, clutching a blackened palm after unleashing an ultimate technique. Defeated swordsmen lie sprawled across the fractured flagstones amidst swirling mist and scattered red maple leaves. Square framing, eye-level shot, somber exhausted mood.",
-    "seed": 1243119985,
+    "seed": 1798351639,
     "kind": "filler",
     "active": true,
-    "title": "Füllbild: 5.4 Meister-Moves und Legendäre Moves",
+    "title": "Füllbild: 5.4 Master Moves and Legendary Moves",
     "after": "sec-5-4-meister-moves-und-legendaere-moves",
     "chapter": "ch-5-moves",
-    "h_mm": 49.8,
+    "h_mm": 185.6,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -567,13 +567,13 @@
   },
   "fill-sec-beispiel-6-gift-und-toeten": {
     "prompt": "Inside a cavernous timber warehouse, a ruthless martial artist kneels on the floor, locking an unconscious brawler in a deadly rear-naked chokehold from behind. A desperate ally sprints forward in low-angle perspective, arms outstretched to break the fatal grip before time runs out, surrounded by stacked wooden crates.",
-    "seed": 415053929,
+    "seed": 1681474402,
     "kind": "filler",
     "active": true,
-    "title": "Füllbild: Beispiel 6: Gift und Töten",
+    "title": "Füllbild: Example 6: Poison and Killing",
     "after": "sec-beispiel-6-gift-und-toeten",
     "chapter": "ch-6-spielbeispiele-am-tisch",
-    "h_mm": 76.5,
+    "h_mm": 101.1,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -585,7 +585,7 @@
     "prompt": "A lone martial artist in grey flowing robes unleashes a low circular sweep with a heavy wooden staff across a stone temple plaza. A ring of armed guards is thrown backward through the air by the kinetic blast, scattered amidst billowing dust and swirling red leaves. Wide-angle shot, dynamic motion.",
     "seed": 377284310,
     "kind": "section",
-    "title": "3.14 Flächenangriffe (AoE)",
+    "title": "3.14 Area Attacks (AoE)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -594,13 +594,13 @@
   },
   "fill-sec-3-14-flaechenangriffe-aoe": {
     "prompt": "A fierce female warrior spins in a whirlwind strike with dual curved broadswords across a narrow wooden suspension bridge. The wide circular slash cleaves the air, repelling three charging brigands simultaneously as shattered rope splinters erupt around them. Square composition, eye-level framing, dramatic high-stakes atmosphere.",
-    "seed": 763328174,
+    "seed": 1840772082,
     "kind": "filler",
     "active": true,
-    "title": "Füllbild: 3.14 Flächenangriffe (AoE)",
+    "title": "Füllbild: 3.14 Area Attacks (AoE)",
     "after": "sec-3-14-flaechenangriffe-aoe",
     "chapter": "ch-3-der-kampf-das-clash-system",
-    "h_mm": 73.5,
+    "h_mm": 225.5,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {
@@ -612,11 +612,43 @@
     "prompt": "An unarmored monk smoothly twisting out of an armored warrior's joint lock, pivoting to sweep the attacker over his shoulder onto a rain-slicked stone courtyard beneath flowering plum trees. Wide landscape shot, dynamic martial clash, swirling robes, suspended tension.",
     "seed": 1685020247,
     "kind": "filler",
-    "active": true,
+    "active": false,
     "title": "Füllbild: 5.2 Move-Beispiele (Richtwerte)",
     "after": "sec-5-2-move-beispiele-richtwerte",
     "chapter": "ch-5-moves",
     "h_mm": 94.2,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-3-2-die-wirkung-eines-treffers-kaskade": {
+    "prompt": "In a wide low-angle view across a misty monastery courtyard, an aggressive swordsman in wind-whipped robes delivers a punishing descending saber strike, cleaving through the lacquered forearm guard of a rival warrior. The defender stumbles backward onto cracked flagstones, posture broken and staggering, surrounded by splintered armor fragments and windblown autumn leaves.",
+    "seed": 1824527932,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: 3.2 The Effect of a Hit (Cascade)",
+    "after": "sec-3-2-die-wirkung-eines-treffers-kaskade",
+    "chapter": "ch-3-der-kampf-das-clash-system",
+    "h_mm": 47.3,
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
+  },
+  "fill-sec-beispiel-5-heimlichkeit-goons-und-elite": {
+    "prompt": "A wide establishing shot of four mercenary sentries lounging around a low table playing dice beside stacked cargo crates inside a cavernous timber storehouse. High above in the rafters, a cloaked infiltrator in dark robes crouches in silence, watching from the shadows. Dim swinging paper lantern, tense and stealthy mood.",
+    "seed": 81917875,
+    "kind": "filler",
+    "active": true,
+    "title": "Füllbild: Example 5: Stealth (Goons and Elite)",
+    "after": "sec-beispiel-5-heimlichkeit-goons-und-elite",
+    "chapter": "ch-6-spielbeispiele-am-tisch",
+    "h_mm": 74.0,
     "w_mm": 176.0,
     "include_style": true,
     "qc": {

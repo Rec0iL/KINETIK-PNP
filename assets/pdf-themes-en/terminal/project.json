@@ -1,0 +1,82 @@
+{
+  "source": "../../../regelwerk/KINETIK_Regelwerk.en.md",
+  "key_source": "../../../regelwerk/KINETIK_Regelwerk.md",
+  "images_from": "../../pdf-themes/terminal",
+  "output": "../../../export/KINETIK_Rulebook_v3.6_terminal.pdf",
+  "title": "KINETIK",
+  "subtitle": "Cinematic Action Roleplaying",
+  "kicker": "GUN-FU · MARTIAL ARTS · ANIME",
+  "tagline": "A tabletop rulebook for boundless, cinematic action · Version 3.6",
+  "running_title": "KINETIK",
+  "chapter_label": "Chapter",
+  "language": "en",
+  "chapter_level": 0,
+  "appendix_patterns": [
+    "^Anhang",
+    "^Appendix",
+    "^Änderungsprotokoll",
+    "^Changelog"
+  ],
+  "theme": {
+    "bg": "#030605",
+    "ink": "#bfe9d6",
+    "accent": "#29e0a0",
+    "accent2": "#d7e24a",
+    "ink_strong": "#e6fff4",
+    "em": "#bfe9d6",
+    "rule": "rgba(41,224,160,0.28)",
+    "card": "rgba(5,12,9,0.92)",
+    "stripe": "rgba(41,224,160,.04)",
+    "scrim": "3,6,5",
+    "font_display": "'VT323'",
+    "font_head": "'Courier Prime'",
+    "font_label": "'Courier Prime'",
+    "font_body": "'Courier Prime'",
+    "extra_css": "\n.cover-title{ font-size:150pt !important; text-shadow:0 0 12px rgba(41,224,160,.6); letter-spacing:.06em; }\n.opener h2{ font-size:58pt; line-height:.9; text-shadow:0 0 10px rgba(41,224,160,.5); }\n.appendix h2{ font-size:36pt; }\n.dropcap{ font-size:54pt; }\n.sub-head h3, .appendix-body h3{ font-weight:700; border-bottom:1px dashed var(--cyan); }\n.sub-head h3::before{ content:'## '; color:var(--magenta); }\n.sub-figure img, .side-figure img, .filler img{ border:1px solid var(--cyan); }\ntable.rules-table{ border-top:1px dashed var(--cyan); }\ntable.rules-table th{ background:transparent; border-bottom:1px solid var(--cyan); }\nstrong{ font-weight:700; }\n"
+  },
+  "layout": {
+    "section_images": true,
+    "page_texture": true,
+    "justify": true,
+    "font_size_pt": 8.8,
+    "fill_gaps": true,
+    "filler_min_mm": 55
+  },
+  "qc": {
+    "enabled": true,
+    "auto_fix": true,
+    "rounds": 3,
+    "radical": true,
+    "lenient": true
+  },
+  "content_type": "rulebook",
+  "style_preset": "",
+  "style_wish": "",
+  "style": "monochrome green phosphor CRT screen graphic, glowing green vector wireframe lines on a pure black background, scanlines, 1980s hacker computer terminal aesthetic, technical schematic, high contrast, only shades of green, no text",
+  "negative": "worst quality, low quality, blurry, jpeg artifacts, bad anatomy, watermark, text, letters, signature, logo, deformed, extra limbs, lowres, color photo, blue, red, orange, yellow, painting, realistic shading, text, letters, numbers",
+  "world": "Modern-day cinematic action roleplaying: gun-fu, martial arts and over-the-top fights, ex-assassins, SWAT operators, street brawlers and legendary masters. Seen through tactical computer displays: green wireframe maps, radar screens, schematic diagrams of fighters and weapons, blueprints, data streams.",
+  "agy": {
+    "model": "gemini-3.8-flash-medium"
+  },
+  "comfy": {
+    "url": "http://127.0.0.1:8188",
+    "models_dir": "",
+    "workflow": "anima",
+    "unet": "krea2TurboOfficialComfy_krea2TurboMxfp8.safetensors",
+    "clip": "qwen3vl_4b_fp8_scaled.safetensors",
+    "clip_type": "krea2",
+    "vae": "qwen_image_vae.safetensors",
+    "checkpoint": "",
+    "custom_workflow": "",
+    "steps": 8,
+    "cfg": 1.0,
+    "sampler": "euler",
+    "scheduler": "simple"
+  },
+  "colophon": [
+    "© 2026 Alexander Freidzon (Rec0iL). KINETIK, rules text and images are licensed under Creative Commons BY-NC-SA 4.0: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en",
+    "The images were generated with an AI image model (Krea 2).",
+    "Web app and current version: https://kinetik.redneck-design.de/ and https://rec0il.github.io/KINETIK-PNP/",
+    "Imprint and privacy policy (German): https://kinetik.redneck-design.de/#/impressum"
+  ]
+}

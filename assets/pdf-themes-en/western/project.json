@@ -1,0 +1,82 @@
+{
+  "source": "../../../regelwerk/KINETIK_Regelwerk.en.md",
+  "key_source": "../../../regelwerk/KINETIK_Regelwerk.md",
+  "images_from": "../../pdf-themes/western",
+  "output": "../../../export/KINETIK_Rulebook_v3.6_western.pdf",
+  "title": "KINETIK",
+  "subtitle": "Cinematic Action Roleplaying",
+  "kicker": "GUN-FU · MARTIAL ARTS · ANIME",
+  "tagline": "A tabletop rulebook for boundless, cinematic action · Version 3.6",
+  "running_title": "KINETIK",
+  "chapter_label": "Chapter",
+  "language": "en",
+  "chapter_level": 0,
+  "appendix_patterns": [
+    "^Anhang",
+    "^Appendix",
+    "^Änderungsprotokoll",
+    "^Changelog"
+  ],
+  "theme": {
+    "bg": "#170f0a",
+    "ink": "#ecdcb9",
+    "accent": "#dba94a",
+    "accent2": "#d2603f",
+    "ink_strong": "#fff3d6",
+    "em": "#ecdcb9",
+    "rule": "rgba(219,169,74,0.28)",
+    "card": "rgba(40,27,18,0.92)",
+    "stripe": "rgba(255,220,160,.04)",
+    "scrim": "23,15,10",
+    "font_display": "'Rye'",
+    "font_head": "'Arvo'",
+    "font_label": "'Arvo'",
+    "font_body": "'Arvo'",
+    "extra_css": "\n.cover-title{ font-size:92pt !important; letter-spacing:.03em; color:#f2d38a; text-shadow:4px 4px 0 #000; }\n.cover-sub, .chapter-sub{ font-weight:700; letter-spacing:.14em; }\n.opener h2{ font-size:30pt; line-height:1.05; color:#f2d38a; text-shadow:3px 3px 0 #000; }\n.appendix h2{ font-size:24pt; color:#f2d38a; }\n.dropcap{ font-size:36pt; }\n.sub-head h3, .appendix-body h3{ font-weight:700; border-bottom:3px double var(--rule); font-size:12.5pt; }\n.sub-head h3::before{ content:'\\2605\\00A0'; color:var(--magenta); }\n.cols h3, .cols h4, .cols h5, .cols h6{ font-weight:700; font-size:9.5pt; }\n.sub-figure img, .side-figure img, .filler img{ border:2px solid #5d4217; padding:2px; background:#2a1c12; }\ntable.rules-table{ border-top:2px solid #b8862b; }\ntable.rules-table th{ background:#b8862b; color:#1d1206; font-weight:700; }\nstrong{ font-weight:700; }\n"
+  },
+  "layout": {
+    "section_images": true,
+    "page_texture": true,
+    "justify": true,
+    "font_size_pt": 8.8,
+    "fill_gaps": true,
+    "filler_min_mm": 55
+  },
+  "qc": {
+    "enabled": true,
+    "auto_fix": true,
+    "rounds": 3,
+    "radical": true,
+    "lenient": true
+  },
+  "content_type": "rulebook",
+  "style_preset": "",
+  "style_wish": "",
+  "style": "vintage 1960s widescreen western film still, faded warm sepia tones, heavy film grain, dust haze, harsh low sun, anamorphic look, painterly cinematic photograph, gritty",
+  "negative": "worst quality, low quality, blurry, jpeg artifacts, bad anatomy, watermark, text, letters, signature, logo, deformed, extra limbs, lowres, modern, neon, cyberpunk, anime, cartoon, text, letters, watermark, bright saturated colors",
+  "world": "Modern-day cinematic action roleplaying: gun-fu, martial arts and over-the-top fights, ex-assassins, SWAT operators, street brawlers and legendary masters. Reimagined as a spaghetti western: dusty frontier town, saloon, duels at high noon, gunslingers and a wandering kung fu master, desert, trains, canyon ambushes.",
+  "agy": {
+    "model": "gemini-3.8-flash-medium"
+  },
+  "comfy": {
+    "url": "http://127.0.0.1:8188",
+    "models_dir": "",
+    "workflow": "anima",
+    "unet": "krea2TurboOfficialComfy_krea2TurboMxfp8.safetensors",
+    "clip": "qwen3vl_4b_fp8_scaled.safetensors",
+    "clip_type": "krea2",
+    "vae": "qwen_image_vae.safetensors",
+    "checkpoint": "",
+    "custom_workflow": "",
+    "steps": 8,
+    "cfg": 1.0,
+    "sampler": "euler",
+    "scheduler": "simple"
+  },
+  "colophon": [
+    "© 2026 Alexander Freidzon (Rec0iL). KINETIK, rules text and images are licensed under Creative Commons BY-NC-SA 4.0: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en",
+    "The images were generated with an AI image model (Krea 2).",
+    "Web app and current version: https://kinetik.redneck-design.de/ and https://rec0il.github.io/KINETIK-PNP/",
+    "Imprint and privacy policy (German): https://kinetik.redneck-design.de/#/impressum"
+  ]
+}

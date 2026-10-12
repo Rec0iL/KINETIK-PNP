@@ -18,21 +18,21 @@
     "prompt": "cinematic anime action illustration, a lone fighter frozen in a dynamic bullet-time dodge, bullets and motion trails frozen mid air around them, dramatic low angle, rain-soaked neon city street, dark gritty atmosphere, bold inked linework, high contrast moody lighting, wide cinematic composition, masterpiece, best quality",
     "seed": 729073887,
     "kind": "chapter",
-    "title": "Grundphilosophie",
+    "title": "Core Philosophy",
     "include_style": false
   },
   "ch-2-der-charakter": {
     "prompt": "cinematic anime action illustration, a lineup of distinct action archetypes standing shoulder to shoulder, a gunslinger in a long coat, a martial artist in a gi, a sniper with a rifle, a street brawler, backlit by neon signage, rain-soaked alley, dark gritty atmosphere, bold inked linework, high contrast moody lighting, wide cinematic composition, masterpiece, best quality",
     "seed": 1454969375,
     "kind": "chapter",
-    "title": "Der Charakter",
+    "title": "The Character",
     "include_style": false
   },
   "sec-2-1-die-attribute-2w6-system": {
     "prompt": "cinematic anime illustration, five ordinary human fighters standing in a loose line, ordinary mundane proportions, a gymnast in a low fighting stance, a marksman calmly aiming a rifle, a muscular brawler with raised fists, an alert scout crouching low, a calm tactician standing with arms crossed, rain-soaked neon city street behind them, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece, best quality",
     "seed": 2075220305,
     "kind": "section",
-    "title": "2.1 Die Attribute (2W6-System)",
+    "title": "2.1 The Attributes (2d6 System)",
     "include_style": false,
     "negative": "worst quality, low quality, blurry, jpeg artifacts, sepia, bad anatomy, watermark, text, signature, deformed, extra limbs, lowres, wings, bat wings, demon, monster, creature, fantasy creature, superhero, superhero costume, cape, mask, helmet"
   },
@@ -40,28 +40,28 @@
     "prompt": "cinematic anime action illustration, a weathered veteran master training a determined young fighter in a rain-soaked dojo courtyard, glowing rank insignia in the background, dark gritty atmosphere, bold inked linework, high contrast moody lighting, wide cinematic composition, masterpiece",
     "seed": 722393507,
     "kind": "section",
-    "title": "2.2 Das Titel-System (Level 1 bis 10)",
+    "title": "2.2 The Title System (Level 1 to 10)",
     "include_style": false
   },
   "sec-2-3-ressourcen-verletzungen": {
     "prompt": "cinematic anime action illustration, a wounded fighter standing defiant despite bandaged injuries, torn clothing, glowing willpower aura around clenched fist, rain-soaked neon city backdrop, dark gritty atmosphere, bold inked linework, high contrast moody lighting, wide cinematic composition, masterpiece",
     "seed": 46464860,
     "kind": "section",
-    "title": "2.3 Ressourcen & Verletzungen",
+    "title": "2.3 Resources & Injuries",
     "include_style": false
   },
   "sec-2-4-charaktererschaffung": {
     "prompt": "cinematic anime action illustration, silhouette roster of varied action heroes on a character select style grid, gunslinger, martial artist, sniper, brawler, each distinct pose, neon rim light, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
     "seed": 1926277325,
     "kind": "section",
-    "title": "2.4 Charaktererschaffung",
+    "title": "2.4 Character Creation",
     "include_style": false
   },
   "sec-2-5-waffen-deckung": {
     "prompt": "In a dark, rain-drenched alleyway between plain brick walls, an operative in tactical armor parries a long sniper rifle barrel aside with one forearm. Stepping into close grappling range, he thrusts two separate pistols past the hooded sniper's head, muzzle flashes illuminating splashing rain and reflective wet asphalt.",
     "seed": 1072935206,
     "kind": "section",
-    "title": "2.5 Waffen & Deckung",
+    "title": "2.5 Weapons & Cover",
     "include_style": true,
     "negative": "low quality, blurry, deformed hands, bad anatomy, stiff pose, static standoff, fused guns, stacked pistols, neon signs, glowing text, letters, watermark, weapon aimed at chest, lack of contact"
   },
@@ -69,14 +69,14 @@
     "prompt": "cinematic anime action illustration, two fighters colliding mid strike in a dynamic clash, fist meeting blade, sparks and shockwave radiating outward, dramatic motion blur, rain-soaked neon-lit rooftop, dark gritty atmosphere, bold inked linework, extreme high contrast lighting, wide cinematic composition, masterpiece, best quality",
     "seed": 701764708,
     "kind": "chapter",
-    "title": "Der Kampf (Das Clash-System)",
+    "title": "Combat (The Clash System)",
     "include_style": false
   },
   "sec-3-1-die-wuerfelmechanik-der-clash": {
     "prompt": "Two martial artists clash violently in a rain-drenched dark alley lit by vibrant neon signs. An agile fighter parries a heavy armored punch directly with the flat of a curved katana blade. Sparks and shockwaves erupt from the point of impact, with splashing puddles and heavy rain reflecting neon light.",
     "seed": 1262727268,
     "kind": "section",
-    "title": "3.1 Die Würfelmechanik (Der Clash)",
+    "title": "3.1 The Dice Mechanic (The Clash)",
     "include_style": true,
     "negative": "worst quality, low quality, blurry, text, kanji, letters, watermark, floating dice, dice graphic, geometric overlay, floating sword, disembodied weapon, extra limbs, bad hands, deformed fingers, unrealistic anatomy"
   },
@@ -84,7 +84,7 @@
     "prompt": "cinematic anime action illustration, a devastating punch connecting, shockwave rippling outward through shattering glass and debris, dramatic freeze frame impact, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
     "seed": 1228136554,
     "kind": "section",
-    "title": "3.2 Die Wirkung eines Treffers (Kaskade)",
+    "title": "3.2 The Effect of a Hit (Cascade)",
     "include_style": false
   },
   "sec-3-3-tags": {
@@ -98,28 +98,28 @@
     "prompt": "cinematic anime action illustration, a lone fighter in a long tattered coat standing defiant against overwhelming odds, heroic low angle, wind and debris swirling, determined glowing eyes, no cape, no superhero costume, grounded modern streetwear, rain-soaked neon city backdrop, dark gritty atmosphere, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece, best quality",
     "seed": 89810286,
     "kind": "section",
-    "title": "3.4 Die Helden-Schwelle",
+    "title": "3.4 The Hero Threshold",
     "include_style": false
   },
   "sec-3-5-ausser-reichweite-klassenunterschied": {
     "prompt": "cinematic anime action illustration, a small outmatched fighter dwarfed by the towering silhouette of a hulking powerful opponent, dramatic scale contrast, rain-soaked neon city backdrop, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
     "seed": 566120345,
     "kind": "section",
-    "title": "3.5 Außer Reichweite (Klassenunterschied)",
+    "title": "3.5 Out of Reach (Class Gap)",
     "include_style": false
   },
   "sec-3-6-der-rundenablauf-seiten-initiative-mit-kinet": {
     "prompt": "cinematic anime action illustration, a coin spinning mid-air in dramatic slow motion between two fighters locked in a standoff, neon reflections, rain-soaked street, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
     "seed": 656312922,
     "kind": "section",
-    "title": "3.6 Der Rundenablauf: Seiten-Initiative mit Kinetik-Marker",
+    "title": "3.6 Round Structure: Side Initiative with the Kinetic Marker",
     "include_style": false
   },
   "sec-3-7-mehrere-gegner-goons-elite-und-bosse": {
     "prompt": "cinematic anime action illustration, one lone hero surrounded by a horde of faceless masked goons in a rain-soaked warehouse, dynamic action stance ready to fight, dark gritty atmosphere, bold inked linework, high contrast moody lighting, wide cinematic composition, masterpiece",
     "seed": 1931187069,
     "kind": "section",
-    "title": "3.7 Mehrere Gegner: Goons, Elite und Bosse",
+    "title": "3.7 Multiple Opponents: Goons, Elites and Bosses",
     "include_style": false
   },
   "sec-3-8-momentum": {
@@ -140,35 +140,35 @@
     "prompt": "cinematic anime action illustration, an exhausted fighter catching their breath against a wall, steam rising from their shoulders in the cold rain, determined to keep fighting, neon backdrop, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
     "seed": 2048752273,
     "kind": "section",
-    "title": "3.10 Regeneration, Ohnmacht und Gebrochen",
+    "title": "3.10 Regeneration, Unconsciousness and Broken",
     "include_style": false
   },
   "sec-3-11-ausgeschaltet-sterben-und-heilung": {
     "prompt": "cinematic anime action illustration, a fallen fighter being helped back onto their feet by a female ally amid the wreckage of battle, emotional moment, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
     "seed": 1266922565,
     "kind": "section",
-    "title": "3.11 Ausgeschaltet, Sterben und Heilung",
+    "title": "3.11 Taken Out, Dying and Healing",
     "include_style": false
   },
   "sec-3-12-moves-einsetzen-und-bezahlen": {
     "prompt": "cinematic anime action illustration, a fighter mid windup for a devastating signature technique, glowing energy gathering at their fist, dramatic anticipation, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
     "seed": 638294801,
     "kind": "section",
-    "title": "3.12 Moves einsetzen und bezahlen",
+    "title": "3.12 Using and Paying for Moves",
     "include_style": false
   },
   "sec-3-13-optionale-experten-regel-erst-wuerfeln-dann": {
     "prompt": "cinematic anime action illustration, split dynamic composition, two dice frozen mid roll above a battlefield clash, dramatic duality, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
     "seed": 510458231,
     "kind": "section",
-    "title": "3.13 Optionale Experten-Regel: Erst würfeln, dann erzählen (\"Fortune in the Middle\")",
+    "title": "3.13 Optional Expert Rule: Roll First, Then Narrate (\"Fortune in the Middle\")",
     "include_style": false
   },
   "ch-4-proben-gegen-die-umgebung-nicht-kampf-skills": {
     "prompt": "cinematic anime action illustration, a lone infiltrator climbing a fire escape on a towering neon-lit skyscraper at night, tense stealth atmosphere, no combat, rain and fog, dark gritty urban atmosphere, bold inked linework, high contrast moody lighting, wide cinematic composition, masterpiece, best quality",
     "seed": 1858148539,
     "kind": "chapter",
-    "title": "Proben gegen die Umgebung (Nicht-Kampf-Skills)",
+    "title": "Checks Against the Environment (Non-Combat Skills)",
     "include_style": false
   },
   "ch-5-moves": {
@@ -182,56 +182,56 @@
     "prompt": "cinematic anime action illustration, a martial artist unleashing a glowing technique with geometric energy diagram patterns radiating from the point of impact, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
     "seed": 808677741,
     "kind": "section",
-    "title": "5.1 Das Bewertungs-Framework (Effektpunkte)",
+    "title": "5.1 The Rating Framework (Effect Points)",
     "include_style": false
   },
   "sec-5-2-move-beispiele-richtwerte": {
     "prompt": "cinematic anime action illustration montage, multiple fighters each performing a different signature move in a dynamic composite panel, a gun-fu pistol spin, a judo throw, a flying kick, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
     "seed": 220413250,
     "kind": "section",
-    "title": "5.2 Move-Beispiele (Richtwerte)",
+    "title": "5.2 Move Examples (Guidelines)",
     "include_style": false
   },
   "sec-5-3-gemeisterte-moves": {
     "prompt": "cinematic anime action illustration, a calm veteran fighter effortlessly executing a technique with relaxed confident expression, afterimage trail showing mastery, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
     "seed": 2106989436,
     "kind": "section",
-    "title": "5.3 Gemeisterte Moves",
+    "title": "5.3 Mastered Moves",
     "include_style": false
   },
   "sec-5-4-meister-moves-und-legendaere-moves": {
     "prompt": "cinematic anime action illustration, an explosive screen filling ultimate technique, overwhelming energy and light engulfing the battlefield, awestruck onlooking enemies, dark gritty neon backdrop, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
     "seed": 136280284,
     "kind": "section",
-    "title": "5.4 Meister-Moves und Legendäre Moves",
+    "title": "5.4 Master Moves and Legendary Moves",
     "include_style": true
   },
   "ch-6-spielbeispiele-am-tisch": {
     "prompt": "cinematic anime action illustration, a sharp-dressed ex-assassin gunman with slicked dark hair in a long coat over concealed body armor, mid gunfight pose firing a pistol while pivoting into a throw, rain-soaked neon-lit Tokyo alley, dark gritty atmosphere, bold inked linework, high contrast moody lighting, wide cinematic composition, masterpiece, best quality",
     "seed": 389472041,
     "kind": "chapter",
-    "title": "Spielbeispiele am Tisch",
+    "title": "Play Examples at the Table",
     "include_style": false
   },
   "sec-beispiel-charakterbogen": {
     "prompt": "cinematic anime character portrait, Jin Ghost Yamada, sharp-dressed ex-assassin gunman with slicked dark hair, confident calm expression, wearing a long coat over concealed body armor, holding a pistol loosely at his side, rain-soaked neon-lit Tokyo backdrop, dark gritty atmosphere, bold inked linework, high contrast, wide cinematic composition, masterpiece",
     "seed": 828366638,
     "kind": "section",
-    "title": "Beispiel-Charakterbogen",
+    "title": "Sample Character Sheet",
     "include_style": false
   },
   "sec-beispiel-1-kampf-gegen-horden-goons": {
     "prompt": "cinematic anime action illustration, a sharp-dressed gunman sprinting along a corridor wall firing a pistol, two goons collapsing in his wake, dynamic motion blur, rain-soaked neon-lit hallway, dark gritty atmosphere, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
     "seed": 552829441,
     "kind": "section",
-    "title": "Beispiel 1: Kampf gegen Horden (Goons)",
+    "title": "Example 1: Fighting Hordes (Goons)",
     "include_style": false
   },
   "sec-beispiel-2-ruestung-und-verletzung-boss-kampf": {
     "prompt": "An agile martial artist executes a dynamic judo throw, flipping a massive SWAT enforcer in heavy tactical armor completely upside down. The armored juggernaut hangs inverted mid-air, helmet slamming into the wet concrete rooftop. A dropped handgun skids across the rain-slick pavement amid flying debris and neon city reflections.",
     "seed": 1068156783,
     "kind": "section",
-    "title": "Beispiel 2: Rüstung und Verletzung (Boss-Kampf)",
+    "title": "Example 2: Armor and Injury (Boss Fight)",
     "include_style": true,
     "negative": "standing upright, standing fighters, upright posture, feet on ground, punching, boxing, worst quality, low quality, blurry, deformed limbs, extra limbs, bad anatomy"
   },
@@ -239,14 +239,14 @@
     "prompt": "cinematic anime action illustration, a tense gunfight across a rain-lit office, one detective diving behind an overturned desk as a bullet grazes past, dynamic motion, dark gritty neon atmosphere, bold inked linework, extreme high contrast, wide cinematic composition, masterpiece",
     "seed": 1183864047,
     "kind": "section",
-    "title": "Beispiel 3: PvP (Spieler gegen Spieler)",
+    "title": "Example 3: PvP (Player vs. Player)",
     "include_style": true
   },
   "sec-beispiel-4-charakterentwicklung-und-titel-leveli": {
     "prompt": "cinematic anime action illustration, split before and after composition, a nervous female rookie swordsman on the left transforming into a legendary robed sword master with a straw hat glowing with power in their slightly drawn but still sheathed blade on the right, rain-soaked neon backdrop, dark gritty atmosphere, bold inked linework, high contrast, high angle shot on the left, low angle shot on the right, masterpiece",
     "seed": 1059938297,
     "kind": "section",
-    "title": "Beispiel 4: Charakterentwicklung und Titel-Leveling",
+    "title": "Example 4: Character Growth and Title Leveling",
     "include_style": true
   },
   "fill-ch-1-grundphilosophie": {
@@ -274,8 +274,8 @@
     "include_style": true
   },
   "fill-sec-2-5-waffen-deckung": {
-    "prompt": "A female operative in a tactical harness crouches behind a bullet-chewed car door in an underground garage, slapping a fresh magazine into her assault rifle. Sparks and shattered safety glass shower the hood from heavy incoming gunfire, with spent brass casings bouncing across grease-slicked concrete. Low-angle wide shot.",
-    "seed": 1654979715,
+    "prompt": "A female tactical operative crouching low behind a bullet-riddled car door in a subterranean parking garage, firmly slamming a magazine into an assault rifle. Sparks and glass shards erupt from the vehicle hood amid incoming gunfire, while spent brass litters the wet concrete floor.",
+    "seed": 1841212980,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 2.5 Weapons & Cover",
@@ -286,11 +286,7 @@
     "include_style": true,
     "qc": {
       "fits": true,
-      "problems": [
-        "Mehrere Patronenhülsen wirken eher wie statisch in der Luft schwebend statt dynamisch fliegend.",
-        "Der beschriebene Magazinwechsel wird nicht aktiv gezeigt; die Waffe wird stattdessen beidhändig in Bereitschaft gehalten.",
-        "Der Einschlag auf der Motorhaube erinnert visuell stellenweise an spritzende weiße Flüssigkeit statt an berstendes Sicherheitsglas."
-      ]
+      "problems": []
     }
   },
   "fill-sec-3-2-die-wirkung-eines-treffers-kaskade": {
@@ -356,8 +352,8 @@
     "include_style": true
   },
   "fill-sec-5-4-meister-moves-und-legendaere-moves": {
-    "prompt": "A wounded, exhausted master in a soaked trench coat stands slumped on a rainy rooftop helipad. Every enemy enforcer lies unconscious across the puddle-covered concrete. Shattered weapon fragments litter the ground. The master drops a broken sword hilt from trembling hands against a backdrop of distant glowing skyscrapers.",
-    "seed": 1653044974,
+    "prompt": "An exhausted, wounded man in a soaking wet trench coat slumps on a rain-drenched rooftop helipad. Several unconscious defeated security enforcers lie scattered across the puddle-covered concrete around him. A broken, shattered sword hilt lies beside his open, limp hand. Illuminated skyscrapers rise in the stormy background.",
+    "seed": 1628031714,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 5.4 Master Moves and Legendary Moves",
@@ -368,10 +364,7 @@
     "include_style": true,
     "qc": {
       "fits": true,
-      "problems": [
-        "Der Schwertgriff wird noch in der Hand gehalten, anstatt aus zitternden Fingern herabzufallen.",
-        "Kaum sichtbare Wunden oder Kampfspuren am Protagonisten trotz der beschriebenen Erschöpfung."
-      ]
+      "problems": []
     }
   },
   "fill-sec-beispiel-charakterbogen": {
@@ -388,7 +381,7 @@
   },
   "fill-sec-beispiel-4-charakterentwicklung-und-titel-leveli": {
     "prompt": "Vertical portrait composition. In a smoke-filled subterranean fighting cage under flickering neon tubes, an imposing female brawler stands victorious with wrapped, bruised fists and a leather jacket over her shoulders. Defeated syndicate heavies lie slumped across the concrete floor around her. Low-angle framing, intense aura of ruthless dominance.",
-    "seed": 446245014,
+    "seed": 1544185257,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: Example 4: Character Growth and Title Leveling",
@@ -396,7 +389,11 @@
     "chapter": "ch-6-spielbeispiele-am-tisch",
     "h_mm": 47.8,
     "w_mm": 176.0,
-    "include_style": true
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "fill-sec-3-4-die-helden-schwelle": {
     "prompt": "Wide low-angle shot in a rain-slicked neon alley. A stylish woman in an open dark trench coat effortlessly parries an incoming machete strike with one hand while delivering a swift reverse-kick to another masked thug. Cascading rain, cyan neon reflections, cinematic effortless dominance, dynamic motion.",
@@ -414,7 +411,7 @@
     "prompt": "Inside a dim industrial warehouse, a hooded black-clad operative crouches unseen high among shadows of towering metal storage racks. Below, four distinct gritty thugs play cards around a table under a hanging yellow lamp. In the background, a backlit silhouette stands behind a glowing frosted-glass office door.",
     "seed": 672491130,
     "kind": "section",
-    "title": "4.1 Heimlichkeit und Infiltration",
+    "title": "4.1 Stealth and Infiltration",
     "include_style": true,
     "negative": "worst quality, low quality, blurry, bad anatomy, clone faces, identical faces, identical clothing, business shirts, malformed hands, extra limbs, floating chair legs, text, watermark, signature"
   },
@@ -422,7 +419,7 @@
     "prompt": "Inside a dark industrial warehouse, a black-clad stealth operative clings silently to high ceiling pipes and steel rafters. Directly beneath him in the shadowy aisle, oblivious armed thugs in casual jackets patrol past tall storage shelves toward an illuminated glass-walled office in the background.",
     "seed": 463140383,
     "kind": "section",
-    "title": "Beispiel 5: Heimlichkeit (Goons und Elite)",
+    "title": "Example 5: Stealth (Goons and Elite)",
     "include_style": true,
     "negative": "bad anatomy, deformed hands, extra limbs, blurry, text, watermark, signage, business suit, necktie, operative on floor, standing upright, brightly lit foreground, looking at camera"
   },
@@ -466,7 +463,7 @@
     "prompt": "In the foreground of a dark, rain-drenched alley, a gloved assassin's hand rests at their side, deftly holding a slender blowpipe dart dripping with glowing emerald neurotoxin. In the soft-focus, blurred background, the distant silhouette of an unsuspecting target stumbles past damp brick walls beneath flickering streetlamps.",
     "seed": 2145845881,
     "kind": "section",
-    "title": "Beispiel 6: Gift und Töten",
+    "title": "Example 6: Poison and Killing",
     "include_style": true,
     "negative": "standing upright, stable stance, wide athletic stance, active fighting pose, energetic victim, extra limbs, fused hands, tangled arms, deformed fingers, mutated hands, bad anatomy, text, watermark, signature"
   },
@@ -474,7 +471,7 @@
     "prompt": "In a vast, flooded subway tunnel under flickering amber emergency lights, a bruised female brawler drops into a low, measured stance to catch her breath. Down the submerged tracks, a burly riot officer wades forward through dark water, creating a tense, wide-angle standoff of tactical endurance and conserved energy.",
     "seed": 484209912,
     "kind": "section",
-    "title": "Beispiel 7: Den Move nicht einsetzen (Variante von Beispiel 2)",
+    "title": "Example 7: Not Using the Move (Variant of Example 2)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -536,7 +533,7 @@
   },
   "fill-sec-3-14-flaechenangriffe-aoe": {
     "prompt": "An ex-assassin in a wet trench coat discharges an incendiary shotgun down a dark brick alley. A massive, broad cone of fire and glowing embers spreads across the entire alleyway, engulfing three masked street brawlers diving into wet puddles amidst dense rising steam and rain.",
-    "seed": 1719789994,
+    "seed": 1889041143,
     "kind": "filler",
     "active": true,
     "title": "Füllbild: 3.14 Area Attacks (AoE)",
@@ -554,7 +551,7 @@
     "prompt": "A tactical operative in dark body armor dives sideways across a flooded subway concourse as an explosive grenade detonates. The concussive orange shockwave expands outward, hurling armed syndicate enforcers off their feet amidst flying debris and splashing water. Wide cinematic framing, low-angle perspective, billowing gray smoke and shattered tile fragments.",
     "seed": 1495693821,
     "kind": "section",
-    "title": "3.14 Flächenangriffe (AoE)",
+    "title": "3.14 Area Attacks (AoE)",
     "include_style": true,
     "qc": {
       "fits": true,
@@ -562,7 +559,7 @@
     }
   },
   "fill-sec-2-2-das-titel-system-level-1-bis-10": {
-    "prompt": "",
+    "prompt": "Square framing, low angle. Inside a rain-streaked rooftop dojo overlooking glowing neon skyscrapers, an elderly scarred master in a dark high-collar coat effortlessly blocks a fierce strike from a younger tactical operative. Wooden training dummies stand shattered nearby as heavy raindrops filter through a broken skylight into the tense sparring session.",
     "seed": 768095695,
     "kind": "filler",
     "active": true,
@@ -570,10 +567,15 @@
     "after": "sec-2-2-das-titel-system-level-1-bis-10",
     "chapter": "ch-2-der-charakter",
     "h_mm": 181.2,
-    "w_mm": 176.0
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": []
+    }
   },
   "fill-sec-beispiel-5-heimlichkeit-goons-und-elite": {
-    "prompt": "",
+    "prompt": "A stealthy operative in a dark tactical coat glides through the cracked door of an elevated warehouse office, raising a silenced pistol behind an alert bodyguard seated at a desk. In the dim hangar below, distracted henchmen lounge around a hanging lamp. Low-angle wide composition, tense and silent anticipation.",
     "seed": 359670205,
     "kind": "filler",
     "active": true,
@@ -581,6 +583,14 @@
     "after": "sec-beispiel-5-heimlichkeit-goons-und-elite",
     "chapter": "ch-6-spielbeispiele-am-tisch",
     "h_mm": 70.2,
-    "w_mm": 176.0
+    "w_mm": 176.0,
+    "include_style": true,
+    "qc": {
+      "fits": true,
+      "problems": [
+        "Nur drei statt vier Handlanger am Tisch im unteren Lagerbereich zu sehen",
+        "Tür hinter dem Eindringling wirkt wie ein hell erleuchteter Außeneingang statt eines Übergangs aus der dunklen Lagerhalle"
+      ]
+    }
   }
 }

@@ -6,6 +6,7 @@ Fenster hinausragen. Nicht Teil von `npm test` (braucht einen Browser und den la
     python3 tests/overflow-audit.py                        # alle Themes, alle Breiten
     python3 tests/overflow-audit.py --themes western akte  --widths 390 1360
     python3 tests/overflow-audit.py --json bericht.json
+    python3 tests/overflow-audit.py --lang en              # englische Oberfläche (Texte sind oft länger)
 
 Voraussetzung: pip install playwright und ein Chrome (Pfad per --chrome).
 Gemeldet wird je (Theme, Seite, Element): Text, der über die Box seines Elements oder eines abschneidenden Vorfahren hinausläuft,
@@ -116,15 +117,22 @@ VIEWS = [
     ("Impressum", "#/impressum", None),
     ("Datenschutz", "#/datenschutz", None),
 ]
-SHEET_TABS = ["Übersicht", "Körper", "Moves", "Ausrüstung", "Tags & Nachteile", "Notizen", "Erschaffung"]
+# Beschriftungen, die das Skript anklickt, je Sprache der Oberfläche
+LABELS = {
+    "de": dict(tabs=["Übersicht", "Körper", "Moves", "Ausrüstung", "Tags & Nachteile", "Notizen", "Erschaffung"],
+               example="Beispiel laden", roll="Würfeln", toc="Inhaltsverzeichnis"),
+    "en": dict(tabs=["Overview", "Body", "Moves", "Gear", "Tags & Drawbacks", "Notes", "Creation"],
+               example="Load example", roll="Roll", toc="Table of contents"),
+}
 
 
-def audit(theme, width, chrome, quick):
+def audit(theme, width, chrome, quick, lang="de"):
+    L = LABELS[lang]
     findings = []
     with sync_playwright() as p:
         b = p.chromium.launch(executable_path=chrome, args=["--no-sandbox"])
-        ctx = b.new_context(viewport={"width": width, "height": 900})
-        ctx.add_init_script(f"localStorage.setItem('kinetik.theme','{theme}')")
+        ctx = b.new_context(viewport={"width": width, "height": 900}, locale="en-GB" if lang == "en" else "de-DE")
+        ctx.add_init_script(f"localStorage.setItem('kinetik.theme','{theme}'); localStorage.setItem('kinetik.lang','{lang}')")
         pg = ctx.new_page()
         errs = []
         pg.on("pageerror", lambda e: errs.append(str(e)))
@@ -145,20 +153,20 @@ def audit(theme, width, chrome, quick):
         # Charakterbogen mit Beispielcharakter, alle Tabs
         pg.evaluate("location.hash = '#/charaktere'")
         pg.wait_for_timeout(500)
-        if pg.locator("text=Beispiel laden").count():
-            pg.locator("text=Beispiel laden").first.click()
+        if pg.locator(f"text={L['example']}").count():
+            pg.locator(f"text={L['example']}").first.click()
             pg.wait_for_timeout(800)
         else:
             pg.locator("a[href*='#/charakter/']").first.click()
             pg.wait_for_timeout(800)
-        for tab in SHEET_TABS:
+        for tab in L["tabs"]:
             loc = pg.locator(f'[role="tab"]:has-text("{tab}"), .tabs button:has-text("{tab}")')
             if loc.count():
                 loc.first.click()
                 pg.wait_for_timeout(300)
                 check(f"Bogen: {tab}")
         # Würfelfenster
-        dock = pg.locator(".dock-toggle, button:has-text('Würfeln')")
+        dock = pg.locator(f".dock-toggle, button:has-text('{L['roll']}')")
         if not quick and dock.count():
             try:
                 dock.first.click(timeout=2000)
@@ -178,10 +186,10 @@ def audit(theme, width, chrome, quick):
             pg.evaluate(f"document.getElementById({json.dumps(target)})?.scrollIntoView()")
             pg.wait_for_timeout(500)
             check(f"Regelwerk: {target[3:30]}")
-        pg.locator("aside.rb button[aria-label='Inhaltsverzeichnis']").click()
+        pg.locator(f"aside.rb button[aria-label='{L['toc']}']").click()
         pg.wait_for_timeout(500)
         check("Regelwerk: Inhaltsverzeichnis")
-        pg.locator("aside.rb button[aria-label='Inhaltsverzeichnis']").click()
+        pg.locator(f"aside.rb button[aria-label='{L['toc']}']").click()
         pg.locator("aside.rb button.dl").click()
         pg.wait_for_timeout(500)
         check("Regelwerk: Download-Menü")
@@ -198,6 +206,7 @@ def main():
     ap.add_argument("--chrome", default="/usr/bin/google-chrome")
     ap.add_argument("--json")
     ap.add_argument("--quick", action="store_true")
+    ap.add_argument("--lang", choices=sorted(LABELS), default="de", help="Sprache der Oberfläche")
     ap.add_argument("--base", default=BASE, help="Adresse der App (Entwicklungs- oder Vorschauserver)")
     args = ap.parse_args()
     BASE = args.base
@@ -205,7 +214,7 @@ def main():
     allf = []
     for theme in args.themes:
         for w in args.widths:
-            f, errs = audit(theme, w, args.chrome, args.quick)
+            f, errs = audit(theme, w, args.chrome, args.quick, args.lang)
             allf += f
             print(f"{theme:8s} {w:5d}px  {len(f):3d} Funde" + (f"  JS-Fehler: {errs[:1]}" if errs else ""), flush=True)
 

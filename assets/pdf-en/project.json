@@ -1,5 +1,7 @@
 {
   "source": "../../regelwerk/KINETIK_Regelwerk.en.md",
+  "key_source": "../../regelwerk/KINETIK_Regelwerk.md",
+  "images_from": "../pdf",
   "output": "../../export/KINETIK_Rulebook_v3.6.pdf",
   "title": "KINETIK",
   "subtitle": "Cinematic Action Roleplaying",
@@ -65,7 +67,5 @@
     "The images were generated with an AI image model (Krea 2).",
     "Web app and current version: https://kinetik.redneck-design.de/ and https://rec0il.github.io/KINETIK-PNP/",
     "Imprint and privacy policy (German): https://kinetik.redneck-design.de/#/impressum"
-  ],
-  "key_source": "../../regelwerk/KINETIK_Regelwerk.md",
-  "images_from": "../pdf"
+  ]
 }
