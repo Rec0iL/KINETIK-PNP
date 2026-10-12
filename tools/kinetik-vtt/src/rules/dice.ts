@@ -1,4 +1,5 @@
 // Würfel-Grundlagen: Zufall, Notation, exakte 2W6-Verteilung für Tests und Wahrscheinlichkeitsanzeigen.
+import { t } from '../i18n';
 
 export type Rng = () => number;
 
@@ -33,7 +34,7 @@ export interface DiceFormula {
 /** Parst Formeln wie "2d6+3", "d20", "3d8-2+1d4". Wirft bei ungültiger Eingabe. */
 export function parseFormula(input: string): DiceFormula {
   const s = input.replace(/\s+/g, '').toLowerCase().replace(/w/g, 'd');
-  if (!s) throw new Error('Leere Formel');
+  if (!s) throw new Error(t('rules.dice.emptyFormula'));
   const re = /([+-]?)(?:(\d*)d(\d+)|(\d+))/gy;
   const terms: DiceTerm[] = [];
   let modifier = 0;
@@ -45,13 +46,13 @@ export function parseFormula(input: string): DiceFormula {
     if (m[3]) {
       const count = m[2] === '' ? 1 : Number(m[2]);
       const sides = Number(m[3]);
-      if (count < 1 || count > 50 || sides < 2 || sides > 1000) throw new Error('Würfel außerhalb des Bereichs');
+      if (count < 1 || count > 50 || sides < 2 || sides > 1000) throw new Error(t('rules.dice.outOfRange'));
       terms.push({ count, sides, sign });
     } else {
       modifier += sign * Number(m[4]);
     }
   }
-  if (pos !== s.length || (!terms.length && !modifier)) throw new Error(`Ungültige Formel: ${input}`);
+  if (pos !== s.length || (!terms.length && !modifier)) throw new Error(t('rules.dice.invalidFormula', { input }));
   return { terms, modifier };
 }
 

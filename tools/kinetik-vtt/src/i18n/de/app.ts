@@ -1,5 +1,5 @@
-// Alle sichtbaren Texte. Für eine weitere Sprache: Datei kopieren, übersetzen, in index.ts eintragen.
-export const de = {
+// Texte der App-Hülle (Kopf, Navigation, Themes, Startseite). Weitere Bereiche stehen in den Nachbardateien.
+export const app = {
   'app.name': 'KINETIK',
   'app.tagline': 'Cinematic Action Roleplaying',
   'app.kicker': 'Gun-Fu · Kampfkunst · Anime',
@@ -41,8 +41,18 @@ export const de = {
   'home.rb.pdf': 'PDF herunterladen',
   'home.soon': 'in Arbeit',
   'home.rules': 'Regelwerk',
+  'app.nav.aria': 'Hauptnavigation',
+  'app.rulebook.title': 'Regelwerk lesen',
+  'app.rulebook.short': 'Regelwerk',
+  'app.dice3d.on': '3D-Würfel an',
+  'app.dice3d.off': '3D-Würfel aus',
+  'app.dice3d.aria': '3D-Würfel',
+  'app.role.player': 'Spieler',
+  'app.footer.rules': 'KINETIK · Regelwerk v{version} · {copyright}',
+  'app.language': 'Sprache',
+  'app.language.confirmHost': 'Die App lädt für den Sprachwechsel neu. Deine laufende Runde wird danach fortgesetzt, die Spieler verbinden sich neu. Jetzt wechseln?',
+  'app.store.unavailable': 'Der Browser-Speicher ist nicht verfügbar. Änderungen gehen beim Schließen verloren, bitte regelmäßig als JSON exportieren.',
+  'app.store.saveFailed': 'Speichern im Browser fehlgeschlagen. Bitte als JSON exportieren.',
   'common.back': 'Zurück',
   'common.soon': 'Dieser Bereich wird im nächsten Schritt gebaut.',
 } as const;
-
-export type Key = keyof typeof de;

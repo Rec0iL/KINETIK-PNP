@@ -1,0 +1,33 @@
+{
+  "effekte": [
+    { "id": "zone", "name": "Choose Zone" },
+    { "id": "tagKlein", "name": "Minor tag", "beispiele": "Prone, Blinded, Disarmed, Paralyzed" },
+    { "id": "ziel2", "name": "Second target" },
+    { "id": "schutzSchaden", "name": "+1 Protection damage" },
+    { "id": "schaden2", "name": "+2 WP or Energy damage" },
+    { "id": "durchschlag", "name": "Penetration 1", "text": "Protection -1 for this Clash" },
+    { "id": "wurfPlus", "name": "+1 to the roll (max. +2)" },
+    { "id": "heilenSelbst", "name": "Restore +2 Energy or WP (self only)" },
+    { "id": "schutzIgnorieren", "name": "Ignore protection type" },
+    { "id": "schutzZerstoeren", "name": "Destroy Protection (to 0 until end of scene)" },
+    { "id": "verletzungOhneDominanz", "name": "Injury without Dominance" },
+    { "id": "tagGross", "name": "Major tag", "beispiele": "Stunned, Immobilized, Choked" },
+    { "id": "ziele3", "name": "Up to 3 targets" },
+    { "id": "heilenAlle", "name": "Restore +2 Energy or WP for up to 3 allies" },
+    { "id": "giftSchwach", "name": "Weak poison (-1 Energy, 2 rounds)" },
+    { "id": "giftStark", "name": "Strong poison (-2 Energy, 2 rounds)" },
+    { "id": "laehmgift", "name": "Paralytic poison (major tag Paralyzed)" },
+    { "id": "giftToedlich", "name": "Lethal poison (dying after the Delay)" },
+    { "id": "nachladen", "name": "Reloading in a Clash without the tag", "text": "The weapon is reloaded as part of the attack; the Reloading tag drops away (2.5)" },
+    { "id": "flaeche", "name": "Area (all targets in one zone)", "text": "Room, street, courtyard; bigger areas grow with EP (3.14)" },
+    { "id": "freiKlein", "name": "Free effect (small)" },
+    { "id": "freiMittel", "name": "Free effect (medium)" },
+    { "id": "freiGross", "name": "Free effect (large)" }
+  ],
+  "abzuege": [
+    { "id": "vorbedingung", "name": "Prerequisite", "text": "Height, ground position, weapon" },
+    { "id": "risiko", "name": "Risk", "text": "A drawback for the user on a failure" },
+    { "id": "setup", "name": "Setup round" },
+    { "id": "einmal", "name": "Only once per scene" }
+  ]
+}

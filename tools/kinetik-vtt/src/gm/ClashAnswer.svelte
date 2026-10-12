@@ -3,11 +3,12 @@
   import { linkClash, rollManual, roll2d6, type RollRecord } from '../dice/roller.svelte';
   import type { PlayerInfo } from '../net/protocol';
   import Stepper from '../ui/Stepper.svelte';
+  import { t } from '../i18n';
 
   let { roll, party, gmName }: { roll: RollRecord; party: PlayerInfo[]; gmName: string } = $props();
 
   let open = $state(false);
-  let name = $state('Gegner');
+  let name = $state(t('gm.common.enemy'));
   let bonus = $state(2);
   let mod = $state(0);
   let playerAttacks = $state(true);
@@ -20,8 +21,8 @@
 
   function answer() {
     const npc = manual
-      ? rollManual({ who: name, label: `Antwort auf ${roll.who}`, bonus, mod, sum, kind: 'clash' })
-      : roll2d6({ who: name, label: `Antwort auf ${roll.who}`, bonus, mod, kind: 'clash' });
+      ? rollManual({ who: name, label: t('gm.clash.answerTo', { who: roll.who }), bonus, mod, sum, kind: 'clash' })
+      : roll2d6({ who: name, label: t('gm.clash.answerTo', { who: roll.who }), bonus, mod, kind: 'clash' });
     const npcSum = manual ? sum : npc.dice[0].value + npc.dice[1].value;
     const pSide = { dice: playerSum, bonus: roll.bonus, mod: roll.mod, isPlayer: true };
     const nSide = { dice: npcSum, bonus, mod, isPlayer: false };
@@ -34,7 +35,7 @@
     result = {
       label: OUTCOME_LABEL[res.outcome],
       delta: res.delta,
-      text: res.noRoll ? 'Lücke ≥ 8: nicht würfeln, der Überlegene erzählt.' : res.limited ? 'Außer Reichweite: Ergebnis gedeckelt.' : res.heldenSchwelle ? 'Helden-Schwelle gilt.' : '',
+      text: res.noRoll ? t('gm.clash.noRoll') : res.limited ? t('gm.clash.limited') : res.heldenSchwelle ? t('gm.clash.heroThreshold') : '',
     };
   }
 </script>
@@ -42,22 +43,22 @@
 {#if !roll.clashWith && !roll.clash}
   <div class="ca">
     {#if !open}
-      <button class="btn sm" onclick={() => (open = true)}>Clash dagegen</button>
+      <button class="btn sm" onclick={() => (open = true)}>{t('gm.clash.against')}</button>
     {:else}
       <div class="form">
         <div class="row">
-          <label class="field">Gegner<input bind:value={name} /></label>
-          <label class="field">Bonus<Stepper bind:value={bonus} min={-3} max={20} label="Gegner-Bonus" /></label>
-          <label class="field">Mod.<Stepper bind:value={mod} min={-9} max={9} label="Modifikator" /></label>
+          <label class="field">{t('gm.common.enemy')}<input bind:value={name} /></label>
+          <label class="field">{t('gm.common.bonus')}<Stepper bind:value={bonus} min={-3} max={20} label={t('gm.clash.enemyBonus')} /></label>
+          <label class="field">{t('gm.clash.modShort')}<Stepper bind:value={mod} min={-9} max={9} label={t('gm.common.modifier')} /></label>
         </div>
         <div class="row">
-          <label class="check"><input type="radio" bind:group={playerAttacks} value={true} /> {roll.who} greift an</label>
-          <label class="check"><input type="radio" bind:group={playerAttacks} value={false} /> {roll.who} verteidigt</label>
-          <label class="check"><input type="checkbox" bind:checked={hero} /> Heldenhafte Gegenwehr</label>
-          <label class="check"><input type="checkbox" bind:checked={manual} /> Wurf eintragen</label>
-          {#if manual}<Stepper bind:value={sum} min={2} max={12} label="Augensumme" />{/if}
+          <label class="check"><input type="radio" bind:group={playerAttacks} value={true} /> {t('gm.clash.attacks', { who: roll.who })}</label>
+          <label class="check"><input type="radio" bind:group={playerAttacks} value={false} /> {t('gm.clash.defends', { who: roll.who })}</label>
+          <label class="check"><input type="checkbox" bind:checked={hero} /> {t('gm.common.heroicResistance')}</label>
+          <label class="check"><input type="checkbox" bind:checked={manual} /> {t('gm.clash.manual')}</label>
+          {#if manual}<Stepper bind:value={sum} min={2} max={12} label={t('gm.clash.sum')} />{/if}
         </div>
-        <div class="row"><button class="btn sm primary" onclick={answer}>{manual ? 'Auswerten' : 'Würfeln und auswerten'}</button><button class="btn sm ghost" onclick={() => (open = false)}>Abbrechen</button></div>
+        <div class="row"><button class="btn sm primary" onclick={answer}>{manual ? t('gm.clash.evaluate') : t('gm.clash.rollEvaluate')}</button><button class="btn sm ghost" onclick={() => (open = false)}>{t('gm.clash.cancel')}</button></div>
       </div>
     {/if}
   </div>

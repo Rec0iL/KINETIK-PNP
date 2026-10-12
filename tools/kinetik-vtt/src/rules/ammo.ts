@@ -1,5 +1,7 @@
 // Munition und Nachladen (2.5, optional). Rein, ohne DOM.
 import { rules } from './data';
+import { TAG, isTag } from './tagid';
+import { t } from '../i18n';
 
 export interface AmmoState {
   /** Größe des Magazins in Angriffen (der W6 am Tisch). */
@@ -12,7 +14,9 @@ export interface AmmoState {
   heavy: boolean;
 }
 
+/** Name des Tags *Nachladen* in der Sprache der App (zum Setzen). Zum Prüfen isReloadTag nehmen. */
 export const RELOAD_TAG = rules.waffen.munition.nachladenTag;
+export const isReloadTag = (name: string): boolean => isTag(name, TAG.reloading);
 
 interface AmmoTemplate { magazin?: number; schwerNachladen?: boolean; wegwurf?: boolean }
 
@@ -49,7 +53,7 @@ export interface ReloadResult {
  * Ein Move wie Wick Flick (Effekt `nachladen`) lädt ohne Tag nach.
  */
 export function reload(a: AmmoState, opts: { inClash: boolean; viaMove?: boolean }): ReloadResult {
-  if (a.reserve !== undefined && a.reserve <= 0) return { ok: false, ammo: a, tag: null, action: false, reason: 'Kein Magazin mehr im Vorrat.' };
+  if (a.reserve !== undefined && a.reserve <= 0) return { ok: false, ammo: a, tag: null, action: false, reason: t('rules.ammo.noReserve') };
   const ammo: AmmoState = { ...a, cur: a.cap, reserve: a.reserve === undefined ? undefined : a.reserve - 1 };
   return { ok: true, ammo, tag: opts.inClash && !opts.viaMove ? RELOAD_TAG : null, action: a.heavy };
 }

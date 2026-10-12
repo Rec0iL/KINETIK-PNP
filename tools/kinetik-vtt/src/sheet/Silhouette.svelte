@@ -1,6 +1,7 @@
 <script lang="ts">
   import { rules, type ZoneKey } from '../rules';
   import type { Injury } from '../model/character';
+  import { t } from '../i18n';
 
   let {
     injuries,
@@ -16,12 +17,12 @@
 
   // Geometrie aus assets/grafiken/koerper-silhouette.svg (Regel 2.3).
   const zones: { key: ZoneKey; shape: { t: 'ellipse'; cx: number; cy: number; rx: number; ry: number } | { t: 'path'; d: string }; boxes: [number, number][]; label: { x: number; y: number; anchor: 'start' | 'middle' | 'end'; text: string }; lead?: [number, number, number, number] }[] = [
-    { key: 'kopf', shape: { t: 'ellipse', cx: 200, cy: 104, rx: 40, ry: 48 }, boxes: [[186, 110], [203, 110]], label: { x: 200, y: 100, anchor: 'middle', text: 'KOPF' } },
-    { key: 'torso', shape: { t: 'path', d: 'M160,162 L240,162 L251,232 L236,298 L164,298 L149,232 Z' }, boxes: [[176, 238], [194, 238], [212, 238]], label: { x: 200, y: 226, anchor: 'middle', text: 'TORSO' } },
-    { key: 'armL', shape: { t: 'path', d: 'M151,167 L163,186 L130,308 L109,300 Z' }, boxes: [[62, 250], [79, 250]], label: { x: 94, y: 242, anchor: 'end', text: 'L-ARM' }, lead: [122, 246, 98, 246] },
-    { key: 'armR', shape: { t: 'path', d: 'M249,167 L237,186 L270,308 L291,300 Z' }, boxes: [[309, 250], [326, 250]], label: { x: 306, y: 242, anchor: 'start', text: 'R-ARM' }, lead: [278, 246, 302, 246] },
-    { key: 'beinL', shape: { t: 'path', d: 'M172,308 L197,308 L195,528 L166,528 L164,322 Z' }, boxes: [[104, 424], [121, 424]], label: { x: 136, y: 416, anchor: 'end', text: 'L-BEIN' }, lead: [164, 420, 140, 420] },
-    { key: 'beinR', shape: { t: 'path', d: 'M203,308 L228,308 L236,322 L234,528 L205,528 Z' }, boxes: [[267, 424], [284, 424]], label: { x: 264, y: 416, anchor: 'start', text: 'R-BEIN' }, lead: [236, 420, 260, 420] },
+    { key: 'kopf', shape: { t: 'ellipse', cx: 200, cy: 104, rx: 40, ry: 48 }, boxes: [[186, 110], [203, 110]], label: { x: 200, y: 100, anchor: 'middle', text: t('sheet.silhouette.kopf') } },
+    { key: 'torso', shape: { t: 'path', d: 'M160,162 L240,162 L251,232 L236,298 L164,298 L149,232 Z' }, boxes: [[176, 238], [194, 238], [212, 238]], label: { x: 200, y: 226, anchor: 'middle', text: t('sheet.silhouette.torso') } },
+    { key: 'armL', shape: { t: 'path', d: 'M151,167 L163,186 L130,308 L109,300 Z' }, boxes: [[62, 250], [79, 250]], label: { x: 94, y: 242, anchor: 'end', text: t('sheet.silhouette.armL') }, lead: [122, 246, 98, 246] },
+    { key: 'armR', shape: { t: 'path', d: 'M249,167 L237,186 L270,308 L291,300 Z' }, boxes: [[309, 250], [326, 250]], label: { x: 306, y: 242, anchor: 'start', text: t('sheet.silhouette.armR') }, lead: [278, 246, 302, 246] },
+    { key: 'beinL', shape: { t: 'path', d: 'M172,308 L197,308 L195,528 L166,528 L164,322 Z' }, boxes: [[104, 424], [121, 424]], label: { x: 136, y: 416, anchor: 'end', text: t('sheet.silhouette.beinL') }, lead: [164, 420, 140, 420] },
+    { key: 'beinR', shape: { t: 'path', d: 'M203,308 L228,308 L236,322 L234,528 L205,528 Z' }, boxes: [[267, 424], [284, 424]], label: { x: 264, y: 416, anchor: 'start', text: t('sheet.silhouette.beinR') }, lead: [236, 420, 260, 420] },
   ];
 
   const status = (z: ZoneKey) => {
@@ -31,10 +32,10 @@
   };
 </script>
 
-<svg viewBox="0 0 400 610" role="group" aria-label="Körpersilhouette mit sechs Trefferzonen">
+<svg viewBox="0 0 400 610" role="group" aria-label={t('sheet.silhouette.aria')}>
   <rect width="400" height="610" rx="14" class="bg" />
   <circle cx="200" cy="310" r="172" class="ring" />
-  <text class="title" x="22" y="34">KÖRPER &amp; VERLETZUNGEN</text>
+  <text class="title" x="22" y="34">{t('sheet.silhouette.title')}</text>
 
   {#each zones as z}
     {@const st = status(z.key)}
@@ -52,7 +53,7 @@
       {#each z.boxes as [x, y], i}
         <rect
           class="box" class:hit={i < injuries[z.key].length} {x} {y} width="12" height="12" rx="2"
-          role="button" tabindex="0" aria-label={`${z.label.text} Verletzung ${i + 1}`} aria-pressed={i < injuries[z.key].length}
+          role="button" tabindex="0" aria-label={t('sheet.common.injuryAria', { zone: z.label.text, n: i + 1 })} aria-pressed={i < injuries[z.key].length}
           onclick={() => onbox?.(z.key, i)} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && onbox?.(z.key, i)}
         />
       {/each}
@@ -60,9 +61,9 @@
   {/each}
 
   <rect class="box" x="22" y="556" width="10" height="10" rx="2" />
-  <text class="note" x="38" y="565">= 1 Verletzung (kostet sofort 1 Willenskraft)</text>
-  <text class="note" x="22" y="584">Arm/Bein: 2. Verletzung = unbrauchbar</text>
-  <text class="note" x="22" y="600">Kopf: 2. Verletzung · Torso: 3. Verletzung = sterbend</text>
+  <text class="note" x="38" y="565">{t('sheet.silhouette.note1')}</text>
+  <text class="note" x="22" y="584">{t('sheet.silhouette.note2')}</text>
+  <text class="note" x="22" y="600">{t('sheet.silhouette.note3')}</text>
 </svg>
 
 <style>

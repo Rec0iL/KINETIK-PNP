@@ -12,6 +12,7 @@
   import Notes from '../sheet/Notes.svelte';
   import Creation from '../sheet/Creation.svelte';
   import RollDock from '../sheet/RollDock.svelte';
+  import { t } from '../i18n';
 
   let { id }: { id: string } = $props();
 
@@ -26,21 +27,21 @@
   });
 
   const tabs = [
-    { key: 'ueber', label: 'Übersicht' },
-    { key: 'koerper', label: 'Körper' },
-    { key: 'moves', label: 'Moves' },
-    { key: 'ausruestung', label: 'Ausrüstung' },
-    { key: 'tags', label: 'Tags & Nachteile' },
-    { key: 'notizen', label: 'Notizen' },
-    { key: 'erschaffung', label: 'Erschaffung' },
+    { key: 'ueber', label: t('pages.characterPage.tabOverview') },
+    { key: 'koerper', label: t('pages.characterPage.tabBody') },
+    { key: 'moves', label: t('pages.characterPage.tabMoves') },
+    { key: 'ausruestung', label: t('pages.characterPage.tabGear') },
+    { key: 'tags', label: t('pages.characterPage.tabTags') },
+    { key: 'notizen', label: t('pages.characterPage.tabNotes') },
+    { key: 'erschaffung', label: t('pages.characterPage.tabCreation') },
   ] as const;
   type Tab = (typeof tabs)[number]['key'];
 
   const TAB_KEY = 'kinetik.tab';
   let tab = $state<Tab>((() => {
     try {
-      const t = sessionStorage.getItem(TAB_KEY);
-      return tabs.some((x) => x.key === t) ? (t as Tab) : 'ueber';
+      const saved = sessionStorage.getItem(TAB_KEY);
+      return tabs.some((x) => x.key === saved) ? (saved as Tab) : 'ueber';
     } catch { return 'ueber'; }
   })());
   $effect(() => { try { sessionStorage.setItem(TAB_KEY, tab); } catch { /* ignorieren */ } });
@@ -48,40 +49,40 @@
 </script>
 
 {#if !library.ready}
-  <p class="dim">Lade …</p>
+  <p class="dim">{t('pages.common.loading')}</p>
 {:else if !char || !sheet}
   <section class="panel stack">
-    <h2>Charakter nicht gefunden</h2>
-    <p class="dim">Dieser Charakter existiert in diesem Browser nicht (mehr). Über den Import kannst du eine JSON-Sicherung zurückholen.</p>
-    <div class="row"><a class="btn primary" href="#/charaktere">Zu den Charakteren</a></div>
+    <h2>{t('pages.common.notFound')}</h2>
+    <p class="dim">{t('pages.characterPage.notFoundText')}</p>
+    <div class="row"><a class="btn primary" href="#/charaktere">{t('pages.common.toCharacters')}</a></div>
   </section>
 {:else}
   <div class="sticky">
   <div class="bar">
-    <a class="btn sm ghost" href="#/charaktere">← Charaktere</a>
+    <a class="btn sm ghost" href="#/charaktere">{t('pages.characterPage.backToList')}</a>
     <div class="who">
-      <b>{char.name}</b>{#if char.alias}<span class="dim"> „{char.alias}“</span>{/if}
+      <b>{char.name}</b>{#if char.alias}<span class="dim"> {t('pages.common.quoted', { text: char.alias })}</span>{/if}
     </div>
-    <div class="mini" title="Energie">
-      <span>E</span><div class="b"><i style:width="{pct(char.resources.energie, sheet.energieMax.value)}%"></i></div><b>{char.resources.energie}/{sheet.energieMax.value}</b>
+    <div class="mini" title={t('pages.common.energy')}>
+      <span>{t('pages.common.energyShort')}</span><div class="b"><i style:width="{pct(char.resources.energie, sheet.energieMax.value)}%"></i></div><b>{char.resources.energie}/{sheet.energieMax.value}</b>
     </div>
-    <div class="mini amber" title="Willenskraft">
-      <span>WK</span><div class="b"><i style:width="{pct(char.resources.wk, sheet.wkMax.value)}%"></i></div><b>{char.resources.wk}/{sheet.wkMax.value}</b>
+    <div class="mini amber" title={t('pages.common.willpower')}>
+      <span>{t('pages.common.willpowerShort')}</span><div class="b"><i style:width="{pct(char.resources.wk, sheet.wkMax.value)}%"></i></div><b>{char.resources.wk}/{sheet.wkMax.value}</b>
     </div>
-    <div class="mini mom" title="Momentum"><span>M</span><b>{char.resources.momentum}/{sheet.momentumCap.value}</b></div>
+    <div class="mini mom" title={t('pages.characterPage.momentum')}><span>{t('pages.characterPage.momentumShort')}</span><b>{char.resources.momentum}/{sheet.momentumCap.value}</b></div>
     <span class="spacer"></span>
-    <button class="btn sm" onclick={() => downloadJson(exportCharacter($state.snapshot(char)), fileNameFor(char))}>Export JSON</button>
+    <button class="btn sm" onclick={() => downloadJson(exportCharacter($state.snapshot(char)), fileNameFor(char))}>{t('pages.common.exportJson')}</button>
   </div>
 
-  <div class="tabs" role="tablist" aria-label="Bogen">
-    {#each tabs as t}
-      <button role="tab" aria-selected={tab === t.key} onclick={() => (tab = t.key)}>{t.label}{#if t.key === 'erschaffung' && char.draft}<span class="dot" title="Erschaffung noch in Arbeit"></span>{/if}</button>
+  <div class="tabs" role="tablist" aria-label={t('pages.common.sheet')}>
+    {#each tabs as tb}
+      <button role="tab" aria-selected={tab === tb.key} onclick={() => (tab = tb.key)}>{tb.label}{#if tb.key === 'erschaffung' && char.draft}<span class="dot" title={t('pages.characterPage.creationDraft')}></span>{/if}</button>
     {/each}
   </div>
   </div>
 
   <div class="content" role="tabpanel">
-    {#if tab === 'ueber'}<Overview {char} ontab={(t) => (tab = t as Tab)} />
+    {#if tab === 'ueber'}<Overview {char} ontab={(k) => (tab = k as Tab)} />
     {:else if tab === 'koerper'}<Body {char} />
     {:else if tab === 'moves'}<Moves {char} />
     {:else if tab === 'ausruestung'}<Gear {char} />

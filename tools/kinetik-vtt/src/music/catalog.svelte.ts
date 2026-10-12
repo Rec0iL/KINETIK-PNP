@@ -1,4 +1,6 @@
 import type { TrackRef } from './clock';
+import { t } from '../i18n';
+export { ALL_CATEGORIES, categoryLabel, categoryFilterLabel } from './categories';
 
 export interface CatalogTrack extends TrackRef {
   category: string;
@@ -14,7 +16,8 @@ export async function loadCatalog() {
     const res = await fetch(new URL('music/catalog.json', document.baseURI));
     const data = await res.json();
     catalog.tracks = data.tracks;
-    catalog.note = data.note ?? '';
+    // Der Hinweis im Katalog ist deutsch; angezeigt wird der Text der App-Sprache (gleicher Inhalt).
+    catalog.note = data.note ? t('music.catalog.note') : '';
   } catch (e) {
     console.warn('Musikkatalog nicht ladbar', e);
   }

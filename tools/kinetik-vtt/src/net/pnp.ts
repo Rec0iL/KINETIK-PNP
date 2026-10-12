@@ -9,6 +9,8 @@ import type { Handout } from './protocol';
 import type { GmSession } from './gm.svelte';
 import type { TrackRef } from '../music/clock';
 import type { CatalogTrack } from '../music/catalog.svelte';
+import { categoryLabel } from '../music/categories';
+import { t, tn } from '../i18n';
 
 export const PNP_PROTOCOL = 1;
 
@@ -50,39 +52,39 @@ interface Role { id: string; for: ('enemy' | 'npc' | 'pc')[]; label: string; des
 export function enemyRole(): Role {
   const tiers = rules.npc.leiter;
   const fields: Field[] = [
-    { key: 'tier', label: 'Stufe', type: 'select', required: true, default: 'schlaeger', group: 'Grundwerte', options: tiers.map((t) => ({ value: t.key, label: t.name })), help: 'Goon, Schläger, Elite, Boss oder Nemesis (Regel 3.7)' },
-    { key: 'level', label: 'Level', type: 'number', min: 0, max: 10, step: 1, group: 'Grundwerte' },
-    { key: 'bonus', label: 'Bonus', type: 'number', min: -3, max: 20, step: 1, group: 'Grundwerte' },
-    { key: 'count', label: 'Gruppengröße', type: 'number', min: 1, max: 12, default: 3, group: 'Grundwerte', showIf: { key: 'tier', equals: 'goon' }, help: 'Goons treten als Gruppe auf, jeder fällt mit einem Treffer.' },
-    { key: 'schutz', label: 'Schutz', type: 'number', min: 0, max: 9, group: 'Ressourcen', showIf: { key: 'tier', notEquals: 'goon' } },
-    { key: 'wk', label: 'Willenskraft (WK)', type: 'number', min: 0, max: 30, group: 'Ressourcen', showIf: { key: 'tier', notEquals: 'goon' } },
-    { key: 'energie', label: 'Energie', type: 'number', min: 0, max: 30, default: 6, group: 'Ressourcen', showIf: { key: 'tier', notEquals: 'goon' } },
-    { key: 'tags', label: 'Tags', type: 'tags', group: 'Zustand', suggestions: [...rules.tags.klein, ...rules.tags.gross], help: 'kleine und große Tags aus dem Regelwerk, z. B. „Am Boden“' },
-    { key: 'moves', label: 'Moves / Fähigkeiten', type: 'list', group: 'Fähigkeiten', item: [
-      { key: 'name', label: 'Name', type: 'text', required: true, suggestions: rules.moves.moves.map((m) => m.name) },
-      { key: 'text', label: 'Wirkung', type: 'longtext' },
+    { key: 'tier', label: t('net.pnp.field.tier'), type: 'select', required: true, default: 'schlaeger', group: t('net.pnp.group.basics'), options: tiers.map((x) => ({ value: x.key, label: x.name })), help: t('net.pnp.field.tierHelp') },
+    { key: 'level', label: t('net.pnp.field.level'), type: 'number', min: 0, max: 10, step: 1, group: t('net.pnp.group.basics') },
+    { key: 'bonus', label: t('net.pnp.field.bonus'), type: 'number', min: -3, max: 20, step: 1, group: t('net.pnp.group.basics') },
+    { key: 'count', label: t('net.pnp.field.count'), type: 'number', min: 1, max: 12, default: 3, group: t('net.pnp.group.basics'), showIf: { key: 'tier', equals: 'goon' }, help: t('net.pnp.field.countHelp') },
+    { key: 'schutz', label: t('net.pnp.field.schutz'), type: 'number', min: 0, max: 9, group: t('net.pnp.group.resources'), showIf: { key: 'tier', notEquals: 'goon' } },
+    { key: 'wk', label: t('net.pnp.field.wk'), type: 'number', min: 0, max: 30, group: t('net.pnp.group.resources'), showIf: { key: 'tier', notEquals: 'goon' } },
+    { key: 'energie', label: t('net.pnp.field.energie'), type: 'number', min: 0, max: 30, default: 6, group: t('net.pnp.group.resources'), showIf: { key: 'tier', notEquals: 'goon' } },
+    { key: 'tags', label: t('net.pnp.field.tags'), type: 'tags', group: t('net.pnp.group.state'), suggestions: [...rules.tags.klein, ...rules.tags.gross], help: t('net.pnp.field.tagsHelp') },
+    { key: 'moves', label: t('net.pnp.field.movesAbilities'), type: 'list', group: t('net.pnp.group.abilities'), item: [
+      { key: 'name', label: t('net.pnp.field.name'), type: 'text', required: true, suggestions: rules.moves.moves.map((m) => m.name) },
+      { key: 'text', label: t('net.pnp.field.effect'), type: 'longtext' },
     ] },
-    { key: 'note', label: 'Verhalten, Schwäche, Beute', type: 'longtext', group: 'Notizen' },
+    { key: 'note', label: t('net.pnp.field.enemyNote'), type: 'longtext', group: t('net.pnp.group.notes') },
   ];
-  const presets: Preset[] = tiers.map((t) => {
-    const wk = 'wk' in t ? (t as { wk: number }).wk : 0;
-    const values: Record<string, unknown> = { tier: t.key, level: t.levelMax, bonus: t.bonusMax };
-    if (t.key === 'goon') values.count = 3;
-    else Object.assign(values, { schutz: t.schutz, wk, energie: 6 });
+  const presets: Preset[] = tiers.map((tier) => {
+    const wk = 'wk' in tier ? (tier as { wk: number }).wk : 0;
+    const values: Record<string, unknown> = { tier: tier.key, level: tier.levelMax, bonus: tier.bonusMax };
+    if (tier.key === 'goon') values.count = 3;
+    else Object.assign(values, { schutz: tier.schutz, wk, energie: 6 });
     return {
-      id: t.key, label: t.name, values, help: `Ausgeschaltet: ${t.ausgeschaltet}`,
-      ranges: { level: [t.levelMin, t.levelMax], bonus: [t.bonusMin, t.bonusMax] },
+      id: tier.key, label: tier.name, values, help: t('net.pnp.presetHelp', { text: tier.ausgeschaltet }),
+      ranges: { level: [tier.levelMin, tier.levelMax], bonus: [tier.bonusMin, tier.bonusMax] },
     };
   });
-  return { id: 'enemy', for: ['enemy'], label: 'Gegner', description: 'Ein Gegner im Kampf-Tab (mit Token auf Wunsch).', portrait: true, fields, presets };
+  return { id: 'enemy', for: ['enemy'], label: t('net.pnp.role.enemy'), description: t('net.pnp.role.enemyText'), portrait: true, fields, presets };
 }
 
 export function npcRole(): Role {
   return {
-    id: 'npc', for: ['npc'], label: 'NPC', description: 'Eine neutrale Figur: wird als Token mit Notiz auf die aktive Karte gesetzt.', portrait: true,
+    id: 'npc', for: ['npc'], label: t('net.pnp.role.npc'), description: t('net.pnp.role.npcText'), portrait: true,
     fields: [
-      { key: 'note', label: 'Notiz unter dem Token', type: 'text' },
-      { key: 'size', label: 'Größe (Felder)', type: 'number', min: 1, max: 4, step: 1, default: 1 },
+      { key: 'note', label: t('net.pnp.field.tokenNote'), type: 'text' },
+      { key: 'size', label: t('net.pnp.field.size'), type: 'number', min: 1, max: 4, step: 1, default: 1 },
     ],
   };
 }
@@ -91,26 +93,26 @@ export function npcRole(): Role {
 export function pcRole(): Role {
   const attrs = rules.tabellen.attribute as { key: string; name: string; text: string }[];
   return {
-    id: 'pc', for: ['pc'], label: 'Spielercharakter', portrait: true,
-    description: 'Der Charakter eines Spielers aus der laufenden Runde. Die VTT besitzt den Bogen; PenNodePaper liest ihn nur (Auswertung, Erzählhilfe), schreibt aber nicht zurück.',
+    id: 'pc', for: ['pc'], label: t('net.pnp.role.pc'), portrait: true,
+    description: t('net.pnp.role.pcText'),
     fields: [
-      { key: 'concept', label: 'Konzept', type: 'text', group: 'Person' },
-      { key: 'alias', label: 'Alias', type: 'text', group: 'Person' },
-      { key: 'stufe', label: 'Stufe der Kampagne', type: 'select', group: 'Person', options: [{ value: 'strasse', label: 'Straße' }, { value: 'kino', label: 'Kino' }, { value: 'legende', label: 'Legende' }, { value: 'custom', label: 'Eigene' }] },
-      ...attrs.map((a): Field => ({ key: a.key, label: a.name, type: 'number', min: 0, max: 10, step: 1, group: 'Attribute', help: a.text })),
-      { key: 'energie', label: 'Energie', type: 'number', group: 'Ressourcen' },
-      { key: 'wk', label: 'Willenskraft (WK)', type: 'number', group: 'Ressourcen' },
-      { key: 'momentum', label: 'Momentum', type: 'number', group: 'Ressourcen' },
-      { key: 'schutz', label: 'Schutz', type: 'number', group: 'Ressourcen' },
-      { key: 'tags', label: 'Tags', type: 'tags', group: 'Zustand' },
-      { key: 'scars', label: 'Narben', type: 'tags', group: 'Zustand' },
-      { key: 'moves', label: 'Moves', type: 'list', group: 'Fähigkeiten', item: [
-        { key: 'name', label: 'Name', type: 'text', required: true },
-        { key: 'text', label: 'Wirkung', type: 'longtext' },
+      { key: 'concept', label: t('net.pnp.field.concept'), type: 'text', group: t('net.pnp.group.person') },
+      { key: 'alias', label: t('net.pnp.field.alias'), type: 'text', group: t('net.pnp.group.person') },
+      { key: 'stufe', label: t('net.pnp.field.campaignTier'), type: 'select', group: t('net.pnp.group.person'), options: [{ value: 'strasse', label: t('net.pnp.field.tierStrasse') }, { value: 'kino', label: t('net.pnp.field.tierKino') }, { value: 'legende', label: t('net.pnp.field.tierLegende') }, { value: 'custom', label: t('net.pnp.field.tierCustom') }] },
+      ...attrs.map((a): Field => ({ key: a.key, label: a.name, type: 'number', min: 0, max: 10, step: 1, group: t('net.pnp.group.attributes'), help: a.text })),
+      { key: 'energie', label: t('net.pnp.field.energie'), type: 'number', group: t('net.pnp.group.resources') },
+      { key: 'wk', label: t('net.pnp.field.wk'), type: 'number', group: t('net.pnp.group.resources') },
+      { key: 'momentum', label: t('net.pnp.field.momentum'), type: 'number', group: t('net.pnp.group.resources') },
+      { key: 'schutz', label: t('net.pnp.field.schutz'), type: 'number', group: t('net.pnp.group.resources') },
+      { key: 'tags', label: t('net.pnp.field.tags'), type: 'tags', group: t('net.pnp.group.state') },
+      { key: 'scars', label: t('net.pnp.field.scars'), type: 'tags', group: t('net.pnp.group.state') },
+      { key: 'moves', label: t('net.pnp.field.moves'), type: 'list', group: t('net.pnp.group.abilities'), item: [
+        { key: 'name', label: t('net.pnp.field.name'), type: 'text', required: true },
+        { key: 'text', label: t('net.pnp.field.effect'), type: 'longtext' },
       ] },
-      { key: 'weapons', label: 'Waffen', type: 'list', group: 'Ausrüstung', item: [
-        { key: 'name', label: 'Name', type: 'text', required: true },
-        { key: 'text', label: 'Profil', type: 'text' },
+      { key: 'weapons', label: t('net.pnp.field.weapons'), type: 'list', group: t('net.pnp.group.gear'), item: [
+        { key: 'name', label: t('net.pnp.field.name'), type: 'text', required: true },
+        { key: 'text', label: t('net.pnp.field.profile'), type: 'text' },
       ] },
     ],
   };
@@ -254,14 +256,14 @@ export function sceneFromPush(p: Extract<PnpPush, { kind: 'scene' }>['payload'],
     ...s.grid, show: !p.grid.hidden, size: Math.max(8, p.grid.size * k), ox: p.grid.offsetX * k, oy: p.grid.offsetY * k,
     unit: p.grid.unit || 'ft', unitsPerCell: p.grid.unitsPerCell || 1,
   };
-  s.tokens = p.tokens.map((t, i): Token => {
+  s.tokens = p.tokens.map((pt, i): Token => {
     // Token eines Charakters: Herkunft merken (`src`), und wenn sein Kampf-Gegner schon da ist, gleich verknüpfen
-    const npc = t.character ? npcs.find((n) => n.src === `pnp:${t.character}`) : undefined;
+    const npc = pt.character ? npcs.find((n) => n.src === `pnp:${pt.character}`) : undefined;
     const tok: Token = {
-      id: uid(), name: (t.label || { pc: `Spieler ${i + 1}`, npc: 'NPC', enemy: 'Gegner' }[t.kind]).slice(0, 40),
-      x: Math.round(((t.x + 0.5) * p.grid.size + p.grid.offsetX) * k), y: Math.round(((t.y + 0.5) * p.grid.size + p.grid.offsetY) * k),
-      size: 1, color: t.kind === 'pc' ? (TOKEN_COLORS[i % TOKEN_COLORS.length] ?? KIND_COLOR.pc) : KIND_COLOR[t.kind], kind: t.kind === 'pc' ? 'pc' : 'npc', hidden: false,
-      ...(t.character ? { src: `pnp:${t.character}` } : {}),
+      id: uid(), name: (pt.label || { pc: t('net.pnp.token.pc', { n: i + 1 }), npc: t('net.pnp.token.npc'), enemy: t('net.pnp.token.enemy') }[pt.kind]).slice(0, 40),
+      x: Math.round(((pt.x + 0.5) * p.grid.size + p.grid.offsetX) * k), y: Math.round(((pt.y + 0.5) * p.grid.size + p.grid.offsetY) * k),
+      size: 1, color: pt.kind === 'pc' ? (TOKEN_COLORS[i % TOKEN_COLORS.length] ?? KIND_COLOR.pc) : KIND_COLOR[pt.kind], kind: pt.kind === 'pc' ? 'pc' : 'npc', hidden: false,
+      ...(pt.character ? { src: `pnp:${pt.character}` } : {}),
       ...(npc ? { npcId: npc.id, ...(npc.token ? { img: npc.token } : {}) } : {}),
     };
     const size = npc ? tokenSizeOfTier(npc.type) : 1;
@@ -286,7 +288,7 @@ export function pickByMood(mood: string, tracks: TrackRef[]): TrackRef | undefin
 export function trackList(host: PnpHost) {
   const s = host.session();
   return [
-    ...host.catalog().map((t) => ({ id: t.id, title: t.title, category: t.category, uploaded: false })),
+    ...host.catalog().map((x) => ({ id: x.id, title: x.title, category: categoryLabel(x), uploaded: false })),
     ...s.tracks.map((t) => ({ id: t.id, title: t.title, uploaded: true })),
   ];
 }
@@ -297,10 +299,10 @@ export async function handlePush(host: PnpHost, push: PnpPush): Promise<unknown>
   switch (push.kind) {
     case 'handout': {
       const p = push.payload;
-      if (!p.title?.trim()) throw new Error('Handout ohne Titel');
+      if (!p.title?.trim()) throw new Error(t('net.pnp.handoutNoTitle'));
       let h: Handout;
       if (p.kind === 'image') {
-        if (!p.image) throw new Error('Bild-Handout ohne Bild');
+        if (!p.image) throw new Error(t('net.pnp.handoutNoImage'));
         const stored = await host.storeImage(p.image, 2400);
         h = { id: p.id, title: p.title.slice(0, 120), kind: 'image', hash: stored.hash, ts: Date.now() };
       } else {
@@ -309,19 +311,19 @@ export async function handlePush(host: PnpHost, push: PnpPush): Promise<unknown>
       if (s.handouts.some((x) => x.id === p.id)) host.removeHandout(p.id); // erneutes Senden ersetzt
       host.addHandout(h);
       const sent = p.reveal || p.to ? host.sendHandout(h, p.to ? [p.to] : null) : undefined;
-      host.notify(`PenNodePaper: Handout „${h.title}“ ${sent !== undefined ? `an ${sent} Spieler gesendet` : 'zur Handout-Liste hinzugefügt'}`);
+      host.notify(sent !== undefined ? tn('net.pnp.handoutSent', sent, { title: h.title }) : t('net.pnp.handoutListed', { title: h.title }));
       return { revealed: sent !== undefined, recipients: sent };
     }
     case 'scene': {
       const p = push.payload;
-      if (p.grid.type !== 'square') throw new Error('Hex-Raster werden noch nicht unterstützt');
+      if (p.grid.type !== 'square') throw new Error(t('net.pnp.hexGrid'));
       const stored = await host.storeImage(p.image, 4096);
       const scene = sceneFromPush(p, stored, host.uid, s.combat.npcs);
       const wasLive = s.activeScene === p.id;
       if (s.scenes.some((x) => x.id === p.id)) host.removeScene(p.id);
       host.addScene(scene);
       if (p.activate || wasLive) host.activateScene(p.id);
-      host.notify(`PenNodePaper: Karte „${p.name}“ übernommen${p.activate ? ' und freigegeben' : ''}`);
+      host.notify(t(p.activate ? 'net.pnp.sceneTakenShared' : 'net.pnp.sceneTaken', { name: p.name }));
       return { tokens: scene.tokens.length };
     }
     case 'character':
@@ -333,8 +335,8 @@ export async function handlePush(host: PnpHost, push: PnpPush): Promise<unknown>
         return { stopped: true };
       }
       const all: TrackRef[] = [...host.catalog(), ...s.tracks];
-      const track = (p.trackId && all.find((t) => t.id === p.trackId)) || (p.mood ? pickByMood(p.mood, all) : undefined);
-      if (!track) throw new Error(p.trackId ? `Unbekannter Titel „${p.trackId}“` : p.mood ? `Kein Titel passt zur Stimmung „${p.mood}“` : 'Titel oder Stimmung angeben');
+      const track = (p.trackId && all.find((x) => x.id === p.trackId)) || (p.mood ? pickByMood(p.mood, all) : undefined);
+      if (!track) throw new Error(p.trackId ? t('net.pnp.unknownTrack', { id: p.trackId }) : p.mood ? t('net.pnp.noMoodTrack', { mood: p.mood }) : t('net.pnp.trackOrMood'));
       host.musicPlay(track);
       return { playing: track.title };
     }
@@ -343,7 +345,7 @@ export async function handlePush(host: PnpHost, push: PnpPush): Promise<unknown>
 
 async function pushCharacter(host: PnpHost, c: PnpCharacter): Promise<unknown> {
   const s = host.session();
-  if (!c.name?.trim()) throw new Error('Charakter ohne Namen');
+  if (!c.name?.trim()) throw new Error(t('net.pnp.noName'));
   const portrait = c.portrait ? await host.portraits(c.portrait) : undefined;
 
   if (c.role === 'enemy') {
@@ -369,7 +371,7 @@ async function pushCharacter(host: PnpHost, c: PnpCharacter): Promise<unknown> {
     // eine Goon-Gruppe hat mindestens so viele Mitglieder, wie Token für sie auf der Karte stehen
     if (npc.type === 'goon' && tied > npc.count) npc.count = Math.min(12, tied);
     host.commitCombat();
-    host.notify(`PenNodePaper: Gegner „${npc.name}“ ${existing ? 'aktualisiert' : 'zum Kampf hinzugefügt'}`);
+    host.notify(t(existing ? 'net.pnp.enemyUpdated' : 'net.pnp.enemyAdded', { name: npc.name }));
     return { npcId: npc.id, updated: !!existing };
   }
 
@@ -389,11 +391,11 @@ async function pushCharacter(host: PnpHost, c: PnpCharacter): Promise<unknown> {
       sceneId ||= sc.id;
     }
     if (updated) {
-      host.notify(`PenNodePaper: NPC „${c.name}“ aktualisiert`);
+      host.notify(t('net.pnp.npcUpdated', { name: c.name }));
       return { tokenId: s.scenes.find((x) => x.id === sceneId)?.tokens.find((t) => t.src === src)?.id, scene: sceneId, updated: true, tokens: updated };
     }
     const scene = s.scenes.find((x) => x.id === c.scene) ?? s.scenes.find((x) => x.id === s.activeScene) ?? s.scenes[0];
-    if (!scene) throw new Error('Keine Karte vorhanden: lege zuerst eine Szene an, dann kann der NPC als Token gesetzt werden.');
+    if (!scene) throw new Error(t('net.pnp.noMap'));
     const g = scene.grid.size;
     const token: Token = {
       id: host.uid(), x: scene.width / 2, y: scene.height / 2 - g * 2, color: KIND_COLOR.npc, kind: 'npc', hidden: false,
@@ -401,11 +403,11 @@ async function pushCharacter(host: PnpHost, c: PnpCharacter): Promise<unknown> {
       ...(portrait ? { img: portrait.token } : {}),
     };
     host.gmMapOps(scene.id, [{ op: 'tok', token }]);
-    host.notify(`PenNodePaper: NPC „${token.name}“ auf Karte „${scene.name}“ gesetzt`);
+    host.notify(t('net.pnp.npcPlaced', { name: token.name, map: scene.name }));
     return { tokenId: token.id, scene: scene.id, updated: false };
   }
-  if (c.role === 'pc') throw new Error('Spielercharaktere gehören den Spielern: sie werden in der VTT gepflegt und nur an PenNodePaper gemeldet.');
-  throw new Error(`Unbekannte Rolle „${c.role}“ (bekannt: enemy, npc)`);
+  if (c.role === 'pc') throw new Error(t('net.pnp.pcReadOnly'));
+  throw new Error(t('net.pnp.unknownRole', { role: c.role }));
 }
 
 /** Einstiegspunkt für jede eingehende Nachricht. Liefert die Antwort (oder nichts, z. B. bei `welcome`). */
@@ -421,7 +423,7 @@ export async function handleMessage(host: PnpHost, msg: PnpIn): Promise<PnpReply
     try {
       if (msg.what === 'tracks') return { t: 'result', id: msg.id, ok: true, data: trackList(host) };
       if (msg.what === 'party') return { t: 'result', id: msg.id, ok: true, data: partyList(host.session()) };
-      return { t: 'result', id: msg.id, ok: false, error: `Unbekannte Anfrage „${String(msg.what)}“` };
+      return { t: 'result', id: msg.id, ok: false, error: t('net.pnp.unknownRequest', { what: String(msg.what) }) };
     } catch (e) {
       return { t: 'result', id: msg.id, ok: false, error: e instanceof Error ? e.message : String(e) };
     }

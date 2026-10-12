@@ -1,0 +1,53 @@
+{
+  "klein": [
+    "Prone",
+    "Blinded",
+    "Disarmed",
+    "Paralyzed",
+    "Dazed",
+    "Off Balance",
+    "Cover Lost",
+    "Weapon Stuck",
+    "Jam",
+    "Magazine Empty",
+    "Blade Stuck",
+    "Barrel Pushed Aside",
+    "Fouled",
+    "Suspicious",
+    "Suspicion",
+    "Exposed",
+    "Reloading",
+    "Pinned Down"
+  ],
+  "gross": [
+    "Stunned",
+    "Immobilized",
+    "Choked",
+    "Joint Locked"
+  ],
+  "umgebung": {
+    "schleicherKlein": [
+      "Darkness",
+      "Noise",
+      "Crowd",
+      "Rain"
+    ],
+    "waechterKlein": [
+      "Blinding Light",
+      "Silence",
+      "Open Ground"
+    ],
+    "gross": [
+      "Blackout",
+      "Fog",
+      "Explosive Distraction"
+    ]
+  },
+  "zustaende": [
+    "Winded",
+    "Broken",
+    "Dying",
+    "Unconscious",
+    "Poisoned"
+  ]
+}

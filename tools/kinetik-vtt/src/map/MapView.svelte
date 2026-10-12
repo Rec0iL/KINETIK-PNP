@@ -1,5 +1,6 @@
 <script lang="ts">
   import { untrack } from 'svelte';
+  import { t, tn } from '../i18n';
   import { assets, assetUrl, requestAsset } from '../net/assets.svelte';
   import { pings } from './pings.svelte';
   import { measure, snapToGrid, type FogOp, type FogShape, type MapOp, type MapState, type Token } from './mapstate';
@@ -103,7 +104,7 @@
           if (!url || hash !== map.asset) return;
           const el = new Image();
           el.onload = () => { img = el; schedule(); };
-          el.onerror = () => { loadError = 'Das Kartenbild konnte nicht geladen werden.'; schedule(); };
+          el.onerror = () => { loadError = t('map.view.loadError'); schedule(); };
           el.src = url;
         })
         .catch((e) => { loadError = (e as Error).message; schedule(); });
@@ -203,7 +204,7 @@
       g.font = `${Math.max(16, map.width / 40)}px Barlow, sans-serif`;
       g.textAlign = 'center';
       const p = map.asset ? assets.progress[map.asset] : undefined;
-      const msg = loadError || (map.asset ? (p ? `Karte wird übertragen … ${Math.round((p.loaded / Math.max(1, p.total)) * 100)} %` : 'Karte wird geladen …') : 'Keine Karte');
+      const msg = loadError || (map.asset ? (p ? t('map.view.transferring', { pct: Math.round((p.loaded / Math.max(1, p.total)) * 100) }) : t('map.view.loading')) : t('map.view.noMap'));
       g.fillText(msg, map.width / 2, map.height / 2);
     }
     g.strokeStyle = 'rgba(255,255,255,0.15)';
@@ -283,7 +284,7 @@
       g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke();
       g.setLineDash([]);
       const m = measure(gr, a, b);
-      const label = `${m.cells.toFixed(1).replace('.0', '')} Felder · ${m.units.toFixed(1).replace('.0', '')} ${gr.unit}`;
+      const label = tn('map.view.measure', Number(m.cells.toFixed(1)), { cells: m.cells.toFixed(1).replace('.0', ''), units: m.units.toFixed(1).replace('.0', ''), unit: gr.unit });
       g.font = `600 ${15 / view.scale}px Barlow, sans-serif`;
       const w = g.measureText(label).width + 14 / view.scale;
       g.fillStyle = 'rgba(5,8,12,0.88)';
@@ -339,7 +340,7 @@
     g.textAlign = 'center';
     g.fillStyle = color;
     const m = measure(map.grid, [x0, y0], [x1, y1]);
-    g.fillText(`${label} · ${m.cells.toFixed(1).replace('.0', '')} Felder`, x1, y1 - r - fs * 0.3);
+    g.fillText(tn('map.view.ghost', Number(m.cells.toFixed(1)), { label, cells: m.cells.toFixed(1).replace('.0', '') }), x1, y1 - r - fs * 0.3);
     g.restore();
   }
 
@@ -613,7 +614,7 @@
     bind:this={canvas}
     style:cursor={cursor}
     tabindex="0"
-    aria-label="Karte"
+    aria-label={t('map.view.aria')}
     onpointerdown={onDown}
     onpointermove={onMove}
     onpointerup={onUp}

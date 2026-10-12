@@ -1,7 +1,8 @@
 <script lang="ts">
   import { router } from './lib/router.svelte';
   import { theme, applyTheme, THEMES, type ThemeKey } from './lib/theme.svelte';
-  import { t, type Key } from './i18n';
+  import { t, type Key, getLocale, changeLocale, LOCALES, LOCALE_LABEL, type Locale } from './i18n';
+  import { gm } from './net/gm.svelte';
   import Home from './pages/Home.svelte';
   import Placeholder from './pages/Placeholder.svelte';
   import Characters from './pages/Characters.svelte';
@@ -47,6 +48,13 @@
     return () => ro.disconnect();
   });
 
+  // Sprache wechseln lädt die App neu (siehe i18n/locale.ts). Eine gehostete Runde wird danach wieder aufgenommen.
+  function onLang(e: Event & { currentTarget: HTMLSelectElement }) {
+    const l = e.currentTarget.value as Locale;
+    if (gm.status === 'open' && !confirm(t('app.language.confirmHost'))) { e.currentTarget.value = getLocale(); return; }
+    changeLocale(l);
+  }
+
   loadLibrary().then(() => resumeFromSession());
   loadAssetIndex().then(() => resumeHostIfActive());
   loadMoveLibrary();
@@ -68,18 +76,26 @@
   <a class="brand" href="#/" aria-label={t('app.name')}>
     <span class="mark">K</span><span class="word">KINETIK</span>
   </a>
-  <nav aria-label="Hauptnavigation">
+  <nav aria-label={t('app.nav.aria')}>
     {#each nav as item}
       <a href={item.href} aria-current={item.names.includes(router.route.name) ? 'page' : undefined}>{t(item.key)}</a>
     {/each}
   </nav>
-  <button class="btn sm rbbtn" class:on={rulebook.open} onclick={toggleRulebook} aria-pressed={rulebook.open} title="Regelwerk lesen">📖 <span class="rbl">Regelwerk</span></button>
-  <button class="btn sm icon dicebtn" class:on={settings.dice3d} onclick={() => (settings.dice3d = !settings.dice3d)} title={settings.dice3d ? '3D-Würfel aus' : '3D-Würfel an'} aria-pressed={settings.dice3d} aria-label="3D-Würfel">⚄</button>
+  <button class="btn sm rbbtn" class:on={rulebook.open} onclick={toggleRulebook} aria-pressed={rulebook.open} title={t('app.rulebook.title')}>📖 <span class="rbl">{t('app.rulebook.short')}</span></button>
+  <button class="btn sm icon dicebtn" class:on={settings.dice3d} onclick={() => (settings.dice3d = !settings.dice3d)} title={settings.dice3d ? t('app.dice3d.off') : t('app.dice3d.on')} aria-pressed={settings.dice3d} aria-label={t('app.dice3d.aria')}>⚄</button>
   <label class="theme">
     <span class="sr-only">{t('theme.label')}</span>
     <select value={theme.current} onchange={(e) => applyTheme(e.currentTarget.value as ThemeKey)} aria-label={t('theme.label')}>
       {#each THEMES as k}
         <option value={k}>{t(`theme.${k}` as Key)}</option>
+      {/each}
+    </select>
+  </label>
+  <label class="theme lang">
+    <span class="sr-only">{t('app.language')}</span>
+    <select value={getLocale()} onchange={onLang} aria-label={t('app.language')} title={t('app.language')}>
+      {#each LOCALES as l}
+        <option value={l} title={LOCALE_LABEL[l]}>{l.toUpperCase()}</option>
       {/each}
     </select>
   </label>
@@ -97,8 +113,8 @@
   {:else if router.route.name === 'builder'}
     <Builder />
   {:else if router.route.name === 'dice'}
-    <span class="kicker">Spieler</span>
-    <h1 class="pagetitle">Würfel</h1>
+    <span class="kicker">{t('app.role.player')}</span>
+    <h1 class="pagetitle">{t('nav.dice')}</h1>
     <RollPanel />
   {:else if router.route.name === 'create'}
     <CreateStart />
@@ -124,7 +140,7 @@
 <Toasts />
 
 <footer class="foot">
-  <span>KINETIK · Regelwerk v{RULES_VERSION} · {COPYRIGHT}</span>
+  <span>{t('app.footer.rules', { version: RULES_VERSION, copyright: COPYRIGHT })}</span>
   <span class="links">
     <a href="#/credits">{t('nav.credits')}</a>
     <a href="#/impressum">{t('nav.impressum')}</a>
@@ -160,6 +176,7 @@
   @media (max-width: 760px) { .rbl { display: none; } }
   .dicebtn { font-size: 1.1rem; color: var(--ink-dim); }
   .dicebtn.on { color: var(--accent); border-color: var(--accent-line); }
+  .lang select { padding-inline: 0.45em; }
   .theme select { width: auto; min-height: 34px; padding: 0.3em 0.6em; font: 600 0.8rem var(--font-head); letter-spacing: 0.1em; text-transform: uppercase; }
   .pagetitle { margin-bottom: 1rem; }
   main { padding: 1.4rem max(16px, 3vw) 3rem; max-width: 1280px; margin: 0 auto; }
@@ -170,5 +187,12 @@
   @media (max-width: 640px) {
     .word { display: none; }
     .top { gap: 0.5rem; }
+  }
+  /* Sehr schmale Telefone (320 px): Kopf enger setzen, damit Regelwerk, Würfel, Look und Sprache nebeneinander passen */
+  @media (max-width: 470px) {
+    .top { gap: 0.3rem 0.4rem; padding-inline: 10px; flex-wrap: wrap; }
+    .brand { margin-right: auto; }
+    nav { order: 5; flex: 1 0 100%; }
+    .theme select { padding-inline: 0.35em; letter-spacing: 0.04em; }
   }
 </style>

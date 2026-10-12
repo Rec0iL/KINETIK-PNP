@@ -14,8 +14,9 @@
   import CombatSidebar from '../gm/CombatSidebar.svelte';
   import GmHandouts from '../gm/GmHandouts.svelte';
   import RollPanel from '../sheet/RollPanel.svelte';
+  import { t, tn, fmtDate, fmtTime } from '../i18n';
 
-  let name = $state(settings.displayName || 'Spielleiter');
+  let name = $state(settings.displayName || t('pages.gm.defaultName'));
   let password = $state('');
   let saved = $state<GmSession | null>(null);
   let loaded = $state(false);
@@ -57,78 +58,78 @@
     if (!f) return;
     try {
       saved = await importSession(await f.text());
-      pushToast('Sitzung geladen. Du kannst sie jetzt fortsetzen.', 'good');
+      pushToast(t('pages.gm.sessionLoaded'), 'good');
     } catch (err) { pushToast((err as Error).message, 'danger'); }
   }
 
   async function start(resume: GmSession | null) {
     settings.displayName = name.trim();
-    await startHost({ gmName: name.trim() || 'Spielleiter', password, resume });
+    await startHost({ gmName: name.trim() || t('pages.gm.defaultName'), password, resume });
   }
 
   const joinUrl = $derived(`${location.origin}${location.pathname}#/beitreten/${gm.session?.code ?? ''}`);
   const party = $derived(gm.session ? partyFor(null) : []);
   async function copy(text: string, what: string) {
-    try { await navigator.clipboard.writeText(text); pushToast(`${what} kopiert.`, 'good', 2500); } catch { pushToast('Kopieren nicht möglich.', 'warn'); }
+    try { await navigator.clipboard.writeText(text); pushToast(t('pages.gm.copied', { what }), 'good', 2500); } catch { pushToast(t('pages.gm.copyFailed'), 'warn'); }
   }
   const online = $derived(gm.session?.players.filter((p) => p.connected || p.local).length ?? 0);
 </script>
 
 {#if gm.status !== 'open'}
   <section class="start">
-    <span class="kicker">Spielleiter</span>
-    <h1>Runde starten</h1>
+    <span class="kicker">{t('pages.gm.kicker')}</span>
+    <h1>{t('pages.gm.title')}</h1>
     <div class="panel stack">
       {#if saved && loaded}
         <div class="resume">
-          <h2>Letzte Runde fortsetzen</h2>
-          <p class="dim">Raumcode <b class="mono">{formatCode(saved.code)}</b> · {saved.players.length} Spieler · gestartet {new Date(saved.created).toLocaleDateString('de-DE')}. Spieler können mit demselben Code wieder beitreten.</p>
-          <button class="btn primary" onclick={() => start(saved)} disabled={gm.status === 'starting'}>Fortsetzen</button>
+          <h2>{t('pages.gm.resumeTitle')}</h2>
+          <p class="dim">{t('pages.gm.roomCode')} <b class="mono">{formatCode(saved.code)}</b> · {tn('pages.gm.playerCount', saved.players.length)} · {t('pages.gm.started', { date: fmtDate(saved.created) })} {t('pages.gm.rejoin')}</p>
+          <button class="btn primary" onclick={() => start(saved)} disabled={gm.status === 'starting'}>{t('pages.gm.resume')}</button>
         </div>
         <hr />
       {/if}
-      <div class="row"><button class="btn sm" onclick={() => importFile?.click()}>Sitzungsdatei laden</button><input bind:this={importFile} type="file" accept="application/json,.json" class="sr-only" onchange={onImport} /></div>
-      <label class="field">Dein Name in der Runde<input bind:value={name} /></label>
-      <label class="field">Passwort (optional)<input bind:value={password} autocomplete="off" placeholder="leer = nur Raumcode und Bestätigung" /></label>
+      <div class="row"><button class="btn sm" onclick={() => importFile?.click()}>{t('pages.gm.loadFile')}</button><input bind:this={importFile} type="file" accept="application/json,.json" class="sr-only" onchange={onImport} /></div>
+      <label class="field">{t('pages.gm.yourName')}<input bind:value={name} /></label>
+      <label class="field">{t('pages.gm.password')}<input bind:value={password} autocomplete="off" placeholder={t('pages.gm.passwordPh')} /></label>
       <NetSettings />
       {#if gm.error}<p class="err" class:wait={gm.status === 'starting'}>{gm.error}</p>{/if}
       <div class="row">
-        <button class="btn amber" onclick={() => start(null)} disabled={gm.status === 'starting'}>{gm.status === 'starting' ? 'Starte …' : saved ? 'Neue Runde' : 'Runde starten'}</button>
+        <button class="btn amber" onclick={() => start(null)} disabled={gm.status === 'starting'}>{gm.status === 'starting' ? t('pages.gm.starting') : saved ? t('pages.gm.newRound') : t('pages.gm.title')}</button>
       </div>
-      <p class="dim">Der Tab des Spielleiters ist der Server der Runde. Er muss während des Spiels offen bleiben. Spieldaten laufen direkt zwischen den Browsern, der öffentliche Vermittlungsserver sieht nur den Verbindungsaufbau.</p>
+      <p class="dim">{t('pages.gm.hostNote')}</p>
     </div>
   </section>
 {:else if gm.session}
   <div class="gmhead">
   <section class="top">
     <div>
-      <span class="kicker">Spielleiter · {gm.session.state.gmName}</span>
+      <span class="kicker">{t('pages.gm.kickerOpen', { name: gm.session.state.gmName })}</span>
       <div class="codewrap">
         <span class="code mono">{formatCode(gm.session.code)}</span>
-        <button class="btn sm" onclick={() => copy(formatCode(gm.session!.code), 'Raumcode')}>Code kopieren</button>
-        <button class="btn sm" onclick={() => copy(joinUrl, 'Beitritts-Link')}>Link kopieren</button>
+        <button class="btn sm" onclick={() => copy(formatCode(gm.session!.code), t('pages.gm.roomCode'))}>{t('pages.gm.copyCode')}</button>
+        <button class="btn sm" onclick={() => copy(joinUrl, t('pages.gm.joinLink'))}>{t('pages.gm.copyLink')}</button>
       </div>
     </div>
     <div class="row">
-      <span class="chip" class:accent={gm.broker} class:danger={!gm.broker} title={gm.broker ? 'Vermittlungsserver erreichbar' : 'Neue Spieler finden den Raum nur, wenn der Vermittlungsserver erreichbar ist. Verbundene Spieler sind nicht betroffen.'}>{gm.broker ? 'Raum online' : 'Raum offline'}</span>
+      <span class="chip" class:accent={gm.broker} class:danger={!gm.broker} title={gm.broker ? t('pages.gm.brokerOk') : t('pages.gm.brokerDown')}>{gm.broker ? t('pages.gm.roomOnline') : t('pages.gm.roomOffline')}</span>
       {#if !gm.broker}
         {#if gm.brokerNote}<span class="chip amber">{gm.brokerNote}</span>{/if}
-        <button class="btn sm" onclick={reconnectNow}>Jetzt neu verbinden</button>
+        <button class="btn sm" onclick={reconnectNow}>{t('pages.gm.reconnect')}</button>
       {/if}
-      <span class="chip">{online} / {gm.session.players.length} online</span>
-      {#if gm.pending.length}<span class="chip amber">{gm.pending.length} Anfrage(n)</span>{/if}
+      <span class="chip">{t('pages.gm.online', { online, total: gm.session.players.length })}</span>
+      {#if gm.pending.length}<span class="chip amber">{tn('pages.gm.requests', gm.pending.length)}</span>{/if}
     </div>
   </section>
 
-  <div class="tabs" role="tablist" aria-label="SL-Dashboard">
-    <button role="tab" aria-selected={tab === 'players'} onclick={() => (tab = 'players')}>Spieler{#if gm.pending.length} ({gm.pending.length}){/if}</button>
-    <button role="tab" aria-selected={tab === 'combat'} onclick={() => (tab = 'combat')}>Kampf{#if gm.session.combat.active} (R{gm.session.combat.round}){/if}</button>
-    <button role="tab" aria-selected={tab === 'map'} onclick={() => (tab = 'map')}>Karte</button>
-    <button role="tab" aria-selected={tab === 'handouts'} onclick={() => (tab = 'handouts')}>Handouts</button>
-    <button role="tab" aria-selected={tab === 'music'} onclick={() => (tab = 'music')}>Musik</button>
-    <button role="tab" aria-selected={tab === 'dice'} onclick={() => (tab = 'dice')}>Würfel</button>
-    <button role="tab" aria-selected={tab === 'notes'} onclick={() => (tab = 'notes')}>Notizen</button>
-    <button role="tab" aria-selected={tab === 'settings'} onclick={() => (tab = 'settings')}>Einstellungen</button>
+  <div class="tabs" role="tablist" aria-label={t('pages.gm.dashboard')}>
+    <button role="tab" aria-selected={tab === 'players'} onclick={() => (tab = 'players')}>{t('pages.gm.tabPlayers')}{#if gm.pending.length} ({gm.pending.length}){/if}</button>
+    <button role="tab" aria-selected={tab === 'combat'} onclick={() => (tab = 'combat')}>{t('pages.gm.tabCombat')}{#if gm.session.combat.active}{t('pages.gm.tabCombatRound', { round: gm.session.combat.round })}{/if}</button>
+    <button role="tab" aria-selected={tab === 'map'} onclick={() => (tab = 'map')}>{t('pages.gm.tabMap')}</button>
+    <button role="tab" aria-selected={tab === 'handouts'} onclick={() => (tab = 'handouts')}>{t('pages.gm.tabHandouts')}</button>
+    <button role="tab" aria-selected={tab === 'music'} onclick={() => (tab = 'music')}>{t('pages.gm.tabMusic')}</button>
+    <button role="tab" aria-selected={tab === 'dice'} onclick={() => (tab = 'dice')}>{t('pages.gm.tabDice')}</button>
+    <button role="tab" aria-selected={tab === 'notes'} onclick={() => (tab = 'notes')}>{t('pages.gm.tabNotes')}</button>
+    <button role="tab" aria-selected={tab === 'settings'} onclick={() => (tab = 'settings')}>{t('pages.gm.tabSettings')}</button>
   </div>
   </div>
 
@@ -137,8 +138,8 @@
       <div class="cols">
         <GmPlayers />
         <section class="panel feed">
-          <h2>Verlauf</h2>
-          {#each gm.feed.slice(0, 15) as f}<div class="f"><span class="dim mono">{new Date(f.ts).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</span> {f.text}</div>{:else}<p class="dim">Noch nichts.</p>{/each}
+          <h2>{t('pages.gm.feed')}</h2>
+          {#each gm.feed.slice(0, 15) as f}<div class="f"><span class="dim mono">{fmtTime(f.ts, { hour: '2-digit', minute: '2-digit' })}</span> {f.text}</div>{:else}<p class="dim">{t('pages.gm.feedEmpty')}</p>{/each}
         </section>
       </div>
     {:else if tab === 'combat'}
@@ -160,12 +161,12 @@
     {:else if tab === 'notes'}
       <div class="stack">
         <section class="panel">
-          <h2>Meine Notizen (privat)</h2>
-          <textarea rows="12" bind:value={gm.session.gmNotes} placeholder="Plot, Gegner, Geheimnisse, Ideen. Nur du siehst das."></textarea>
+          <h2>{t('pages.gm.myNotes')}</h2>
+          <textarea rows="12" bind:value={gm.session.gmNotes} placeholder={t('pages.gm.myNotesPh')}></textarea>
         </section>
         <section class="panel">
-          <h2>Notizen für die Runde (für alle sichtbar)</h2>
-          <textarea rows="6" bind:value={sharedDraft} oninput={() => { clearTimeout(sharedTimer); sharedTimer = setTimeout(() => setSharedNotes(sharedDraft), 600); }} placeholder="Auftrag, bekannte Fakten, Ortsbeschreibung. Spieler sehen das in ihrer Rundenansicht."></textarea>
+          <h2>{t('pages.gm.sharedNotes')}</h2>
+          <textarea rows="6" bind:value={sharedDraft} oninput={() => { clearTimeout(sharedTimer); sharedTimer = setTimeout(() => setSharedNotes(sharedDraft), 600); }} placeholder={t('pages.gm.sharedNotesPh')}></textarea>
         </section>
       </div>
     {:else}

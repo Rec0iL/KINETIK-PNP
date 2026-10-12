@@ -3,6 +3,7 @@
   import type { Character } from '../model/character';
   import { creationReport, computeSheet } from '../model/sheet';
   import Stepper from '../ui/Stepper.svelte';
+  import { t } from '../i18n';
 
   let { char }: { char: Character } = $props();
   const report = $derived(creationReport(char));
@@ -10,22 +11,22 @@
   const defs = rules.tabellen.attribute;
   const remaining = $derived(report.attributesBudget - report.attributesSpent);
   const fmt = (n: number) => (n > 0 ? `+${n}` : String(n));
-  const growthTitles = $derived(char.titles.filter((t) => (t.startedAtLevel ?? t.level) >= 4));
-  const effect = { energie: 'Energie', wk: 'Willenskraft' };
+  const growthTitles = $derived(char.titles.filter((ti) => (ti.startedAtLevel ?? ti.level) >= 4));
+  const effect = { energie: t('wizard.common.energie'), wk: t('wizard.common.wk') };
 </script>
 
 <div class="stack">
-  <p class="dim intro">Attribute sind das Talent deiner Figur, von <b>−1</b> bis <b>+3</b>. Alle starten bei 0. Du verteilst dein Budget, das Startmaximum ist +{report.startMax}. Ein Attribut auf −1 gibt einen Punkt zurück (bei höchstens zwei Attributen). Über Fluss und Gewalt bestimmst du die Energie, über Instinkt und Fokus die Willenskraft.</p>
+  <p class="dim intro">{t('wizard.attributes.intro1')}<b>−1</b>{t('wizard.attributes.intro2')}<b>+3</b>{t('wizard.attributes.intro3', { max: report.startMax })}</p>
 
   <div class="budget" class:over={remaining < 0}>
-    <span>Attributspunkte</span><b>{report.attributesSpent} / {report.attributesBudget}</b>
-    <small class="dim">{remaining >= 0 ? `${remaining} übrig` : `${-remaining} zu viel`}{report.growthPoints ? ` · inkl. ${report.growthPoints} aus Titel-Wachstum` : ''}</small>
+    <span>{t('wizard.attributes.points')}</span><b>{report.attributesSpent} / {report.attributesBudget}</b>
+    <small class="dim">{remaining >= 0 ? t('wizard.common.left', { n: remaining }) : t('wizard.common.tooMany', { n: -remaining })}{report.growthPoints ? ` · ${t('wizard.attributes.fromGrowth', { n: report.growthPoints })}` : ''}</small>
     <span class="spacer"></span>
-    <label class="check"><input type="checkbox" bind:checked={char.naturtalent} /> Naturtalent (+3 auf einem Attribut)</label>
+    <label class="check"><input type="checkbox" bind:checked={char.naturtalent} /> {t('wizard.attributes.prodigy')}</label>
   </div>
 
   {#if growthTitles.length}
-    <p class="note">Titel ab Level 4 geben ihr Wachstum gleich mit: {growthTitles.map((t) => t.name).join(', ')}. Dieses +1 liegt auf einem Leitattribut des Titels und zählt zusätzlich zum Budget. Es darf das Startmaximum von +2 auf +3 heben.</p>
+    <p class="note">{t('wizard.attributes.growthNote', { titles: growthTitles.map((g) => g.name).join(', ') })}</p>
   {/if}
 
   <div class="attrs">
@@ -37,31 +38,31 @@
         <Stepper bind:value={char.attributes[k]} min={-1} max={4} warn={char.attributes[k] > report.startMax || char.attributes[k] < -1} label={d.name} />
         <small class="dim">{d.text}</small>
         <div class="chips">{#each attributeAffects(k) as r}<span class="chip">{effect[r]}</span>{/each}
-          {#each char.titles.filter((t) => t.leadAttrs.includes(k)) as t}<span class="chip accent" title="Leitattribut von {t.name}">★ {t.name}</span>{/each}
+          {#each char.titles.filter((x) => x.leadAttrs.includes(k)) as ti}<span class="chip accent" title={t('wizard.attributes.leadOf', { name: ti.name })}>★ {ti.name}</span>{/each}
         </div>
       </div>
     {/each}
   </div>
 
   <div class="derived">
-    <div><span class="lbl">Energie (6 + Fluss + Gewalt)</span><b>{sheet.energieMax.value}</b></div>
-    <div><span class="lbl">Willenskraft (6 + Instinkt + Fokus)</span><b>{sheet.wkMax.value}</b></div>
-    <div><span class="lbl">Passive Wahrnehmung</span><b>{sheet.passiv.value}</b></div>
+    <div><span class="lbl">{t('wizard.attributes.energieFormula')}</span><b>{sheet.energieMax.value}</b></div>
+    <div><span class="lbl">{t('wizard.attributes.wkFormula')}</span><b>{sheet.wkMax.value}</b></div>
+    <div><span class="lbl">{t('wizard.attributes.passive')}</span><b>{sheet.passiv.value}</b></div>
   </div>
 
   {#if char.titles.length}
     <div class="tablewrap">
       <table>
-        <thead><tr><th>Bonus in der Domäne</th>{#each defs as d}<th>{d.kurz}</th>{/each}</tr></thead>
+        <thead><tr><th>{t('wizard.attributes.bonusInDomain')}</th>{#each defs as d}<th>{d.kurz}</th>{/each}</tr></thead>
         <tbody>
-          {#each char.titles as t}
-            {@const row = titleBonusRow(char.attributes, t)}
-            <tr><td>{t.name} <small class="dim">L{t.level}</small></td>{#each ATTR_KEYS as k}<td class:lead={t.leadAttrs.includes(k)}>{fmt(row[k])}</td>{/each}</tr>
+          {#each char.titles as ti}
+            {@const row = titleBonusRow(char.attributes, ti)}
+            <tr><td>{ti.name} <small class="dim">L{ti.level}</small></td>{#each ATTR_KEYS as k}<td class:lead={ti.leadAttrs.includes(k)}>{fmt(row[k])}</td>{/each}</tr>
           {/each}
         </tbody>
       </table>
     </div>
-    <small class="dim">Hervorgehoben: Leitattribut mit voller Meisterschaft. Ein Kino-Charakter hat in seiner Domäne meist +3.</small>
+    <small class="dim">{t('wizard.attributes.legend')}</small>
   {/if}
 </div>
 

@@ -8,6 +8,7 @@
   import MovePayBar from './MovePayBar.svelte';
   import MoveEditor from './MoveEditor.svelte';
   import { uid } from '../model/character';
+  import { t } from '../i18n';
 
   let { char }: { char: Character } = $props();
 
@@ -32,14 +33,14 @@
     if (m) { add(m); template = ''; }
   }
   function remove(id: string) {
-    if (!confirm('Move löschen?')) return;
+    if (!confirm(t('sheet.moves.confirmDelete'))) return;
     char.moves = char.moves.filter((m) => m.id !== id);
     if (openId === id) openId = null;
   }
   function duplicate(m: Move) {
     const copy: Move = JSON.parse(JSON.stringify($state.snapshot(m)));
     copy.id = uid();
-    copy.name += ' (Kopie)';
+    copy.name += t('sheet.moves.copySuffix');
     char.moves.push(copy);
   }
   const fmt = (n: number) => (n > 0 ? `+${n}` : String(n));
@@ -51,19 +52,19 @@
     <div class="row">
       <h2>Moves</h2><span class="chip">{char.moves.length}</span>
       <span class="spacer"></span>
-      <input class="search" bind:value={query} placeholder="Suchen…" aria-label="Moves suchen" />
+      <input class="search" bind:value={query} placeholder={t('sheet.moves.searchPlaceholder')} aria-label={t('sheet.moves.searchAria')} />
     </div>
     <div class="row adds">
-      <button class="btn primary sm" onclick={addBlank}>+ Neuer Move</button>
-      <select bind:value={template} aria-label="Vorlage wählen">
-        <option value="">Beispiel-Move aus 5.2 …</option>
-        {#each rules.moves.moves as t}<option value={t.id}>{t.name} ({t.ep} EP, {t.titel})</option>{/each}
+      <button class="btn primary sm" onclick={addBlank}>{t('sheet.moves.newMove')}</button>
+      <select bind:value={template} aria-label={t('sheet.moves.templateAria')}>
+        <option value="">{t('sheet.moves.templatePick')}</option>
+        {#each rules.moves.moves as tm}<option value={tm.id}>{tm.name} ({tm.ep} EP, {tm.titel})</option>{/each}
       </select>
-      <button class="btn sm" onclick={addTemplate} disabled={!template}>Hinzufügen</button>
-      <a class="btn sm ghost" href="#/builder">Zum Move-Builder</a>
-      <label class="auto" title="Regel 3.12: Bezahlt wird sonst erst nach dem Wurf, wenn der Move wirkt."><input type="checkbox" bind:checked={settings.autoPayMoves} /> Kosten sofort beim Wurf abziehen</label>
+      <button class="btn sm" onclick={addTemplate} disabled={!template}>{t('sheet.common.add')}</button>
+      <a class="btn sm ghost" href="#/builder">{t('sheet.moves.toBuilder')}</a>
+      <label class="auto" title={t('sheet.common.autoPayTitle')}><input type="checkbox" bind:checked={settings.autoPayMoves} /> {t('sheet.moves.autoPayLong')}</label>
     </div>
-    {#if !char.titles.length}<p class="warn">Lege zuerst einen Titel an, damit Moves Meisterschaft und Kosten bekommen.</p>{/if}
+    {#if !char.titles.length}<p class="warn">{t('sheet.moves.needTitle')}</p>{/if}
   </section>
 
   {#each filtered as m (m.id)}
@@ -78,24 +79,24 @@
         <span class="chip accent">{rules.tabellen.attribute.find((a) => a.key === m.attr)?.name}</span>
         <span class="chip amber">{v.evaluation.ep} EP</span>
         <span class="chip">{TIER_LABEL[v.evaluation.tier]}</span>
-        {#if v.cost.mastered}<span class="chip accent">gemeistert</span>{/if}
-        {#if v.cost.levelTooLow}<span class="chip danger" title="Titel-Level unter dem Mindestlevel">Level {v.evaluation.minLevel} nötig</span>{/if}
+        {#if v.cost.mastered}<span class="chip accent">{t('sheet.common.mastered')}</span>{/if}
+        {#if v.cost.levelTooLow}<span class="chip danger" title={t('sheet.common.levelBelowMin')}>{t('sheet.common.levelNeeded', { n: v.evaluation.minLevel })}</span>{/if}
         <span class="spacer"></span>
         <span class="cost">{costLabel(v.cost)}</span>
-        <button class="btn sm primary" onclick={() => rollMove(char, m)} disabled={!a.ok} title={a.ok ? `2W6 ${fmt(moveRollBonus(char, m))}` : a.reason}>Würfeln {fmt(moveRollBonus(char, m))}</button>
+        <button class="btn sm primary" onclick={() => rollMove(char, m)} disabled={!a.ok} title={a.ok ? t('sheet.common.roll2d6', { b: fmt(moveRollBonus(char, m)) }) : a.reason}>{t('sheet.common.rollBonus', { b: fmt(moveRollBonus(char, m)) })}</button>
       </div>
       <MovePayBar {char} move={m} />
       {#if openId !== m.id && m.text}<p class="dim txt">{m.text}</p>{/if}
       {#if openId === m.id}
         <MoveEditor bind:move={char.moves[char.moves.findIndex((x) => x.id === m.id)]} level={v.level} titles={titleOpts} />
         <div class="row foot">
-          <button class="btn sm" onclick={() => duplicate(m)}>Duplizieren</button>
-          <button class="btn sm danger" onclick={() => remove(m.id)}>Löschen</button>
+          <button class="btn sm" onclick={() => duplicate(m)}>{t('sheet.moves.duplicate')}</button>
+          <button class="btn sm danger" onclick={() => remove(m.id)}>{t('sheet.moves.delete')}</button>
         </div>
       {/if}
     </section>
   {:else}
-    <p class="dim">Keine Moves{query ? ' gefunden' : ' angelegt'}.</p>
+    <p class="dim">{query ? t('sheet.moves.noneFound') : t('sheet.moves.noneYet')}</p>
   {/each}
 </div>
 

@@ -7,6 +7,7 @@ import { infoOf } from '../model/vitals';
 import { commitRoll, linkClash, onRoll, rollLog, roll2d6, type RollRecord } from '../dice/roller.svelte';
 import { settings } from '../lib/settings.svelte';
 import { pushToast } from '../ui/toasts.svelte';
+import { t } from '../i18n';
 import { openPeer, explainPeerError, brokerReachable, type DataConnection, type Peer } from './peer';
 import { RECONNECT_MAX_TRIES, backoffMs } from './backoff';
 import { serveAsset } from './assets.svelte';
@@ -162,7 +163,7 @@ export async function startHost(opts: { gmName: string; password: string; resume
     code: newRoomCode(), password: '', players: [], gmNotes: '', created: Date.now(), scenes: [], activeScene: null, tracks: [], combat: newCombat(), handouts: [],
     state: { gmName: '', visibility: 'party', notes: '', rounds: 0, music: defaultMusic(), combat: null },
   };
-  s.state.gmName = opts.gmName || s.state.gmName || 'Spielleiter';
+  s.state.gmName = opts.gmName || s.state.gmName || t('net.gm.defaultGmName');
   s.password = opts.password;
   // Nach einem Neuladen hält der Server die alte Registrierung kurz fest: ein paar Mal erneut versuchen.
   for (let attempt = 0; ; attempt++) {
@@ -172,7 +173,7 @@ export async function startHost(opts: { gmName: string; password: string; resume
     } catch (e) {
       const busy = (e as { kind?: string }).kind === 'unavailable-id';
       if (busy && opts.resume && attempt < 16) {
-        gm.error = 'Der Server hält den alten Raumcode noch fest (bis zu einer Minute nach dem Neuladen). Neuer Versuch läuft …';
+        gm.error = t('net.gm.idBusy');
         await new Promise((r) => setTimeout(r, 4000));
         continue;
       }
@@ -186,7 +187,7 @@ export async function startHost(opts: { gmName: string; password: string; resume
   gm.error = '';
   gm.broker = true;
   try { sessionStorage.setItem('kinetik.gmActive', '1'); } catch { /* ignorieren */ }
-  feed('Runde gestartet.');
+  feed(t('net.gm.started'));
   bindPeer(peer);
   unsubRoll = onRoll((r) => { if (!r.secret) broadcast({ t: 'roll', roll: r }); });
   persistSession();
@@ -213,7 +214,7 @@ function bindPeer(p: Peer) {
     reconnectTry = 0;
     gm.broker = true;
     gm.brokerNote = '';
-    if (was) { feed('Verbindung zum Vermittlungsserver wiederhergestellt.'); pushToast('Raum wieder online.', 'good', 3000); }
+    if (was) { feed(t('net.gm.brokerRestored')); pushToast(t('net.gm.roomOnline'), 'good', 3000); }
   });
   p.on('close', () => {
     // Der Peer wurde zerstört (z.B. Raumcode vom Server noch belegt): neu aufbauen.
@@ -231,12 +232,12 @@ function scheduleReconnect() {
   clearTimeout(reconnectTimer);
   if (!peer || peer.destroyed) return;
   if (reconnectTry >= RECONNECT_MAX_TRIES) {
-    gm.brokerNote = 'Vermittlungsserver nicht erreichbar. Neue Spieler können nicht beitreten.';
+    gm.brokerNote = t('net.gm.brokerDown');
     return;
   }
   const delay = backoffMs(reconnectTry);
   reconnectTry++;
-  gm.brokerNote = `Neuer Versuch ${reconnectTry}/${RECONNECT_MAX_TRIES} in ${Math.round(delay / 1000)} s`;
+  gm.brokerNote = t('net.gm.retryIn', { n: reconnectTry, max: RECONNECT_MAX_TRIES, s: Math.round(delay / 1000) });
   reconnectTimer = setTimeout(async () => {
     const p = peer;
     if (!p || p.destroyed) return;
@@ -255,7 +256,7 @@ async function restartPeer() {
   if (!s) return;
   for (; reconnectTry < RECONNECT_MAX_TRIES; ) {
     const delay = backoffMs(reconnectTry++);
-    gm.brokerNote = `Raum wird neu angelegt (Versuch ${reconnectTry}/${RECONNECT_MAX_TRIES})`;
+    gm.brokerNote = t('net.gm.recreating', { n: reconnectTry, max: RECONNECT_MAX_TRIES });
     await new Promise((r) => setTimeout(r, delay));
     if (gm.status !== 'open' || !gm.session) return;
     try {
@@ -265,12 +266,12 @@ async function restartPeer() {
       reconnectTry = 0;
       gm.broker = true;
       gm.brokerNote = '';
-      feed('Raum neu angelegt, Spieler verbinden sich wieder.');
-      pushToast('Raum wieder online.', 'good', 3000);
+      feed(t('net.gm.recreated'));
+      pushToast(t('net.gm.roomOnline'), 'good', 3000);
       return;
     } catch { /* nächster Versuch */ }
   }
-  gm.brokerNote = 'Vermittlungsserver nicht erreichbar. Neue Spieler können nicht beitreten.';
+  gm.brokerNote = t('net.gm.brokerDown');
 }
 
 /** Der SL stößt den Neuaufbau selbst an (nach dem Aufgeben oder bei Ungeduld). */
@@ -288,13 +289,13 @@ export async function resumeHostIfActive(): Promise<boolean> {
   const saved = await loadSavedSession();
   if (!saved) return false;
   await startHost({ gmName: saved.state.gmName, password: saved.password, resume: saved });
-  if (gm.status === 'open') pushToast('Runde nach dem Neuladen fortgesetzt.', 'good');
+  if (gm.status === 'open') pushToast(t('net.gm.resumed'), 'good');
   return true;
 }
 
 export function stopHost() {
   try { sessionStorage.removeItem('kinetik.gmActive'); } catch { /* ignorieren */ }
-  for (const c of conns.values()) { send(c, { t: 'kick', reason: 'Die Runde wurde beendet.' }); c.close(); }
+  for (const c of conns.values()) { send(c, { t: 'kick', reason: t('net.gm.kickEnded') }); c.close(); }
   conns.clear();
   pendingConns.clear();
   connOwner.clear();
@@ -341,7 +342,7 @@ function onClose(conn: DataConnection) {
   if (p) {
     p.connected = false;
     p.lastSeen = Date.now();
-    feed(`${p.name} hat die Verbindung verloren.`);
+    feed(t('net.gm.lost', { name: p.name }));
   }
   scheduleParty();
   persistSession();
@@ -405,7 +406,7 @@ function onData(conn: DataConnection, msg: ClientMsg) {
       if (!sit || sit.playerId !== id || !sit.bullet || sit.bullet.option || !['zone', 'ep', 'momentum'].includes(msg.option)) break;
       sit.bullet.option = msg.option;
       if (msg.option === 'zone' && ZONE_KEYS.includes(msg.zone as never)) sit.bullet.zone = msg.zone;
-      feed(`${p.name}: Bullet Time, ${msg.option === 'zone' ? 'Zonenwahl' : msg.option === 'ep' ? '+1 EP' : '+1 Momentum'}.`);
+      feed(t('net.gm.bulletChoice', { name: p.name, choice: t(msg.option === 'zone' ? 'net.gm.bt.zone' : msg.option === 'ep' ? 'net.gm.bt.ep' : 'net.gm.bt.momentum') }));
       if (sit.proposal) buildProposal(sit);
       break;
     }
@@ -471,7 +472,7 @@ export function activateScene(id: string | null) {
 }
 
 export function gmPing(x: number, y: number, color: string) {
-  const who = gm.session?.state.gmName ?? 'SL';
+  const who = gm.session?.state.gmName ?? t('net.gm.gmShort');
   addPing(x, y, who, color);
   broadcast({ t: 'map', ops: [{ op: 'ping', x, y, who, color }] });
 }
@@ -497,17 +498,17 @@ function onPlayerMapOps(playerId: string, name: string, ops: MapOp[]) {
 
 function onHello(conn: DataConnection, msg: Extract<ClientMsg, { t: 'hello' }>) {
   const s = gm.session!;
-  if (msg.v !== PROTOCOL_VERSION) return void (send(conn, { t: 'deny', reason: 'Inkompatible Version. Bitte die Seite neu laden.' }), conn.close());
-  if (s.password && msg.password !== s.password) return void (send(conn, { t: 'deny', reason: 'Falsches Passwort.' }), setTimeout(() => conn.close(), 200));
-  const name = String(msg.name || 'Spieler').slice(0, 40);
+  if (msg.v !== PROTOCOL_VERSION) return void (send(conn, { t: 'deny', reason: t('net.gm.denyVersion') }), conn.close());
+  if (s.password && msg.password !== s.password) return void (send(conn, { t: 'deny', reason: t('net.gm.denyPassword') }), setTimeout(() => conn.close(), 200));
+  const name = String(msg.name || t('net.gm.defaultPlayer')).slice(0, 40);
   const known = playerById(msg.playerId);
   if (known && !known.local) return accept(conn, known, name, true);
   pendingConns.get(msg.playerId)?.close();
   pendingConns.set(msg.playerId, conn);
   gm.pending = [...gm.pending.filter((x) => x.id !== msg.playerId), { id: msg.playerId, name }];
   send(conn, { t: 'pending' });
-  feed(`${name} möchte beitreten.`);
-  pushToast(`${name} möchte beitreten.`, 'info');
+  feed(t('net.gm.wantsJoin', { name }));
+  pushToast(t('net.gm.wantsJoin', { name }), 'info');
 }
 
 function accept(conn: DataConnection, p: GmPlayer, name: string, resume: boolean) {
@@ -524,7 +525,7 @@ function accept(conn: DataConnection, p: GmPlayer, name: string, resume: boolean
     t: 'welcome', playerId: p.id, gmName: s.state.gmName, state: $state.snapshot(s.state), players: partyFor(p.id),
     log: $state.snapshot(log) as RollRecord[], resume, map: $state.snapshot(forPlayers(activeScene())) as MapState | null,
   });
-  feed(`${p.name} ist ${resume ? 'wieder da' : 'beigetreten'}.`);
+  feed(t(resume ? 'net.gm.back' : 'net.gm.joined', { name: p.name }));
   scheduleParty();
   lastSits.delete(p.id);
   pushSituations();
@@ -544,7 +545,7 @@ export function approve(id: string) {
 
 export function deny(id: string) {
   const conn = pendingConns.get(id);
-  send(conn, { t: 'deny', reason: 'Der Spielleiter hat die Anfrage abgelehnt.' });
+  send(conn, { t: 'deny', reason: t('net.gm.denyRequest') });
   setTimeout(() => conn?.close(), 200);
   pendingConns.delete(id);
   gm.pending = gm.pending.filter((x) => x.id !== id);
@@ -552,7 +553,7 @@ export function deny(id: string) {
 
 export function kick(id: string) {
   const conn = conns.get(id);
-  send(conn, { t: 'kick', reason: 'Der Spielleiter hat dich aus der Runde entfernt.' });
+  send(conn, { t: 'kick', reason: t('net.gm.kickRemoved') });
   setTimeout(() => conn?.close(), 200);
   removePlayer(id);
 }
@@ -622,7 +623,7 @@ export function patchPlayer(id: string, ops: PatchOp[]): boolean {
   }
   const conn = conns.get(id);
   if (!conn?.open) {
-    pushToast(`${p.name} ist nicht verbunden.`, 'warn');
+    pushToast(t('net.gm.notConnected', { name: p.name }), 'warn');
     return false;
   }
   send(conn, { t: 'patch', ops, note: describePatch(ops) });
@@ -785,7 +786,7 @@ function syncTokens() {
 
 function pcName(playerId: string) {
   const p = playerById(playerId);
-  return p?.character?.name || p?.name || 'Spieler';
+  return p?.character?.name || p?.name || t('net.gm.defaultPlayer');
 }
 
 function onPlan(playerId: string, d: Draft) {
@@ -794,21 +795,22 @@ function onPlan(playerId: string, d: Draft) {
   const p = playerById(playerId);
   const warn = (text: string) => send(conns.get(playerId), { t: 'toast', text });
   if (!p || !d || typeof d !== 'object') return;
-  if (!c.active) return warn('Es läuft kein Kampf.');
+  if (!c.active) return warn(t('net.gm.noCombat'));
   if (!['attack', 'breath', 'gather'].includes(d.kind) || !ATTR_KEYS.includes(d.attr)) return;
   if (c.done[playerId] || c.situations.some((x) => x.playerId === playerId && x.round === c.round && x.kind !== 'defend' && isOpen(x))) {
-    return warn('Du hast in dieser Runde schon eine Aktion (3.6).');
+    return warn(t('net.gm.alreadyActed'));
   }
   const npc = npcById(d.npcId);
-  if (d.kind === 'attack' && (!npc || npc.hidden || npcStatus(npc).out)) return warn('Dieses Ziel gibt es nicht oder es ist schon ausgeschaltet.');
+  if (d.kind === 'attack' && (!npc || npc.hidden || npcStatus(npc).out)) return warn(t('net.gm.noTarget'));
   const gift = d.gift && GIFT_LEVELS.includes(d.gift.level) ? { level: d.gift.level, delay: Math.max(0, Math.min(MAX_GIFT_DELAY, Math.round(Number(d.gift.delay) || 0))) } : undefined;
   const sit = createSituation(c, uid(), playerId, {
     kind: d.kind, npcId: d.npcId, attr: d.attr, technique: String(d.technique ?? ''), moveName: String(d.moveName ?? ''),
     tagsUsed: Array.isArray(d.tagsUsed) ? d.tagsUsed.map(String) : [], gift,
     area: d.area === 'flaeche' || d.area === 'ziele' ? d.area : undefined,
   });
-  feed(`${p.name} plant: ${KIND_LABEL[sit.kind]}${npc ? ` gegen ${npc.name}` : ''}.`);
-  pushToast(`${p.name} plant: ${KIND_LABEL[sit.kind]}${npc ? ` gegen ${npc.name}` : ''}`, 'info', 5000);
+  const planned = npc ? t('net.gm.plansVs', { name: p.name, kind: KIND_LABEL[sit.kind], npc: npc.name }) : t('net.gm.plans', { name: p.name, kind: KIND_LABEL[sit.kind] });
+  feed(`${planned}.`);
+  pushToast(planned, 'info', 5000);
   if (sit.status === 'released' && (sit.kind === 'breath' || sit.kind === 'gather')) finish(sit);
 }
 
@@ -816,12 +818,12 @@ function onMoveRequest(playerId: string, name: string, tokenId: string, x: numbe
   const s = gm.session!;
   const c = s.combat;
   const scene = activeScene();
-  const t = scene?.tokens.find((k) => k.id === tokenId);
-  if (!c.active || !t || t.playerId !== playerId || !Number.isFinite(x) || !Number.isFinite(y)) return;
+  const tok = scene?.tokens.find((k) => k.id === tokenId);
+  if (!c.active || !tok || tok.playerId !== playerId || !Number.isFinite(x) || !Number.isFinite(y)) return;
   c.moveRequests = c.moveRequests.filter((r) => r.playerId !== playerId);
-  c.moveRequests.push({ id: uid(), playerId, tokenId, name: t.name, from: { x: t.x, y: t.y }, to: { x, y } });
-  feed(`${name} möchte sich bewegen.`);
-  pushToast(`${name} möchte sich bewegen`, 'info', 5000);
+  c.moveRequests.push({ id: uid(), playerId, tokenId, name: tok.name, from: { x: tok.x, y: tok.y }, to: { x, y } });
+  feed(`${t('net.gm.wantsMove', { name })}.`);
+  pushToast(t('net.gm.wantsMove', { name }), 'info', 5000);
 }
 
 /** Der SL antwortet auf eine Bewegungsanfrage. */
@@ -832,7 +834,7 @@ export function answerMove(id: string, ok: boolean) {
   const scene = activeScene();
   if (ok && scene) gmMapOps(scene.id, [{ op: 'tokmove', id: r.tokenId, x: r.to.x, y: r.to.y }]);
   s.combat.moveRequests = s.combat.moveRequests.filter((x) => x.id !== id);
-  send(conns.get(r.playerId), { t: 'move-result', ok, note: ok ? 'Bewegung bestätigt.' : 'Der SL lehnt die Bewegung ab.' });
+  send(conns.get(r.playerId), { t: 'move-result', ok, note: t(ok ? 'net.gm.moveOk' : 'net.gm.moveDenied') });
 }
 
 /** Der SL legt für einen Spieler eine Aktion an (z.B. für lokale Spieler ohne Gerät). */
@@ -850,11 +852,11 @@ export function gmAttack(playerId: string, npcId: string): Situation | null {
   const c = gm.session?.combat;
   const npc = npcById(npcId);
   if (!c?.active || !npc || !playerById(playerId)) return null;
-  const sit = createSituation(c, uid(), playerId, { kind: 'defend', npcId, attr: 'fluss', technique: `${npc.name} greift an`, moveName: '', tagsUsed: [] });
+  const sit = createSituation(c, uid(), playerId, { kind: 'defend', npcId, attr: 'fluss', technique: t('net.gm.attacksTechnique', { npc: npc.name }), moveName: '', tagsUsed: [] });
   sit.status = 'released';
   sit.attackers = npc.type === 'goon' ? Math.max(1, npc.count) : 1;
-  feed(`${npc.name} greift ${pcName(playerId)} an.`);
-  sendToast(playerId, `${npc.name} greift dich an!`);
+  feed(t('net.gm.attacks', { npc: npc.name, pc: pcName(playerId) }));
+  sendToast(playerId, t('net.gm.attacksYou', { npc: npc.name }));
   return sit;
 }
 
@@ -877,14 +879,14 @@ export function grantBullet(id: string) {
   const c = gm.session?.combat;
   const sit = sitById(id);
   if (!c || !sit) return;
-  if (!grantBulletTime(c, sit)) { pushToast('Bullet Time gab es in dieser Runde für diesen Spieler schon.', 'warn'); return; }
-  sendToast(sit.playerId, 'Bullet Time! Wähle Zonenwahl, +1 EP oder +1 Momentum.');
+  if (!grantBulletTime(c, sit)) { pushToast(t('net.gm.bulletUsed'), 'warn'); return; }
+  sendToast(sit.playerId, t('net.gm.bulletGranted'));
 }
 
 function attachPlayerRoll(playerId: string, r: RollRecord) {
   const sit = sitById(String(r.sit));
   if (!sit || sit.playerId !== playerId || sit.pRoll || (sit.kind !== 'attack' && sit.kind !== 'defend')) return;
-  if (sit.status !== 'released') { send(conns.get(playerId), { t: 'toast', text: 'Der SL hat diese Aktion noch nicht freigegeben.' }); return; }
+  if (sit.status !== 'released') { send(conns.get(playerId), { t: 'toast', text: t('net.gm.notReleased') }); return; }
   sit.pRoll = rollToSit(r.id, r.total, r.bonus, r.mod);
   sit.hero = !!r.hero;
   finish(sit);
@@ -899,7 +901,7 @@ export function rollNpcFor(id: string, secret = false) {
   const pc = playerById(sit.playerId)?.character;
   const mod = npcRollMod(sit, c, pc ? pc.tags.map((t) => ({ name: t.name, size: t.size })) : []);
   const rec = roll2d6({
-    who: npc.name, label: `${KIND_LABEL[sit.kind]}: ${npc.name} gegen ${pcName(sit.playerId)}`, bonus: npc.bonus, mod, kind: 'clash', secret, sit: sit.id,
+    who: npc.name, label: t('net.gm.npcRoll', { kind: KIND_LABEL[sit.kind], npc: npc.name, pc: pcName(sit.playerId) }), bonus: npc.bonus, mod, kind: 'clash', secret, sit: sit.id,
   });
   sit.nRoll = rollToSit(rec.id, rec.total, rec.bonus, rec.mod);
   finish(sit);
@@ -963,7 +965,7 @@ export function applySit(id: string) {
   const scene = activeScene();
   if (scene && applied.removeTokens.length) gmMapOps(scene.id, applied.removeTokens.map((tid) => ({ op: 'tokdel', id: tid }) as MapOp));
   sit.status = 'resolved';
-  feed(`${KIND_LABEL[sit.kind]} von ${pcName(sit.playerId)} abgewickelt.`);
+  feed(t('net.gm.resolved', { kind: KIND_LABEL[sit.kind], pc: pcName(sit.playerId) }));
 }
 
 // ---------- Rundenende und Gift ----------
@@ -980,7 +982,7 @@ export function poisonRound() {
   }
   for (const n of s.combat.npcs) notes.push(...tickNpc(n));
   for (const t of notes) feed(t);
-  if (notes.length) pushToast(`Gift: ${notes.join(' · ')}`, 'warn', 9000);
+  if (notes.length) pushToast(t('net.gm.poison', { notes: notes.join(' · ') }), 'warn', 9000);
 }
 
 /** Neue Runde: erst wirkt das Gift (Rundenende), dann beginnt die nächste. */
@@ -1064,8 +1066,8 @@ export async function exportSession(includeAssets: boolean): Promise<SessionFile
 /** Liest eine Sitzungsdatei, stellt Dateien wieder her und liefert die Sitzung (noch nicht gestartet). */
 export async function importSession(text: string): Promise<GmSession> {
   let json: SessionFile;
-  try { json = JSON.parse(text); } catch { throw new Error('Die Datei ist kein gültiges JSON.'); }
-  if (json?.kinetik !== 'session' || !json.session) throw new Error('Das ist keine KINETIK-Sitzungsdatei.');
+  try { json = JSON.parse(text); } catch { throw new Error(t('net.gm.importNotJson')); }
+  if (json?.kinetik !== 'session' || !json.session) throw new Error(t('net.gm.importNotSession'));
   for (const a of Object.values(json.assets ?? {})) await putAsset(fromB64(a.b64), a.name, a.mime);
   const s = json.session;
   s.tracks = s.tracks ?? [];

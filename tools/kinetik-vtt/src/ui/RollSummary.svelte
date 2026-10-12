@@ -2,13 +2,14 @@
   import { PROBE_LABEL, OUTCOME_LABEL } from '../rules';
   import type { RollRecord } from '../dice/roller.svelte';
   import DiceFace from '../dice/DiceFace.svelte';
+  import { t } from '../i18n';
 
   let { r, animate = true, size = 46 }: { r: RollRecord; animate?: boolean; size?: number } = $props();
 </script>
 
 <div class="sum">
   <div class="dice">
-    {#each r.dice as d, i}<DiceFace value={d.value} sides={d.sides} {size} {animate} delay={i * 90} />{:else}<span class="chip">Tisch</span>{/each}
+    {#each r.dice as d, i}<DiceFace value={d.value} sides={d.sides} {size} {animate} delay={i * 90} />{:else}<span class="chip">{t('ui.rollSummary.table')}</span>{/each}
   </div>
   <div class="txt">
     <div class="line"><span class="who">{r.who}</span><span class="dim">{r.label}</span></div>
@@ -16,9 +17,9 @@
   </div>
   <div class="tot">
     <span class="n">{r.total}</span>
-    {#if r.mw}<span class="chip" class:accent={r.result === 'erfolg'} class:amber={r.result === 'preis'} class:danger={r.result === 'fehlschlag'}>{PROBE_LABEL[r.result!]} <small>(MW {r.mw})</small></span>{/if}
+    {#if r.mw}<span class="chip" class:accent={r.result === 'erfolg'} class:amber={r.result === 'preis'} class:danger={r.result === 'fehlschlag'}>{PROBE_LABEL[r.result!]} <small>({t('ui.rollSummary.dc', { mw: r.mw })})</small></span>{/if}
     {#if r.clash}<span class="chip" class:danger={r.clash.outcome === 'konter' || r.clash.outcome === 'perfekterKonter'} class:accent={r.clash.outcome === 'dominanz'}>{OUTCOME_LABEL[r.clash.outcome]} Δ{r.clash.delta > 0 ? '+' : ''}{r.clash.delta}</span>{/if}
-    {#if r.secret}<span class="chip amber">geheim</span>{/if}
+    {#if r.secret}<span class="chip amber">{t('ui.rollSummary.secret')}</span>{/if}
   </div>
 </div>
 

@@ -3,17 +3,17 @@
   // Das Menü ist ein Popover (liegt im Top-Layer): so wird es weder von Karten mit abgeschnittenen Ecken noch vom
   // scrollenden Regelwerk-Panel beschnitten, schließt bei Klick daneben und mit Escape von selbst.
   import { rulebook, rbPdfs, loadRulebook } from './rulebook.svelte';
-  import { t } from '../i18n';
+  import { t, fmtNumber } from '../i18n';
 
   /** drawer: kompakter Titel mit Pfeil (Kopfleiste des Regelwerks), button: normale Schaltfläche (Startseite) */
-  let { variant = 'button', label = 'PDF herunterladen' }: { variant?: 'drawer' | 'button'; label?: string } = $props();
+  let { variant = 'button', label = t('rulebook.dl.label') }: { variant?: 'drawer' | 'button'; label?: string } = $props();
 
   const pdfs = $derived(rbPdfs());
   const version = $derived(rulebook.data?.version ?? '');
   let pop = $state<HTMLElement>();
   let trigger = $state<HTMLElement>();
   let open = $state(false);
-  const fmtSize = (b: number) => `${(b / 1048576).toFixed(1).replace('.', ',')} MB`;
+  const fmtSize = (b: number) => `${fmtNumber(b / 1048576, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} MB`;
 
   // Die Liste der PDFs steht in rulebook.json. Das Regelwerk lädt sonst erst, wenn es geöffnet wird: nur die Startseite braucht
   // die Liste sofort, die Kopfleiste im Regelwerk erst, wenn es offen ist (dann ist es ohnehin geladen).
@@ -36,29 +36,29 @@
 
 <div class="dlmenu {variant}">
   {#if pdfs.length > 1}
-    <button bind:this={trigger} type="button" class={variant === 'drawer' ? 'dl' : 'btn'} aria-haspopup="menu" aria-expanded={open} onclick={toggle} title="Regelwerk als PDF herunterladen, Look wählen">
+    <button bind:this={trigger} type="button" class={variant === 'drawer' ? 'dl' : 'btn'} aria-haspopup="menu" aria-expanded={open} onclick={toggle} title={t('rulebook.dl.title')}>
       <svg viewBox="0 0 24 24" width={variant === 'drawer' ? 22 : 18} height={variant === 'drawer' ? 22 : 18} aria-hidden="true"><path d="M12 3v11m0 0l-4.5-4.5M12 14l4.5-4.5M4 15v4a2 2 0 002 2h12a2 2 0 002-2v-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-      {#if variant === 'drawer'}<b>Regelwerk</b><small>v{version}</small>{:else}<span>{label}</span>{/if}
+      {#if variant === 'drawer'}<b>{t('rulebook.dl.name')}</b><small>v{version}</small>{:else}<span>{label}</span>{/if}
       <span class="caret" aria-hidden="true">▾</span>
-      <span class="sr-only">Look wählen</span>
+      <span class="sr-only">{t('rulebook.dl.pickLook')}</span>
     </button>
-    <div bind:this={pop} class="dlpop" popover="auto" role="menu" aria-label="Regelwerk als PDF herunterladen, Look wählen" ontoggle={(e) => (open = (e as ToggleEvent).newState === 'open')}>
-      <p class="dlhead">PDF · Look wählen</p>
-      <p class="dlnote">Es ist immer dasselbe Regelwerk (v{version}). Nur Gestaltung, Schrift und Bilder unterscheiden sich.</p>
+    <div bind:this={pop} class="dlpop" popover="auto" role="menu" aria-label={t('rulebook.dl.title')} ontoggle={(e) => (open = (e as ToggleEvent).newState === 'open')}>
+      <p class="dlhead">{t('rulebook.dl.head')}</p>
+      <p class="dlnote">{t('rulebook.dl.note', { version })}</p>
       {#each pdfs as p (p.key)}
         <a role="menuitem" class="dlitem" class:cur={p.current} href={p.href} download={p.filename} onclick={() => pop?.hidePopover()}>
-          <span class="nm">{t(`theme.${p.key}`)}{#if p.key === 'noir'}<small>Standard</small>{/if}</span>
-          <span class="meta">{#if p.current}<em>aktiv</em>{/if}{#if p.size}<span>{fmtSize(p.size)}</span>{/if}</span>
+          <span class="nm">{t(`theme.${p.key}`)}{#if p.key === 'noir'}<small>{t('rulebook.dl.standard')}</small>{/if}</span>
+          <span class="meta">{#if p.current}<em>{t('rulebook.dl.current')}</em>{/if}{#if p.size}<span>{fmtSize(p.size)}</span>{/if}</span>
         </a>
       {/each}
     </div>
   {:else if pdfs.length === 1}
-    <a class={variant === 'drawer' ? 'dl' : 'btn'} href={pdfs[0].href} download={pdfs[0].filename} title="Regelwerk als PDF herunterladen">
+    <a class={variant === 'drawer' ? 'dl' : 'btn'} href={pdfs[0].href} download={pdfs[0].filename} title={t('rulebook.dl.titleSingle')}>
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3v11m0 0l-4.5-4.5M12 14l4.5-4.5M4 15v4a2 2 0 002 2h12a2 2 0 002-2v-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-      {#if variant === 'drawer'}<b>Regelwerk</b><small>v{version}</small>{:else}<span>{label}</span>{/if}
+      {#if variant === 'drawer'}<b>{t('rulebook.dl.name')}</b><small>v{version}</small>{:else}<span>{label}</span>{/if}
     </a>
   {:else if variant === 'drawer'}
-    <b class="plain">Regelwerk</b>{#if version}<small class="dim">v{version}</small>{/if}
+    <b class="plain">{t('rulebook.dl.name')}</b>{#if version}<small class="dim">v{version}</small>{/if}
   {/if}
 </div>
 

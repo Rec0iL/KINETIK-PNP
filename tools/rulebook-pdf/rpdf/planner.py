@@ -10,6 +10,8 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from .project import FILLER_PREFIX
+
 CHAPTER_TEXT_LIMIT = 14000
 OVERVIEW_TEXT_LIMIT = 6000
 
@@ -243,7 +245,7 @@ def plan_chapter(chapter, slots, world, model=None, style="", kind="rulebook"):
             return f'chapter banner for "{s.title}"'
         if s.kind == "filler":
             shape = "portrait" if s.aspect < 0.9 else ("square" if s.aspect < 1.25 else "landscape")
-            return (f'additional {shape} illustration for "{s.title.removeprefix("Füllbild: ")}" '
+            return (f'additional {shape} illustration for "{s.title.removeprefix(FILLER_PREFIX)}" '
                     f'- a different moment, place or character than its section image')
         return f'section "{s.title}"'
     wanted = "\n".join(f"- {s.key}: {describe(s)}" for s in slots)

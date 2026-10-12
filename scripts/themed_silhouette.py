@@ -4,8 +4,9 @@
 Die Farben kommen aus denselben --term-*-Werten, die auch die Silhouette im VTT benutzt (tools/kinetik-vtt/src/themes/themes.css),
 damit PDF, Web-Regelwerk und Charakterbogen gleich aussehen. Neo-Noir behält die Originalgrafik (assets/grafiken/koerper-silhouette.svg).
 
-    python3 scripts/themed_silhouette.py            # alle Looks
+    python3 scripts/themed_silhouette.py            # alle Looks (deutsch)
     python3 scripts/themed_silhouette.py wushu      # einer
+    python3 scripts/themed_silhouette.py --lang en  # englische Beschriftung: koerper-silhouette-<theme>.en.svg
 """
 import re
 import sys
@@ -13,6 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "assets" / "grafiken" / "koerper-silhouette.svg"
+SRC_EN = ROOT / "assets" / "grafiken" / "koerper-silhouette.en.svg"
 CSS = ROOT / "tools" / "kinetik-vtt" / "src" / "themes" / "themes.css"
 THEMES = ["sincity", "wushu", "pixel", "manga", "ukiyo", "western", "akte", "terminal", "hybrid"]
 
@@ -46,9 +48,9 @@ def hex_of(v, over=None):
     return "#%02x%02x%02x" % (round(r), round(g), round(b))
 
 
-def make(theme, tokens):
+def make(theme, tokens, lang="de"):
     t = tokens[theme]
-    svg = SRC.read_text(encoding="utf-8")
+    svg = (SRC_EN if lang == "en" else SRC).read_text(encoding="utf-8")
     sub = {
         "#12352b": hex_of(t["fill"], t["bg"]),   # Zonen
         "#1fc28b": hex_of(t["line"]),   # Umriss, Kästchen, Titel
@@ -70,9 +72,16 @@ def make(theme, tokens):
 
 def main():
     tokens = term_tokens()
-    for theme in sys.argv[1:] or THEMES:
-        out = ROOT / "assets" / "grafiken" / f"koerper-silhouette-{theme}.svg"
-        out.write_text(make(theme, tokens), encoding="utf-8")
+    args = sys.argv[1:]
+    lang = "de"
+    if "--lang" in args:
+        i = args.index("--lang")
+        lang = args[i + 1]
+        del args[i:i + 2]
+    suffix = ".en" if lang == "en" else ""
+    for theme in args or THEMES:
+        out = ROOT / "assets" / "grafiken" / f"koerper-silhouette-{theme}{suffix}.svg"
+        out.write_text(make(theme, tokens, lang), encoding="utf-8")
         print(f"{theme}: {out.relative_to(ROOT)}  Hintergrund {hex_of(tokens[theme]['bg'])}, Linie {hex_of(tokens[theme]['line'])}, Füllung {hex_of(tokens[theme]['fill'])}")
 
 

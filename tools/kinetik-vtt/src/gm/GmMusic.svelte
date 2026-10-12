@@ -1,22 +1,23 @@
 <script lang="ts">
   import { gm, musicPlay, musicPause, musicResume, musicStop, musicSeek, musicVolume, musicLoop, addTrack, removeTrack } from '../net/gm.svelte';
-  import { catalog, type CatalogTrack } from '../music/catalog.svelte';
+  import { catalog, ALL_CATEGORIES, categoryLabel, categoryFilterLabel, type CatalogTrack } from '../music/catalog.svelte';
   import { music } from '../music/engine.svelte';
   import type { TrackRef } from '../music/clock';
   import { putAsset, removeAsset } from '../net/assets.svelte';
   import { settings } from '../lib/settings.svelte';
   import { pushToast } from '../ui/toasts.svelte';
   import { uid } from '../model/character';
+  import { t } from '../i18n';
 
   let fileInput = $state<HTMLInputElement>();
   let uploading = $state(false);
-  let cat = $state('alle');
+  let cat = $state(ALL_CATEGORIES);
 
   const m = $derived(gm.session!.state.music);
-  const categories = $derived(['alle', ...new Set(catalog.tracks.map((t) => t.category))]);
-  const shown = $derived(catalog.tracks.filter((t) => cat === 'alle' || t.category === cat));
+  const categories = $derived([ALL_CATEGORIES, ...new Set(catalog.tracks.map((tr) => tr.tag ?? tr.category))]);
+  const shown = $derived(catalog.tracks.filter((tr) => cat === ALL_CATEGORIES || (tr.tag ?? tr.category) === cat));
   const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
-  const isCurrent = (t: TrackRef) => m.track?.id === t.id;
+  const isCurrent = (tr: TrackRef) => m.track?.id === tr.id;
 
   async function onFiles(e: Event) {
     const input = e.currentTarget as HTMLInputElement;
@@ -24,21 +25,21 @@
     input.value = '';
     uploading = true;
     for (const f of files) {
-      if (f.size > 40 * 1024 * 1024) { pushToast(`${f.name}: größer als 40 MB, bitte komprimieren.`, 'warn'); continue; }
+      if (f.size > 40 * 1024 * 1024) { pushToast(t('gm.music.tooBig', { name: f.name }), 'warn'); continue; }
       try {
         const meta = await putAsset(await f.arrayBuffer(), f.name, f.type || 'audio/mpeg');
-        addTrack({ id: uid(), title: f.name.replace(/\.[^.]+$/, ''), hash: meta.hash, mime: meta.mime, license: 'eigene Datei' });
-        pushToast(`„${f.name}“ hinzugefügt.`, 'good');
+        addTrack({ id: uid(), title: f.name.replace(/\.[^.]+$/, ''), hash: meta.hash, mime: meta.mime, license: t('gm.music.ownFile') });
+        pushToast(t('gm.music.added', { name: f.name }), 'good');
       } catch (err) {
         pushToast(`${f.name}: ${(err as Error).message}`, 'danger');
       }
     }
     uploading = false;
   }
-  async function del(t: TrackRef) {
-    if (!confirm(`„${t.title}“ aus der Bibliothek löschen?`)) return;
-    removeTrack(t.id);
-    if (t.hash && !gm.session!.tracks.some((x) => x.hash === t.hash)) await removeAsset(t.hash);
+  async function del(tr: TrackRef) {
+    if (!confirm(t('gm.music.confirmDelete', { title: tr.title }))) return;
+    removeTrack(tr.id);
+    if (tr.hash && !gm.session!.tracks.some((x) => x.hash === tr.hash)) await removeAsset(tr.hash);
   }
   const progress = $derived(music.dur ? (music.pos / music.dur) * 100 : 0);
   function seek(e: MouseEvent) {
@@ -50,57 +51,57 @@
 
 <div class="stack">
   <section class="panel now">
-    <h2>Jetzt</h2>
+    <h2>{t('gm.music.now')}</h2>
     {#if m.track}
       <div class="row">
         <div class="titles"><b class="t">{m.track.title}</b><small class="dim">{m.track.artist ?? ''} {m.track.license ? `· ${m.track.license}` : ''}</small></div>
         <span class="spacer"></span>
-        {#if m.playing}<button class="btn primary" onclick={musicPause}>Pause</button>{:else}<button class="btn primary" onclick={musicResume}>Weiter</button>{/if}
-        <button class="btn" onclick={musicStop}>Stopp</button>
+        {#if m.playing}<button class="btn primary" onclick={musicPause}>{t('gm.music.pause')}</button>{:else}<button class="btn primary" onclick={musicResume}>{t('gm.music.resume')}</button>{/if}
+        <button class="btn" onclick={musicStop}>{t('gm.music.stop')}</button>
       </div>
-      <div class="seek" onclick={seek} role="slider" tabindex="0" aria-label="Position" aria-valuenow={Math.round(music.pos)} aria-valuemin="0" aria-valuemax={Math.round(music.dur)} onkeydown={(e) => { if (e.key === 'ArrowRight') musicSeek(music.pos + 10); if (e.key === 'ArrowLeft') musicSeek(Math.max(0, music.pos - 10)); }}>
+      <div class="seek" onclick={seek} role="slider" tabindex="0" aria-label={t('gm.music.position')} aria-valuenow={Math.round(music.pos)} aria-valuemin="0" aria-valuemax={Math.round(music.dur)} onkeydown={(e) => { if (e.key === 'ArrowRight') musicSeek(music.pos + 10); if (e.key === 'ArrowLeft') musicSeek(Math.max(0, music.pos - 10)); }}>
         <i style:width="{progress}%"></i>
       </div>
-      <small class="dim mono">{fmt(music.pos)} / {music.dur ? fmt(music.dur) : '–:––'}{music.loading ? ' · lädt …' : ''}</small>
+      <small class="dim mono">{fmt(music.pos)} / {music.dur ? fmt(music.dur) : '–:––'}{music.loading ? t('gm.music.loadingSuffix') : ''}</small>
     {:else}
-      <p class="dim">Es läuft nichts. Wähle unten einen Titel, alle Spieler hören ihn synchron.</p>
+      <p class="dim">{t('gm.music.nothing')}</p>
     {/if}
     <div class="row opts">
-      <label class="field vol">Lautstärke für alle<input type="range" min="0" max="1" step="0.02" value={m.volume} oninput={(e) => musicVolume(Number(e.currentTarget.value))} /></label>
-      <label class="check"><input type="checkbox" checked={m.loop} onchange={(e) => musicLoop(e.currentTarget.checked)} /> Schleife</label>
-      <label class="check"><input type="checkbox" bind:checked={settings.musicAutoNext} /> Danach nächsten Titel</label>
+      <label class="field vol">{t('gm.music.volume')}<input type="range" min="0" max="1" step="0.02" value={m.volume} oninput={(e) => musicVolume(Number(e.currentTarget.value))} /></label>
+      <label class="check"><input type="checkbox" checked={m.loop} onchange={(e) => musicLoop(e.currentTarget.checked)} /> {t('gm.music.loop')}</label>
+      <label class="check"><input type="checkbox" bind:checked={settings.musicAutoNext} /> {t('gm.music.autoNext')}</label>
     </div>
-    <small class="dim">Spieler stellen ihre eigene Lautstärke ein oder schalten stumm. Der Browser verlangt einmal einen Klick auf „Audio aktivieren“.</small>
+    <small class="dim">{t('gm.music.playerHint')}</small>
   </section>
 
   <section class="panel">
-    <div class="row"><h2>Eigene Titel</h2><span class="spacer"></span>
-      <button class="btn sm primary" onclick={() => fileInput?.click()} disabled={uploading}>{uploading ? 'Lade …' : '+ Audiodatei'}</button>
+    <div class="row"><h2>{t('gm.music.own')}</h2><span class="spacer"></span>
+      <button class="btn sm primary" onclick={() => fileInput?.click()} disabled={uploading}>{uploading ? t('gm.common.loading') : t('gm.music.addAudio')}</button>
       <input bind:this={fileInput} type="file" accept="audio/*" multiple class="sr-only" onchange={onFiles} />
     </div>
-    <p class="dim hint">Hochgeladene Titel werden beim ersten Abspielen an die Spieler übertragen und dort zwischengespeichert. Nur Musik hochladen, für die du die Rechte hast.</p>
-    {#each gm.session!.tracks as t (t.id)}
-      <div class="trk" class:cur={isCurrent(t)}>
-        <button class="btn sm icon" onclick={() => musicPlay(t)} aria-label={`${t.title} abspielen`}>▶</button>
-        <span class="n">{t.title}</span>
-        <button class="btn sm icon ghost danger" onclick={() => del(t)} aria-label="Löschen">✕</button>
+    <p class="dim hint">{t('gm.music.ownHint')}</p>
+    {#each gm.session!.tracks as tr (tr.id)}
+      <div class="trk" class:cur={isCurrent(tr)}>
+        <button class="btn sm icon" onclick={() => musicPlay(tr)} aria-label={t('gm.music.play', { title: tr.title })}>▶</button>
+        <span class="n">{tr.title}</span>
+        <button class="btn sm icon ghost danger" onclick={() => del(tr)} aria-label={t('gm.common.delete')}>✕</button>
       </div>
     {:else}
-      <p class="dim">Noch keine eigenen Titel.</p>
+      <p class="dim">{t('gm.music.noOwn')}</p>
     {/each}
   </section>
 
   <section class="panel">
-    <div class="row"><h2>Mitgelieferte Titel</h2><span class="spacer"></span>
-      <select bind:value={cat} aria-label="Kategorie">{#each categories as c}<option value={c}>{c === 'alle' ? 'Alle Kategorien' : c}</option>{/each}</select>
+    <div class="row"><h2>{t('gm.music.bundled')}</h2><span class="spacer"></span>
+      <select bind:value={cat} aria-label={t('gm.music.category')}>{#each categories as c}<option value={c}>{categoryFilterLabel(c)}</option>{/each}</select>
     </div>
-    <p class="dim hint">Kevin MacLeod, <a href="#/credits">CC BY 4.0</a>. Sie liegen auf der Webseite, Spieler laden sie direkt von dort.</p>
-    {#each shown as t (t.id)}
-      <div class="trk" class:cur={isCurrent(t)}>
-        <button class="btn sm icon" onclick={() => musicPlay(t)} aria-label={`${t.title} abspielen`}>▶</button>
-        <span class="n">{t.title}</span>
-        <span class="chip">{t.category}</span>
-        <small class="dim mono">{fmt(t.duration ?? 0)}</small>
+    <p class="dim hint">Kevin MacLeod, <a href="#/credits">CC BY 4.0</a>. {t('gm.music.bundledHint')}</p>
+    {#each shown as tr (tr.id)}
+      <div class="trk" class:cur={isCurrent(tr)}>
+        <button class="btn sm icon" onclick={() => musicPlay(tr)} aria-label={t('gm.music.play', { title: tr.title })}>▶</button>
+        <span class="n">{tr.title}</span>
+        <span class="chip">{categoryLabel(tr)}</span>
+        <small class="dim mono">{fmt(tr.duration ?? 0)}</small>
       </div>
     {/each}
   </section>

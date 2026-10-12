@@ -2,27 +2,28 @@
   import { music, setLocalVolume, setMuted, unlockAudio } from './engine.svelte';
   import { gm } from '../net/gm.svelte';
   import { player } from '../net/player.svelte';
+  import { t } from '../i18n';
 
   const active = $derived(gm.status === 'open' || player.status === 'connected');
   const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 </script>
 
 {#if active && music.current}
-  <div class="bar panel flat" role="region" aria-label="Musik">
+  <div class="bar panel flat" role="region" aria-label={t('music.bar.aria')}>
     <span class="note" aria-hidden="true">♪</span>
     <div class="info">
       <b>{music.current.title}</b>
-      <small class="dim">{music.current.artist ?? ''}{music.loading ? ' · lädt …' : ''}{music.error ? ` · ${music.error}` : ''}</small>
+      <small class="dim">{music.current.artist ?? ''}{music.loading ? ` · ${t('music.bar.loading')}` : ''}{music.error ? ` · ${music.error}` : ''}</small>
       <div class="track"><i style:width="{music.dur ? (music.pos / music.dur) * 100 : 0}%"></i></div>
       <small class="dim mono">{fmt(music.pos)} / {music.dur ? fmt(music.dur) : '–:––'}</small>
     </div>
     <div class="ctl">
       {#if music.blocked}
-        <button class="btn sm amber" onclick={unlockAudio}>Audio aktivieren</button>
+        <button class="btn sm amber" onclick={unlockAudio}>{t('music.bar.unlock')}</button>
       {/if}
-      <button class="btn sm icon" onclick={() => setMuted(!music.muted)} aria-label={music.muted ? 'Ton an' : 'Stumm'} title={music.muted ? 'Ton an' : 'Stumm'}>{music.muted ? '🔇' : '🔊'}</button>
-      <input type="range" min="0" max="1" step="0.02" value={music.volume} oninput={(e) => setLocalVolume(Number(e.currentTarget.value))} aria-label="Lautstärke" />
-      <a href="#/credits" class="dim cr" title="Lizenz und Namensnennung">©</a>
+      <button class="btn sm icon" onclick={() => setMuted(!music.muted)} aria-label={t(music.muted ? 'music.bar.unmute' : 'music.bar.mute')} title={t(music.muted ? 'music.bar.unmute' : 'music.bar.mute')}>{music.muted ? '🔇' : '🔊'}</button>
+      <input type="range" min="0" max="1" step="0.02" value={music.volume} oninput={(e) => setLocalVolume(Number(e.currentTarget.value))} aria-label={t('music.bar.volume')} />
+      <a href="#/credits" class="dim cr" title={t('music.bar.credits')}>©</a>
     </div>
   </div>
 {/if}

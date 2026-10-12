@@ -4,6 +4,7 @@ import { settings } from '../lib/settings.svelte';
 import { buildIceConfig, explainFailedJoin, hasCustomTurn } from './ice';
 import { brokerProbeUrl } from './backoff';
 import { currentIceSettings } from './icetest';
+import { t, type Key } from '../i18n';
 
 export type { DataConnection };
 export { Peer };
@@ -29,18 +30,19 @@ export class PeerFailure extends Error {
 /** Beschreibt PeerJS-Fehler verständlich. */
 export function explainPeerError(err: unknown): PeerFailure {
   const type = (err as { type?: string })?.type ?? 'unknown';
-  const map: Record<string, string> = {
-    'unavailable-id': 'Dieser Raumcode ist gerade belegt (ist die Runde noch in einem anderen Tab offen?).',
-    'peer-unavailable': 'Keine Runde mit diesem Code gefunden. Läuft der SL-Tab und stimmt der Code?',
-    network: 'Keine Verbindung zum Vermittlungsserver. Internet und Server-Einstellungen prüfen.',
-    'server-error': 'Der Vermittlungsserver antwortet nicht.',
-    'socket-error': 'Verbindung zum Vermittlungsserver unterbrochen.',
-    'socket-closed': 'Verbindung zum Vermittlungsserver geschlossen.',
-    'browser-incompatible': 'Dieser Browser unterstützt WebRTC nicht.',
-    'webrtc': 'WebRTC-Fehler: Direktverbindung nicht möglich (Firewall?). Ein TURN-Server kann helfen.',
-    negotiation: 'Verbindungsaufbau fehlgeschlagen (Firewall oder strenges NAT?).',
+  const map: Record<string, Key> = {
+    'unavailable-id': 'net.peer.unavailableId',
+    'peer-unavailable': 'net.peer.peerUnavailable',
+    network: 'net.peer.network',
+    'server-error': 'net.peer.serverError',
+    'socket-error': 'net.peer.socketError',
+    'socket-closed': 'net.peer.socketClosed',
+    'browser-incompatible': 'net.peer.browserIncompatible',
+    'webrtc': 'net.peer.webrtc',
+    negotiation: 'net.peer.negotiation',
   };
-  return new PeerFailure(type, map[type] ?? `Verbindungsfehler (${type}).`);
+  const key = map[type];
+  return new PeerFailure(type, key ? t(key) : t('net.peer.unknown', { type }));
 }
 
 /** Erzeugt einen Peer und wartet, bis er beim Server registriert ist. */
@@ -49,7 +51,7 @@ export function openPeer(id?: string): Promise<Peer> {
     const peer = id ? new Peer(id, peerOptions()) : new Peer(peerOptions());
     const timer = setTimeout(() => {
       peer.destroy();
-      reject(new PeerFailure('timeout', 'Zeitüberschreitung beim Verbinden mit dem Vermittlungsserver.'));
+      reject(new PeerFailure('timeout', t('net.peer.timeout')));
     }, 15000);
     peer.once('open', () => {
       clearTimeout(timer);

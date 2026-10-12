@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
+  import { t } from '../i18n';
   let { open = $bindable(false), title, children, wide = false }: { open: boolean; title: string; children: Snippet; wide?: boolean } = $props();
   let el = $state<HTMLDialogElement>();
 
@@ -15,7 +16,7 @@
     <div class="row head">
       <h2>{title}</h2>
       <span class="spacer"></span>
-      <button type="button" class="btn sm icon ghost" onclick={() => (open = false)} aria-label="Schließen">✕</button>
+      <button type="button" class="btn sm icon ghost" onclick={() => (open = false)} aria-label={t('ui.common.close')}>✕</button>
     </div>
     {@render children()}
   </div>

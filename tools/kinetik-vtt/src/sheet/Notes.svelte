@@ -1,5 +1,6 @@
 <script lang="ts">
   import { uid, type Character } from '../model/character';
+  import { t } from '../i18n';
 
   let { char }: { char: Character } = $props();
   let sel = $state('');
@@ -7,12 +8,12 @@
   const current = $derived(char.notes.find((n) => n.id === sel) ?? char.notes[0]);
 
   function add() {
-    const n = { id: uid(), title: 'Neue Notiz', text: '' };
+    const n = { id: uid(), title: t('sheet.notes.newNote'), text: '' };
     char.notes.push(n);
     sel = n.id;
   }
   function remove(id: string) {
-    if (!confirm('Notiz löschen?')) return;
+    if (!confirm(t('sheet.notes.confirmDelete'))) return;
     char.notes = char.notes.filter((n) => n.id !== id);
     sel = char.notes[0]?.id ?? '';
   }
@@ -21,34 +22,34 @@
 <div class="stack">
   <section class="panel notes">
     <div class="side">
-      <div class="row"><h2>Notizen</h2><span class="spacer"></span><button class="btn sm primary" onclick={add}>+</button></div>
+      <div class="row"><h2>{t('sheet.notes.notes')}</h2><span class="spacer"></span><button class="btn sm primary" onclick={add}>+</button></div>
       <ul>
         {#each char.notes as n (n.id)}
-          <li><button class:on={current?.id === n.id} onclick={() => (sel = n.id)}>{n.title || 'Ohne Titel'}</button></li>
+          <li><button class:on={current?.id === n.id} onclick={() => (sel = n.id)}>{n.title || t('sheet.notes.untitled')}</button></li>
         {/each}
       </ul>
     </div>
     <div class="main">
       {#if current}
         <div class="row">
-          <input class="ttl" bind:value={current.title} aria-label="Titel der Notiz" />
-          <button class="btn sm icon danger" onclick={() => remove(current.id)} aria-label="Notiz löschen">✕</button>
+          <input class="ttl" bind:value={current.title} aria-label={t('sheet.notes.titleAria')} />
+          <button class="btn sm icon danger" onclick={() => remove(current.id)} aria-label={t('sheet.notes.delete')}>✕</button>
         </div>
-        <textarea bind:value={current.text} rows="16" placeholder="Hintergrund, Kontakte, Ziele, Spuren, Sitzungsnotizen …" aria-label="Notiztext"></textarea>
+        <textarea bind:value={current.text} rows="16" placeholder={t('sheet.notes.textPlaceholder')} aria-label={t('sheet.notes.textAria')}></textarea>
       {:else}
-        <p class="dim">Keine Notiz vorhanden.</p>
+        <p class="dim">{t('sheet.notes.empty')}</p>
       {/if}
     </div>
   </section>
 
   <section class="panel">
-    <div class="row"><h2>Eigene Felder</h2><span class="spacer"></span><button class="btn sm" onclick={() => char.customFields.push({ id: uid(), label: '', value: '' })}>+ Feld</button></div>
-    <p class="dim hint">Beliebige Zusatzangaben, z.B. Alter, Herkunft, Konto, Fahrzeug, Hausregeln.</p>
+    <div class="row"><h2>{t('sheet.notes.customFields')}</h2><span class="spacer"></span><button class="btn sm" onclick={() => char.customFields.push({ id: uid(), label: '', value: '' })}>{t('sheet.notes.addField')}</button></div>
+    <p class="dim hint">{t('sheet.notes.fieldsHint')}</p>
     {#each char.customFields as f, i (f.id)}
       <div class="row cf">
-        <input class="l" bind:value={f.label} placeholder="Bezeichnung" aria-label="Bezeichnung" />
-        <input class="v" bind:value={f.value} placeholder="Wert" aria-label="Wert" />
-        <button class="btn sm icon danger" onclick={() => char.customFields.splice(i, 1)} aria-label="Entfernen">✕</button>
+        <input class="l" bind:value={f.label} placeholder={t('sheet.notes.label')} aria-label={t('sheet.notes.label')} />
+        <input class="v" bind:value={f.value} placeholder={t('sheet.notes.value')} aria-label={t('sheet.notes.value')} />
+        <button class="btn sm icon danger" onclick={() => char.customFields.splice(i, 1)} aria-label={t('sheet.common.remove')}>✕</button>
       </div>
     {/each}
   </section>

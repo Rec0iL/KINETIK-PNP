@@ -20,7 +20,9 @@ Thumbs.db
 
 # Regelwerk-Bildsätze der Themes: die Quell-JPGs bleiben lokal (die Web-Fassung liegt als WebP in tools/kinetik-vtt/public/rulebook/img/<theme>/)
 assets/pdf-themes/*/images/
+assets/pdf-themes-en/*/images/
 
 # Gestaltete Regelwerk-PDFs je Theme: liegen als Download unter tools/kinetik-vtt/public/rulebook und lassen sich mit
 # scripts/gen_rulebook_themes.py --pdf neu bauen. Die Kopien in export/ sind nur Zwischenablage.
 export/KINETIK_Regelwerk_v*_*.pdf
+export/KINETIK_Rulebook_v*_*.pdf

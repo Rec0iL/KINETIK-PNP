@@ -1,10 +1,11 @@
 // Kampfsituationen: ein geplanter Angriff oder eine Aktion eines Spielers, bzw. ein Angriff eines Gegners auf einen Spieler.
 // Rein, ohne DOM: Modifikatoren, Clash, Vorschlag der Folgen (3.1 bis 3.10) und deren Anwendung.
 import {
-  resolveClash, resolveHit, tagBonus, ueberzahlBonus, newPoison, GIFT,
+  resolveClash, resolveHit, tagBonus, ueberzahlBonus, newPoison, GIFT, TAG, tagLabel, sameTag,
   type AttrKey, type ClashResult, type GiftLevel, type HitKind, type Poison, type ZoneKey,
 } from '../rules';
 import type { PatchOp } from '../net/protocol';
+import { t, tn } from '../i18n';
 import {
   bedraengnisHit, npcInjury, npcStatus, tagSize, type CombatState, type Npc, type Side,
 } from './combat';
@@ -14,10 +15,10 @@ export type SitStatus = 'planned' | 'released' | 'rolled' | 'resolved' | 'cancel
 export type BtOption = 'zone' | 'ep' | 'momentum';
 
 export const KIND_LABEL: Record<SitKind, string> = {
-  attack: 'Angriff', defend: 'Verteidigung', breath: 'Durchatmen', gather: 'Sammeln',
+  attack: t('gm.sit.kind.attack'), defend: t('gm.sit.kind.defend'), breath: t('gm.sit.kind.breath'), gather: t('gm.sit.kind.gather'),
 };
 export const BT_LABEL: Record<BtOption, string> = {
-  zone: 'Zonenwahl', ep: '+1 EP (kostenloser Effekt oder Move 1 EP günstiger)', momentum: '+1 Momentum',
+  zone: t('gm.sit.bt.zone'), ep: t('gm.sit.bt.ep'), momentum: t('gm.sit.bt.momentum'),
 };
 
 /** Ein Wurf, wie ihn die Situation braucht: Augensumme getrennt von Bonus und Modifikator. */
@@ -97,7 +98,7 @@ export function usedTagBonus(used: string[], available: TagRef[]): number {
   let small = 0;
   let large = 0;
   for (const name of used) {
-    const t = available.find((x) => x.name === name);
+    const t = available.find((x) => sameTag(x.name, name));
     if (!t) continue;
     if (t.size === 'gross') large++;
     else small++;
@@ -203,10 +204,10 @@ export function proposeResolution(i: ProposeInput): ProposalItem[] {
   const bulletZone: ZoneKey | undefined = sit.bullet?.option === 'zone' ? sit.bullet.zone : undefined;
 
   if (sit.kind === 'breath' || sit.kind === 'gather') {
-    if (sit.kind === 'breath') add(`${pcName}: +2 Energie (Durchatmen)`, { k: 'pcRes', playerId: pc, energie: 2 });
-    else add(`${pcName}: +2 Willenskraft (Sammeln)`, { k: 'pcRes', playerId: pc, wk: 2 });
-    add(`Der nächste Clash gegen ${pcName} bekommt +1`, { k: 'exposed', playerId: pc, on: true });
-    add(`${pcName} hat gehandelt`, { k: 'done', id: pc });
+    if (sit.kind === 'breath') add(t('gm.sit.p.breath', { name: pcName }), { k: 'pcRes', playerId: pc, energie: 2 });
+    else add(t('gm.sit.p.gather', { name: pcName }), { k: 'pcRes', playerId: pc, wk: 2 });
+    add(t('gm.sit.p.exposedOn', { name: pcName }), { k: 'exposed', playerId: pc, on: true });
+    add(t('gm.sit.p.acted', { name: pcName }), { k: 'done', id: pc });
     return out;
   }
 
@@ -221,35 +222,35 @@ export function proposeResolution(i: ProposeInput): ProposalItem[] {
   const bothHit = o === 'schlagabtausch';
   const pcWins = pcAttacks ? o === 'dominanz' : o === 'konter' || o === 'perfekterKonter';
 
-  if (res.noRoll) add('Lücke ≥ 8: der Überlegene erzählt, es muss nicht gewürfelt werden', { k: 'note' }, false);
-  if (res.limited) add('Außer Reichweite: das Ergebnis des Unterlegenen wurde gedeckelt', { k: 'note' }, false);
+  if (res.noRoll) add(t('gm.sit.p.noRoll'), { k: 'note' }, false);
+  if (res.limited) add(t('gm.sit.p.limited'), { k: 'note' }, false);
 
-  const hitOnPc = (outcome: typeof o, delta: number, t: number, group?: string, on = true): HitKind | null => {
+  const hitOnPc = (outcome: typeof o, delta: number, thr: number, group?: string, on = true): HitKind | null => {
     if (goon) {
       const r = bedraengnisHit(i.pcBedraengnis);
       if (r.result === 'erster') {
-        add(`${pcName}: 1. Treffer der Goons, −1 ${i.pcSchutz > 0 ? 'Schutz' : 'Willenskraft'} (Bedrängnis 1)`, { k: 'pcHit', playerId: pc, hit: i.pcSchutz > 0 ? 'schutz' : 'wk', zone: 'torso', why: 'Bedrängnis durch Goons' }, on, group);
+        add(t('gm.sit.p.goonFirst', { name: pcName, res: i.pcSchutz > 0 ? t('gm.sit.p.resProtection') : t('gm.sit.p.resWp') }), { k: 'pcHit', playerId: pc, hit: i.pcSchutz > 0 ? 'schutz' : 'wk', zone: 'torso', why: t('gm.sit.why.goons') }, on, group);
       } else {
-        add(`${pcName}: 2. Treffer in Folge, Verletzung (Bedrängnis 0)`, { k: 'pcHit', playerId: pc, hit: 'verletzung', zone: 'torso', why: 'Bedrängnis durch Goons' }, on, group);
+        add(t('gm.sit.p.goonSecond', { name: pcName }), { k: 'pcHit', playerId: pc, hit: 'verletzung', zone: 'torso', why: t('gm.sit.why.goons') }, on, group);
       }
-      add(`Bedrängnis von ${pcName}: ${r.counter}`, { k: 'bedr', playerId: pc, value: r.counter }, on, group);
+      add(t('gm.sit.p.pressure', { name: pcName, n: r.counter }), { k: 'bedr', playerId: pc, value: r.counter }, on, group);
       return r.result === 'erster' ? (i.pcSchutz > 0 ? 'schutz' : 'wk') : 'verletzung';
     }
-    const h = resolveHit({ outcome, delta, t, schutz: i.pcSchutz });
-    add(`${pcName}: ${h.text}`, { k: 'pcHit', playerId: pc, hit: h.kind, zone: 'torso', why: `Treffer von ${npcName}` }, on, group);
+    const h = resolveHit({ outcome, delta, t: thr, schutz: i.pcSchutz });
+    add(`${pcName}: ${h.text}`, { k: 'pcHit', playerId: pc, hit: h.kind, zone: 'torso', why: t('gm.sit.why.hitBy', { name: npcName }) }, on, group);
     return h.kind;
   };
 
-  const hitOnNpc = (outcome: typeof o, delta: number, t: number, group?: string, on = true): HitKind | null => {
+  const hitOnNpc = (outcome: typeof o, delta: number, thr: number, group?: string, on = true): HitKind | null => {
     if (goon) {
       // Dominanz und perfekter Konter sind die großen Siege: 2 Goons, der SL darf auf 3 erhöhen (3.7).
       const big = outcome === 'dominanz' || outcome === 'perfekterKonter';
       const n = big ? 2 : 1;
       const tokenIds = (i.nearTokens ?? []).slice(0, n);
-      add(`${npcName}: ${n} ausgeschaltet${big ? ' (großer Sieg: 2 bis 3)' : ''}`, { k: 'goonOut', npcId: npc.id, n, tokenIds }, on, group);
+      add(t(big ? 'gm.sit.p.goonOutBig' : 'gm.sit.p.goonOut', { name: npcName, n }), { k: 'goonOut', npcId: npc.id, n, tokenIds }, on, group);
       return null;
     }
-    const h = resolveHit({ outcome, delta, t, schutz: npc.schutz });
+    const h = resolveHit({ outcome, delta, t: thr, schutz: npc.schutz });
     add(`${npcName}: ${h.text}`, { k: 'npcHit', npcId: npc.id, hit: h.kind, zone: bulletZone ?? 'torso' }, on, group);
     return h.kind;
   };
@@ -267,11 +268,11 @@ export function proposeResolution(i: ProposeInput): ProposalItem[] {
     const reaches = sit.gift.ignoresSchutz || mainHit === 'verletzung' || targetSchutz === 0;
     const target = pcAttacks ? { who: 'npc' as const, id: npc.id, name: npcName } : { who: 'pc' as const, id: pc, name: pcName };
     const poison = newPoison(`g${sit.id}`, sit.gift.level, sit.gift.delay, pcAttacks ? pcName : npcName);
-    const later = sit.gift.delay ? `wirkt nach ${sit.gift.delay} Runde${sit.gift.delay === 1 ? '' : 'n'}` : 'wirkt am Rundenende';
+    const later = sit.gift.delay ? tn('gm.sit.p.poisonDelay', sit.gift.delay) : t('gm.sit.p.poisonEndOfRound');
     add(
       reaches
-        ? `${target.name}: Vergiftet (${GIFT[sit.gift.level].label}), ${later}`
-        : `${target.name}: Gift bleibt am Schutz hängen (Schutz > 0, keine Verletzung)`,
+        ? t('gm.sit.p.poisoned', { name: target.name, level: GIFT[sit.gift.level].label, later })
+        : t('gm.sit.p.poisonBlocked', { name: target.name }),
       { k: 'poison', who: target.who, id: target.id, poison },
       reaches,
     );
@@ -281,40 +282,44 @@ export function proposeResolution(i: ProposeInput): ProposalItem[] {
     // Schlagabtausch (3.1): beide treffen, oder der Angreifer bekommt einen kleinen Nachteils-Tag.
     if (pcAttacks) hitOnPc('schlagabtausch', 0, res.tV, 'sa');
     else hitOnNpc('schlagabtausch', 0, res.tV, 'sa');
-    if (pcAttacks) add(`Alternativ: ${pcName} bekommt den kleinen Tag „Aus der Balance“ statt der Gegentreffer`, { k: 'tag', who: 'pc', id: pc, name: 'Aus der Balance' }, false, 'sa');
-    else add(`Alternativ: ${npcName} bekommt den kleinen Tag „Aus der Balance“ statt der Gegentreffer`, { k: 'tag', who: 'npc', id: npc.id, name: 'Aus der Balance' }, false, 'sa');
+    if (pcAttacks) add(t('gm.sit.p.offBalance', { name: pcName, tag: tagLabel(TAG.offBalance) }), { k: 'tag', who: 'pc', id: pc, name: tagLabel(TAG.offBalance) }, false, 'sa');
+    else add(t('gm.sit.p.offBalance', { name: npcName, tag: tagLabel(TAG.offBalance) }), { k: 'tag', who: 'npc', id: npc.id, name: tagLabel(TAG.offBalance) }, false, 'sa');
   }
 
-  if (pcWins) add(`Bedrängnis von ${pcName} auf 0 (Sieg des Spielers)`, { k: 'bedr', playerId: pc, value: 0 });
+  if (pcWins) add(t('gm.sit.p.pcWins', { name: pcName }), { k: 'bedr', playerId: pc, value: 0 });
 
   if (res.rewards) {
     const pcSide = (res.rewards.side === 'attacker') === pcAttacks;
     if (pcSide) {
       const r = res.rewards;
-      const bits = [`${r.momentum} Momentum`, r.energie ? `${r.energie} Energie` : '', r.wk ? `${r.wk} Willenskraft` : ''].filter(Boolean).join(', ');
-      add(`${pcName}: +${bits}`, { k: 'pcRes', playerId: pc, momentum: r.momentum, energie: r.energie, wk: r.wk });
+      const bits = [
+        t('gm.sit.p.rewardMomentum', { n: r.momentum }),
+        r.energie ? t('gm.sit.p.rewardEnergy', { n: r.energie }) : '',
+        r.wk ? t('gm.sit.p.rewardWp', { n: r.wk }) : '',
+      ].filter(Boolean).join(', ');
+      add(t('gm.sit.p.rewards', { name: pcName, bits }), { k: 'pcRes', playerId: pc, momentum: r.momentum, energie: r.energie, wk: r.wk });
     }
   }
   if (res.marker) {
     const pcGets = (res.marker === 'attacker') === pcAttacks;
-    add(`Der Kinetik-Marker geht an die ${pcGets ? 'Spieler' : 'Gegner'}`, { k: 'marker', side: pcGets ? 'players' : 'enemies' });
+    add(t(pcGets ? 'gm.sit.p.markerPlayers' : 'gm.sit.p.markerEnemies'), { k: 'marker', side: pcGets ? 'players' : 'enemies' });
   }
 
   if (sit.area) {
     add(
       sit.area === 'flaeche'
-        ? 'Fläche (3.14): alle Ziele in der Zone würfeln einzeln. Ein Konter heißt nur Entkommen, Goons: bis zu 5 fallen, Deckung zählt halb. Weitere Ziele am Tisch auswerten.'
-        : 'Mehrere Ziele (5.1): jedes weitere Ziel würfelt einzeln, bei Goons fallen bis zu 3. Ein Konter heißt nur Entkommen. Weitere Ziele am Tisch auswerten.',
+        ? t('gm.sit.p.area')
+        : t('gm.sit.p.multi'),
       { k: 'note' },
       false,
     );
   }
-  if (sit.bullet?.option === 'momentum') add(`${pcName}: +1 Momentum (Bullet Time)`, { k: 'pcRes', playerId: pc, momentum: 1 });
-  if (sit.bullet?.option === 'ep') add('Bullet Time: kostenloser 1-EP-Effekt für die Aktion (erzählen und eintragen)', { k: 'note' }, false);
-  if (sit.bullet?.option === 'zone' && !bulletZone) add('Bullet Time: der Spieler wählt die Zone der Verletzung', { k: 'note' }, false);
+  if (sit.bullet?.option === 'momentum') add(t('gm.sit.p.bulletMomentum', { name: pcName }), { k: 'pcRes', playerId: pc, momentum: 1 });
+  if (sit.bullet?.option === 'ep') add(t('gm.sit.p.bulletEp'), { k: 'note' }, false);
+  if (sit.bullet?.option === 'zone' && !bulletZone) add(t('gm.sit.p.bulletZone'), { k: 'note' }, false);
 
-  if (i.exposedUsed) add(`Der +1-Bonus gegen ${pcName} ist verbraucht`, { k: 'exposed', playerId: pc, on: false });
-  add(pcAttacks ? `${pcName} hat gehandelt` : `${npcName} hat gehandelt`, { k: 'done', id: pcAttacks ? pc : npc.id });
+  if (i.exposedUsed) add(t('gm.sit.p.exposedUsed', { name: pcName }), { k: 'exposed', playerId: pc, on: false });
+  add(t('gm.sit.p.acted', { name: pcAttacks ? pcName : npcName }), { k: 'done', id: pcAttacks ? pc : npc.id });
   return out;
 }
 
@@ -435,7 +440,7 @@ export function playerView(sit: Situation, npc: Npc | null): PlayerSituation {
     tagsUsed: sit.tagsUsed, mod: sit.mod, modReason: sit.modReason, rollMod: playerRollMod(sit, npc), attackers: sit.attackers,
     gift: sit.gift && sit.kind === 'attack' ? { level: sit.gift.level, delay: sit.gift.delay } : null,
     bullet: sit.bullet ? { ...sit.bullet } : null, status: sit.status, rolled: !!sit.pRoll,
-    summary: showResult && r ? { outcome: r.outcome, delta: r.delta, note: r.noRoll ? 'Lücke ≥ 8' : r.limited ? 'Außer Reichweite' : r.heldenSchwelle ? 'Helden-Schwelle' : '' } : null,
+    summary: showResult && r ? { outcome: r.outcome, delta: r.delta, note: r.noRoll ? t('gm.sit.note.noRoll') : r.limited ? t('gm.sit.note.limited') : r.heldenSchwelle ? t('gm.sit.note.heroThreshold') : '' } : null,
   };
 }
 

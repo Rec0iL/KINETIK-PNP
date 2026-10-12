@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { rules, ueberzahlBonus, newPoison, describePoison, antidoteMw, GIFT, GIFT_LEVELS, MAX_GIFT_DELAY, type GiftLevel, type NpcType, type ZoneKey } from '../rules';
+    import { rules, TAG, isTag, tagLabel, ueberzahlBonus, newPoison, describePoison, antidoteMw, GIFT, GIFT_LEVELS, MAX_GIFT_DELAY, type GiftLevel, type NpcType, type ZoneKey } from '../rules';
   import { gm, patchPlayer, partyFor, advanceRound, poisonRound, gmMapOps } from '../net/gm.svelte';
   import { imageToDataUrl, shrinkDataUrl } from '../lib/image';
   import { pushToast } from '../ui/toasts.svelte';
@@ -9,6 +9,7 @@
   import { roll2d6 } from '../dice/roller.svelte';
   import { uid } from '../model/character';
   import Stepper from '../ui/Stepper.svelte';
+  import { t } from '../i18n';
   import TagInput from '../ui/TagInput.svelte';
 
   const combat = $derived(gm.session!.combat);
@@ -26,11 +27,11 @@
   let giftDelay = $state(0);
 
   const types = rules.npc.leiter;
-  const sideName = (s: Side) => (s === 'players' ? 'Spieler' : 'Gegner');
+  const sideName = (s: Side) => (s === 'players' ? t('gm.common.sidePlayers') : t('gm.common.sideEnemies'));
 
   function start() { startCombat(combat, { ambush: ambush || undefined }); }
   function end() {
-    if (!confirm('Kampf beenden? Momentum der Spieler verfällt auf 0.')) return;
+    if (!confirm(t('gm.common.confirmEnd'))) return;
     for (const p of gm.session!.players) if (p.character) patchPlayer(p.id, [{ op: 'set', key: 'momentum', value: 0 }]);
     endCombat(combat);
   }
@@ -55,7 +56,7 @@
       n.img = await imageToDataUrl(f, 256);
       n.token = await shrinkDataUrl(n.img, 96);
       syncTokenImages(n);
-    } catch { pushToast('Das Bild konnte nicht gelesen werden.', 'warn'); }
+    } catch { pushToast(t('gm.combat.imageUnreadable'), 'warn'); }
   }
   function clearPortrait(n: Npc) { n.img = undefined; n.token = undefined; syncTokenImages(n); }
   function syncTokenImages(n: Npc) {
@@ -77,19 +78,19 @@
     if (r.result === 'erster') {
       patchPlayer(playerId, [{ op: 'add', key: p.character.resources.schutz.current > 0 ? 'schutz' : 'wk', delta: -1 }]);
     } else {
-      patchPlayer(playerId, [{ op: 'injury', zone: hurtZone, text: 'Bedrängnis durch Goons' }]);
+      patchPlayer(playerId, [{ op: 'injury', zone: hurtZone, text: t('gm.sit.why.goons') }]);
     }
   }
   const playerWins = (id: string) => { combat.bedraengnis[id] = 0; };
 
   function rollNpc(n: Npc) {
-    roll2d6({ who: n.name, label: `Gegner (${n.type})`, bonus: n.bonus + ueberzahlBonus(attackers), kind: 'attr', secret });
+    roll2d6({ who: n.name, label: t('gm.combat.rollLabel', { type: n.type }), bonus: n.bonus + ueberzahlBonus(attackers), kind: 'attr', secret });
   }
   function hit(n: Npc) { npcNormalHit(n); }
-  function addGift(n: Npc) { n.poisons = [...(n.poisons ?? []), newPoison(uid(), giftLevel, giftDelay, 'SL')]; }
+  function addGift(n: Npc) { n.poisons = [...(n.poisons ?? []), newPoison(uid(), giftLevel, giftDelay, t('gm.combat.gmSource'))]; }
   function cure(n: Npc, id: string) {
     n.poisons = (n.poisons ?? []).filter((p) => p.id !== id);
-    if (!n.poisons.some((p) => p.level === 'laehm')) n.tags = n.tags.filter((t) => t !== 'Gelähmt');
+    if (!n.poisons.some((p) => p.level === 'laehm')) n.tags = n.tags.filter((t) => !isTag(t, TAG.paralyzed));
   }
   const fmt = (v: number) => (v > 0 ? `+${v}` : String(v));
   const defaultsOf = (t: NpcType) => types.find((x) => x.key === t)!;
@@ -98,33 +99,33 @@
 <div class="stack">
   <section class="panel head">
     <div class="row">
-      <h2>Kampf</h2>
-      {#if combat.active}<span class="chip accent">Runde {combat.round}</span>{:else}<span class="chip">kein Kampf</span>{/if}
+      <h2>{t('gm.common.combat')}</h2>
+      {#if combat.active}<span class="chip accent">{t('gm.common.round', { n: combat.round })}</span>{:else}<span class="chip">{t('gm.common.noCombat')}</span>{/if}
       <span class="spacer"></span>
-      <button class="btn sm" onclick={poisonRound} title="Alle Gifte ticken lassen, auch außerhalb des Kampfes">Gift-Runde</button>
+      <button class="btn sm" onclick={poisonRound} title={t('gm.combat.poisonRoundTitle')}>{t('gm.combat.poisonRound')}</button>
       {#if !combat.active}
-        <select bind:value={ambush} aria-label="Hinterhalt"><option value="">Normaler Beginn (Marker bei den Spielern)</option><option value="players">Spieler überraschen (Marker bei Spielern)</option><option value="enemies">Hinterhalt der Gegner (Marker bei Gegnern)</option></select>
-        <button class="btn primary" onclick={start}>Kampf starten</button>
+        <select bind:value={ambush} aria-label={t('gm.common.ambush')}><option value="">{t('gm.combat.startNormal')}</option><option value="players">{t('gm.combat.startPlayers')}</option><option value="enemies">{t('gm.combat.startEnemies')}</option></select>
+        <button class="btn primary" onclick={start}>{t('gm.common.startCombat')}</button>
       {:else}
-        <button class="btn primary" onclick={advanceRound} title="Gift wirkt am Rundenende, dann beginnt die nächste Runde">Nächste Runde</button>
-        <button class="btn danger" onclick={end}>Kampf beenden</button>
+        <button class="btn primary" onclick={advanceRound} title={t('gm.common.nextRoundTitle')}>{t('gm.common.nextRound')}</button>
+        <button class="btn danger" onclick={end}>{t('gm.combat.endCombat')}</button>
       {/if}
     </div>
 
     {#if combat.active}
       <div class="sides">
         <div class="marker">
-          <span class="lbl">Kinetik-Marker liegt bei</span>
+          <span class="lbl">{t('gm.combat.markerAt')}</span>
           <div class="seg">
-            <button class:on={combat.marker === 'players'} onclick={() => setMarker('players')}>Spielern</button>
-            <button class:on={combat.marker === 'enemies'} onclick={() => setMarker('enemies')}>Gegnern</button>
+            <button class:on={combat.marker === 'players'} onclick={() => setMarker('players')}>{t('gm.combat.markerPlayers')}</button>
+            <button class:on={combat.marker === 'enemies'} onclick={() => setMarker('enemies')}>{t('gm.combat.markerEnemies')}</button>
           </div>
-          <small class="dim">Dominanz oder perfekter Konter holt den Marker. Die Seite mit dem Marker beginnt die nächste Runde.</small>
+          <small class="dim">{t('gm.combat.markerHint')}</small>
         </div>
         <div class="acting">
-          <span class="lbl">Am Zug</span>
+          <span class="lbl">{t('gm.common.onTurn')}</span>
           <b class="turn" class:en={combat.side === 'enemies'}>{sideName(combat.side)}</b>
-          <button class="btn sm" onclick={sideDone}>Seite fertig, {sideName(otherSide(combat.side))} sind dran</button>
+          <button class="btn sm" onclick={sideDone}>{t('gm.combat.sideDone', { side: sideName(otherSide(combat.side)) })}</button>
         </div>
       </div>
     {/if}
@@ -132,37 +133,37 @@
 
   <div class="cols">
     <section class="panel">
-      <h2>Spielercharaktere</h2>
-      <div class="row hz"><span class="dim">Zone bei Bedrängnis-Verletzung</span>
-        <select bind:value={hurtZone} aria-label="Zone">{#each rules.tabellen.zonen as z}<option value={z.key}>{z.kurz}</option>{/each}</select>
+      <h2>{t('gm.combat.pcs')}</h2>
+      <div class="row hz"><span class="dim">{t('gm.combat.pressureZone')}</span>
+        <select bind:value={hurtZone} aria-label={t('gm.common.zone')}>{#each rules.tabellen.zonen as z}<option value={z.key}>{z.kurz}</option>{/each}</select>
       </div>
       {#each party.filter((p) => p.vitals) as p (p.id)}
         <div class="part" class:done={combat.done[p.id]}>
           <label class="check"><input type="checkbox" checked={!!combat.done[p.id]} onchange={(e) => (combat.done[p.id] = e.currentTarget.checked)} disabled={!combat.active} /> <b>{p.characterName || p.name}</b></label>
-          <span class="chip amber" title="Bedrängnis">Bedr. {combat.bedraengnis[p.id] ?? 0}</span>
+          <span class="chip amber" title={t('gm.common.pressure')}>{t('gm.common.pressureShort', { n: combat.bedraengnis[p.id] ?? 0 })}</span>
           <span class="spacer"></span>
-          <button class="btn sm" onclick={() => goonHit(p.id)} title="Goon-Gruppe landet einen Treffer: 1. Treffer -1 Schutz/WK, 2. in Folge Verletzung">Goon-Treffer</button>
-          <button class="btn sm" onclick={() => playerWins(p.id)} title="Spieler gewinnt einen Clash: Zähler 0">Sieg</button>
+          <button class="btn sm" onclick={() => goonHit(p.id)} title={t('gm.combat.goonHitTitle')}>{t('gm.combat.goonHit')}</button>
+          <button class="btn sm" onclick={() => playerWins(p.id)} title={t('gm.combat.winTitle')}>{t('gm.combat.win')}</button>
         </div>
       {:else}
-        <p class="dim">Keine Spielerbögen sichtbar.</p>
+        <p class="dim">{t('gm.common.noSheets')}</p>
       {/each}
-      <label class="check opt"><input type="checkbox" bind:checked={combat.showEnemies} /> Spieler sehen Gegnernamen und Status</label>
+      <label class="check opt"><input type="checkbox" bind:checked={combat.showEnemies} /> {t('gm.combat.showEnemies')}</label>
     </section>
 
     <section class="panel">
-      <h2>Gegner hinzufügen</h2>
+      <h2>{t('gm.combat.addEnemies')}</h2>
       <div class="row">
-        <select bind:value={newType} aria-label="Typ">{#each types as t}<option value={t.key}>{t.name} (Bonus +{t.bonusMax})</option>{/each}</select>
-        <input bind:value={newName} placeholder="Name (optional)" aria-label="Name" />
-        {#if newType === 'goon'}<Stepper bind:value={newCount} min={1} max={20} label="Anzahl" />{/if}
-        <button class="btn primary" onclick={addNpc}>+ Gegner</button>
+        <select bind:value={newType} aria-label={t('gm.common.type')}>{#each types as ty}<option value={ty.key}>{t('gm.common.typeOption', { name: ty.name, n: ty.bonusMax })}</option>{/each}</select>
+        <input bind:value={newName} placeholder={t('gm.common.nameOptional')} aria-label={t('gm.common.name')} />
+        {#if newType === 'goon'}<Stepper bind:value={newCount} min={1} max={20} label={t('gm.common.count')} />{/if}
+        <button class="btn primary" onclick={addNpc}>{t('gm.common.addEnemy')}</button>
       </div>
       <div class="row ueber">
-        <span class="dim">Überzahl: Angreifer auf ein Ziel</span>
-        <Stepper bind:value={attackers} min={1} max={10} label="Angreifer" />
-        <span class="chip accent">Bonus +{ueberzahlBonus(attackers)}</span>
-        <label class="check"><input type="checkbox" bind:checked={secret} /> Gegnerwürfe geheim</label>
+        <span class="dim">{t('gm.combat.outnumbering')}</span>
+        <Stepper bind:value={attackers} min={1} max={10} label={t('gm.combat.attackers')} />
+        <span class="chip accent">{t('gm.combat.bonusChip', { n: ueberzahlBonus(attackers) })}</span>
+        <label class="check"><input type="checkbox" bind:checked={secret} /> {t('gm.combat.secretRolls')}</label>
       </div>
     </section>
   </div>
@@ -172,26 +173,26 @@
       {@const st = npcStatus(n)}
       <article class="panel npc" class:out={st.out} class:hid={n.hidden}>
         <div class="row">
-          <button class="av" onclick={() => pickPortrait(n)} title={n.img ? 'Porträt ändern' : 'Porträt hinzufügen'} aria-label="Porträt">
+          <button class="av" onclick={() => pickPortrait(n)} title={n.img ? t('gm.combat.portraitChange') : t('gm.combat.portraitAdd')} aria-label={t('gm.combat.portrait')}>
             {#if n.img}<img src={n.img} alt="" />{:else}<span>＋</span>{/if}
           </button>
-          <input class="nm" bind:value={n.name} aria-label="Name" />
+          <input class="nm" bind:value={n.name} aria-label={t('gm.common.name')} />
           <span class="chip">{defaultsOf(n.type).name}</span>
-          {#if st.out}<span class="chip danger" title={st.reason}>ausgeschaltet</span>{/if}
-          {#if n.hidden}<span class="chip amber">versteckt</span>{/if}
+          {#if st.out}<span class="chip danger" title={st.reason}>{t('gm.common.takenOut')}</span>{/if}
+          {#if n.hidden}<span class="chip amber">{t('gm.common.hidden')}</span>{/if}
           <span class="spacer"></span>
-          <label class="check"><input type="checkbox" checked={!!combat.done[n.id]} onchange={(e) => (combat.done[n.id] = e.currentTarget.checked)} disabled={!combat.active} /> gehandelt</label>
+          <label class="check"><input type="checkbox" checked={!!combat.done[n.id]} onchange={(e) => (combat.done[n.id] = e.currentTarget.checked)} disabled={!combat.active} /> {t('gm.common.acted')}</label>
         </div>
         {#if st.out}<small class="dim">{st.reason}</small>{/if}
         <div class="stats">
-          <label class="s">Level<Stepper bind:value={n.level} min={0} max={10} label="Level" /></label>
-          <label class="s">Bonus<Stepper bind:value={n.bonus} min={-3} max={20} label="Bonus" /></label>
+          <label class="s">{t('gm.combat.level')}<Stepper bind:value={n.level} min={0} max={10} label={t('gm.combat.level')} /></label>
+          <label class="s">{t('gm.common.bonus')}<Stepper bind:value={n.bonus} min={-3} max={20} label={t('gm.common.bonus')} /></label>
           {#if n.type === 'goon'}
-            <label class="s">Mitglieder<Stepper bind:value={n.count} min={0} max={30} label="Mitglieder" /></label>
+            <label class="s">{t('gm.combat.members')}<Stepper bind:value={n.count} min={0} max={30} label={t('gm.combat.members')} /></label>
           {:else}
-            <label class="s">Schutz<span class="pair"><Stepper bind:value={n.schutz} min={0} max={9} label="Schutz" /><span class="dim">/</span><Stepper bind:value={n.schutzMax} min={0} max={9} label="Schutz max" /></span></label>
-            <label class="s">WK<span class="pair"><Stepper bind:value={n.wk} min={0} max={n.wkMax} label="WK" /><span class="dim">/</span><Stepper bind:value={n.wkMax} min={0} max={30} label="WK max" /></span></label>
-            <label class="s">Energie<span class="pair"><Stepper bind:value={n.energie} min={-30} max={n.energieMax} label="Energie" /><span class="dim">/</span><Stepper bind:value={n.energieMax} min={0} max={30} label="Energie max" /></span></label>
+            <label class="s">{t('gm.combat.protection')}<span class="pair"><Stepper bind:value={n.schutz} min={0} max={9} label={t('gm.combat.protection')} /><span class="dim">/</span><Stepper bind:value={n.schutzMax} min={0} max={9} label={t('gm.combat.protectionMax')} /></span></label>
+            <label class="s">{t('gm.combat.wp')}<span class="pair"><Stepper bind:value={n.wk} min={0} max={n.wkMax} label={t('gm.combat.wp')} /><span class="dim">/</span><Stepper bind:value={n.wkMax} min={0} max={30} label={t('gm.combat.wpMax')} /></span></label>
+            <label class="s">{t('gm.combat.energy')}<span class="pair"><Stepper bind:value={n.energie} min={-30} max={n.energieMax} label={t('gm.combat.energy')} /><span class="dim">/</span><Stepper bind:value={n.energieMax} min={0} max={30} label={t('gm.combat.energyMax')} /></span></label>
           {/if}
         </div>
         {#if n.type !== 'goon'}
@@ -199,51 +200,51 @@
             {#each rules.tabellen.zonen as z}
               {@const c = n.injuries[z.key as ZoneKey] ?? 0}
               <span class="z" class:bad={c >= z.felder}>
-                <button class="btn sm icon ghost" onclick={() => { n.injuries[z.key as ZoneKey] = Math.max(0, c - 1); }} disabled={!c} aria-label={`${z.kurz} heilen`}>−</button>
+                <button class="btn sm icon ghost" onclick={() => { n.injuries[z.key as ZoneKey] = Math.max(0, c - 1); }} disabled={!c} aria-label={t('gm.combat.healZone', { zone: z.kurz })}>−</button>
                 <span>{z.kurz} {c}/{z.felder}</span>
-                <button class="btn sm icon ghost" onclick={() => npcInjury(n, z.key as ZoneKey)} disabled={c >= z.felder} aria-label={`${z.kurz} verletzen`}>+</button>
+                <button class="btn sm icon ghost" onclick={() => npcInjury(n, z.key as ZoneKey)} disabled={c >= z.felder} aria-label={t('gm.combat.hurtZone', { zone: z.kurz })}>+</button>
               </span>
             {/each}
           </div>
         {/if}
-        <label class="field">Tags<TagInput bind:values={n.tags} label="Tags" placeholder="z.B. Am Boden" /></label>
+        <label class="field">{t('gm.combat.tags')}<TagInput bind:values={n.tags} label={t('gm.combat.tags')} placeholder={t('gm.common.tagExample', { tag: tagLabel('Am Boden') })} /></label>
         {#if n.type !== 'goon'}
           <div class="gift">
             {#each n.poisons ?? [] as pz (pz.id)}
               <div class="row gp">
                 <span class="chip danger">{describePoison(pz)}</span><span class="spacer"></span>
-                <button class="btn sm" onclick={() => cure(n, pz.id)} title="Gegenmittel gelungen, das Gift endet">Gegenmittel (MW {antidoteMw(pz)})</button>
+                <button class="btn sm" onclick={() => cure(n, pz.id)} title={t('gm.combat.cureTitle')}>{t('gm.combat.cure', { n: antidoteMw(pz) })}</button>
               </div>
             {/each}
             <div class="row gp">
-              <select bind:value={giftLevel} aria-label="Giftstufe">{#each GIFT_LEVELS as l}<option value={l}>{GIFT[l].label}</option>{/each}</select>
-              <Stepper bind:value={giftDelay} min={0} max={MAX_GIFT_DELAY} label="Verzögerung in Runden" />
-              <button class="btn sm danger" onclick={() => addGift(n)}>+ Gift</button>
+              <select bind:value={giftLevel} aria-label={t('gm.combat.poisonLevel')}>{#each GIFT_LEVELS as l}<option value={l}>{GIFT[l].label}</option>{/each}</select>
+              <Stepper bind:value={giftDelay} min={0} max={MAX_GIFT_DELAY} label={t('gm.common.delayRounds')} />
+              <button class="btn sm danger" onclick={() => addGift(n)}>{t('gm.combat.addPoison')}</button>
             </div>
           </div>
         {/if}
-        <label class="field">Notiz<input bind:value={n.note} placeholder="Verhalten, Schwäche, Beute" /></label>
+        <label class="field">{t('gm.combat.note')}<input bind:value={n.note} placeholder={t('gm.combat.notePlaceholder')} /></label>
         <details class="moves" open={!!n.moves?.length}>
-          <summary>Moves &amp; Fähigkeiten ({n.moves?.length ?? 0}){#if n.img}<button class="btn sm ghost" onclick={(e) => { e.preventDefault(); clearPortrait(n); }} title="Porträt entfernen">Porträt entfernen</button>{/if}</summary>
+          <summary>{t('gm.combat.moves', { n: n.moves?.length ?? 0 })}{#if n.img}<button class="btn sm ghost" onclick={(e) => { e.preventDefault(); clearPortrait(n); }} title={t('gm.combat.portraitRemove')}>{t('gm.combat.portraitRemove')}</button>{/if}</summary>
           {#each n.moves ?? [] as m, i}
             <div class="mv">
-              <div class="row"><input class="mvn" bind:value={m.name} placeholder="Name" aria-label="Move-Name" /><button class="btn sm icon ghost" onclick={() => removeMove(n, i)} aria-label="Move entfernen">×</button></div>
-              <textarea bind:value={m.text} rows="2" placeholder="Was passiert, wenn der Gegner das einsetzt?" aria-label="Move-Wirkung"></textarea>
+              <div class="row"><input class="mvn" bind:value={m.name} placeholder={t('gm.common.name')} aria-label={t('gm.combat.moveName')} /><button class="btn sm icon ghost" onclick={() => removeMove(n, i)} aria-label={t('gm.combat.moveRemove')}>×</button></div>
+              <textarea bind:value={m.text} rows="2" placeholder={t('gm.combat.movePlaceholder')} aria-label={t('gm.combat.moveEffect')}></textarea>
             </div>
           {/each}
-          <button class="btn sm" onclick={() => addMove(n)}>+ Move</button>
+          <button class="btn sm" onclick={() => addMove(n)}>{t('gm.combat.addMove')}</button>
         </details>
         <div class="row">
-          <button class="btn sm primary" onclick={() => rollNpc(n)} title="2W6 + Bonus (+ Überzahl)">Würfeln {fmt(n.bonus + ueberzahlBonus(attackers))}</button>
-          <button class="btn sm" onclick={() => hit(n)} title={n.type === 'goon' ? 'Ein Goon fällt' : 'Normaler Treffer: erst Schutz, dann Willenskraft'}>{n.type === 'goon' ? 'Goon fällt' : 'Treffer'}</button>
-          <label class="check"><input type="checkbox" bind:checked={n.hidden} /> versteckt</label>
+          <button class="btn sm primary" onclick={() => rollNpc(n)} title={t('gm.combat.rollTitle')}>{t('gm.combat.roll', { mod: fmt(n.bonus + ueberzahlBonus(attackers)) })}</button>
+          <button class="btn sm" onclick={() => hit(n)} title={n.type === 'goon' ? t('gm.combat.goonFallsTitle') : t('gm.combat.hitTitle')}>{n.type === 'goon' ? t('gm.combat.goonFalls') : t('gm.combat.hit')}</button>
+          <label class="check"><input type="checkbox" bind:checked={n.hidden} /> {t('gm.common.hidden')}</label>
           <span class="spacer"></span>
-          <button class="btn sm danger" onclick={() => removeNpc(n.id)}>Entfernen</button>
+          <button class="btn sm danger" onclick={() => removeNpc(n.id)}>{t('gm.common.remove')}</button>
         </div>
       </article>
     {/each}
   </div>
-  {#if !combat.npcs.length}<p class="dim">Noch keine Gegner. Füge oben Goon-Gruppen, Schläger, Elite, Bosse oder Nemesis hinzu, mit den Werten aus der NPC-Leiter (3.7).</p>{/if}
+  {#if !combat.npcs.length}<p class="dim">{t('gm.combat.empty')}</p>{/if}
 </div>
 
 <input type="file" accept="image/*" bind:this={portraitInput} onchange={onPortrait} hidden />

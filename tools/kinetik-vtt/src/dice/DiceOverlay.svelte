@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onRollShown, type RollRecord } from './roller.svelte';
   import { settings } from '../lib/settings.svelte';
+  import { t } from '../i18n';
   import { PROBE_LABEL, OUTCOME_LABEL } from '../rules';
   import Cube from './Cube.svelte';
   import DiceFace from './DiceFace.svelte';
@@ -35,7 +36,7 @@
         <span class="tot">{s.r.total}</span>
         {#if s.r.mw}<span class="res" class:ok={s.r.result === 'erfolg'} class:mid={s.r.result === 'preis'} class:bad={s.r.result === 'fehlschlag'}>{PROBE_LABEL[s.r.result!]}</span>{/if}
         {#if s.r.clash}<span class="res" class:ok={s.r.clash.outcome === 'dominanz'} class:bad={s.r.clash.outcome === 'perfekterKonter'}>{OUTCOME_LABEL[s.r.clash.outcome]}</span>{/if}
-        {#if s.r.secret}<span class="res mid">geheim</span>{/if}
+        {#if s.r.secret}<span class="res mid">{t('dice.overlay.secret')}</span>{/if}
       </div>
     </div>
   {/each}

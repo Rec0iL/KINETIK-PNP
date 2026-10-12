@@ -6,6 +6,7 @@
   import { computeSheet } from '../model/sheet';
   import { navigate } from '../lib/router.svelte';
   import { portraitPlaceholder } from '../lib/art';
+  import { t, tn } from '../i18n';
 
   let fileInput = $state<HTMLInputElement>();
   let message = $state('');
@@ -17,10 +18,10 @@
   }
   function dup(id: string) {
     const c = duplicateCharacter(id);
-    if (c) message = `„${c.name}“ angelegt.`;
+    if (c) message = t('pages.characters.duplicated', { name: c.name });
   }
   async function del(id: string, name: string) {
-    if (confirm(`„${name}“ unwiderruflich löschen? Tipp: vorher als JSON exportieren.`)) await removeCharacter(id);
+    if (confirm(t('pages.characters.confirmDelete', { name }))) await removeCharacter(id);
   }
   async function onFiles(e: Event) {
     const input = e.currentTarget as HTMLInputElement;
@@ -32,7 +33,7 @@
         for (const c of parseImport(await f.text())) {
           const existing = getCharacter(c.id);
           if (existing) {
-            if (confirm(`„${c.name}“ ist schon vorhanden. Ersetzen? (Abbrechen legt eine Kopie an.)`)) {
+            if (confirm(t('pages.characters.confirmReplace', { name: c.name }))) {
               Object.assign(existing, c);
               saveCharacter(existing);
               added++;
@@ -44,25 +45,25 @@
           added++;
         }
       } catch (err) {
-        errors.push(`${f.name}: ${err instanceof ImportError ? err.message : 'Lesefehler'}`);
+        errors.push(`${f.name}: ${err instanceof ImportError ? err.message : t('pages.common.readError')}`);
       }
     }
     input.value = '';
-    message = [added ? `${added} Charakter(e) importiert.` : '', ...errors].filter(Boolean).join(' ');
+    message = [added ? tn('pages.characters.imported', added) : '', ...errors].filter(Boolean).join(' ');
   }
-  const exportAll = () => downloadJson(exportLibrary($state.snapshot(library.characters)), 'kinetik-charaktere.json');
-  const topLevel = (c: (typeof library.characters)[number]) => c.titles.reduce((m, t) => Math.max(m, t.level), 0);
+  const exportAll = () => downloadJson(exportLibrary($state.snapshot(library.characters)), 'kinetik-characters.json');
+  const topLevel = (c: (typeof library.characters)[number]) => c.titles.reduce((m, ti) => Math.max(m, ti.level), 0);
 </script>
 
 <section class="head">
   <div>
-    <span class="kicker">Spieler</span>
-    <h1>Charaktere</h1>
+    <span class="kicker">{t('pages.common.player')}</span>
+    <h1>{t('pages.characters.title')}</h1>
   </div>
   <div class="row">
-    <button class="btn primary" onclick={create}>+ Neuer Charakter</button>
-    <button class="btn" onclick={() => fileInput?.click()}>JSON importieren</button>
-    <button class="btn" onclick={exportAll} disabled={!library.characters.length}>Alle exportieren</button>
+    <button class="btn primary" onclick={create}>{t('pages.characters.newChar')}</button>
+    <button class="btn" onclick={() => fileInput?.click()}>{t('pages.characters.importJson')}</button>
+    <button class="btn" onclick={exportAll} disabled={!library.characters.length}>{t('pages.common.exportAll')}</button>
     <input bind:this={fileInput} type="file" accept="application/json,.json" multiple class="sr-only" onchange={onFiles} />
   </div>
 </section>
@@ -71,42 +72,42 @@
 {#if message}<p class="panel flat banner">{message} <button class="btn sm ghost" onclick={() => (message = '')}>OK</button></p>{/if}
 
 {#if !library.ready}
-  <p class="dim">Lade …</p>
+  <p class="dim">{t('pages.common.loading')}</p>
 {:else if !library.characters.length}
   <section class="panel empty stack">
-    <h2>Noch keine Charaktere</h2>
-    <p class="dim">Der Bogen speichert automatisch in diesem Browser. Sichere wichtige Charaktere zusätzlich als JSON-Datei, denn gelöschte Browserdaten sind weg.</p>
-    <div class="row"><button class="btn primary" onclick={create}>Ersten Charakter anlegen</button><button class="btn" onclick={loadExample}>Beispiel laden: Jin „Ghost“ Yamada</button></div>
+    <h2>{t('pages.characters.emptyTitle')}</h2>
+    <p class="dim">{t('pages.characters.emptyText')}</p>
+    <div class="row"><button class="btn primary" onclick={create}>{t('pages.characters.createFirst')}</button><button class="btn" onclick={loadExample}>{t('pages.characters.loadExample')}</button></div>
   </section>
 {:else}
   <div class="grid cards">
     {#each library.characters as c (c.id)}
       {@const s = computeSheet(c)}
       <article class="panel card">
-        <a class="open" href={`#/charakter/${c.id}`} aria-label={`${c.name} öffnen`}>
+        <a class="open" href={`#/charakter/${c.id}`} aria-label={t('pages.characters.open', { name: c.name })}>
           <div class="pic">{#if c.portrait}<img src={c.portrait} alt="" />{:else}<img class="ph" src={portraitPlaceholder()} alt="" />{/if}</div>
           <div class="info">
             <h2>{c.name}</h2>
-            {#if c.alias}<span class="kicker">„{c.alias}“</span>{/if}
-            <small class="dim">{c.titles.map((t) => `${t.name} L${t.level}`).join(' · ') || 'Kein Titel'}</small>
+            {#if c.alias}<span class="kicker">{t('pages.common.quoted', { text: c.alias })}</span>{/if}
+            <small class="dim">{c.titles.map((ti) => `${ti.name} L${ti.level}`).join(' · ') || t('pages.characters.noTitle')}</small>
             <div class="vitals">
-              <span class="chip accent" title="Energie">E {c.resources.energie}/{s.energieMax.value}</span>
-              <span class="chip amber" title="Willenskraft">WK {c.resources.wk}/{s.wkMax.value}</span>
-              {#if topLevel(c)}<span class="chip">Lv {topLevel(c)}</span>{/if}
-              {#if s.states.sterbend}<span class="chip danger">sterbend</span>{/if}
+              <span class="chip accent" title={t('pages.common.energy')}>{t('pages.common.energyShort')} {c.resources.energie}/{s.energieMax.value}</span>
+              <span class="chip amber" title={t('pages.common.willpower')}>{t('pages.common.willpowerShort')} {c.resources.wk}/{s.wkMax.value}</span>
+              {#if topLevel(c)}<span class="chip">{t('pages.characters.level', { n: topLevel(c) })}</span>{/if}
+              {#if s.states.sterbend}<span class="chip danger">{t('pages.characters.dying')}</span>{/if}
             </div>
           </div>
         </a>
         <div class="row acts">
-          <button class="btn sm" onclick={() => downloadJson(exportCharacter($state.snapshot(c)), fileNameFor(c))}>Export</button>
-          <button class="btn sm" onclick={() => dup(c.id)}>Duplizieren</button>
+          <button class="btn sm" onclick={() => downloadJson(exportCharacter($state.snapshot(c)), fileNameFor(c))}>{t('pages.characters.export')}</button>
+          <button class="btn sm" onclick={() => dup(c.id)}>{t('pages.common.duplicate')}</button>
           <span class="spacer"></span>
-          <button class="btn sm danger icon" onclick={() => del(c.id, c.name)} aria-label="Löschen">🗑</button>
+          <button class="btn sm danger icon" onclick={() => del(c.id, c.name)} aria-label={t('pages.common.delete')}>🗑</button>
         </div>
       </article>
     {/each}
   </div>
-  <p class="dim foot">Gespeichert nur in diesem Browser. Für ein Backup oder Gerätewechsel: Export als JSON.</p>
+  <p class="dim foot">{t('pages.characters.foot')}</p>
 {/if}
 
 <style>

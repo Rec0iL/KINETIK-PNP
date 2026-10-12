@@ -19,12 +19,14 @@ Du darfst die Inhalte teilen und bearbeiten, wenn du
 
 | Pfad | Inhalt |
 |---|---|
-| `regelwerk/` | Regelwerk als Markdown, frühere Fassungen |
-| `data/` | Regeldaten (Tabellen, Effekte, Moves, Waffen, NPC) |
-| `export/` | Das gesetzte Regelwerk als PDF |
-| `assets/` | Grafiken und die Bilder des PDF-Projekts |
+| `regelwerk/` | Regelwerk als Markdown (Deutsch und die englische Übersetzung `*.en.md`), Glossar, frühere Fassungen |
+| `data/` | Regeldaten (Tabellen, Effekte, Moves, Waffen, NPC) und ihre Übersetzungen (`data/i18n/`) |
+| `export/` | Das gesetzte Regelwerk als PDF (Deutsch: `KINETIK_Regelwerk_*`, Englisch: `KINETIK_Rulebook_*`) |
+| `assets/` | Grafiken und die Bilder der PDF-Projekte (`pdf`, `pdf-en`, `pdf-themes`, `pdf-themes-en`) |
 | `tools/kinetik-vtt/public/art`, `public/rulebook` | Bilder der Web-App und das Regelwerk in der App |
 | `docs/` | Dokumentation und Screenshots |
+
+Übersetzungen sind Bearbeitungen im Sinne der Lizenz und stehen unter denselben Bedingungen. Maßgeblich für Regeln ist die deutsche Fassung des Regelwerks, die englische Übersetzung soll sie wiedergeben (Abweichungen bitte als Issue melden).
 
 ## KI-Bilder
 

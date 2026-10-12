@@ -1,6 +1,7 @@
 // ICE-Konfiguration und Auswertung von Verbindungsproblemen. Rein, ohne DOM und ohne PeerJS (testbar).
 // Direkte Browser-zu-Browser-Verbindungen scheitern hinter strengem NAT (Mobilfunk/CGNAT, Firmennetze).
 // Dann braucht es einen Relay-Server (TURN), der den Verkehr weiterleitet.
+import { t } from '../i18n';
 
 export interface IceSettings {
   /** Eigene ICE-Server als JSON, ersetzt alles andere. */
@@ -84,28 +85,28 @@ export interface Verdict { ok: boolean; title: string; text: string }
 export function verdict(r: IceReport, customTurn: boolean): Verdict {
   if (!r.host && !r.srflx && !r.relay) {
     return {
-      ok: false, title: 'WebRTC ist in diesem Browser blockiert',
-      text: 'Es entstehen keine Verbindungsdaten. Häufigste Ursache: eine VPN- oder Privacy-Erweiterung mit WebRTC-Schutz. Deaktivieren oder einen anderen Browser nutzen.',
+      ok: false, title: t('net.ice.blocked.title'),
+      text: t('net.ice.blocked.text'),
     };
   }
   if (!r.relay) {
     const auth = r.errors.some((e) => /\b401\b|\b403\b/.test(e));
     return {
-      ok: false, title: 'Kein Relay-Server erreichbar',
-      text: `${auth ? 'Die Zugangsdaten des TURN-Servers werden abgelehnt. ' : 'Der TURN-Server antwortet nicht (UDP gesperrt oder Server nicht erreichbar). '}`
-        + `${customTurn ? 'Prüfe URL, Benutzer und Passwort. ' : 'Der mitgelieferte öffentliche TURN reicht nicht. '}`
-        + 'Hinter Mobilfunk oder strengem NAT braucht es einen eigenen TURN-Server, am besten mit „turns:…:443“ (läuft wie normaler HTTPS-Verkehr).',
+      ok: false, title: t('net.ice.noRelay.title'),
+      text: `${t(auth ? 'net.ice.noRelay.auth' : 'net.ice.noRelay.noAnswer')} `
+        + `${t(customTurn ? 'net.ice.noRelay.checkCustom' : 'net.ice.noRelay.publicNotEnough')} `
+        + t('net.ice.noRelay.ownTurn'),
     };
   }
   if (!r.srflx) {
     return {
-      ok: true, title: 'Nur über Relay',
-      text: 'Direkte Wege sind nicht möglich (strenges NAT), aber der Relay-Server ist erreichbar. Die Verbindung läuft darüber. „Nur über Relay“ kann den Aufbau beschleunigen.',
+      ok: true, title: t('net.ice.relayOnly.title'),
+      text: t('net.ice.relayOnly.text'),
     };
   }
   return {
-    ok: true, title: 'Verbindung sollte klappen',
-    text: `Direkte Wege und Relay-Server sind erreichbar.${r.relayTcp ? ' Der Relay funktioniert auch über TCP.' : ''}`,
+    ok: true, title: t('net.ice.ok.title'),
+    text: `${t('net.ice.ok.text')}${r.relayTcp ? ` ${t('net.ice.ok.tcp')}` : ''}`,
   };
 }
 
@@ -113,13 +114,13 @@ export function verdict(r: IceReport, customTurn: boolean): Verdict {
 export function explainFailedJoin(localTypes: string[], remoteCount: number, customTurn: boolean): string {
   const r = summarize(localTypes.map((type) => ({ type, protocol: '' })));
   if (!r.host && !r.srflx && !r.relay) {
-    return 'WebRTC ist in diesem Browser blockiert (VPN- oder Privacy-Erweiterung?). Deaktivieren oder einen anderen Browser nutzen.';
+    return t('net.ice.join.blocked');
   }
   if (remoteCount === 0) {
-    return 'Der Raum wurde gefunden, aber vom Spielleiter kamen keine Verbindungsdaten an. Hat der SL den Tab noch offen? Sonst unter „Erweitert“ den Verbindungstest ausführen.';
+    return t('net.ice.join.noRemote');
   }
   if (!r.relay && !customTurn) {
-    return 'Keine direkte Verbindung möglich, vermutlich strenges NAT (Mobilfunk, Firmennetz). Unter „Erweitert“ einen TURN-Server eintragen und den Verbindungstest ausführen.';
+    return t('net.ice.join.strictNat');
   }
-  return 'Die Direktverbindung kam nicht zustande. Unter „Erweitert“ den Verbindungstest ausführen, die TURN-Zugangsdaten prüfen oder „Nur über Relay“ einschalten.';
+  return t('net.ice.join.generic');
 }

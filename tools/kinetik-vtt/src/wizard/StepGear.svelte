@@ -3,6 +3,7 @@
   import { ARMOR_PRESETS } from './templates';
   import ShieldGauge from '../ui/ShieldGauge.svelte';
   import Gear from '../sheet/Gear.svelte';
+  import { t } from '../i18n';
 
   let { char }: { char: Character } = $props();
 
@@ -15,15 +16,15 @@
 </script>
 
 <div class="stack">
-  <p class="dim intro">Schutz ist kontextabhängig (ein ballistischer Anzug hilft gegen Kugeln, nicht gegen einen Tritt) und liegt zwischen 0 und 3. Er hebt die Schwelle für Verletzungen an und nutzt sich bei Treffern ab. Waffen bringen ein Profil mit, der Titel bestimmt das Können.</p>
+  <p class="dim intro">{t('wizard.gear.intro')}</p>
 
   <section class="panel flat">
-    <h2>Schutz</h2>
+    <h2>{t('wizard.common.schutz')}</h2>
     <div class="row">
       <ShieldGauge bind:current={char.resources.schutz.current} bind:max={char.resources.schutz.max} />
       <div class="stack grow">
         <div class="presets">{#each ARMOR_PRESETS as a, i}<button class="chip" onclick={() => pick(i)}>{a.name} · {a.max}</button>{/each}</div>
-        <label class="field">Art / Kontext<textarea rows="2" bind:value={char.resources.schutz.type} placeholder="z.B. Verdecktes Kevlar, gegen Kugeln und Schnitte"></textarea></label>
+        <label class="field">{t('wizard.gear.type')}<textarea rows="2" bind:value={char.resources.schutz.type} placeholder={t('wizard.gear.typePh')}></textarea></label>
       </div>
     </div>
   </section>

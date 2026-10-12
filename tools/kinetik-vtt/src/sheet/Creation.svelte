@@ -5,6 +5,7 @@
   import { openRulebook } from '../rulebook/rulebook.svelte';
   import { navigate } from '../lib/router.svelte';
   import Stepper from '../ui/Stepper.svelte';
+  import { t, tn } from '../i18n';
 
   let { char }: { char: Character } = $props();
   const report = $derived(creationReport(char));
@@ -12,34 +13,34 @@
 </script>
 
 <section class="panel creation">
-  <h2>Charaktererschaffung ({report.stufe.name}) <span class="chip" class:danger={report.hints.length > 0} class:accent={report.hints.length === 0}>{report.hints.length ? `${report.hints.length} Hinweis` : 'im Budget'}</span>{#if char.draft}<span class="chip amber">in Arbeit</span>{/if}</h2>
+  <h2>{t('sheet.creation.title', { tier: report.stufe.name })} <span class="chip" class:danger={report.hints.length > 0} class:accent={report.hints.length === 0}>{report.hints.length ? tn('sheet.creation.hints', report.hints.length) : t('sheet.creation.inBudget')}</span>{#if char.draft}<span class="chip amber">{t('sheet.creation.draft')}</span>{/if}</h2>
 
     <div class="cstufe">
-      <label class="field">Kampagnenstartstufe
+      <label class="field">{t('sheet.creation.startTier')}
         <select bind:value={char.stufe}>
-          {#each stufen as s}<option value={s.key}>{s.name}{'standard' in s ? ' (Standard)' : ''}</option>{/each}
-          <option value="custom">Eigene</option>
+          {#each stufen as s}<option value={s.key}>{s.name}{'standard' in s ? t('sheet.creation.standardSuffix') : ''}</option>{/each}
+          <option value="custom">{t('sheet.creation.custom')}</option>
         </select>
       </label>
       {#if char.stufe === 'custom'}
-        <label class="field">Attribut-Budget<Stepper bind:value={char.customStufe.attributBudget} min={0} max={20} label="Attribut-Budget" /></label>
-        <label class="field">Titel-Level-Budget<Stepper bind:value={char.customStufe.titelBudget} min={0} max={40} label="Titel-Level-Budget" /></label>
-        <label class="field">Max. Start-Level je Titel<Stepper bind:value={char.customStufe.startLevelMax} min={1} max={10} label="Max. Start-Level" /></label>
+        <label class="field">{t('sheet.creation.attrBudget')}<Stepper bind:value={char.customStufe.attributBudget} min={0} max={20} label={t('sheet.creation.attrBudget')} /></label>
+        <label class="field">{t('sheet.creation.titleBudget')}<Stepper bind:value={char.customStufe.titelBudget} min={0} max={40} label={t('sheet.creation.titleBudget')} /></label>
+        <label class="field">{t('sheet.creation.maxStartLevel')}<Stepper bind:value={char.customStufe.startLevelMax} min={1} max={10} label={t('sheet.creation.maxStartLevelAria')} /></label>
       {/if}
-      <label class="check nat"><input type="checkbox" bind:checked={char.naturtalent} /> Naturtalent (ein Attribut darf zum Start +3 haben)</label>
+      <label class="check nat"><input type="checkbox" bind:checked={char.naturtalent} /> {t('sheet.creation.prodigy')}</label>
     </div>
     <div class="cgrid">
-      <div><span class="lbl">Attributspunkte</span><b class:over={report.attributesOver}>{report.attributesSpent} / {report.attributesBudget}</b><small class="dim">(−1 gibt bis zu 2 Punkte zurück{report.growthPoints ? `, +${report.growthPoints} aus Titel-Wachstum` : ''})</small></div>
-      <div><span class="lbl">Titel-Level (Start)</span><b class:over={report.titleLevels > report.titleBudget}>{report.titleLevels} / {report.titleBudget}</b><small class="dim">höchstens {report.stufe.startLevelMax} je Titel</small></div>
-      <div><span class="lbl">Start-Maximum Attribut</span><b>+{report.startMax}</b></div>
+      <div><span class="lbl">{t('sheet.creation.attrPoints')}</span><b class:over={report.attributesOver}>{report.attributesSpent} / {report.attributesBudget}</b><small class="dim">{t('sheet.creation.refund', { growth: report.growthPoints ? t('sheet.creation.growth', { n: report.growthPoints }) : '' })}</small></div>
+      <div><span class="lbl">{t('sheet.creation.titleLevels')}</span><b class:over={report.titleLevels > report.titleBudget}>{report.titleLevels} / {report.titleBudget}</b><small class="dim">{t('sheet.creation.perTitleMax', { n: report.stufe.startLevelMax })}</small></div>
+      <div><span class="lbl">{t('sheet.creation.startMax')}</span><b>+{report.startMax}</b></div>
     </div>
     {#if report.hints.length}<ul class="hints">{#each report.hints as h}<li>{h}</li>{/each}</ul>{/if}
     <div class="row cact">
-      <button class="btn sm" onclick={() => navigate(`/wizard/${char.id}/1`)}>Assistent öffnen</button>
-      <button class="btn sm" onclick={() => openRulebook('sec-2-4-charaktererschaffung')}>Regeln 2.4 lesen</button>
-      {#if char.draft}<button class="btn sm primary" onclick={() => (char.draft = false)}>Erschaffung abschließen</button>{/if}
+      <button class="btn sm" onclick={() => navigate(`/wizard/${char.id}/1`)}>{t('sheet.creation.openWizard')}</button>
+      <button class="btn sm" onclick={() => openRulebook('sec-2-4-charaktererschaffung')}>{t('sheet.creation.readRules')}</button>
+      {#if char.draft}<button class="btn sm primary" onclick={() => (char.draft = false)}>{t('sheet.creation.finish')}</button>{/if}
     </div>
-    <p class="hint dim">Nur Hinweise. Der Bogen lässt jede Eingabe zu, auch Hausregeln und Kampagnen mit höherem Level. Die Stufe betrifft nur die Erschaffung, nicht den Spielverlauf.</p>
+    <p class="hint dim">{t('sheet.creation.hint')}</p>
 </section>
 
 <style>

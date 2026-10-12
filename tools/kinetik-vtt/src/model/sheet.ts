@@ -5,6 +5,7 @@ import {
   ATTR_KEYS, ZONE_KEYS, type AttrKey, type ZoneKey, type Title, type MoveCost, type MoveEvaluation,
 } from '../rules';
 import type { Character, Move } from './character';
+import { t, tn } from '../i18n';
 
 export interface Derived<T = number> {
   /** Wert nach Regel. */
@@ -123,7 +124,7 @@ export interface StufeConfig { key: string; name: string; attributBudget: number
 
 /** Budgets der gewählten Kampagnenstartstufe (inkl. eigener Stufe). */
 export function stufeConfig(c: Pick<Character, 'stufe' | 'customStufe'>): StufeConfig {
-  if (c.stufe === 'custom') return { key: 'custom', name: 'Eigene', ...c.customStufe };
+  if (c.stufe === 'custom') return { key: 'custom', name: t('model.sheet.customStufe'), ...c.customStufe };
   return rules.tabellen.kampagnenstufen.find((s) => s.key === c.stufe) ?? rules.tabellen.kampagnenstufen[1];
 }
 
@@ -141,11 +142,11 @@ export function creationReport(c: Character): CreationReport {
   const titleLevels = c.titles.reduce((s, t) => s + (t.startedAtLevel ?? t.level), 0);
   const over = c.titles.filter((t) => (t.startedAtLevel ?? t.level) > stufe.startLevelMax).map((t) => t.name);
   const hints: string[] = [];
-  if (attributesSpent > attributesBudget) hints.push(`${attributesSpent - attributesBudget} Attributspunkt(e) über dem Budget.`);
-  if (minusCount > 2) hints.push('Nur zwei Attribute auf -1 geben einen Punkt zurück.');
-  if (aboveStart.length) hints.push('Ein Attribut liegt über dem Startmaximum.');
-  if (titleLevels > stufe.titelBudget) hints.push(`${titleLevels - stufe.titelBudget} Titel-Level über dem Startbudget.`);
-  if (over.length) hints.push(`Start-Level über ${stufe.startLevelMax}: ${over.join(', ')}.`);
+  if (attributesSpent > attributesBudget) hints.push(tn('model.sheet.attrOver', attributesSpent - attributesBudget));
+  if (minusCount > 2) hints.push(t('model.sheet.minusRefund'));
+  if (aboveStart.length) hints.push(t('model.sheet.aboveStartMax'));
+  if (titleLevels > stufe.titelBudget) hints.push(tn('model.sheet.titleOver', titleLevels - stufe.titelBudget));
+  if (over.length) hints.push(t('model.sheet.startLevelOver', { max: stufe.startLevelMax, titles: over.join(', ') }));
   return {
     stufe: { name: stufe.name, attributBudget: stufe.attributBudget, titelBudget: stufe.titelBudget, startLevelMax: stufe.startLevelMax },
     attributesSpent, attributesBudget, attributesOver: attributesSpent > attributesBudget, minusCount,

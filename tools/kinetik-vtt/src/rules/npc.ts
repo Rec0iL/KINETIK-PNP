@@ -1,5 +1,6 @@
 // NPC-Leiter (3.7), Ausgeschaltet-bei (3.11) und Zonen-Status (2.3).
 import { rules, type ZoneKey } from './data';
+import { t } from '../i18n';
 
 export type NpcType = 'goon' | 'schlaeger' | 'elite' | 'boss' | 'nemesis';
 export type Injuries = Partial<Record<ZoneKey, number>>;
@@ -33,23 +34,23 @@ export function isOut(type: NpcType | 'spieler', s: FightState): { out: boolean;
   const total = totalInjuries(s.injuries);
   switch (type) {
     case 'goon':
-      return (s.hits ?? 0) >= 1 ? { out: true, reason: 'Goon: 1 Treffer' } : { out: false, reason: '' };
+      return (s.hits ?? 0) >= 1 ? { out: true, reason: t('rules.npc.out.goon') } : { out: false, reason: '' };
     case 'schlaeger':
     case 'elite':
-      if (s.wk <= 0) return { out: true, reason: 'WK 0: flieht oder ergibt sich' };
-      if (total >= 2) return { out: true, reason: '2 Verletzungen' };
+      if (s.wk <= 0) return { out: true, reason: t('rules.npc.out.eliteBroken') };
+      if (total >= 2) return { out: true, reason: t('rules.npc.out.twoInjuries') };
       return { out: false, reason: '' };
     case 'boss':
     case 'nemesis':
-      if (total >= 3) return { out: true, reason: '3 Verletzungen' };
-      if (kopf >= 2) return { out: true, reason: '2 Verletzungen am Kopf' };
-      if (torso >= 3) return { out: true, reason: '3 Verletzungen am Torso' };
-      if (s.wk <= 0) return { out: true, reason: 'WK 0: gebrochen, letzte Verzweiflungstat' };
+      if (total >= 3) return { out: true, reason: t('rules.npc.out.threeInjuries') };
+      if (kopf >= 2) return { out: true, reason: t('rules.npc.out.head') };
+      if (torso >= 3) return { out: true, reason: t('rules.npc.out.torso') };
+      if (s.wk <= 0) return { out: true, reason: t('rules.npc.out.bossBroken') };
       return { out: false, reason: '' };
     case 'spieler':
-      if (kopf >= 2) return { out: true, reason: 'Sterbend: 2 Verletzungen am Kopf' };
-      if (torso >= 3) return { out: true, reason: 'Sterbend: 3 Verletzungen am Torso' };
-      if (s.wk <= 0) return { out: true, reason: 'WK 0: gebrochen' };
+      if (kopf >= 2) return { out: true, reason: t('rules.npc.out.dyingHead') };
+      if (torso >= 3) return { out: true, reason: t('rules.npc.out.dyingTorso') };
+      if (s.wk <= 0) return { out: true, reason: t('rules.npc.out.broken') };
       return { out: false, reason: '' };
   }
 }

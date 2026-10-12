@@ -1,5 +1,7 @@
 // Gift (3.11, 5.1): Stufen, Verzögerung, Wirkung am Rundenende, Gegenmittel. Rein, ohne DOM.
 import { rules } from './data';
+import { TAG, tagLabel } from './tagid';
+import { t, tn } from '../i18n';
 
 export type GiftLevel = 'schwach' | 'stark' | 'laehm' | 'toedlich';
 
@@ -19,15 +21,16 @@ export interface GiftDef {
 }
 
 export const GIFT: Record<GiftLevel, GiftDef> = {
-  schwach: { label: 'Schwach', ep: 1, energie: 1, rounds: 2, mw: 7, effectId: 'giftSchwach', text: '−1 Energie am Rundenende, 2 Runden lang' },
-  stark: { label: 'Stark', ep: 2, energie: 2, rounds: 2, mw: 9, effectId: 'giftStark', text: '−2 Energie am Rundenende, 2 Runden lang' },
-  laehm: { label: 'Lähmgift', ep: 2, energie: 0, rounds: 0, mw: 9, effectId: 'laehmgift', text: 'großer Tag Gelähmt bis Szenenende oder Gegenmittel' },
-  toedlich: { label: 'Tödlich', ep: 3, energie: 0, rounds: 0, mw: 11, effectId: 'giftToedlich', text: 'nach der Verzögerung sterbend, Gegenmittel muss vorher gelingen' },
+  schwach: { label: t('rules.gift.label.schwach'), ep: 1, energie: 1, rounds: 2, mw: 7, effectId: 'giftSchwach', text: t('rules.gift.text.schwach') },
+  stark: { label: t('rules.gift.label.stark'), ep: 2, energie: 2, rounds: 2, mw: 9, effectId: 'giftStark', text: t('rules.gift.text.stark') },
+  laehm: { label: t('rules.gift.label.laehm'), ep: 2, energie: 0, rounds: 0, mw: 9, effectId: 'laehmgift', text: t('rules.gift.text.laehm') },
+  toedlich: { label: t('rules.gift.label.toedlich'), ep: 3, energie: 0, rounds: 0, mw: 11, effectId: 'giftToedlich', text: t('rules.gift.text.toedlich') },
 };
 
 export const GIFT_LEVELS = Object.keys(GIFT) as GiftLevel[];
 export const MAX_GIFT_DELAY = 3;
-export const PARALYSIS_TAG = 'Gelähmt';
+/** Name des Tags *Gelähmt* in der Sprache der App (zum Setzen). Zum Prüfen immer isTag(name, TAG.paralyzed) nehmen. */
+export const PARALYSIS_TAG = tagLabel(TAG.paralyzed);
 
 export interface Poison {
   id: string;
@@ -87,9 +90,9 @@ export function tickPoison(p: Poison): PoisonTick {
 /** Sprechender Text für die Anzeige. */
 export function describePoison(p: Poison): string {
   const def = GIFT[p.level];
-  const when = p.delay > 0 ? `wirkt in ${p.delay} Runde${p.delay === 1 ? '' : 'n'}` : p.level === 'laehm' && p.fired ? 'gelähmt' : 'wirkt';
-  const rest = p.level === 'schwach' || p.level === 'stark' ? `, noch ${p.left}× −${def.energie} Energie` : '';
-  return `Vergiftet (${def.label}): ${when}${rest}`;
+  const when = p.delay > 0 ? tn('rules.gift.waitsIn', p.delay) : p.level === 'laehm' && p.fired ? t('rules.gift.paralyzed') : t('rules.gift.active');
+  const rest = p.level === 'schwach' || p.level === 'stark' ? t('rules.gift.left', { left: p.left, energie: def.energie }) : '';
+  return t('rules.gift.describe', { level: def.label, when, rest });
 }
 
 /**

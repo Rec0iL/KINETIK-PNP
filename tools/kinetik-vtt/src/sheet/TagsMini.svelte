@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { rules } from '../rules';
+  import { rules, tagLabel } from '../rules';
+  import { t } from '../i18n';
   import { uid, type Character } from '../model/character';
   import { computeSheet } from '../model/sheet';
 
@@ -9,39 +10,40 @@
   let size = $state<'klein' | 'gross'>('klein');
 
   function add(n: string, sz: 'klein' | 'gross' = size) {
-    const t = n.trim();
-    if (!t) return;
-    char.tags.push({ id: uid(), name: t, size: sz });
+    const nm = n.trim();
+    if (!nm) return;
+    char.tags.push({ id: uid(), name: nm, size: sz });
     name = '';
   }
-  const quick = ['Am Boden', 'Geblendet', 'Entwaffnet', 'Benommen'];
+  // Kennungen der Schnell-Tags; gespeichert und angezeigt wird der Name in der Sprache der App.
+  const quick = ['Am Boden', 'Geblendet', 'Entwaffnet', 'Benommen'].map(tagLabel);
 </script>
 
 <section class="panel tags">
   <div class="row head">
     <h2>Tags</h2><span class="spacer"></span>
-    <span class="chip" class:danger={sheet.tagBonus >= 3} class:accent={sheet.tagBonus < 3} title="Summe aller Tags gegen dich, höchstens +{rules.tabellen.tags.stapelMax}">Gegner +{sheet.tagBonus}</span>
+    <span class="chip" class:danger={sheet.tagBonus >= 3} class:accent={sheet.tagBonus < 3} title={t('sheet.tags.sumTitle', { max: rules.tabellen.tags.stapelMax })}>{t('sheet.tags.oppPlus', { n: sheet.tagBonus })}</span>
   </div>
 
   <div class="list">
-    {#each char.tags as t, i (t.id)}
-      <div class="tag" class:big={t.size === 'gross'}>
-        <button class="sz" onclick={() => (t.size = t.size === 'klein' ? 'gross' : 'klein')} title="Größe wechseln: klein +1, groß +2">{t.size === 'gross' ? '+2' : '+1'}</button>
-        <input bind:value={t.name} aria-label="Tag-Name" />
-        <button class="btn sm icon ghost danger" onclick={() => char.tags.splice(i, 1)} aria-label="Tag entfernen">✕</button>
+    {#each char.tags as tg, i (tg.id)}
+      <div class="tag" class:big={tg.size === 'gross'}>
+        <button class="sz" onclick={() => (tg.size = tg.size === 'klein' ? 'gross' : 'klein')} title={t('sheet.tags.sizeTitle')}>{tg.size === 'gross' ? '+2' : '+1'}</button>
+        <input value={tagLabel(tg.name)} oninput={(e) => (tg.name = e.currentTarget.value)} aria-label={t('sheet.common.tagName')} />
+        <button class="btn sm icon ghost danger" onclick={() => char.tags.splice(i, 1)} aria-label={t('sheet.tags.removeTag')}>✕</button>
       </div>
     {:else}
-      <p class="dim none">Keine Tags aktiv.</p>
+      <p class="dim none">{t('sheet.common.noTagsActive')}</p>
     {/each}
   </div>
 
   <div class="add">
-    <input bind:value={name} placeholder="Tag hinzufügen" aria-label="Neuer Tag" onkeydown={(e) => e.key === 'Enter' && add(name)} />
-    <select bind:value={size} aria-label="Größe"><option value="klein">klein</option><option value="gross">groß</option></select>
+    <input bind:value={name} placeholder={t('sheet.tags.addPlaceholder')} aria-label={t('sheet.tags.newAria')} onkeydown={(e) => e.key === 'Enter' && add(name)} />
+    <select bind:value={size} aria-label={t('sheet.common.size')}><option value="klein">{t('sheet.tags.minor')}</option><option value="gross">{t('sheet.tags.major')}</option></select>
     <button class="btn sm primary" onclick={() => add(name)} disabled={!name.trim()}>+</button>
   </div>
   <div class="quick">{#each quick as q}<button class="chip" onclick={() => add(q, 'klein')}>+ {q}</button>{/each}</div>
-  {#if ontab}<button class="more" onclick={() => ontab('tags')}>Alle Tags und Nachteile →</button>{/if}
+  {#if ontab}<button class="more" onclick={() => ontab('tags')}>{t('sheet.tags.more')}</button>{/if}
 </section>
 
 <style>

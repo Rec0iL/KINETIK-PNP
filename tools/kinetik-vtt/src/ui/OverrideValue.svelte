@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Derived } from '../model/sheet';
+  import { t } from '../i18n';
 
   let {
     derived,
@@ -31,11 +32,11 @@
       {@attach (el) => el.focus()}
     />
   {:else}
-    <button type="button" class="val" onclick={start} title={`${formula ? formula + '\n' : ''}Klicken zum Überschreiben${derived.overridden ? `\nRegelwert: ${derived.rule}` : ''}`}>
+    <button type="button" class="val" onclick={start} title={`${formula ? formula + '\n' : ''}${t('ui.overrideValue.clickToOverride')}${derived.overridden ? `\n${t('ui.overrideValue.ruleValue', { rule: derived.rule })}` : ''}`}>
       {derived.value}{#if derived.overridden}<sup>✎</sup>{/if}
     </button>
     {#if derived.overridden}
-      <button type="button" class="reset" onclick={() => onset(undefined)} title={`Zurück auf Regelwert (${derived.rule})`} aria-label="Zurücksetzen">↺</button>
+      <button type="button" class="reset" onclick={() => onset(undefined)} title={t('ui.overrideValue.resetTitle', { rule: derived.rule })} aria-label={t('ui.overrideValue.reset')}>↺</button>
     {/if}
   {/if}
 </span>

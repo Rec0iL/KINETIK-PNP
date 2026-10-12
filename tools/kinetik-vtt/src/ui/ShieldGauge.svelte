@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { t } from '../i18n';
   let { current = $bindable(0), max = $bindable(0), warnAbove = 3 }: { current: number; max: number; warnAbove?: number } = $props();
 
   const cid = `sfill-${Math.random().toString(36).slice(2, 8)}`;
@@ -11,7 +12,7 @@
   }
 </script>
 
-<div class="shield" class:over={max > warnAbove} role="group" aria-label="Schutz">
+<div class="shield" class:over={max > warnAbove} role="group" aria-label={t('ui.shieldGauge.label')}>
   <svg viewBox="0 0 100 120" aria-hidden="true">
     <defs>
       <clipPath id={cid}><rect x="0" y={120 - 120 * fill} width="100" height={120 * fill} /></clipPath>
@@ -23,15 +24,15 @@
   </svg>
   <div class="nums">
     <div class="n">
-      <button type="button" class="ar" onclick={() => setCur(current + 1)} disabled={current >= max} aria-label="Aktueller Schutz erhöhen">▲</button>
+      <button type="button" class="ar" onclick={() => setCur(current + 1)} disabled={current >= max} aria-label={t('ui.shieldGauge.curUp')}>▲</button>
       <b>{current}</b>
-      <button type="button" class="ar" onclick={() => setCur(current - 1)} disabled={current <= 0} aria-label="Aktueller Schutz verringern">▼</button>
+      <button type="button" class="ar" onclick={() => setCur(current - 1)} disabled={current <= 0} aria-label={t('ui.shieldGauge.curDown')}>▼</button>
     </div>
     <span class="slash">/</span>
     <div class="n m">
-      <button type="button" class="ar" onclick={() => setMax(max + 1)} disabled={max >= 9} aria-label="Maximalen Schutz erhöhen">▲</button>
+      <button type="button" class="ar" onclick={() => setMax(max + 1)} disabled={max >= 9} aria-label={t('ui.shieldGauge.maxUp')}>▲</button>
       <b>{max}</b>
-      <button type="button" class="ar" onclick={() => setMax(max - 1)} disabled={max <= 0} aria-label="Maximalen Schutz verringern">▼</button>
+      <button type="button" class="ar" onclick={() => setMax(max - 1)} disabled={max <= 0} aria-label={t('ui.shieldGauge.maxDown')}>▼</button>
     </div>
   </div>
 </div>

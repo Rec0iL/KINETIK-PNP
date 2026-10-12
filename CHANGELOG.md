@@ -2,6 +2,12 @@
 
 Alle wesentlichen Änderungen am Regelwerk. Details stehen jeweils im Änderungsprotokoll am Ende von `regelwerk/KINETIK_Regelwerk.md`.
 
+## Englisch (2026-10-12)
+- Regelwerk auf Englisch (`regelwerk/KINETIK_Regelwerk.en.md`, Begriffe in `regelwerk/GLOSSARY.en.md`), gleiche Struktur und Regeln wie v3.6. `scripts/check_translation.py` prüft Zeilen, Überschriften, Tabellen und Zahlen gegen das Original.
+- Web-App zweisprachig (Deutsch, Englisch): Sprache nach Browser, im Kopf umschaltbar oder per `?lang=en`. Regeldaten mit englischen Texten unter `data/i18n/en/`. Tags und legendäre Preise werden sprachübergreifend erkannt (ein deutscher Charakter funktioniert in einer englischen Runde).
+- Englische PDFs für alle zehn Looks (`KINETIK_Rulebook_v3.6*.pdf`) und englisches Web-Regelwerk. Bilder werden aus der deutschen Fassung übernommen, Füllbilder neu gemessen und wo nötig neu erzeugt.
+- Link-Vorschau zweisprachig (`og-kinetik.jpg`).
+
 ## Rechtliches (2026-10-11)
 - Impressum und Datenschutzerklärung in der Web-App (`#/impressum`, `#/datenschutz`), Copyright unter Credits und Impressum, im Footer und am Ende des Web-Regelwerks. Die Regelwerk-PDFs tragen auf der letzten Seite Copyright, Lizenz und den Link zum Impressum. Die App läuft jetzt auch unter kinetik.redneck-design.de, die Datenschutzerklärung nennt beide Hoster.
 - Betreiberangaben nicht im Repository: Datei `tools/kinetik-vtt/legal.local.json` oder GitHub-Secret `KINETIK_LEGAL_JSON`, die E-Mail erscheint erst nach einem Klick.

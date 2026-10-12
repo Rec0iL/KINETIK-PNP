@@ -9,6 +9,7 @@
   import type { Visibility } from '../net/protocol';
   import { settings } from '../lib/settings.svelte';
   import { pnp } from '../net/pnp.svelte';
+  import { t } from '../i18n';
 
   let fileInput = $state<HTMLInputElement>();
   let pick = $state('');
@@ -19,23 +20,23 @@
     exporting = true;
     try {
       const f = await exportSession(withAssets);
-      if (f) downloadJson(f, `kinetik-sitzung-${new Date().toISOString().slice(0, 10)}.json`);
+      if (f) downloadJson(f, t('gm.settings.exportFile', { date: new Date().toISOString().slice(0, 10) }));
     } finally { exporting = false; }
   }
 
   const modes: { key: Visibility; title: string; text: string }[] = [
-    { key: 'party', title: 'Gruppenleiste', text: 'Alle sehen Name, Energie, WK, Momentum, Verletzungen und Tags der anderen, aber nicht die ganzen Bögen.' },
-    { key: 'private', title: 'Privat', text: 'Nur der SL sieht Bögen und Werte. Spieler sehen nur, wer am Tisch sitzt.' },
-    { key: 'open', title: 'Offen', text: 'Jeder Spieler darf die Bögen der anderen lesen.' },
+    { key: 'party', title: t('gm.visibility.party'), text: t('gm.visibility.partyText') },
+    { key: 'private', title: t('gm.visibility.private'), text: t('gm.visibility.privateText') },
+    { key: 'open', title: t('gm.visibility.open'), text: t('gm.visibility.openText') },
   ];
 
   async function onFiles(e: Event) {
     const input = e.currentTarget as HTMLInputElement;
     for (const f of [...(input.files ?? [])]) {
       try {
-        for (const c of parseImport(await f.text(), { newIds: true })) { addLocalPlayer(c); pushToast(`${c.name} als lokaler Spieler hinzugefügt.`, 'good'); }
+        for (const c of parseImport(await f.text(), { newIds: true })) { addLocalPlayer(c); pushToast(t('gm.settings.addedLocal', { name: c.name }), 'good'); }
       } catch (err) {
-        pushToast(`${f.name}: ${err instanceof ImportError ? err.message : 'Lesefehler'}`, 'danger');
+        pushToast(`${f.name}: ${err instanceof ImportError ? err.message : t('gm.settings.readError')}`, 'danger');
       }
     }
     input.value = '';
@@ -46,13 +47,13 @@
     addLocalPlayer(parseImport(JSON.stringify($state.snapshot(c)), { newIds: true })[0]);
     pick = '';
   }
-  const addBlank = () => addLocalPlayer(newCharacter({ name: 'Neuer Spieler' }));
+  const addBlank = () => addLocalPlayer(newCharacter({ name: t('gm.settings.newPlayer') }));
 </script>
 
 {#if gm.session}
   <div class="stack">
     <section class="panel">
-      <h2>Sichtbarkeit der Bögen</h2>
+      <h2>{t('gm.settings.visibility')}</h2>
       <div class="modes">
         {#each modes as m}
           <button class="mode" class:on={gm.session.state.visibility === m.key} onclick={() => setVisibility(m.key)}>
@@ -60,56 +61,56 @@
           </button>
         {/each}
       </div>
-      <p class="dim">Pro Spieler lässt sich das auf der Spielerkarte überschreiben.</p>
+      <p class="dim">{t('gm.settings.visibilityHint')}</p>
     </section>
 
     <section class="panel">
-      <h2>Runde</h2>
+      <h2>{t('gm.settings.round')}</h2>
       <div class="row">
-        <label class="field">Dein Name in der Runde<input value={gm.session.state.gmName} onchange={(e) => setGmName(e.currentTarget.value)} /></label>
-        <label class="field">Passwort (optional, gilt für neue Beitritte)<input bind:value={gm.session.password} autocomplete="off" /></label>
+        <label class="field">{t('gm.settings.gmName')}<input value={gm.session.state.gmName} onchange={(e) => setGmName(e.currentTarget.value)} /></label>
+        <label class="field">{t('gm.settings.password')}<input bind:value={gm.session.password} autocomplete="off" /></label>
       </div>
       <div class="row">
-        <button class="btn" onclick={() => { stopHost(); }}>Runde pausieren</button>
-        <button class="btn danger" onclick={async () => { if (confirm('Runde beenden und alle Daten der Sitzung (Spieler, Notizen) löschen?')) { await endSession(); navigate('/sl'); } }}>Runde beenden und vergessen</button>
+        <button class="btn" onclick={() => { stopHost(); }}>{t('gm.settings.pause')}</button>
+        <button class="btn danger" onclick={async () => { if (confirm(t('gm.settings.confirmEnd'))) { await endSession(); navigate('/sl'); } }}>{t('gm.settings.end')}</button>
       </div>
-      <p class="dim">Pausieren trennt alle Spieler, die Sitzung bleibt in diesem Browser gespeichert und lässt sich mit demselben Raumcode fortsetzen.</p>
+      <p class="dim">{t('gm.settings.pauseHint')}</p>
     </section>
 
     <section class="panel">
-      <h2>PenNodePaper-Verbindung</h2>
-      <p class="dim">Verbindet diese Runde mit PenNodePaper, deiner Vorbereitungs-App: Handouts, Karten, Gegner und NPCs lassen sich von dort direkt in die Runde schicken, und die App kennt deine Musik (auch eigene Titel).</p>
-      <label class="check"><input type="checkbox" bind:checked={settings.pnpEnabled} /> Verbindung halten, solange die Runde läuft</label>
+      <h2>{t('gm.settings.pnp')}</h2>
+      <p class="dim">{t('gm.settings.pnpText')}</p>
+      <label class="check"><input type="checkbox" bind:checked={settings.pnpEnabled} /> {t('gm.settings.pnpKeep')}</label>
       <div class="row">
-        <label class="field">Adresse<input bind:value={settings.pnpUrl} placeholder="ws://127.0.0.1:4317/bridge" spellcheck="false" /></label>
-        <label class="field">Kopplungs-Token<input type="password" bind:value={settings.pnpToken} placeholder="aus PenNodePaper: Einstellungen → VTT link" autocomplete="off" /></label>
+        <label class="field">{t('gm.settings.pnpUrl')}<input bind:value={settings.pnpUrl} placeholder="ws://127.0.0.1:4317/bridge" spellcheck="false" /></label>
+        <label class="field">{t('gm.settings.pnpToken')}<input type="password" bind:value={settings.pnpToken} placeholder={t('gm.settings.pnpTokenPlaceholder')} autocomplete="off" /></label>
       </div>
       <div class="row">
-        {#if pnp.status === 'connected'}<span class="chip accent">verbunden · {pnp.campaign}</span>
-        {:else if pnp.status === 'connecting'}<span class="chip amber">verbinde …</span>
+        {#if pnp.status === 'connected'}<span class="chip accent">{t('gm.settings.pnpConnected', { campaign: pnp.campaign ?? '' })}</span>
+        {:else if pnp.status === 'connecting'}<span class="chip amber">{t('gm.settings.pnpConnecting')}</span>
         {:else if pnp.status === 'error'}<span class="chip danger">{pnp.error}</span>
-        {:else}<span class="chip">{settings.pnpEnabled ? 'wartet auf eine laufende Runde' : 'aus'}</span>{/if}
+        {:else}<span class="chip">{settings.pnpEnabled ? t('gm.settings.pnpWaiting') : t('gm.settings.pnpOff')}</span>{/if}
       </div>
     </section>
 
     <section class="panel">
-      <h2>Sitzung sichern</h2>
-      <p class="dim">Die Sitzung (Spieler samt Bögen, Karten, Tokens, Nebel, Gegner, Handouts, Notizen) liegt automatisch in diesem Browser. Als Datei lässt sie sich sichern oder auf ein anderes Gerät mitnehmen und auf der Startseite des SL-Bereichs wieder laden.</p>
+      <h2>{t('gm.settings.backup')}</h2>
+      <p class="dim">{t('gm.settings.backupText')}</p>
       <div class="row">
-        <label class="check"><input type="checkbox" bind:checked={withAssets} /> Karten, Bilder und Musik mitspeichern (Datei wird groß)</label>
-        <button class="btn" onclick={doExport} disabled={exporting}>{exporting ? 'Packe …' : 'Sitzung exportieren'}</button>
+        <label class="check"><input type="checkbox" bind:checked={withAssets} /> {t('gm.settings.withAssets')}</label>
+        <button class="btn" onclick={doExport} disabled={exporting}>{exporting ? t('gm.settings.packing') : t('gm.settings.export')}</button>
       </div>
     </section>
 
     <section class="panel">
-      <h2>Lokale Spieler (ohne Gerät)</h2>
-      <p class="dim">Für Spieler am Tisch ohne Verbindung: Der SL pflegt ihren Bogen selbst, sie erscheinen in der Gruppe wie alle anderen.</p>
+      <h2>{t('gm.settings.local')}</h2>
+      <p class="dim">{t('gm.settings.localText')}</p>
       <div class="row">
-        <button class="btn" onclick={() => fileInput?.click()}>Charakter-JSON laden</button>
+        <button class="btn" onclick={() => fileInput?.click()}>{t('gm.settings.loadJson')}</button>
         <input bind:this={fileInput} type="file" accept="application/json,.json" multiple class="sr-only" onchange={onFiles} />
-        <select bind:value={pick} aria-label="Aus Bibliothek"><option value="">Aus meiner Bibliothek …</option>{#each library.characters as c}<option value={c.id}>{c.name}</option>{/each}</select>
-        <button class="btn" onclick={addFromLibrary} disabled={!pick}>Hinzufügen</button>
-        <button class="btn" onclick={addBlank}>Leerer Bogen</button>
+        <select bind:value={pick} aria-label={t('gm.settings.fromLibrary')}><option value="">{t('gm.settings.fromLibraryOption')}</option>{#each library.characters as c}<option value={c.id}>{c.name}</option>{/each}</select>
+        <button class="btn" onclick={addFromLibrary} disabled={!pick}>{t('gm.settings.add')}</button>
+        <button class="btn" onclick={addBlank}>{t('gm.settings.blank')}</button>
       </div>
     </section>
   </div>

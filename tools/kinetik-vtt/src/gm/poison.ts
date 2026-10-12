@@ -1,8 +1,9 @@
 // Gift am Rundenende (3.11) für Spielerbögen und NPCs. Rein, ohne DOM.
-import { GIFT, PARALYSIS_TAG, overflowInjuries, tickPoison, type Poison } from '../rules';
+import { GIFT, PARALYSIS_TAG, TAG, isTag, overflowInjuries, tickPoison, type Poison } from '../rules';
 import type { Character } from '../model/character';
 import type { PatchOp } from '../net/protocol';
 import type { Npc } from './combat';
+import { t, tn } from '../i18n';
 
 export interface PoisonRound {
   ops: PatchOp[];
@@ -32,21 +33,21 @@ export function tickCharacter(c: Character): PoisonRound {
   if (loss > 0) {
     const before = c.resources.energie;
     ops.push({ op: 'add', key: 'energie', delta: -loss });
-    notes.push(`${c.name}: −${loss} Energie durch Gift`);
+    notes.push(t('gm.poison.energyLoss', { name: c.name, n: loss }));
     const n = overflowInjuries(before, before - loss);
-    for (let i = 0; i < n; i++) ops.push({ op: 'injury', zone: 'torso', text: 'Überlauf (Gift)' });
-    if (n) notes.push(`${c.name}: Überlauf, ${n} Verletzung(en) am Torso`);
-    if (c.dying !== null) notes.push(`${c.name} ist sterbend und verliert weiter Energie: stirbt (3.11)`);
+    for (let i = 0; i < n; i++) ops.push({ op: 'injury', zone: 'torso', text: t('gm.poison.overflowInjury') });
+    if (n) notes.push(tn('gm.poison.overflow', n, { name: c.name }));
+    if (c.dying !== null) notes.push(t('gm.poison.dyingDies', { name: c.name }));
   }
-  if (lame && !c.tags.some((t) => t.name === PARALYSIS_TAG)) {
-    ops.push({ op: 'tag', name: PARALYSIS_TAG, size: 'gross', note: 'Lähmgift' });
-    notes.push(`${c.name}: gelähmt (großer Tag)`);
+  if (lame && !c.tags.some((t) => isTag(t.name, TAG.paralyzed))) {
+    ops.push({ op: 'tag', name: PARALYSIS_TAG, size: 'gross', note: t('gm.poison.paralyticNote') });
+    notes.push(t('gm.poison.paralyzed', { name: c.name }));
   }
   if (dying) {
     ops.push({ op: 'dying' });
-    notes.push(`${c.name}: wird sterbend (tödliches Gift), Gegenmittel nötig`);
+    notes.push(t('gm.poison.becomesDying', { name: c.name }));
   }
-  if (waiting && !notes.length) notes.push(`${c.name}: Gift wirkt noch nicht (Verzögerung)`);
+  if (waiting && !notes.length) notes.push(t('gm.poison.waiting', { name: c.name }));
   return { ops, notes };
 }
 
@@ -66,10 +67,10 @@ export function tickNpc(n: Npc): string[] {
     dying ||= t.dying;
   }
   n.poisons = next;
-  if (loss > 0) { n.energie -= loss; notes.push(`${n.name}: −${loss} Energie durch Gift`); }
-  if (lame && !n.tags.includes(PARALYSIS_TAG)) { n.tags.push(PARALYSIS_TAG); notes.push(`${n.name}: gelähmt (großer Tag)`); }
-  if (dying) { n.dying = true; notes.push(`${n.name}: stirbt am tödlichen Gift`); }
-  if (n.energie < 0) notes.push(`${n.name}: Energie unter 0, ohnmächtig`);
+  if (loss > 0) { n.energie -= loss; notes.push(t('gm.poison.energyLoss', { name: n.name, n: loss })); }
+  if (lame && !n.tags.some((t) => isTag(t, TAG.paralyzed))) { n.tags.push(PARALYSIS_TAG); notes.push(t('gm.poison.paralyzed', { name: n.name })); }
+  if (dying) { n.dying = true; notes.push(t('gm.poison.npcDies', { name: n.name })); }
+  if (n.energie < 0) notes.push(t('gm.poison.npcUnconscious', { name: n.name }));
   return notes;
 }
 
@@ -83,4 +84,4 @@ export function cureOps(c: Character, poisonId: string): PatchOp[] {
   return ops;
 }
 
-export const mwText = (p: Poison) => `MW ${p.mw ?? GIFT[p.level].mw}`;
+export const mwText = (p: Poison) => t('gm.poison.dc', { n: p.mw ?? GIFT[p.level].mw });

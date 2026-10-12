@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ATTR_KEYS, GIFT, OUTCOME_LABEL, areaOfEffects, giftOfEffects, rules, type AttrKey, type ZoneKey } from '../rules';
+  import { ATTR_KEYS, GIFT, OUTCOME_LABEL, areaOfEffects, giftOfEffects, rules, tagLabel, type AttrKey, type ZoneKey } from '../rules';
   import type { Character } from '../model/character';
   import { computeSheet } from '../model/sheet';
   import { player, sendPlan, cancelPlan, sendBulletChoice } from '../net/player.svelte';
@@ -10,6 +10,7 @@
   import { ROUGH_LABEL } from '../gm/combat';
   import { moveUse } from '../sheet/moveUse.svelte';
   import MovePayBar from '../sheet/MovePayBar.svelte';
+  import { t, tn } from '../i18n';
 
   let { char, target = $bindable(null) }: { char: Character | null; target: string | null } = $props();
 
@@ -22,7 +23,7 @@
   const acted = $derived(!!combat?.done.includes(player.playerId));
   const attrName = (a: AttrKey) => rules.tabellen.attribute.find((x) => x.key === a)?.name ?? a;
   const fmt = (v: number) => (v > 0 ? `+${v}` : String(v));
-  const enemyName = (id: string | null) => combat?.enemies.find((e) => e.id === id)?.name ?? 'Gegner';
+  const enemyName = (id: string | null) => combat?.enemies.find((e) => e.id === id)?.name ?? t('pages.combatPlan.enemy');
 
   let kind = $state<'attack' | 'breath' | 'gather'>('attack');
   let attr = $state<AttrKey>('gewalt');
@@ -37,7 +38,7 @@
     if (!enemy) return 0;
     let s = 0;
     let l = 0;
-    for (const t of enemy.tags) if (tagsUsed.includes(t.name)) { if (t.size === 'gross') l++; else s++; }
+    for (const tg of enemy.tags) if (tagsUsed.includes(tg.name)) { if (tg.size === 'gross') l++; else s++; }
     return Math.min(rules.tabellen.tags.stapelMax, s * rules.tabellen.tags.klein + l * rules.tabellen.tags.gross);
   });
   $effect(() => { target; tagsUsed = []; });
@@ -66,13 +67,13 @@
     if (!char || !sheet) return;
     const a = s.kind === 'defend' ? defAttr : s.attr;
     if (hero && s.kind === 'defend') {
-      if (char.resources.momentum < 3) { pushToast('Die Heldenhafte Gegenwehr kostet 3 Momentum.', 'warn'); return; }
+      if (char.resources.momentum < 3) { pushToast(t('pages.combatPlan.heroCost'), 'warn'); return; }
       char.resources.momentum -= 3;
     }
     roll2d6({
       who: settings.displayName || char.name, characterId: char.id, kind: 'clash', bonus: sheet.basicBonus[a], mod: s.rollMod, sit: s.id,
       hero: hero && s.kind === 'defend' ? true : undefined,
-      label: `${KIND_LABEL[s.kind]}: ${s.kind === 'defend' ? `gegen ${enemyName(s.npcId)}` : s.technique || enemyName(s.npcId)}`,
+      label: `${KIND_LABEL[s.kind]}: ${s.kind === 'defend' ? t('pages.combatPlan.rollAgainst', { name: enemyName(s.npcId) }) : s.technique || enemyName(s.npcId)}`,
     });
     hero = false;
   }
@@ -87,74 +88,74 @@
     moveUse.pending = { charId: char.id, moveId: payMove, total: rec?.total ?? 0 };
   }
   const statusText: Record<PlayerSituation['status'], string> = {
-    planned: 'wartet auf den SL', released: 'freigegeben', rolled: 'beide Würfe da, der SL wickelt ab', resolved: 'abgewickelt', cancelled: '',
+    planned: t('pages.combatPlan.statusPlanned'), released: t('pages.combatPlan.statusReleased'), rolled: t('pages.combatPlan.statusRolled'), resolved: t('pages.combatPlan.statusResolved'), cancelled: '',
   };
 </script>
 
 {#if combat?.active}
   <section class="panel plan">
     <div class="row">
-      <h2>Meine Aktion</h2><span class="spacer"></span>
-      {#if acted}<span class="chip">in dieser Runde gehandelt</span>{/if}
+      <h2>{t('pages.combatPlan.myAction')}</h2><span class="spacer"></span>
+      {#if acted}<span class="chip">{t('pages.combatPlan.acted')}</span>{/if}
     </div>
 
     {#if !char || !sheet}
-      <p class="dim">Ohne Bogen kannst du keine Aktion planen. Wähle unten einen Bogen für diese Runde.</p>
+      <p class="dim">{t('pages.combatPlan.noSheet')}</p>
     {:else if busy || acted}
-      <p class="dim">Pro Runde hast du eine Aktion (3.6). Verteidigen ist eine Reaktion und kostet keine Aktion.</p>
+      <p class="dim">{t('pages.combatPlan.oneAction')}</p>
     {:else}
       <div class="kinds">
-        <button class="chip" class:on={kind === 'attack'} onclick={() => (kind = 'attack')}>Angriff / Move</button>
-        <button class="chip" class:on={kind === 'breath'} onclick={() => (kind = 'breath')} title="+2 Energie, der nächste Clash gegen dich +1">Durchatmen</button>
-        <button class="chip" class:on={kind === 'gather'} onclick={() => (kind = 'gather')} title="+2 Willenskraft, der nächste Clash gegen dich +1">Sammeln</button>
+        <button class="chip" class:on={kind === 'attack'} onclick={() => (kind = 'attack')}>{t('pages.combatPlan.kindAttack')}</button>
+        <button class="chip" class:on={kind === 'breath'} onclick={() => (kind = 'breath')} title={t('pages.combatPlan.breathTitle')}>{t('pages.combatPlan.breath')}</button>
+        <button class="chip" class:on={kind === 'gather'} onclick={() => (kind = 'gather')} title={t('pages.combatPlan.gatherTitle')}>{t('pages.combatPlan.gather')}</button>
       </div>
       {#if kind === 'attack'}
-        <label class="field">Ziel
+        <label class="field">{t('pages.combatPlan.target')}
           <select bind:value={target}>
-            <option value={null}>— Gegner auf der Karte anklicken oder hier wählen —</option>
+            <option value={null}>{t('pages.combatPlan.targetNone')}</option>
             {#each enemies as e}<option value={e.id}>{e.name} · {ROUGH_LABEL[e.state]}</option>{/each}
           </select>
         </label>
         {#if enemy}
           <div class="tags">
-            <span class="lbl">Tags am Gegner (anklicken, um sie zu nutzen)</span>
-            {#each enemy.tags as t (t.name)}
-              <button class="chip tg" class:on={tagsUsed.includes(t.name)} class:big={t.size === 'gross'} onclick={() => toggleTag(t.name)}>{t.name} {t.size === 'gross' ? '+2' : '+1'}</button>
-            {:else}<span class="dim">keine</span>{/each}
+            <span class="lbl">{t('pages.combatPlan.enemyTags')}</span>
+            {#each enemy.tags as tg (tg.name)}
+              <button class="chip tg" class:on={tagsUsed.includes(tg.name)} class:big={tg.size === 'gross'} onclick={() => toggleTag(tg.name)}>{tagLabel(tg.name)} {tg.size === 'gross' ? '+2' : '+1'}</button>
+            {:else}<span class="dim">{t('pages.combatPlan.none')}</span>{/each}
             {#if tagBonus}<span class="chip accent">+{tagBonus}</span>{/if}
           </div>
         {/if}
         <div class="row">
-          <label class="field grow">Technik (Ansage, 3.12)<input bind:value={technique} placeholder="z.B. springt über den Tisch und tritt zu" /></label>
-          <label class="field">Attribut
+          <label class="field grow">{t('pages.combatPlan.technique')}<input bind:value={technique} placeholder={t('pages.combatPlan.techniquePh')} /></label>
+          <label class="field">{t('pages.combatPlan.attribute')}
             <select bind:value={attr}>{#each ATTR_KEYS as a}<option value={a}>{attrName(a)} {fmt(sheet.basicBonus[a])}</option>{/each}</select>
           </label>
         </div>
-        <label class="field">Move vormerken (optional, bezahlt wird nach dem Wurf)
-          <select bind:value={moveId}><option value="">kein Move</option>{#each char.moves as m}<option value={m.id}>{m.name}</option>{/each}</select>
+        <label class="field">{t('pages.combatPlan.markMove')}
+          <select bind:value={moveId}><option value="">{t('pages.combatPlan.noMove')}</option>{#each char.moves as m}<option value={m.id}>{m.name}</option>{/each}</select>
         </label>
-        {#if area}<small class="dim"><span class="chip accent">{area === 'flaeche' ? 'Fläche' : 'Mehrere Ziele'}</span> Ein Wurf, jedes weitere Ziel verteidigt einzeln. Ein Konter heißt nur Entkommen.</small>{/if}
-        {#if gift}<small class="dim"><span class="chip danger">Gift {GIFT[gift].label}</span> Verzögerung {move?.giftDelay ?? 0} Runde(n). Wirkt nur, wenn der Treffer den Körper erreicht.</small>{/if}
+        {#if area}<small class="dim"><span class="chip accent">{area === 'flaeche' ? t('pages.combatPlan.area') : t('pages.combatPlan.multi')}</span> {t('pages.combatPlan.areaNote')}</small>{/if}
+        {#if gift}<small class="dim"><span class="chip danger">{t('pages.combatPlan.poison', { level: GIFT[gift].label })}</span> {tn('pages.combatPlan.poisonDelay', move?.giftDelay ?? 0)} {t('pages.combatPlan.poisonNote')}</small>{/if}
       {:else}
-        <small class="dim">{kind === 'breath' ? 'Durchatmen: +2 Energie. ' : 'Sammeln: +2 Willenskraft. '}Der nächste Clash gegen dich bekommt +1.</small>
+        <small class="dim">{kind === 'breath' ? t('pages.combatPlan.breathInfo') : t('pages.combatPlan.gatherInfo')} {t('pages.combatPlan.nextClash')}</small>
       {/if}
-      <div class="row"><button class="btn primary" onclick={send} disabled={kind === 'attack' && !enemy}>Aktion an den SL senden</button></div>
+      <div class="row"><button class="btn primary" onclick={send} disabled={kind === 'attack' && !enemy}>{t('pages.combatPlan.send')}</button></div>
     {/if}
   </section>
 
   {#if mine.length}
     <section class="panel plan">
-      <h2>Kampfsituationen</h2>
+      <h2>{t('pages.combatPlan.situations')}</h2>
       {#each mine as s (s.id)}
         <article class="sit" class:def={s.kind === 'defend'}>
           <header>
-            <b>{s.kind === 'defend' ? `${enemyName(s.npcId)} greift dich an` : s.kind === 'attack' ? `Angriff auf ${enemyName(s.npcId)}` : KIND_LABEL[s.kind]}</b>
+            <b>{s.kind === 'defend' ? t('pages.combatPlan.attacksYou', { name: enemyName(s.npcId) }) : s.kind === 'attack' ? t('pages.combatPlan.attackOn', { name: enemyName(s.npcId) }) : KIND_LABEL[s.kind]}</b>
             <span class="chip amber">{statusText[s.status]}</span>
           </header>
-          {#if s.technique}<p class="tech">„{s.technique}“ <span class="dim">({attrName(s.attr)}{s.moveName ? ` · ${s.moveName}` : ''})</span></p>{/if}
-          {#if s.tagsUsed.length}<small class="dim">Genutzte Tags: {s.tagsUsed.join(', ')}</small>{/if}
-          {#if s.mod || s.modReason}<small class="mod" class:neg={s.mod < 0}>{s.mod > 0 ? 'Erleichtert' : s.mod < 0 ? 'Erschwert' : 'Hinweis'} {s.mod ? fmt(s.mod) : ''} {s.modReason}</small>{/if}
-          {#if s.gift}<small class="dim"><span class="chip danger">Gift {GIFT[s.gift.level].label}</span></small>{/if}
+          {#if s.technique}<p class="tech">{t('pages.common.quoted', { text: s.technique })} <span class="dim">({attrName(s.attr)}{s.moveName ? ` · ${s.moveName}` : ''})</span></p>{/if}
+          {#if s.tagsUsed.length}<small class="dim">{t('pages.combatPlan.tagsUsed', { tags: s.tagsUsed.map(tagLabel).join(', ') })}</small>{/if}
+          {#if s.mod || s.modReason}<small class="mod" class:neg={s.mod < 0}>{s.mod > 0 ? t('pages.combatPlan.modEasier') : s.mod < 0 ? t('pages.combatPlan.modHarder') : t('pages.combatPlan.modNote')} {s.mod ? fmt(s.mod) : ''} {s.modReason}</small>{/if}
+          {#if s.gift}<small class="dim"><span class="chip danger">{t('pages.combatPlan.poison', { level: GIFT[s.gift.level].label })}</span></small>{/if}
 
           {#if s.bullet}
             <div class="bt">
@@ -163,8 +164,8 @@
                 <span>{BT_LABEL[s.bullet.option]}{s.bullet.zone ? ` (${rules.tabellen.zonen.find((z) => z.key === s.bullet?.zone)?.kurz})` : ''}</span>
               {:else}
                 <div class="row">
-                  <button class="btn sm primary" onclick={() => choose(s, 'zone')}>Zonenwahl</button>
-                  <select bind:value={zone} aria-label="Zone">{#each rules.tabellen.zonen as z}<option value={z.key as ZoneKey}>{z.kurz}</option>{/each}</select>
+                  <button class="btn sm primary" onclick={() => choose(s, 'zone')}>{t('pages.combatPlan.zoneChoice')}</button>
+                  <select bind:value={zone} aria-label={t('pages.combatPlan.zone')}>{#each rules.tabellen.zonen as z}<option value={z.key as ZoneKey}>{z.kurz}</option>{/each}</select>
                   <button class="btn sm primary" onclick={() => choose(s, 'ep')}>+1 EP</button>
                   <button class="btn sm primary" onclick={() => choose(s, 'momentum')}>+1 Momentum</button>
                 </div>
@@ -175,30 +176,30 @@
           {#if (s.kind === 'attack' || s.kind === 'defend') && s.status === 'released' && !s.rolled && char && sheet}
             {#if s.kind === 'defend'}
               <div class="row">
-                <label class="field">Verteidigung mit
+                <label class="field">{t('pages.combatPlan.defendWith')}
                   <select bind:value={defAttr}>{#each ATTR_KEYS as a}<option value={a}>{attrName(a)} {fmt(sheet.basicBonus[a])}</option>{/each}</select>
                 </label>
-                <label class="check"><input type="checkbox" bind:checked={hero} /> Heldenhafte Gegenwehr (3 Momentum)</label>
+                <label class="check"><input type="checkbox" bind:checked={hero} /> {t('pages.combatPlan.heroCheck')}</label>
               </div>
             {/if}
-            <button class="btn primary" onclick={() => rollSit(s)}>Würfeln {fmt(sheet.basicBonus[s.kind === 'defend' ? defAttr : s.attr])}{s.rollMod ? ` ${fmt(s.rollMod)}` : ''}</button>
+            <button class="btn primary" onclick={() => rollSit(s)}>{t('pages.combatPlan.roll')} {fmt(sheet.basicBonus[s.kind === 'defend' ? defAttr : s.attr])}{s.rollMod ? ` ${fmt(s.rollMod)}` : ''}</button>
           {:else if s.rolled && !s.summary}
-            <small class="dim">Gewürfelt. Der SL würfelt für den Gegner …</small>
+            <small class="dim">{t('pages.combatPlan.rolledWait')}</small>
           {/if}
 
           {#if s.summary}
             <p class="res"><b>{OUTCOME_LABEL[s.summary.outcome]}</b> <span class="dim">Δ {s.summary.delta > 0 ? '+' : ''}{s.summary.delta}{s.summary.note ? ` · ${s.summary.note}` : ''}</span></p>
             {#if s.kind === 'attack' && char && s.summary.outcome !== 'konter' && s.summary.outcome !== 'perfekterKonter'}
               <div class="row">
-                <select bind:value={payMove} aria-label="Move einsetzen"><option value="">Move einsetzen …</option>{#each char.moves as m}<option value={m.id}>{m.name}</option>{/each}</select>
-                <button class="btn sm" onclick={() => useMove(s)} disabled={!payMove}>Move wählen</button>
+                <select bind:value={payMove} aria-label={t('pages.combatPlan.useMove')}><option value="">{t('pages.combatPlan.useMoveOption')}</option>{#each char.moves as m}<option value={m.id}>{m.name}</option>{/each}</select>
+                <button class="btn sm" onclick={() => useMove(s)} disabled={!payMove}>{t('pages.combatPlan.pickMove')}</button>
               </div>
               {#each char.moves.filter((m) => m.id === payMove) as m (m.id)}<MovePayBar {char} move={m} />{/each}
             {/if}
           {/if}
 
           {#if (s.status === 'planned' || s.status === 'released') && !s.rolled && s.kind !== 'defend'}
-            <button class="btn sm ghost danger" onclick={() => cancelPlan(s.id)}>Zurückziehen</button>
+            <button class="btn sm ghost danger" onclick={() => cancelPlan(s.id)}>{t('pages.combatPlan.withdraw')}</button>
           {/if}
         </article>
       {/each}

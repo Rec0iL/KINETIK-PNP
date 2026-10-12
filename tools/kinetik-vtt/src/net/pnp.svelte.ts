@@ -6,6 +6,7 @@ import { imageToDataUrl, shrinkDataUrl } from '../lib/image';
 import { uid } from '../model/character';
 import { settings } from '../lib/settings.svelte';
 import { pushToast } from '../ui/toasts.svelte';
+import { t } from '../i18n';
 import { backoffMs, RECONNECT_MAX_TRIES } from './backoff';
 import { b64ToBytes, handleMessage, pnpProfile, PNP_PROTOCOL, type PnpCharacter, type PnpHost, type PnpImage, type PnpIn } from './pnp';
 
@@ -18,7 +19,7 @@ const fileOf = (img: PnpImage) => new File([b64ToBytes(img.b64)], img.name, { ty
 const host: PnpHost = {
   uid,
   session() {
-    if (!gm.session || gm.status !== 'open') throw new Error('Keine laufende Runde: starte zuerst die Runde im Spielleiter-Bereich.');
+    if (!gm.session || gm.status !== 'open') throw new Error(t('net.pnpConn.noSession'));
     return gm.session;
   },
   async storeImage(img, maxSide) {
@@ -32,7 +33,7 @@ const host: PnpHost = {
   },
   addScene, removeScene, activateScene, gmMapOps, addHandout, removeHandout, sendHandout, commitCombat, musicPlay, musicStop,
   catalog: () => catalog.tracks,
-  notify: (t) => pushToast(t, 'good'),
+  notify: (text) => pushToast(text, 'good'),
 };
 
 let ws: WebSocket | null = null;
@@ -54,7 +55,7 @@ function open() {
     sock = new WebSocket(address());
   } catch (e) {
     pnp.status = 'error';
-    pnp.error = e instanceof Error ? e.message : 'Ungültige Adresse';
+    pnp.error = e instanceof Error ? e.message : t('net.pnpConn.badAddress');
     return;
   }
   ws = sock;
@@ -81,12 +82,12 @@ function open() {
     if (!wanted) return;
     if (e.code === 1008) {
       pnp.status = 'error';
-      pnp.error = e.reason || 'Protokollversion wird nicht unterstützt';
+      pnp.error = e.reason || t('net.pnpConn.protocol');
       return;
     }
     if (tries >= RECONNECT_MAX_TRIES) {
       pnp.status = 'error';
-      pnp.error = 'Keine Verbindung zu PenNodePaper. Läuft die App, und stimmen Adresse und Token?';
+      pnp.error = t('net.pnpConn.unreachable');
       return;
     }
     pnp.status = 'connecting';

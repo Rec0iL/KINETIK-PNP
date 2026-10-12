@@ -4,6 +4,7 @@
   import type { Handout } from '../net/protocol';
   import { uid } from '../model/character';
   import { pushToast } from '../ui/toasts.svelte';
+  import { t } from '../i18n';
 
   let title = $state('');
   let text = $state('');
@@ -22,7 +23,7 @@
 
   function addText() {
     if (!title.trim() && !text.trim()) return;
-    addHandout({ id: uid(), title: title.trim() || 'Notiz', kind: 'text', text, ts: Date.now() });
+    addHandout({ id: uid(), title: title.trim() || t('gm.handouts.defaultTitle'), kind: 'text', text, ts: Date.now() });
     title = ''; text = '';
   }
   async function onFile(e: Event) {
@@ -35,15 +36,15 @@
       const meta = await putAsset(prep.bytes, f.name, prep.mime);
       addHandout({ id: uid(), title: title.trim() || f.name.replace(/\.[^.]+$/, ''), kind: 'image', hash: meta.hash, ts: Date.now() });
       title = '';
-    } catch (err) { pushToast(`Bild konnte nicht verarbeitet werden: ${(err as Error).message}`, 'danger'); }
+    } catch (err) { pushToast(t('gm.common.imageFailed', { msg: (err as Error).message }), 'danger'); }
   }
   function send(h: Handout) {
-    const t = target[h.id] ?? '';
-    const n = sendHandout({ ...h, ts: Date.now() }, t ? [t] : null);
-    pushToast(n ? `„${h.title}“ an ${t ? party.find((p) => p.id === t)?.name : 'alle'} gesendet.` : 'Niemand verbunden.', n ? 'good' : 'warn');
+    const to = target[h.id] ?? '';
+    const n = sendHandout({ ...h, ts: Date.now() }, to ? [to] : null);
+    pushToast(n ? t('gm.handouts.sent', { title: h.title, who: (to ? party.find((p) => p.id === to)?.name : t('gm.handouts.all')) ?? '' }) : t('gm.handouts.nobody'), n ? 'good' : 'warn');
   }
   async function del(h: Handout) {
-    if (!confirm(`Handout „${h.title}“ löschen?`)) return;
+    if (!confirm(t('gm.handouts.confirmDelete', { title: h.title }))) return;
     removeHandout(h.id);
     if (h.hash && !gm.session!.handouts.some((x) => x.hash === h.hash) && !gm.session!.scenes.some((s) => s.asset === h.hash)) await removeAsset(h.hash);
   }
@@ -51,13 +52,13 @@
 
 <div class="stack">
   <section class="panel">
-    <h2>Neues Handout</h2>
+    <h2>{t('gm.handouts.new')}</h2>
     <div class="stack">
-      <label class="field">Titel<input bind:value={title} placeholder="z.B. Brief des Auftraggebers" /></label>
-      <label class="field">Text<textarea rows="4" bind:value={text} placeholder="Text für die Spieler (oder leer lassen und ein Bild hochladen)"></textarea></label>
+      <label class="field">{t('gm.handouts.title')}<input bind:value={title} placeholder={t('gm.handouts.titlePlaceholder')} /></label>
+      <label class="field">{t('gm.handouts.text')}<textarea rows="4" bind:value={text} placeholder={t('gm.handouts.textPlaceholder')}></textarea></label>
       <div class="row">
-        <button class="btn primary" onclick={addText} disabled={!title.trim() && !text.trim()}>Text-Handout anlegen</button>
-        <button class="btn" onclick={() => fileInput?.click()}>Bild hochladen</button>
+        <button class="btn primary" onclick={addText} disabled={!title.trim() && !text.trim()}>{t('gm.handouts.addText')}</button>
+        <button class="btn" onclick={() => fileInput?.click()}>{t('gm.handouts.uploadImage')}</button>
         <input bind:this={fileInput} type="file" accept="image/*" class="sr-only" onchange={onFile} />
       </div>
     </div>
@@ -66,18 +67,18 @@
   <div class="list">
     {#each hs as h (h.id)}
       <article class="panel h">
-        <div class="row"><h3>{h.title}</h3><span class="chip">{h.kind === 'image' ? 'Bild' : 'Text'}</span><span class="spacer"></span>
-          <button class="btn sm icon ghost danger" onclick={() => del(h)} aria-label="Löschen">✕</button>
+        <div class="row"><h3>{h.title}</h3><span class="chip">{h.kind === 'image' ? t('gm.handouts.kindImage') : t('gm.handouts.kindText')}</span><span class="spacer"></span>
+          <button class="btn sm icon ghost danger" onclick={() => del(h)} aria-label={t('gm.common.delete')}>✕</button>
         </div>
         {#if h.kind === 'image' && previews[h.id]}<img src={previews[h.id]} alt={h.title} />{/if}
         {#if h.text}<p class="txt">{h.text}</p>{/if}
         <div class="row">
-          <select bind:value={target[h.id]} aria-label="Empfänger"><option value="">An alle Verbundenen</option>{#each party as p}<option value={p.id} disabled={!p.connected}>{p.characterName || p.name}{p.connected ? '' : ' (offline)'}</option>{/each}</select>
-          <button class="btn sm amber" onclick={() => send(h)}>Senden</button>
+          <select bind:value={target[h.id]} aria-label={t('gm.handouts.recipient')}><option value="">{t('gm.handouts.toAll')}</option>{#each party as p}<option value={p.id} disabled={!p.connected}>{p.characterName || p.name}{p.connected ? '' : t('gm.handouts.offline')}</option>{/each}</select>
+          <button class="btn sm amber" onclick={() => send(h)}>{t('gm.common.send')}</button>
         </div>
       </article>
     {:else}
-      <p class="dim">Noch keine Handouts. Brief, Fahndungsfoto, Kartenausschnitt: Der SL schickt es an alle oder einzelne Spieler.</p>
+      <p class="dim">{t('gm.handouts.empty')}</p>
     {/each}
   </div>
 </div>

@@ -6,24 +6,29 @@
   import Gear from './Gear.svelte';
   import Tags from './Tags.svelte';
   import Notes from './Notes.svelte';
+  import { t } from '../i18n';
 
   let { char, editable = false }: { char: Character; editable?: boolean } = $props();
 
-  const tabs = ['Übersicht', 'Körper', 'Moves', 'Ausrüstung', 'Tags', 'Notizen'] as const;
-  let tab = $state<(typeof tabs)[number]>('Übersicht');
+  const tabs = ['overview', 'body', 'moves', 'gear', 'tags', 'notes'] as const;
+  const tabLabel: Record<(typeof tabs)[number], string> = {
+    overview: t('sheet.viewer.overview'), body: t('sheet.viewer.body'), moves: t('sheet.viewer.moves'),
+    gear: t('sheet.viewer.gear'), tags: t('sheet.viewer.tags'), notes: t('sheet.viewer.notes'),
+  };
+  let tab = $state<(typeof tabs)[number]>('overview');
 </script>
 
 <div class="viewer">
   <div class="tabs" role="tablist">
-    {#each tabs as t}<button role="tab" aria-selected={tab === t} onclick={() => (tab = t)}>{t}</button>{/each}
+    {#each tabs as k}<button role="tab" aria-selected={tab === k} onclick={() => (tab = k)}>{tabLabel[k]}</button>{/each}
   </div>
-  {#if !editable}<p class="chip amber ro">Nur lesen</p>{/if}
+  {#if !editable}<p class="chip amber ro">{t('sheet.viewer.readOnly')}</p>{/if}
   <fieldset disabled={!editable}>
-    {#if tab === 'Übersicht'}<Overview {char} />
-    {:else if tab === 'Körper'}<Body {char} />
-    {:else if tab === 'Moves'}<Moves {char} />
-    {:else if tab === 'Ausrüstung'}<Gear {char} />
-    {:else if tab === 'Tags'}<Tags {char} />
+    {#if tab === 'overview'}<Overview {char} />
+    {:else if tab === 'body'}<Body {char} />
+    {:else if tab === 'moves'}<Moves {char} />
+    {:else if tab === 'gear'}<Gear {char} />
+    {:else if tab === 'tags'}<Tags {char} />
     {:else}<Notes {char} />{/if}
   </fieldset>
 </div>

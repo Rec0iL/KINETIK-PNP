@@ -1,5 +1,7 @@
 // Kampfverwaltung des SL: Seiten-Initiative mit Kinetik-Marker (3.6), Bedrängnis (3.7), NPC-Leiter. Rein, ohne DOM.
 import { npcDefaults, isOut, rules, ZONE_KEYS, zoneStatus, type NpcType, type ZoneKey, type Poison } from '../rules';
+import { tagSize } from '../rules/tagid';
+import { t } from '../i18n';
 import type { MoveRequest, Situation } from './situation';
 
 export type Side = 'players' | 'enemies';
@@ -151,9 +153,9 @@ export function npcInjury(n: Npc, zone: ZoneKey): boolean {
 }
 
 export function npcStatus(n: Npc): { out: boolean; reason: string } {
-  if (n.dying) return { out: true, reason: 'Sterbend an tödlichem Gift' };
-  if (n.type !== 'goon' && n.energie < 0) return { out: true, reason: 'Energie unter 0: ohnmächtig' };
-  if (n.type === 'goon') return n.count <= 0 ? { out: true, reason: 'Alle ausgeschaltet' } : { out: false, reason: '' };
+  if (n.dying) return { out: true, reason: t('gm.npc.dyingPoison') };
+  if (n.type !== 'goon' && n.energie < 0) return { out: true, reason: t('gm.npc.energyUnconscious') };
+  if (n.type === 'goon') return n.count <= 0 ? { out: true, reason: t('gm.npc.allOut') } : { out: false, reason: '' };
   return isOut(n.type, { hits: n.hits, wk: n.wk, injuries: n.injuries });
 }
 
@@ -163,7 +165,7 @@ export function npcZoneState(n: Npc, z: ZoneKey) {
 
 export type RoughState = 'unverletzt' | 'angeschlagen' | 'schwer' | 'aus';
 export const ROUGH_LABEL: Record<RoughState, string> = {
-  unverletzt: 'unverletzt', angeschlagen: 'angeschlagen', schwer: 'schwer getroffen', aus: 'ausgeschaltet',
+  unverletzt: t('gm.npc.rough.unverletzt'), angeschlagen: t('gm.npc.rough.angeschlagen'), schwer: t('gm.npc.rough.schwer'), aus: t('gm.npc.rough.aus'),
 };
 
 /** Grober Zustand für die Spieleransicht: keine Zahlen, nur ein Eindruck. */
@@ -215,9 +217,7 @@ export function publicCombat(c: CombatState): PublicCombat {
   };
 }
 
-/** Größe eines Tags aus dem Katalog, unbekannte (eigene) Tags zählen als klein. */
-export function tagSize(name: string): 'klein' | 'gross' {
-  return (rules.tags.gross as string[]).includes(name) ? 'gross' : 'klein';
-}
+/** Größe eines Tags aus dem Katalog (in jeder Sprache), unbekannte (eigene) Tags zählen als klein. */
+export { tagSize };
 
 export { ZONE_KEYS };

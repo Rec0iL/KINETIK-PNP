@@ -7,6 +7,7 @@ export { affordability };
 import { roll2d6 } from '../dice/roller.svelte';
 import { settings } from '../lib/settings.svelte';
 import { pushToast } from '../ui/toasts.svelte';
+import { t } from '../i18n';
 
 /** Ein Wurf wartet darauf, dass der Spieler den Move einsetzt und bezahlt. */
 export const moveUse = $state<{ pending: { charId: string; moveId: string; total: number } | null }>({ pending: null });
@@ -16,7 +17,7 @@ export function pay(char: Character, m: Move): boolean {
   if (!a.ok) { pushToast(a.reason, 'warn'); return false; }
   char.resources.energie -= a.energie;
   char.resources.momentum -= a.momentum;
-  pushToast(`${m.name}: ${costLabel(a)} bezahlt.`, 'info', 3500);
+  pushToast(t('sheet.pay.paid', { name: m.name, cost: costLabel(a) }), 'info', 3500);
   return true;
 }
 

@@ -2,6 +2,7 @@
 import { set, del, keys, getMany } from 'idb-keyval';
 import { newCharacter, type Character } from '../model/character';
 import { sanitizeCharacter } from '../model/io';
+import { t } from '../i18n';
 
 const PREFIX = 'char:';
 
@@ -20,7 +21,7 @@ export async function loadLibrary() {
     const rows = (await getMany(ks)) as Character[];
     library.characters = rows.map((r) => sanitizeCharacter(r)).sort((a, b) => b.updated - a.updated);
   } catch (e) {
-    library.storageError = 'Der Browser-Speicher ist nicht verfügbar. Änderungen gehen beim Schließen verloren, bitte regelmäßig als JSON exportieren.';
+    library.storageError = t('app.store.unavailable');
     console.warn(e);
   }
   library.ready = true;
@@ -32,7 +33,7 @@ export function saveCharacter(c: Character) {
     try {
       await set(PREFIX + c.id, $state.snapshot(c));
     } catch (e) {
-      library.storageError = 'Speichern im Browser fehlgeschlagen. Bitte als JSON exportieren.';
+      library.storageError = t('app.store.saveFailed');
       console.warn(e);
     }
   }, 350));

@@ -2,6 +2,7 @@
   import { costLabel } from '../rules';
   import type { Character, Move } from '../model/character';
   import { affordability, confirmPending, dismissPending, pendingFor } from './moveUse.svelte';
+  import { t } from '../i18n';
 
   let { char, move }: { char: Character; move: Move } = $props();
   const p = $derived(pendingFor(char, move));
@@ -10,11 +11,11 @@
 
 {#if p}
   <div class="pay" role="status">
-    <span>Wurf <b>{p.total}</b>. Wirkt der Move (ab Schlagabtausch), bezahlst du jetzt:</span>
+    <span>{t('sheet.pay.roll')} <b>{p.total}</b>{t('sheet.pay.payNow')}</span>
     <b class="cost">{costLabel(a)}</b>
     <span class="spacer"></span>
-    <button class="btn sm primary" onclick={() => confirmPending(char, move)} disabled={!a.ok} title={a.ok ? '' : a.reason}>Einsetzen und bezahlen</button>
-    <button class="btn sm" onclick={dismissPending}>Nicht einsetzen</button>
+    <button class="btn sm primary" onclick={() => confirmPending(char, move)} disabled={!a.ok} title={a.ok ? '' : a.reason}>{t('sheet.pay.confirm')}</button>
+    <button class="btn sm" onclick={dismissPending}>{t('sheet.pay.dismiss')}</button>
   </div>
 {/if}
 

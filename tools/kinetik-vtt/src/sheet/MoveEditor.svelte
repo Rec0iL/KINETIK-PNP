@@ -1,10 +1,11 @@
 <script lang="ts">
   import {
     rules, effectDef, effectEp, isStar, evaluateMove, moveCost, costLabel, meisterschaft, epCap, TIER_LABEL, minLevelForEp,
-    giftOfEffects, GIFT, MAX_GIFT_DELAY, type MoveEffect,
+    giftOfEffects, GIFT, MAX_GIFT_DELAY, canonicalPrice, priceLabel, type MoveEffect,
   } from '../rules';
   import type { Move } from '../model/character';
   import Stepper from '../ui/Stepper.svelte';
+  import { t } from '../i18n';
 
   let {
     move = $bindable(),
@@ -51,66 +52,66 @@
   }
   function togglePrice(name: string, on: boolean) {
     const cur = move.prices ?? [];
-    move.prices = on ? [...cur, name] : cur.filter((p) => p !== name);
+    move.prices = on ? [...cur, name] : cur.filter((p) => canonicalPrice(p) !== canonicalPrice(name));
   }
   const eName = (e: MoveEffect) => effectDef(e.id)?.name ?? e.id;
 </script>
 
 <div class="editor">
   <div class="top">
-    <label class="field grow">Name<input bind:value={move.name} placeholder="z.B. Roundhouse-Kick" /></label>
-    <label class="field">Attribut
+    <label class="field grow">{t('sheet.common.name')}<input bind:value={move.name} placeholder={t('sheet.editor.namePlaceholder')} /></label>
+    <label class="field">{t('sheet.common.attribute')}
       <select bind:value={move.attr}>{#each attrs as a}<option value={a.key}>{a.name}</option>{/each}</select>
     </label>
     {#if titles.length}
-      <label class="field">Titel
+      <label class="field">{t('sheet.common.title')}
         <select bind:value={move.titleId}>
-          <option value={undefined}>— keiner —</option>
-          {#each titles as t}<option value={t.id}>{t.name} (L{t.level})</option>{/each}
+          <option value={undefined}>{t('sheet.editor.noTitle')}</option>
+          {#each titles as ti}<option value={ti.id}>{ti.name} (L{ti.level})</option>{/each}
         </select>
       </label>
     {/if}
     {#if levelEditable}
-      <label class="field">Titel-Level<Stepper bind:value={level} min={1} max={10} label="Titel-Level" /></label>
+      <label class="field">{t('sheet.editor.titleLevel')}<Stepper bind:value={level} min={1} max={10} label={t('sheet.editor.titleLevel')} /></label>
     {/if}
-    <label class="field">Gelernt auf Level<Stepper value={move.learnedAtLevel ?? level} min={0} max={10} onchange={(v) => (move.learnedAtLevel = v)} label="Gelernt auf Level" /></label>
+    <label class="field">{t('sheet.editor.learnedAt')}<Stepper value={move.learnedAtLevel ?? level} min={0} max={10} onchange={(v) => (move.learnedAtLevel = v)} label={t('sheet.editor.learnedAt')} /></label>
   </div>
   {#if gift}
     <div class="row giftrow">
-      <span class="chip danger">Gift: {GIFT[gift].label}</span>
-      <label class="field">Wirkt nach (Runden, kostet nichts)<Stepper value={move.giftDelay ?? 0} min={0} max={MAX_GIFT_DELAY} onchange={(v) => (move.giftDelay = v)} label="Verzögerung in Runden" /></label>
-      <small class="dim">{GIFT[gift].text}. Wirkt nur, wenn der Treffer den Körper erreicht (Schutz 0 oder Verletzung). Gegenmittel MW {GIFT[gift].mw}.</small>
+      <span class="chip danger">{t('sheet.editor.gift', { label: GIFT[gift].label })}</span>
+      <label class="field">{t('sheet.editor.giftDelay')}<Stepper value={move.giftDelay ?? 0} min={0} max={MAX_GIFT_DELAY} onchange={(v) => (move.giftDelay = v)} label={t('sheet.common.delayRounds')} /></label>
+      <small class="dim">{t('sheet.editor.giftNote', { text: GIFT[gift].text, mw: GIFT[gift].mw })}</small>
     </div>
   {/if}
-  <label class="field">Beschreibung der Technik<textarea rows="2" bind:value={move.text} placeholder="Was passiert, wann wirkt es, Vorbedingungen"></textarea></label>
+  <label class="field">{t('sheet.editor.description')}<textarea rows="2" bind:value={move.text} placeholder={t('sheet.editor.descPlaceholder')}></textarea></label>
 
   <div class="cols">
     <section class="col">
-      <h3>Effekte</h3>
-      {#if !move.effects.length}<p class="dim">Ein normaler Angriff kostet 0 EP. Alles darüber wird mit Effekten bezahlt.</p>{/if}
+      <h3>{t('sheet.editor.effects')}</h3>
+      {#if !move.effects.length}<p class="dim">{t('sheet.editor.noEffects')}</p>{/if}
       {#each move.effects as e, i}
         <div class="eff" class:star={isStar(e)}>
-          <span class="en">{eName(e)}{#if isStar(e)}<b class="starmark" title="Sondereffekt: kein Meisterschaftsrabatt">★</b>{/if}</span>
-          <input class="lab" bind:value={e.label} placeholder="Zusatz (z.B. Am Boden)" aria-label="Zusatz" />
+          <span class="en">{eName(e)}{#if isStar(e)}<b class="starmark" title={t('sheet.editor.starTitle')}>★</b>{/if}</span>
+          <input class="lab" bind:value={e.label} placeholder={t('sheet.editor.extraPlaceholder')} aria-label={t('sheet.editor.extraAria')} />
           {#if effectDef(e.id) && 'frei' in effectDef(e.id)!}
             <Stepper value={effectEp(e)} min={0} max={8} onchange={(v) => (e.ep = v)} label="EP" />
           {:else}
             <span class="chip accent">{effectEp(e) >= 0 ? '+' : ''}{effectEp(e)} EP</span>
           {/if}
-          <button class="btn sm icon danger" onclick={() => removeEffect(i)} aria-label="Effekt entfernen">✕</button>
+          <button class="btn sm icon danger" onclick={() => removeEffect(i)} aria-label={t('sheet.editor.removeEffect')}>✕</button>
         </div>
       {/each}
       <div class="row add">
-        <select bind:value={pick} aria-label="Effekt wählen">
+        <select bind:value={pick} aria-label={t('sheet.editor.pickEffect')}>
           <optgroup label="+1 EP">{#each catalog.filter((c) => c.ep === 1 && !('frei' in c) && !('stern' in c)) as c}<option value={c.id}>{c.name}</option>{/each}</optgroup>
           <optgroup label="+2 EP">{#each catalog.filter((c) => c.ep === 2 && !('frei' in c) && !('stern' in c)) as c}<option value={c.id}>{c.name}</option>{/each}</optgroup>
-          <optgroup label="★ Sondereffekte">{#each catalog.filter((c) => 'stern' in c) as c}<option value={c.id}>{c.name} (+{c.ep})</option>{/each}</optgroup>
-          <optgroup label="Frei (SL schätzt: 1 / 2 / 3 EP)">{#each catalog.filter((c) => 'frei' in c) as c}<option value={c.id}>{c.name}</option>{/each}</optgroup>
+          <optgroup label={t('sheet.editor.groupStar')}>{#each catalog.filter((c) => 'stern' in c) as c}<option value={c.id}>{c.name} (+{c.ep})</option>{/each}</optgroup>
+          <optgroup label={t('sheet.editor.groupFree')}>{#each catalog.filter((c) => 'frei' in c) as c}<option value={c.id}>{c.name}</option>{/each}</optgroup>
         </select>
-        <button class="btn sm primary" onclick={() => addEffect(pick)}>+ Effekt</button>
+        <button class="btn sm primary" onclick={() => addEffect(pick)}>{t('sheet.editor.addEffect')}</button>
       </div>
 
-      <h3 class="mt">Abzüge <small class="dim">(je −1 EP, höchstens −{rules.epKatalog.abzugMax})</small></h3>
+      <h3 class="mt">{t('sheet.editor.deductions')} <small class="dim">{t('sheet.editor.deductionsNote', { max: rules.epKatalog.abzugMax })}</small></h3>
       <div class="ded">
         {#each deductions as d}
           <label class="check" title={'text' in d ? (d.text as string) : ''}>
@@ -119,73 +120,73 @@
           </label>
         {/each}
       </div>
-      {#if ev.rawEp > 0 && move.deductions.length > rules.epKatalog.abzugMax}<p class="warn">Mehr als {rules.epKatalog.abzugMax} Abzüge zählen nicht.</p>{/if}
+      {#if ev.rawEp > 0 && move.deductions.length > rules.epKatalog.abzugMax}<p class="warn">{t('sheet.editor.tooManyDeductions', { max: rules.epKatalog.abzugMax })}</p>{/if}
     </section>
 
     <section class="col read">
-      <h3>Bewertung</h3>
+      <h3>{t('sheet.editor.rating')}</h3>
       <div class="ep">
         <span class="big">{ev.ep}</span><span class="dim">EP</span>
         <span class="chip" class:amber={ev.tier !== 'energie'}>{TIER_LABEL[ev.tier]}</span>
       </div>
       <div class="sum dim">
-        {ev.normalEp} normal{#if ev.starEp} + {ev.starEp}★{/if}{#if ev.deduction} − {ev.deduction} Abzug{/if}
-        {#if move.epOverride !== undefined}· manuell überschrieben{/if}
+        {t('sheet.editor.sumNormal', { n: ev.normalEp })}{#if ev.starEp} + {ev.starEp}★{/if}{#if ev.deduction} − {t('sheet.editor.sumDeduction', { n: ev.deduction })}{/if}
+        {#if move.epOverride !== undefined}{t('sheet.editor.overridden')}{/if}
       </div>
       <div class="costline">
-        <span class="lbl">Kosten auf Level {level} (M {m})</span>
+        <span class="lbl">{t('sheet.editor.costAt', { level, m })}</span>
         <b class="cost">{costLabel(cost)}</b>
-        {#if cost.mastered}<span class="chip accent">gemeistert</span>{/if}
+        {#if cost.mastered}<span class="chip accent">{t('sheet.common.mastered')}</span>{/if}
       </div>
       <div class="chips">
-        <span class="chip" class:danger={base.levelTooLow}>Mindestlevel {ev.minLevel}</span>
-        <span class="chip" class:danger={ev.ep > epCap(m)}>EP-Deckel {epCap(m)}</span>
+        <span class="chip" class:danger={base.levelTooLow}>{t('sheet.editor.minLevel', { n: ev.minLevel })}</span>
+        <span class="chip" class:danger={ev.ep > epCap(m)}>{t('sheet.editor.epCap', { n: epCap(m) })}</span>
       </div>
       {#each base.notes as n}<p class="warn">{n}</p>{/each}
       {#each ev.conflicts as c}<p class="warn">{c}</p>{/each}
-      {#if base.levelTooLow}<p class="warn">Der Titel ist zu niedrig für diesen Move (Level {ev.minLevel} nötig).</p>{/if}
+      {#if base.levelTooLow}<p class="warn">{t('sheet.editor.titleTooLow', { n: ev.minLevel })}</p>{/if}
 
       {#if hasStar}
-        <label class="field">★-EP bezahlen mit
+        <label class="field">{t('sheet.editor.starPayWith')}
           <select bind:value={move.starPayment}>
-            <option value={undefined}>Energie (voll, kein Rabatt)</option>
-            <option value="momentum">Momentum (1 je angefangene 2 ★-EP)</option>
+            <option value={undefined}>{t('sheet.editor.starPayEnergy')}</option>
+            <option value="momentum">{t('sheet.editor.starPayMomentum')}</option>
           </select>
         </label>
       {/if}
       {#if ev.ep > rules.epKatalog.kosten.energieMoveMaxEp && !legendary}
-        <label class="check"><input type="checkbox" bind:checked={move.masteredByGM} /> Vom SL für gemeistert erklärt (Muskelgedächtnis)</label>
-        <small class="dim">Automatisch gemeistert, sobald der Titel {rules.epKatalog.kosten.gemeistertLevelAbstand} Level über „gelernt auf“ steht.</small>
+        <label class="check"><input type="checkbox" bind:checked={move.masteredByGM} /> {t('sheet.editor.masteredByGm')}</label>
+        <small class="dim">{t('sheet.editor.autoMastered', { n: rules.epKatalog.kosten.gemeistertLevelAbstand })}</small>
       {/if}
       <details class="over">
-        <summary>Hausregel: Werte überschreiben</summary>
+        <summary>{t('sheet.editor.houseRule')}</summary>
         <div class="row">
-          <label class="check"><input type="checkbox" checked={move.epOverride !== undefined} onchange={(e) => (move.epOverride = e.currentTarget.checked ? ev.ep : undefined)} /> EP manuell</label>
+          <label class="check"><input type="checkbox" checked={move.epOverride !== undefined} onchange={(e) => (move.epOverride = e.currentTarget.checked ? ev.ep : undefined)} /> {t('sheet.editor.epManual')}</label>
           {#if move.epOverride !== undefined}<Stepper bind:value={move.epOverride} min={0} max={12} label="EP" />{/if}
         </div>
         <div class="row">
-          <label class="check"><input type="checkbox" checked={!!move.costOverride} onchange={(e) => (move.costOverride = e.currentTarget.checked ? { energie: base.energie, momentum: base.momentum } : undefined)} /> Kosten manuell</label>
+          <label class="check"><input type="checkbox" checked={!!move.costOverride} onchange={(e) => (move.costOverride = e.currentTarget.checked ? { energie: base.energie, momentum: base.momentum } : undefined)} /> {t('sheet.editor.costManual')}</label>
           {#if move.costOverride}
-            <span class="dim">Energie</span><Stepper value={move.costOverride.energie ?? 0} min={0} max={20} onchange={(v) => (move.costOverride!.energie = v)} label="Energie" />
+            <span class="dim">{t('sheet.common.energy')}</span><Stepper value={move.costOverride.energie ?? 0} min={0} max={20} onchange={(v) => (move.costOverride!.energie = v)} label={t('sheet.common.energy')} />
             <span class="dim">Momentum</span><Stepper value={move.costOverride.momentum ?? 0} min={0} max={9} onchange={(v) => (move.costOverride!.momentum = v)} label="Momentum" />
           {/if}
         </div>
       </details>
 
       {#if legendary}
-        <h3 class="mt">Preise (1 bis 2)</h3>
+        <h3 class="mt">{t('sheet.editor.prices')}</h3>
         <div class="prices">
           {#each rules.tabellen.legendaerePreise as p}
-            <label class="check" title={p.text}><input type="checkbox" checked={move.prices?.includes(p.name)} onchange={(e) => togglePrice(p.name, e.currentTarget.checked)} /> {p.name}</label>
+            <label class="check" title={p.text}><input type="checkbox" checked={move.prices?.some((x) => canonicalPrice(x) === canonicalPrice(p.name))} onchange={(e) => togglePrice(p.name, e.currentTarget.checked)} /> {priceLabel(p.name)}</label>
           {/each}
         </div>
-        {#if !(move.prices?.length)}<p class="warn">Ein legendärer Move hat immer mindestens einen Preis.</p>{/if}
+        {#if !(move.prices?.length)}<p class="warn">{t('sheet.editor.needPrice')}</p>{/if}
       {/if}
     </section>
   </div>
 
   <div class="bylevel">
-    <span class="lbl">Kosten nach Titel-Level</span>
+    <span class="lbl">{t('sheet.editor.costByLevel')}</span>
     <div class="lvgrid">
       {#each byLevel as r}
         <button type="button" class="lv" class:cur={r.level === level} class:locked={r.level < minLevelForEp(ev.ep)} disabled={!levelEditable} onclick={() => (level = r.level)}>

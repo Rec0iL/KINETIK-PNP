@@ -3,6 +3,7 @@
   import { gm } from '../net/gm.svelte';
   import { router } from '../lib/router.svelte';
   import { formatCode } from '../net/protocol';
+  import { t } from '../i18n';
 
   const playerOn = $derived(player.status === 'connected' || player.status === 'reconnecting' || player.status === 'pending');
   const gmOn = $derived(gm.status === 'open');
@@ -12,21 +13,21 @@
   <div class="bar" class:warn={player.status !== 'connected'}>
     <span class="dot"></span>
     <span class="txt">
-      {#if player.status === 'connected'}Runde von <b>{player.gmName}</b>
-      {:else if player.status === 'pending'}Warte auf SL …
-      {:else}Verbindung wird wiederhergestellt …{/if}
+      {#if player.status === 'connected'}{t('ui.sessionBar.roundOf')} <b>{player.gmName}</b>
+      {:else if player.status === 'pending'}{t('ui.sessionBar.waitingForGm')}
+      {:else}{t('ui.sessionBar.reconnecting')}{/if}
     </span>
     {#if player.status === 'connected' && player.latency}<span class="dim mono">{player.latency} ms</span>{/if}
     <span class="spacer"></span>
-    {#if router.route.name !== 'round'}<a class="btn sm" href="#/runde">Zur Runde</a>{/if}
-    <button class="btn sm ghost" onclick={() => confirm('Runde verlassen?') && leaveRound()}>Verlassen</button>
+    {#if router.route.name !== 'round'}<a class="btn sm" href="#/runde">{t('ui.sessionBar.toRound')}</a>{/if}
+    <button class="btn sm ghost" onclick={() => confirm(t('ui.sessionBar.leaveConfirm')) && leaveRound()}>{t('ui.sessionBar.leave')}</button>
   </div>
 {:else if gmOn && router.route.name !== 'gm'}
   <div class="bar gm">
     <span class="dot"></span>
-    <span class="txt">Du hostest eine Runde <b class="mono">{formatCode(gm.session?.code ?? '')}</b></span>
+    <span class="txt">{t('ui.sessionBar.hosting')} <b class="mono">{formatCode(gm.session?.code ?? '')}</b></span>
     <span class="spacer"></span>
-    <a class="btn sm" href="#/sl">Zum SL-Dashboard</a>
+    <a class="btn sm" href="#/sl">{t('ui.sessionBar.toDashboard')}</a>
   </div>
 {/if}
 

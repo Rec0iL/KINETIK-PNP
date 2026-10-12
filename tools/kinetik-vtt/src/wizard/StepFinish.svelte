@@ -1,8 +1,9 @@
 <script lang="ts">
   import { rules, ATTR_KEYS } from '../rules';
-  import type { Character } from '../model/character';
+  import { isDefaultName, type Character } from '../model/character';
   import { computeSheet, creationReport, viewMove } from '../model/sheet';
   import { costLabel } from '../rules';
+  import { t } from '../i18n';
 
   let { char }: { char: Character } = $props();
   const sheet = $derived(computeSheet(char));
@@ -11,28 +12,28 @@
   const defs = rules.tabellen.attribute;
 
   const checks = $derived([
-    { ok: !!char.name.trim() && char.name !== 'Neuer Charakter', text: 'Name vergeben' },
-    { ok: char.titles.length > 0, text: 'Mindestens ein Titel' },
-    { ok: char.titles.every((t) => t.domains.length >= 3 && t.domains.length <= 5), text: 'Jeder Titel hat 3 bis 5 Domänen' },
-    { ok: report.hints.length === 0, text: report.hints.length ? report.hints.join(' ') : 'Budgets und Startmaximum eingehalten' },
-    { ok: char.moves.length > 0, text: 'Mindestens ein Move' },
+    { ok: !!char.name.trim() && !isDefaultName(char.name), text: t('wizard.finish.checkName') },
+    { ok: char.titles.length > 0, text: t('wizard.finish.checkTitle') },
+    { ok: char.titles.every((ti) => ti.domains.length >= 3 && ti.domains.length <= 5), text: t('wizard.finish.checkDomains') },
+    { ok: report.hints.length === 0, text: report.hints.length ? report.hints.join(' ') : t('wizard.finish.checkBudgets') },
+    { ok: char.moves.length > 0, text: t('wizard.finish.checkMove') },
   ]);
 </script>
 
 <div class="stack">
-  <p class="dim intro">Zum Schluss: kurz prüfen. Mit „Fertig“ füllt der Bogen Energie, Willenskraft und Schutz auf das Maximum, setzt Momentum auf 0 und schließt die Erschaffung ab. Hinweise sind keine Sperre: Hausregeln und Absprachen mit dem SL gehen vor.</p>
+  <p class="dim intro">{t('wizard.finish.intro')}</p>
 
   <section class="panel flat sum">
     <div class="id">
-      <h2>{char.name}{#if char.alias} <span class="dim">„{char.alias}“</span>{/if}</h2>
+      <h2>{char.name}{#if char.alias} <span class="dim">{t('wizard.finish.alias', { alias: char.alias })}</span>{/if}</h2>
       {#if char.concept}<p class="dim">{char.concept}</p>{/if}
-      <div class="chips">{#each char.titles as t}<span class="chip accent">{t.name} L{t.level}</span>{/each}</div>
+      <div class="chips">{#each char.titles as ti}<span class="chip accent">{ti.name} L{ti.level}</span>{/each}</div>
     </div>
     <div class="stats">
-      <div><span class="lbl">Energie</span><b>{sheet.energieMax.value}</b></div>
-      <div><span class="lbl">Willenskraft</span><b>{sheet.wkMax.value}</b></div>
-      <div><span class="lbl">Momentum-Deckel</span><b>{sheet.momentumCap.value}</b></div>
-      <div><span class="lbl">Schutz</span><b>{char.resources.schutz.max}</b></div>
+      <div><span class="lbl">{t('wizard.common.energie')}</span><b>{sheet.energieMax.value}</b></div>
+      <div><span class="lbl">{t('wizard.common.wk')}</span><b>{sheet.wkMax.value}</b></div>
+      <div><span class="lbl">{t('wizard.finish.momentumCap')}</span><b>{sheet.momentumCap.value}</b></div>
+      <div><span class="lbl">{t('wizard.common.schutz')}</span><b>{char.resources.schutz.max}</b></div>
     </div>
     <div class="attrs">{#each defs as d}<span class="chip">{d.kurz} <b>{fmt(char.attributes[d.key as (typeof ATTR_KEYS)[number]])}</b></span>{/each}</div>
     {#if char.moves.length}

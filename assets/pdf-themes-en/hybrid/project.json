@@ -1,0 +1,82 @@
+{
+  "source": "../../../regelwerk/KINETIK_Regelwerk.en.md",
+  "key_source": "../../../regelwerk/KINETIK_Regelwerk.md",
+  "images_from": "../../pdf-themes/hybrid",
+  "output": "../../../export/KINETIK_Rulebook_v3.6_hybrid.pdf",
+  "title": "KINETIK",
+  "subtitle": "Cinematic Action Roleplaying",
+  "kicker": "GUN-FU · MARTIAL ARTS · ANIME",
+  "tagline": "A tabletop rulebook for boundless, cinematic action · Version 3.6",
+  "running_title": "KINETIK",
+  "chapter_label": "Chapter",
+  "language": "en",
+  "chapter_level": 0,
+  "appendix_patterns": [
+    "^Anhang",
+    "^Appendix",
+    "^Änderungsprotokoll",
+    "^Changelog"
+  ],
+  "theme": {
+    "bg": "#07061a",
+    "ink": "#e9e6ff",
+    "accent": "#ff2bd6",
+    "accent2": "#19e9ff",
+    "ink_strong": "#ffffff",
+    "em": "#e9e6ff",
+    "rule": "rgba(150,120,255,0.3)",
+    "card": "rgba(14,11,42,0.92)",
+    "stripe": "rgba(150,120,255,.05)",
+    "scrim": "7,6,26",
+    "font_display": "'Tektur'",
+    "font_head": "'Tektur'",
+    "font_label": "'Tektur'",
+    "font_body": "'Barlow'",
+    "extra_css": "\n.cover-title{ font-weight:900; font-size:100pt !important; text-shadow:4px 0 0 rgba(255,43,214,.8), -4px 0 0 rgba(25,233,255,.8); }\n.opener h2{ font-weight:900; font-size:36pt; text-shadow:3px 0 0 rgba(255,43,214,.8), -3px 0 0 rgba(25,233,255,.8); }\n.appendix h2{ font-weight:900; font-size:26pt; }\n.sub-head h3{ font-weight:700; border-bottom:1px solid; border-image:linear-gradient(90deg,#ff2bd6,#19e9ff) 1; }\n.sub-figure img, .side-figure img, .filler img{ border:1px solid #19e9ff; }\ntable.rules-table{ border-top:2px solid #19e9ff; }\ntable.rules-table th{ color:#19e9ff; background:rgba(25,233,255,.1); }\n"
+  },
+  "layout": {
+    "section_images": true,
+    "page_texture": true,
+    "justify": true,
+    "font_size_pt": 9.6,
+    "fill_gaps": true,
+    "filler_min_mm": 55
+  },
+  "qc": {
+    "enabled": true,
+    "auto_fix": true,
+    "rounds": 3,
+    "radical": true,
+    "lenient": true
+  },
+  "content_type": "rulebook",
+  "style_preset": "",
+  "style_wish": "",
+  "style": "cyberpunk holographic interface aesthetic, deep indigo darkness with hot magenta and electric cyan light, glowing HUD overlays and wireframe grids blended into a moody neon scene, glitch artifacts, volumetric haze, sharp digital illustration",
+  "negative": "worst quality, low quality, blurry, jpeg artifacts, bad anatomy, watermark, text, letters, signature, logo, deformed, extra limbs, lowres, text, letters, numbers, daylight, pastel, watercolor, photo",
+  "world": "Modern-day cinematic action roleplaying: gun-fu, martial arts and over-the-top fights, ex-assassins, SWAT operators, street brawlers and legendary masters. Told as a cyberpunk deck-runner story: neon rooftops, holographic interfaces, hackers and street samurai, glitch effects, data streams over a rain-slick megacity.",
+  "agy": {
+    "model": "gemini-3.8-flash-medium"
+  },
+  "comfy": {
+    "url": "http://127.0.0.1:8188",
+    "models_dir": "",
+    "workflow": "anima",
+    "unet": "krea2TurboOfficialComfy_krea2TurboMxfp8.safetensors",
+    "clip": "qwen3vl_4b_fp8_scaled.safetensors",
+    "clip_type": "krea2",
+    "vae": "qwen_image_vae.safetensors",
+    "checkpoint": "",
+    "custom_workflow": "",
+    "steps": 8,
+    "cfg": 1.0,
+    "sampler": "euler",
+    "scheduler": "simple"
+  },
+  "colophon": [
+    "© 2026 Alexander Freidzon (Rec0iL). KINETIK, rules text and images are licensed under Creative Commons BY-NC-SA 4.0: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en",
+    "The images were generated with an AI image model (Krea 2).",
+    "Web app and current version: https://kinetik.redneck-design.de/ and https://rec0il.github.io/KINETIK-PNP/",
+    "Imprint and privacy policy (German): https://kinetik.redneck-design.de/#/impressum"
+  ]
+}

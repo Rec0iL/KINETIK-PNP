@@ -9,6 +9,7 @@
   import { player } from '../net/player.svelte';
   import { pushToast } from '../ui/toasts.svelte';
   import Stepper from '../ui/Stepper.svelte';
+  import { t } from '../i18n';
 
   let { char }: { char: Character } = $props();
   const sheet = $derived(computeSheet(char));
@@ -27,12 +28,12 @@
     const p = list.find((x) => x.id === id);
     if (!p) return;
     const rec = roll2d6({
-      who: settings.displayName || char.name, characterId: char.id, label: `Gegenmittel (${GIFT[p.level].label})`, bonus: sheet.basicBonus[attr], mod, mw: antidoteMw(p), kind: 'probe',
+      who: settings.displayName || char.name, characterId: char.id, label: t('sheet.poisons.antidoteLabel', { label: GIFT[p.level].label }), bonus: sheet.basicBonus[attr], mod, mw: antidoteMw(p), kind: 'probe',
     });
     if (antidoteWorks(rec.result, rec.auto)) {
       applyPatch(char, cureOps(char, id), { autoShock: false });
-      pushToast('Gegenmittel wirkt: das Gift endet.', 'good');
-    } else pushToast(rec.result === 'preis' ? 'Gegenmittel mit Preis: das Gift wirkt weiter.' : 'Gegenmittel misslungen, das Gift wirkt weiter.', 'warn');
+      pushToast(t('sheet.poisons.cured'), 'good');
+    } else pushToast(rec.result === 'preis' ? t('sheet.poisons.costly') : t('sheet.poisons.failed'), 'warn');
   }
   function tick() {
     const r = tickCharacter(char);
@@ -40,39 +41,39 @@
     for (const n of r.notes) pushToast(n, 'warn', 6000);
   }
   function add() {
-    char.poisons = [...list, newPoison(uid(), level, delay, 'von Hand')];
+    char.poisons = [...list, newPoison(uid(), level, delay, t('sheet.poisons.byHand'))];
     adding = false;
   }
 </script>
 
 {#if list.length || adding}
   <section class="panel poison">
-    <div class="row head"><h2>Gift</h2><span class="spacer"></span>
-      {#if list.length && !inRound}<button class="btn sm" onclick={tick} title="Rundenende: Verzögerung zählt herunter, danach wirkt das Gift">Gift-Runde</button>{/if}
+    <div class="row head"><h2>{t('sheet.poisons.title')}</h2><span class="spacer"></span>
+      {#if list.length && !inRound}<button class="btn sm" onclick={tick} title={t('sheet.poisons.tickTitle')}>{t('sheet.poisons.tick')}</button>{/if}
     </div>
     {#each list as p (p.id)}
       <div class="p">
         <span class="chip danger">{describePoison(p)}</span>
-        <small class="dim">{GIFT[p.level].text}. Gegenmittel: Aktion + Probe gegen MW {antidoteMw(p)}.</small>
+        <small class="dim">{t('sheet.poisons.antidoteNote', { text: GIFT[p.level].text, mw: antidoteMw(p) })}</small>
         <div class="row">
-          <select bind:value={attr} aria-label="Attribut der Probe">{#each ATTR_KEYS as a}<option value={a}>{rules.tabellen.attribute.find((x) => x.key === a)?.name}</option>{/each}</select>
-          <Stepper bind:value={mod} min={-9} max={9} label="Modifikator (z.B. Medizin)" />
-          <button class="btn sm primary" onclick={() => antidote(p.id)}>Gegenmittel würfeln {fmt(sheet.basicBonus[attr] + mod)}</button>
-          <button class="btn sm ghost danger" onclick={() => (char.poisons = list.filter((x) => x.id !== p.id))} aria-label="Gift entfernen">✕</button>
+          <select bind:value={attr} aria-label={t('sheet.poisons.attrAria')}>{#each ATTR_KEYS as a}<option value={a}>{rules.tabellen.attribute.find((x) => x.key === a)?.name}</option>{/each}</select>
+          <Stepper bind:value={mod} min={-9} max={9} label={t('sheet.poisons.modAria')} />
+          <button class="btn sm primary" onclick={() => antidote(p.id)}>{t('sheet.poisons.rollAntidote', { b: fmt(sheet.basicBonus[attr] + mod) })}</button>
+          <button class="btn sm ghost danger" onclick={() => (char.poisons = list.filter((x) => x.id !== p.id))} aria-label={t('sheet.poisons.remove')}>✕</button>
         </div>
       </div>
     {/each}
     {#if adding}
       <div class="row">
-        <select bind:value={level} aria-label="Giftstufe">{#each GIFT_LEVELS as l}<option value={l}>{GIFT[l].label}</option>{/each}</select>
-        <Stepper bind:value={delay} min={0} max={MAX_GIFT_DELAY} label="Verzögerung in Runden" />
+        <select bind:value={level} aria-label={t('sheet.poisons.levelAria')}>{#each GIFT_LEVELS as l}<option value={l}>{GIFT[l].label}</option>{/each}</select>
+        <Stepper bind:value={delay} min={0} max={MAX_GIFT_DELAY} label={t('sheet.common.delayRounds')} />
         <button class="btn sm primary" onclick={add}>+</button>
-        <button class="btn sm ghost" onclick={() => (adding = false)}>Abbrechen</button>
+        <button class="btn sm ghost" onclick={() => (adding = false)}>{t('sheet.poisons.cancel')}</button>
       </div>
     {/if}
   </section>
 {:else}
-  <button class="btn sm ghost addp" onclick={() => (adding = true)}>+ Gift eintragen</button>
+  <button class="btn sm ghost addp" onclick={() => (adding = true)}>{t('sheet.poisons.add')}</button>
 {/if}
 
 <style>

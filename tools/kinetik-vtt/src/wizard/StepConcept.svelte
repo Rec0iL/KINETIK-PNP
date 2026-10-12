@@ -2,30 +2,31 @@
   import type { Character } from '../model/character';
   import { imageToDataUrl } from '../lib/image';
   import { portraitPlaceholder } from '../lib/art';
+  import { t } from '../i18n';
 
   let { char }: { char: Character } = $props();
 
   async function onPortrait(e: Event) {
     const f = (e.currentTarget as HTMLInputElement).files?.[0];
     if (!f) return;
-    try { char.portrait = await imageToDataUrl(f); } catch { alert('Das Bild konnte nicht gelesen werden.'); }
+    try { char.portrait = await imageToDataUrl(f); } catch { alert(t('wizard.concept.imageError')); }
   }
 </script>
 
 <div class="grid2">
   <div class="stack">
-    <p class="dim intro">Fang bei der Figur an, nicht bei den Zahlen: Wer ist sie, was treibt sie an, wo kommt sie her? Titel und Attribute folgen daraus. Ein Satz reicht.</p>
-    <label class="field">Name<input bind:value={char.name} placeholder="z.B. Jin Yamada" /></label>
+    <p class="dim intro">{t('wizard.concept.intro')}</p>
+    <label class="field">{t('wizard.concept.name')}<input bind:value={char.name} placeholder={t('wizard.concept.namePh')} /></label>
     <div class="row">
-      <label class="field grow">Alias / Spitzname<input bind:value={char.alias} placeholder="z.B. Ghost" /></label>
-      <label class="field grow">Spieler<input bind:value={char.player} /></label>
+      <label class="field grow">{t('wizard.concept.alias')}<input bind:value={char.alias} placeholder={t('wizard.concept.aliasPh')} /></label>
+      <label class="field grow">{t('wizard.concept.player')}<input bind:value={char.player} /></label>
     </div>
-    <label class="field">Konzept in einem Satz<textarea rows="3" bind:value={char.concept} placeholder="z.B. Ehemaliger Auftragskiller der Triaden, der nach einem letzten Job untergetaucht ist."></textarea></label>
-    <label class="field">Setting / Power-Scale (optional)<input bind:value={char.setting} placeholder="z.B. Moderne Welt, Level 10 = John Wick" /></label>
-    <small class="dim">Das Titel-Level misst den Rang innerhalb des Settings, nicht eine absolute Stärke. Frag den Tisch, wie hoch die Decke der Welt liegt.</small>
+    <label class="field">{t('wizard.concept.concept')}<textarea rows="3" bind:value={char.concept} placeholder={t('wizard.concept.conceptPh')}></textarea></label>
+    <label class="field">{t('wizard.concept.setting')}<input bind:value={char.setting} placeholder={t('wizard.concept.settingPh')} /></label>
+    <small class="dim">{t('wizard.concept.scaleNote')}</small>
   </div>
-  <label class="portrait" title="Bild wählen">
-    {#if char.portrait}<img src={char.portrait} alt="Porträt" />{:else}<img class="ph" src={portraitPlaceholder()} alt="" /><span>Porträt wählen (optional)</span>{/if}
+  <label class="portrait" title={t('wizard.concept.pickImage')}>
+    {#if char.portrait}<img src={char.portrait} alt={t('wizard.concept.portraitAlt')} />{:else}<img class="ph" src={portraitPlaceholder()} alt="" /><span>{t('wizard.concept.pickPortrait')}</span>{/if}
     <input type="file" accept="image/*" onchange={onPortrait} class="sr-only" />
   </label>
 </div>

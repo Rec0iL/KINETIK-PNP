@@ -2,23 +2,24 @@
   import { epCap, meisterschaft, minLevelForEp } from '../rules';
   import type { Character } from '../model/character';
   import Moves from '../sheet/Moves.svelte';
+  import { t } from '../i18n';
 
   let { char }: { char: Character } = $props();
 </script>
 
 <div class="stack">
-  <p class="dim intro">Moves sind die Signature-Techniken deiner Figur. Ein normaler Angriff kostet 0 EP, alles darüber wird mit Effektpunkten (EP) aus dem Katalog bezahlt. Bis 3 EP zahlst du Energie (EP − Meisterschaft), ab 4 EP Momentum plus 1 Energie. Es gibt keine Obergrenze für die Anzahl, für den Start reichen <b>ein bis drei</b> Moves. Wähle Beispiele aus dem Regelwerk oder baue eigene.</p>
+  <p class="dim intro">{t('wizard.moves.intro1')}<b>{t('wizard.moves.intro2')}</b>{t('wizard.moves.intro3')}</p>
 
   {#if char.titles.length}
     <div class="caps">
-      {#each char.titles as t (t.id)}
-        {@const m = meisterschaft(t.level)}
-        <div class="cap"><b>{t.name}</b><span>Level {t.level}, M {m}</span><span class="chip amber">EP-Deckel {epCap(m)}</span>
-          <small class="dim">4 EP ab Level {minLevelForEp(4)}, 5 EP ab {minLevelForEp(5)}</small></div>
+      {#each char.titles as ti (ti.id)}
+        {@const m = meisterschaft(ti.level)}
+        <div class="cap"><b>{ti.name}</b><span>{t('wizard.moves.levelMastery', { level: ti.level, m })}</span><span class="chip amber">{t('wizard.moves.epCap', { cap: epCap(m) })}</span>
+          <small class="dim">{t('wizard.moves.minLevels', { a: minLevelForEp(4), b: minLevelForEp(5) })}</small></div>
       {/each}
     </div>
   {:else}
-    <p class="warn">Du hast noch keinen Titel. Moves gehören zu einem Titel und nutzen dessen Meisterschaft. Gehe zurück zu „Titel“.</p>
+    <p class="warn">{t('wizard.moves.noTitle')}</p>
   {/if}
 
   <Moves {char} />

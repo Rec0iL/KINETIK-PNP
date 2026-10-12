@@ -2,6 +2,8 @@
   import type { PlayerInfo } from '../net/protocol';
   import type { Snippet } from 'svelte';
   import { portraitPlaceholder } from '../lib/art';
+  import { t } from '../i18n';
+  import { tagLabel } from '../rules';
 
   let { p, me = false, onopen, children }: { p: PlayerInfo; me?: boolean; onopen?: () => void; children?: Snippet } = $props();
   const v = $derived(p.vitals);
@@ -12,30 +14,30 @@
   <div class="pic">{#if p.portrait}<img src={p.portrait} alt="" />{:else}<img class="ph" src={portraitPlaceholder()} alt="" />{/if}</div>
   <div class="main">
     <div class="row top">
-      <b class="nm">{p.characterName || p.name}</b>{#if p.alias}<span class="dim">„{p.alias}“</span>{/if}
+      <b class="nm">{p.characterName || p.name}</b>{#if p.alias}<span class="dim">{t('ui.partyCard.alias', { alias: p.alias })}</span>{/if}
       <span class="spacer"></span>
-      <span class="chip" class:accent={p.connected} title={p.local ? 'Lokaler Spieler (SL pflegt den Bogen)' : p.connected ? 'verbunden' : 'getrennt'}>{p.local ? 'lokal' : p.connected ? 'online' : 'offline'}</span>
+      <span class="chip" class:accent={p.connected} title={p.local ? t('ui.partyCard.localTitle') : p.connected ? t('ui.partyCard.connectedTitle') : t('ui.partyCard.disconnectedTitle')}>{p.local ? t('ui.partyCard.local') : p.connected ? t('ui.partyCard.online') : t('ui.partyCard.offline')}</span>
     </div>
     <small class="dim">{p.name}{p.titles ? ` · ${p.titles}` : ''}</small>
     {#if v}
       <div class="bars">
-        <div class="b" title={`Energie ${v.energie}/${v.energieMax}`}><span>E</span><div class="t"><i style:width="{pct(v.energie, v.energieMax)}%"></i></div><em>{v.energie}/{v.energieMax}</em></div>
-        <div class="b amber" title={`Willenskraft ${v.wk}/${v.wkMax}`}><span>WK</span><div class="t"><i style:width="{pct(v.wk, v.wkMax)}%"></i></div><em>{v.wk}/{v.wkMax}</em></div>
+        <div class="b" title={t('ui.partyCard.energyTitle', { cur: v.energie, max: v.energieMax })}><span>{t('ui.partyCard.energyShort')}</span><div class="t"><i style:width="{pct(v.energie, v.energieMax)}%"></i></div><em>{v.energie}/{v.energieMax}</em></div>
+        <div class="b amber" title={t('ui.partyCard.willpowerTitle', { cur: v.wk, max: v.wkMax })}><span>{t('ui.partyCard.willpowerShort')}</span><div class="t"><i style:width="{pct(v.wk, v.wkMax)}%"></i></div><em>{v.wk}/{v.wkMax}</em></div>
       </div>
       <div class="chips">
-        <span class="chip amber" title="Momentum">M {v.momentum}/{v.momentumCap}</span>
-        {#if v.schutzMax}<span class="chip" title="Schutz">S {v.schutz}/{v.schutzMax}</span>{/if}
-        {#if v.injuries}<span class="chip danger" title="Verletzungen">{v.injuries} Verl.</span>{/if}
-        {#if v.sterbend}<span class="chip danger">sterbend</span>{/if}
-        {#if v.poisons?.length}<span class="chip danger" title="Vergiftet">Gift</span>{/if}
-        {#if v.ausgepumpt}<span class="chip danger">ausgepumpt</span>{/if}
-        {#if v.gebrochen}<span class="chip danger">gebrochen</span>{/if}
-        {#each v.tags as t}<span class="chip" class:amber={t.size === 'gross'}>{t.name}</span>{/each}
+        <span class="chip amber" title={t('ui.partyCard.momentum')}>{t('ui.partyCard.momentumChip', { cur: v.momentum, max: v.momentumCap })}</span>
+        {#if v.schutzMax}<span class="chip" title={t('ui.partyCard.protection')}>{t('ui.partyCard.protectionChip', { cur: v.schutz, max: v.schutzMax })}</span>{/if}
+        {#if v.injuries}<span class="chip danger" title={t('ui.partyCard.injuries')}>{t('ui.partyCard.injuriesChip', { n: v.injuries })}</span>{/if}
+        {#if v.sterbend}<span class="chip danger">{t('ui.partyCard.dying')}</span>{/if}
+        {#if v.poisons?.length}<span class="chip danger" title={t('ui.partyCard.poisoned')}>{t('ui.partyCard.poison')}</span>{/if}
+        {#if v.ausgepumpt}<span class="chip danger">{t('ui.partyCard.winded')}</span>{/if}
+        {#if v.gebrochen}<span class="chip danger">{t('ui.partyCard.broken')}</span>{/if}
+        {#each v.tags as tg}<span class="chip" class:amber={tg.size === 'gross'}>{tagLabel(tg.name)}</span>{/each}
       </div>
     {:else}
-      <small class="dim">Keine Details sichtbar.</small>
+      <small class="dim">{t('ui.partyCard.noDetails')}</small>
     {/if}
-    {#if onopen && v}<div class="row"><button class="btn sm" onclick={onopen}>Bogen ansehen</button></div>{/if}
+    {#if onopen && v}<div class="row"><button class="btn sm" onclick={onopen}>{t('ui.partyCard.viewSheet')}</button></div>{/if}
     {@render children?.()}
   </div>
 </article>

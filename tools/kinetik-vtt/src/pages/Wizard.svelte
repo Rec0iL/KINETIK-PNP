@@ -11,6 +11,7 @@
   import StepMoves from '../wizard/StepMoves.svelte';
   import StepGear from '../wizard/StepGear.svelte';
   import StepFinish from '../wizard/StepFinish.svelte';
+  import { t } from '../i18n';
 
   let { id, step }: { id: string; step: number } = $props();
 
@@ -38,23 +39,23 @@
 </script>
 
 {#if !library.ready}
-  <p class="dim">Lade …</p>
+  <p class="dim">{t('pages.common.loading')}</p>
 {:else if !char || !report}
-  <section class="panel stack"><h2>Charakter nicht gefunden</h2><a class="btn primary" href="#/charaktere">Zu den Charakteren</a></section>
+  <section class="panel stack"><h2>{t('pages.common.notFound')}</h2><a class="btn primary" href="#/charaktere">{t('pages.common.toCharacters')}</a></section>
 {:else}
   <header class="top">
     <div>
-      <span class="kicker">Charakter-Assistent · {report.stufe.name}</span>
+      <span class="kicker">{t('pages.wizard.kicker', { tier: report.stufe.name })}</span>
       <h1>{current.title}</h1>
       <p class="dim sub">{current.text}</p>
     </div>
     <div class="row">
-      <button class="btn sm" onclick={() => openRulebook(current.rule)}>📖 Regeln zu diesem Schritt</button>
-      <a class="btn sm ghost" href={`#/charakter/${char.id}`}>Zum Bogen wechseln</a>
+      <button class="btn sm" onclick={() => openRulebook(current.rule)}>{t('pages.wizard.rules')}</button>
+      <a class="btn sm ghost" href={`#/charakter/${char.id}`}>{t('pages.wizard.toSheet')}</a>
     </div>
   </header>
 
-  <nav class="rail" aria-label="Schritte">
+  <nav class="rail" aria-label={t('pages.wizard.steps')}>
     {#each WIZARD_STEPS as s, i (s.key)}
       <button class:on={i === idx} class:done={i < idx} onclick={() => go(i + 1)} aria-current={i === idx ? 'step' : undefined}>
         <span class="n">{i + 1}</span><span class="t">{s.title}</span>
@@ -63,9 +64,9 @@
   </nav>
 
   <div class="budgets">
-    <span class="b" class:over={report.attributesOver}>Attribute <b>{fmt(report.attributesSpent, report.attributesBudget)}</b></span>
-    <span class="b" class:over={report.titleLevels > report.titleBudget}>Titel-Level <b>{fmt(report.titleLevels, report.titleBudget)}</b></span>
-    <span class="b">Max. Start-Level <b>{report.stufe.startLevelMax}</b></span>
+    <span class="b" class:over={report.attributesOver}>{t('pages.common.attributes')} <b>{fmt(report.attributesSpent, report.attributesBudget)}</b></span>
+    <span class="b" class:over={report.titleLevels > report.titleBudget}>{t('pages.common.titleLevels')} <b>{fmt(report.titleLevels, report.titleBudget)}</b></span>
+    <span class="b">{t('pages.common.maxStartLevel')} <b>{report.stufe.startLevelMax}</b></span>
   </div>
 
   <section class="panel step">
@@ -80,12 +81,12 @@
   </section>
 
   <footer class="nav">
-    <button class="btn" onclick={() => go(idx)} disabled={idx === 0}>← Zurück</button>
+    <button class="btn" onclick={() => go(idx)} disabled={idx === 0}>{t('pages.common.back')}</button>
     <span class="spacer"></span>
     {#if last}
-      <button class="btn primary" onclick={finish}>Fertig, zum Bogen</button>
+      <button class="btn primary" onclick={finish}>{t('pages.wizard.finish')}</button>
     {:else}
-      <button class="btn primary" onclick={() => go(idx + 2)}>Weiter →</button>
+      <button class="btn primary" onclick={() => go(idx + 2)}>{t('pages.wizard.next')}</button>
     {/if}
   </footer>
 {/if}

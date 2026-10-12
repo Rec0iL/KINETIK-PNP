@@ -2,11 +2,13 @@
   import { operator, REPO_URL } from '../lib/legal';
   import Reveal from '../ui/Reveal.svelte';
   import Copyright from '../ui/Copyright.svelte';
+  import { t, getLocale } from '../i18n';
 </script>
 
-<section class="stack wrap">
+<section class="stack wrap" lang="de">
   <span class="kicker">KINETIK</span>
   <h1>Impressum</h1>
+  {#if getLocale() !== 'de'}<p class="panel notice" lang="en">{t('legal.notice')}</p>{/if}
 
   {#if operator}
     {@const people = operator.partner ? [operator, operator.partner] : [operator]}

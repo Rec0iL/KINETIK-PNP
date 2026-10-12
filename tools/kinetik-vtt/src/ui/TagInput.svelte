@@ -1,5 +1,7 @@
 <script lang="ts">
-  let { values = $bindable([]), placeholder = 'Hinzufügen (Enter)', label = '' }: { values: string[]; placeholder?: string; label?: string } = $props();
+  import { t } from '../i18n';
+  import { tagLabel } from '../rules';
+  let { values = $bindable([]), placeholder = t('ui.tagInput.placeholder'), label = '' }: { values: string[]; placeholder?: string; label?: string } = $props();
   let draft = $state('');
 
   function add() {
@@ -11,7 +13,7 @@
 
 <div class="ti" aria-label={label || undefined}>
   {#each values as v, i (v)}
-    <span class="chip accent">{v}<button type="button" onclick={() => (values = values.filter((_, j) => j !== i))} aria-label={`${v} entfernen`}>×</button></span>
+    <span class="chip accent">{tagLabel(v)}<button type="button" onclick={() => (values = values.filter((_, j) => j !== i))} aria-label={t('ui.tagInput.remove', { name: tagLabel(v) })}>×</button></span>
   {/each}
   <input
     bind:value={draft} {placeholder} aria-label={label || placeholder}

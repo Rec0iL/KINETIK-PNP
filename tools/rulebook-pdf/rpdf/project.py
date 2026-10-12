@@ -9,6 +9,8 @@ from . import mdparse
 
 DEFAULTS = {
     "source": "",
+    "key_source": "",              # same book in another language: its headings give the image keys (translations reuse the images)
+    "images_from": "",             # project folder whose images are used for every key this project has no image for (not fillers)
     "output": "output.pdf",
     "title": "",
     "subtitle": "",
@@ -72,6 +74,9 @@ SIZES = {
     "chapter": (1600, 704),
     "section": (1280, 560),
 }
+
+
+FILLER_PREFIX = "Füllbild: "     # manifest title prefix of filler slots; language-neutral on purpose (planner strips it again)
 
 
 def size_for(slot):
@@ -138,6 +143,15 @@ class Project:
         return self.path(self.config["source"]) if self.config["source"] else None
 
     @property
+    def key_source_path(self):
+        return self.path(self.config["key_source"]) if self.config.get("key_source") else None
+
+    @property
+    def images_from_dir(self):
+        """images/ folder of the project this one borrows non-filler images from, or None."""
+        return self.path(self.config["images_from"]) / "images" if self.config.get("images_from") else None
+
+    @property
     def output_path(self):
         return self.path(self.config["output"])
 
@@ -150,7 +164,13 @@ class Project:
         return self.root / ".build"
 
     def image_path(self, key):
-        return self.images_dir / f"{key}.jpg"
+        """images/<key>.jpg. Without an own file, a borrowed image (images_from) is used; fillers are never borrowed
+        because they are cut to the gaps of this project's own layout."""
+        own = self.images_dir / f"{key}.jpg"
+        base = self.images_from_dir
+        if base is not None and not own.exists() and not key.startswith("fill-"):
+            return base / f"{key}.jpg"
+        return own
 
     def has_image(self, key):
         return self.image_path(key).exists()
@@ -160,9 +180,11 @@ class Project:
         src = self.source_path
         if not src or not src.exists():
             raise FileNotFoundError(f"Quelldatei nicht gefunden: {src}")
+        ks = self.key_source_path
         return mdparse.parse(src.read_text(encoding="utf-8"),
                              chapter_level=self.config.get("chapter_level") or None,
-                             appendix_patterns=self.config["appendix_patterns"])
+                             appendix_patterns=self.config["appendix_patterns"],
+                             key_source=ks.read_text(encoding="utf-8") if ks else None)
 
     def slots(self, doc=None):
         doc = doc or self.document()
@@ -187,7 +209,7 @@ class Project:
         if not (self.config["layout"].get("fill_gaps") and e and e.get("active")):
             return []
         aspect = e["w_mm"] / e["h_mm"] if e.get("h_mm") else None
-        return [Slot(f"fill-{block_key}", "filler", f"Füllbild: {title}", context, chapter_key, aspect)]
+        return [Slot(f"fill-{block_key}", "filler", f"{FILLER_PREFIX}{title}", context, chapter_key, aspect)]
 
     def sync_manifest(self, slots):
         """Ensure every slot has a manifest entry; returns the slots."""
