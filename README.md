@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="tools/kinetik-vtt/public/art/hero.webp" alt="KINETIK: ein Revolverheld und ein Kampfkünstler stehen sich in einer verregneten Neon-Gasse gegenüber" width="100%">
+  <img src="tools/kinetik-vtt/public/art/noir/hero.webp" alt="KINETIK: ein Revolverheld und ein Kampfkünstler stehen sich in einer verregneten Neon-Gasse gegenüber" width="100%">
 </p>
 
 <h1 align="center">KINETIK</h1>
@@ -56,12 +56,12 @@ Alles Weitere steht im [Regelwerk](regelwerk/KINETIK_Regelwerk.md) (aktuell **v3
 
 <table>
 <tr>
-<td width="50%"><a href="https://rec0il.github.io/KINETIK-PNP/#/charaktere"><img src="tools/kinetik-vtt/public/art/card-player.webp" alt="Spieler" width="100%"></a><br><b>Spieler</b><br>Charakterbogen mit Assistent, Körpersilhouette, Moves und Würfeln. Speichert im Browser, Export als JSON.</td>
-<td width="50%"><a href="https://rec0il.github.io/KINETIK-PNP/#/beitreten"><img src="tools/kinetik-vtt/public/art/card-join.webp" alt="Beitreten" width="100%"></a><br><b>Runde beitreten</b><br>Mit dem Raumcode des SL. Bogen, Würfel, Karte und Musik teilen, direkt von Browser zu Browser (WebRTC).</td>
+<td width="50%"><a href="https://rec0il.github.io/KINETIK-PNP/#/charaktere"><img src="tools/kinetik-vtt/public/art/noir/card-player.webp" alt="Spieler" width="100%"></a><br><b>Spieler</b><br>Charakterbogen mit Assistent, Körpersilhouette, Moves und Würfeln. Speichert im Browser, Export als JSON.</td>
+<td width="50%"><a href="https://rec0il.github.io/KINETIK-PNP/#/beitreten"><img src="tools/kinetik-vtt/public/art/noir/card-join.webp" alt="Beitreten" width="100%"></a><br><b>Runde beitreten</b><br>Mit dem Raumcode des SL. Bogen, Würfel, Karte und Musik teilen, direkt von Browser zu Browser (WebRTC).</td>
 </tr>
 <tr>
-<td><a href="https://rec0il.github.io/KINETIK-PNP/#/sl"><img src="tools/kinetik-vtt/public/art/card-gm.webp" alt="Spielleiter" width="100%"></a><br><b>Spielleiter</b><br>Spieler und Bögen sehen, Kampf mit Kinetik-Marker, Gegner, Handouts, Karte mit Nebel, Musik.</td>
-<td><a href="https://rec0il.github.io/KINETIK-PNP/#/builder"><img src="tools/kinetik-vtt/public/art/card-builder.webp" alt="Move-Builder" width="100%"></a><br><b>Move-Builder</b><br>Moves nach Kapitel 5 bauen: Effektpunkte, Kosten und Mindestlevel live, ohne Charakter nutzbar.</td>
+<td><a href="https://rec0il.github.io/KINETIK-PNP/#/sl"><img src="tools/kinetik-vtt/public/art/noir/card-gm.webp" alt="Spielleiter" width="100%"></a><br><b>Spielleiter</b><br>Spieler und Bögen sehen, Kampf mit Kinetik-Marker, Gegner, Handouts, Karte mit Nebel, Musik.</td>
+<td><a href="https://rec0il.github.io/KINETIK-PNP/#/builder"><img src="tools/kinetik-vtt/public/art/noir/card-builder.webp" alt="Move-Builder" width="100%"></a><br><b>Move-Builder</b><br>Moves nach Kapitel 5 bauen: Effektpunkte, Kosten und Mindestlevel live, ohne Charakter nutzbar.</td>
 </tr>
 </table>
 

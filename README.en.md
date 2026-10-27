@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="tools/kinetik-vtt/public/art/hero.webp" alt="KINETIK: a gunslinger and a martial artist face each other in a rainy neon alley" width="100%">
+  <img src="tools/kinetik-vtt/public/art/noir/hero.webp" alt="KINETIK: a gunslinger and a martial artist face each other in a rainy neon alley" width="100%">
 </p>
 
 <h1 align="center">KINETIK</h1>
