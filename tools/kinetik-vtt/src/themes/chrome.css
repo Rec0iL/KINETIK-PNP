@@ -620,6 +620,8 @@ html::after { z-index: 9998; }
 :root[data-theme='wushu'] .rb {
   .banner { border-top: 3px double var(--accent); }
   .secimg, .fill, .coverimg { border: 0; box-shadow: 0 0 0 1px var(--line-strong), 0 0 0 5px rgba(247, 239, 220, 0.9), 0 0 0 6px var(--line), 0 8px 20px -10px rgba(60, 40, 10, 0.5); margin: 1rem auto; width: calc(100% - 12px); }
+  /* Cover: feste Breite plus Höhendeckel aus Rulebook.svelte verzerrt es (im breiten Regelwerk auf mehr als doppelte Breite) */
+  .coverimg { width: auto; max-width: calc(100% - 12px); }
   .bannertxt { background: linear-gradient(to bottom, rgba(247, 239, 220, 0.95), var(--bg)); }
   .sec h3 { border-bottom: 1px solid var(--line-strong); background: linear-gradient(var(--accent), var(--accent)) 0 100% / 3em 3px no-repeat; }
   .rbcontent th { color: var(--accent); background: rgba(185, 48, 29, 0.08); }
@@ -655,6 +657,9 @@ html::after { z-index: 9998; }
   .banner { border-top: 4px solid var(--ink); }
   .bannerimg { border-bottom: 4px solid var(--ink); }
   .secimg, .fill, .coverimg { border: 0; margin: 10px auto; box-shadow: 0 -4px 0 0 var(--ink), 0 4px 0 0 var(--ink), -4px 0 0 0 var(--ink), 4px 0 0 0 var(--ink), 8px 8px 0 4px rgba(0, 0, 0, 0.35); width: calc(100% - 8px); }
+  /* Cover (256×364) muss hochskaliert werden, darf aber nicht verzerren: nur die Breite setzen, gedeckelt auf die Höhe der
+     anderen Themes (Seitenverhältnis des Covers), die Höhe folgt aus dem Bild. Ohne max-height kann nichts gestaucht werden. */
+  .coverimg { width: min(calc(100% - 8px), calc(min(70vh, 640px) * 256 / 364)); max-height: none; }
   .sec h3 { border-bottom: 4px solid var(--line-strong); }
   .rbcontent th { background: var(--accent); color: var(--accent-ink); border-bottom: 0; }
   .rbcontent table { border-top: 4px solid var(--ink); }
