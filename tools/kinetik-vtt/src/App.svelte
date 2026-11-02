@@ -179,7 +179,8 @@
   .lang select { padding-inline: 0.45em; }
   .theme select { width: auto; min-height: 34px; padding: 0.3em 0.6em; font: 600 0.8rem var(--font-head); letter-spacing: 0.1em; text-transform: uppercase; }
   .pagetitle { margin-bottom: 1rem; }
-  main { padding: 1.4rem max(16px, 3vw) 3rem; max-width: 1280px; margin: 0 auto; }
+  /* flex: füllt die freie Höhe in #app (Fußzeile unten); width: sonst schrumpft main in der Spalte wegen margin: auto auf den Inhalt */
+  main { flex: 1 0 auto; width: 100%; padding: 1.4rem max(16px, 3vw) 3rem; max-width: 1280px; margin: 0 auto; }
   /* SL-Dashboard: die volle Breite nutzen (Widescreen und Ultrawide), die Karte braucht den Platz. */
   main.wide { max-width: none; padding-inline: max(16px, 1.2vw); padding-top: 1rem; padding-bottom: 1.5rem; }
   .foot { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; justify-content: space-between; padding: 1rem max(16px, 3vw); color: var(--ink-dim); font: 600 0.75rem var(--font-head); letter-spacing: 0.14em; text-transform: uppercase; border-top: 1px solid var(--line); }

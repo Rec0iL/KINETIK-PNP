@@ -13,6 +13,8 @@ body {
   font: 400 var(--body-size) / var(--body-lh) var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
+/* App als Spalte über die volle Fensterhöhe: der Inhalt wächst, damit die Fußzeile auch bei kurzen Seiten auf hohen Bildschirmen unten sitzt */
+#app { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
 /* Hintergrund: Verlaufsnebel + feines Raster + Scanlines */
 body::before {
   content: '';
